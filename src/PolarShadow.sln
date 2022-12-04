@@ -5,6 +5,16 @@ VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow", "PolarShadow\PolarShadow.csproj", "{F45A0208-30F6-4472-9537-C21684FB14DA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Core", "PolarShadow.Core\PolarShadow.Core.csproj", "{D8814AF4-51A4-4AEF-8B06-2F54157C364A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.ResourcePack", "PolarShadow.ResourcePack\PolarShadow.ResourcePack.csproj", "{6E9EF63D-BEC2-4453-B085-E328917A3FF9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A0DA3243-6E13-4A97-A794-9AF90DF06F28}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.ResourcePack.Test", "Tests\PolarShadow.ResourcePack.Test\PolarShadow.ResourcePack.Test.csproj", "{3524F043-884A-4C1E-A367-4A13E54B87A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolarShadowTests", "Tests\PolarShadowTests\PolarShadowTests.csproj", "{D948F56C-BB01-486C-BAAD-1C373A918C67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,9 +27,29 @@ Global
 		{F45A0208-30F6-4472-9537-C21684FB14DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F45A0208-30F6-4472-9537-C21684FB14DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F45A0208-30F6-4472-9537-C21684FB14DA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E9EF63D-BEC2-4453-B085-E328917A3FF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E9EF63D-BEC2-4453-B085-E328917A3FF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E9EF63D-BEC2-4453-B085-E328917A3FF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E9EF63D-BEC2-4453-B085-E328917A3FF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3524F043-884A-4C1E-A367-4A13E54B87A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3524F043-884A-4C1E-A367-4A13E54B87A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3524F043-884A-4C1E-A367-4A13E54B87A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3524F043-884A-4C1E-A367-4A13E54B87A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3524F043-884A-4C1E-A367-4A13E54B87A1} = {A0DA3243-6E13-4A97-A794-9AF90DF06F28}
+		{D948F56C-BB01-486C-BAAD-1C373A918C67} = {A0DA3243-6E13-4A97-A794-9AF90DF06F28}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
