@@ -11,7 +11,7 @@ namespace PolarShadow.ResourcePack
 {
     public class Dy2018Site : IPolarShadowSite, IDownloadAble
     {
-        public string Name => "电影天堂";
+        public string Name => "DY2018";
         public string Domain => "www.dy2018.com";
 
         public VideoSourceType DownloadType => VideoSourceType.Magnet;

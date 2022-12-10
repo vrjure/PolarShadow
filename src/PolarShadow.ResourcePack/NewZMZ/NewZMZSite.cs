@@ -13,11 +13,13 @@ using System.Threading;
 
 namespace PolarShadow.ResourcePack
 {
-    public class NewZMZSite : IPolarShadowSite, ISearchAble
+    public class NewZMZSite : IPolarShadowSite, ISearchAble, IDownloadAble
     {
         public string Name => "NEWZMZ";
 
         public string Domain => "newzmz.com";
+
+        public VideoSourceType DownloadType => VideoSourceType.Magnet | VideoSourceType.BaiDu | VideoSourceType.Quark | VideoSourceType.ALiYun;
 
         public async Task<VideoDetail> GetVideoDetailAsync(string detailUrl, VideoSummary summary = default)
         {

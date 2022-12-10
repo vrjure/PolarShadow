@@ -13,6 +13,7 @@ namespace PolarShadow.Core
         BaiDu = 4,
         ALiYun = 8,
         Quark = 16,
-        M3U8 = 32
+        M3U8 = 32,
+        HTML = 64
     }
 }
