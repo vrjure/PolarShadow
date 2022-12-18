@@ -13,10 +13,10 @@ namespace PolarShadow.ResourcePack.Test
         {
             var site = new YHDMSite();
             var summay = await site.SearchVideosAsync(new Core.SearchVideoFilter(1, 10, "死神"));
-            Console.WriteLine(JsonSerializer.Serialize(summay, JsonOption.Default));
+            Console.WriteLine(JsonSerializer.Serialize(summay, JsonOption.DefaultSerializer));
 
             var detail = await site.GetVideoDetailAsync(summay.Data.First().DetailSrc, summay.Data.First());
-            Console.WriteLine(JsonSerializer.Serialize(detail, JsonOption.Default));
+            Console.WriteLine(JsonSerializer.Serialize(detail, JsonOption.DefaultSerializer));
         }
     }
 }

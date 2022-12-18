@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PolarShadow.Core.Aria2RPC.Models
+namespace PolarShadow.Core
 {
-    internal class Aria2Response
+    public class PlayMode
     {
     }
 }

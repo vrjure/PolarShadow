@@ -6,30 +6,30 @@ namespace PolarShadow.Core
 {
     public static class VideoSourceTypeExtensions
     {
-        public static VideoSourceType GetVideoSourceType(this string src)
+        public static SrcType GetVideoSourceType(this string src)
         {
             if (src == null)
             {
-                return VideoSourceType.None;
+                return SrcType.None;
             }
             if (src.StartsWith("magnet:"))
             {
-                return VideoSourceType.Magnet;
+                return SrcType.Magnet;
             }
             else if (src.StartsWith("http"))
             {
                 var uri = new Uri(src);
                 if (uri.Host.Equals("pan.quark.cn", StringComparison.OrdinalIgnoreCase))
                 {
-                    return VideoSourceType.Quark;
+                    return SrcType.Quark;
                 }
                 else if (uri.Host.Equals("pan.baidu.com"))
                 {
-                    return VideoSourceType.BaiDu;
+                    return SrcType.BaiDu;
                 }
             }
 
-            return VideoSourceType.None;
+            return SrcType.None;
         }
     }
 }

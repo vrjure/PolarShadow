@@ -14,7 +14,7 @@ namespace PolarShadow.ResourcePack
         public string Name => "DY2018";
         public string Domain => "www.dy2018.com";
 
-        public VideoSourceType DownloadType => VideoSourceType.Magnet;
+        public SrcType DownloadType => SrcType.Magnet;
 
         public Dy2018Site()
         {
@@ -52,7 +52,7 @@ namespace PolarShadow.ResourcePack
                             new VideoSource
                             {
                                 Src = aNode.GetAttributeValue("href", ""),
-                                SrcType = VideoSourceType.Magnet
+                                SrcType = SrcType.Magnet
                             }
                         }
                     };

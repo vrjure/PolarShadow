@@ -19,7 +19,7 @@ namespace PolarShadow.ResourcePack
 
         public string Domain => "newzmz.com";
 
-        public VideoSourceType DownloadType => VideoSourceType.Magnet | VideoSourceType.BaiDu | VideoSourceType.Quark | VideoSourceType.ALiYun;
+        public SrcType DownloadType => SrcType.Magnet | SrcType.BaiDu | SrcType.Quark | SrcType.ALiYun;
 
         public async Task<VideoDetail> GetVideoDetailAsync(string detailUrl, VideoSummary summary = default)
         {
@@ -96,7 +96,7 @@ namespace PolarShadow.ResourcePack
             using (var client = new HttpClient())
             {
                 var serachUrl = $"https://{Domain}/subres/index/getres.html?keyword={filter.SearchKey}&page={filter.Page}&snpage={filter.PageSize}";
-                var result = await client.GetFromJsonAsync<ZmzSearchResult>(serachUrl, JsonOption.Default, cancellation);
+                var result = await client.GetFromJsonAsync<ZmzSearchResult>(serachUrl, JsonOption.DefaultSerializer, cancellation);
                 if (result == null)
                 {
                     return new PageResult<VideoSummary>

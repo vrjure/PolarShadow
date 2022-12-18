@@ -5,7 +5,7 @@ using System.Text;
 namespace PolarShadow.Core
 {
     [Flags]
-    public enum VideoSourceType
+    public enum SrcType
     {
         None = 0,
         Http  = 1,

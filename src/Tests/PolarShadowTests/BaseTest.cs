@@ -33,11 +33,17 @@ namespace PolarShadowTests
             var result = await searcHandler.SearchNextAsync();
             while (result != null)
             {
-                Console.WriteLine(JsonSerializer.Serialize(result, JsonOption.Default));
+                Console.WriteLine(JsonSerializer.Serialize(result, JsonOption.DefaultSerializer));
                 result = await searcHandler.SearchNextAsync();
             }
 
             Assert.Pass();
+        }
+
+        [Test]
+        public void TestOther()
+        {
+
         }
     }
 }

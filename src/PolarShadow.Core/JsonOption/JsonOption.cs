@@ -9,23 +9,25 @@ namespace PolarShadow.Core
     {
         static JsonOption()
         {
-            Default = new JsonSerializerOptions
+            DefaultSerializer = new JsonSerializerOptions
             {
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                Converters = { new EnumStringConverter() }
             };
 
-            ForDash = new JsonSerializerOptions
+            ForDashSerializer = new JsonSerializerOptions
             {
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 PropertyNamingPolicy = new JsonCamelCaseNamingPolicyDash(),
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+                Converters = { new EnumStringConverter() }
             };
         }
 
-        public static JsonSerializerOptions Default { get; }
+        public static JsonSerializerOptions DefaultSerializer { get; }
 
-        public static JsonSerializerOptions ForDash { get; }
+        public static JsonSerializerOptions ForDashSerializer { get; }
     }
 }

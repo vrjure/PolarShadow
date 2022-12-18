@@ -7,6 +7,6 @@ namespace PolarShadow.Core
     public class VideoSource
     {
         public string Src { get; set; }
-        public VideoSourceType SrcType { get; set; }
+        public SrcType SrcType { get; set; }
     }
 }

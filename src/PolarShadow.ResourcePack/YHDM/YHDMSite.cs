@@ -98,7 +98,7 @@ namespace PolarShadow.ResourcePack
                     Description = string.Empty,
                     Sources = new List<VideoSource>()
                     {
-                        new VideoSource{Src = a.GetAttributeValue("href", ""), SrcType = VideoSourceType.HTML}
+                        new VideoSource{Src = a.GetAttributeValue("href", ""), SrcType = SrcType.HTML}
                     }
                 };
 

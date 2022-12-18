@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PolarShadow.Core.Aria2RPC
+namespace PolarShadow.Core.Aria2
 {
-    internal class InputFileOption
+    public class Aria2InputFileOption
     {
         public string All_proxy { get; set; }
         public string All_proxy_passwd { get; set; }

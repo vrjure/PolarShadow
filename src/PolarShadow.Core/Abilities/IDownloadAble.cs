@@ -6,6 +6,6 @@ namespace PolarShadow.Core
 {
     public interface IDownloadAble
     {
-        VideoSourceType DownloadType { get; }
+        SrcType DownloadType { get; }
     }
 }
