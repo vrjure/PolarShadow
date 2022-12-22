@@ -96,7 +96,6 @@ namespace PolarShadow.Core.Aria2
                 try
                 {
                     var result = await _ws.ReceiveAsync(memory, cancellation).ConfigureAwait(false);
-
                     if (result.Count == 0)
                     {
                         break;
@@ -169,9 +168,9 @@ namespace PolarShadow.Core.Aria2
 
             if (string.IsNullOrEmpty(method))
             {
-                if (doc.RootElement.TryGetProperty("id", out JsonElement idElement))
+                if (doc.RootElement.TryGetProperty("id", out element))
                 {
-                    method = idElement.GetString();
+                    method = element.GetString();
                 }
             }
 

@@ -4,7 +4,9 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    public class PlayMode
+    public enum PlayMode
     {
+        Local,
+        Web
     }
 }

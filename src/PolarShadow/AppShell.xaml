@@ -4,11 +4,12 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:PolarShadow"
-    Shell.FlyoutBehavior="Disabled">
-
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-
+    xmlns:page="clr-namespace:PolarShadow.Pages"
+    Shell.FlyoutBehavior="{OnIdiom Locked, Desktop = Locked, Tablet = Locked, Phone = Disabled}">
+    <FlyoutItem Title="Home">
+        <ShellContent ContentTemplate="{DataTemplate local:MainPage}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Search">
+        <ShellContent ContentTemplate="{DataTemplate page:SearchPage}"/>
+    </FlyoutItem>
 </Shell>

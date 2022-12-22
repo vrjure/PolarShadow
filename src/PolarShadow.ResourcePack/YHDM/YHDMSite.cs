@@ -19,6 +19,10 @@ namespace PolarShadow.ResourcePack
 
         public async Task<PageResult<VideoSummary>> SearchVideosAsync(SearchVideoFilter filter, CancellationToken cancellation = default)
         {
+            PageResult<VideoSummary> page = new PageResult<VideoSummary>();
+            page.Data = new List<VideoSummary>(filter.PageSize);
+            page.Page = filter.Page;
+
             var url = $"https://www.yhdmp.cc/s_all?kw={HttpUtility.UrlEncode(filter.SearchKey)}&pagesize={filter.PageSize}&pageindex={filter.Page - 1}";
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync(url);
@@ -26,11 +30,12 @@ namespace PolarShadow.ResourcePack
             var totalText = doc.DocumentNode.SelectSingleNode("//div[@class='gohome']/h1")?.InnerText;
 
             var ul = doc.DocumentNode.SelectSingleNode("//body//div[@class='lpic']/ul");
-            var liList = ul.SelectNodes("li");
+            if (ul == null)
+            {
+                return page;
+            }
 
-            PageResult<VideoSummary> page = new PageResult<VideoSummary>();
-            page.Data = new List<VideoSummary>(filter.PageSize);
-            page.Page = filter.Page;
+            var liList = ul.SelectNodes("li");
 
             if (!string.IsNullOrEmpty(totalText))
             {
