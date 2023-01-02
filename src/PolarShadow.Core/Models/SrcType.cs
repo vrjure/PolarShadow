@@ -14,6 +14,7 @@ namespace PolarShadow.Core
         ALiYun = 8,
         Quark = 16,
         M3U8 = 32,
-        HTML = 64
+        HTML = 64,
+        HTMLAnalysis = 128
     }
 }

@@ -20,7 +20,7 @@ namespace PolarShadow.Core
         /// <summary>
         /// 视频来源
         /// </summary>
-        public string SourceFrom { get; set; }
+        public string SiteName { get; set; }
         /// <summary>
         /// 详情地址
         /// </summary>

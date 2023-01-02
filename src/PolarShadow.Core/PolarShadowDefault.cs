@@ -29,9 +29,9 @@ namespace PolarShadow.Core
             }
         }
 
-        public IPolarShadowSite GetSite(string domain)
+        public IPolarShadowSite GetSite(string name)
         {
-            if (_sites.TryGetValue(domain, out IPolarShadowSite site))
+            if (_sites.TryGetValue(name, out IPolarShadowSite site))
             {
                 return site;
             }

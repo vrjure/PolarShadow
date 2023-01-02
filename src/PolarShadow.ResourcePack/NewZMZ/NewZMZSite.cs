@@ -34,11 +34,10 @@ namespace PolarShadow.ResourcePack
                 Description = desc,
                 DetailSrc = detailUrl,
                 ImageSrc = summary?.ImageSrc,
-                SourceFrom = Domain
+                SiteName = this.Name
             };
             if (!string.IsNullOrEmpty(href))
             {
-                result.Episodes = new List<VideoEpisode>();
                 var epDoc = await web.LoadFromWebAsync(href);
                 var articleNode = epDoc.DocumentNode.SelectSingleNode("//body/section[2]//article");
                 if (articleNode != null)
@@ -124,7 +123,7 @@ namespace PolarShadow.ResourcePack
                             DetailSrc = $"https://{Domain}/{res.Link_url}",
                             ImageSrc = res.Image_url,
                             Name = res.Name,
-                            SourceFrom = Domain
+                            SiteName = this.Name
                         };
 
                         page.Data.Add(summary);

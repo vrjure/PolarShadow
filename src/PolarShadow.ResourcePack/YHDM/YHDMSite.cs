@@ -35,7 +35,6 @@ namespace PolarShadow.ResourcePack
                 return page;
             }
 
-            var liList = ul.SelectNodes("li");
 
             if (!string.IsNullOrEmpty(totalText))
             {
@@ -46,10 +45,15 @@ namespace PolarShadow.ResourcePack
                 }
             }
 
+            var liList = ul.SelectNodes("li");
+            if (liList == null)
+            {
+                return page;
+            }
             foreach (var li in liList)
             {
                 var summary = new VideoSummary();
-                summary.SourceFrom = Domain;
+                summary.SiteName = this.Name;
                 summary.DetailSrc = $"https://{Domain}{li.SelectSingleNode("a").GetAttributeValue("href", "")}";
                 summary.ImageSrc = "https:" + li.SelectSingleNode("a/img").GetAttributeValue("src", "");
                 summary.Name = li.SelectSingleNode("h2/a").InnerText;
@@ -91,8 +95,6 @@ namespace PolarShadow.ResourcePack
             {
                 return detail;
             }
-
-            detail.Episodes = new List<VideoEpisode>();
             var liList = ul.SelectNodes("li");
             foreach (var li in liList)
             {
@@ -103,7 +105,7 @@ namespace PolarShadow.ResourcePack
                     Description = string.Empty,
                     Sources = new List<VideoSource>()
                     {
-                        new VideoSource{Src = a.GetAttributeValue("href", ""), SrcType = SrcType.HTML}
+                        new VideoSource{Src = $"https://{Domain}{a.GetAttributeValue("href", "")}", SrcType = SrcType.HTML}
                     }
                 };
 

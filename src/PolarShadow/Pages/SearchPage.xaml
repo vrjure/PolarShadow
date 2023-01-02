@@ -6,35 +6,41 @@
              xmlns:vm="clr-namespace:PolarShadow.Pages.ViewModels"
              x:DataType="vm:SearchPageViewModel">
     
-    <StackLayout Orientation="Vertical" Margin="10">
+    <Grid Margin="10"
+          RowDefinitions="auto,*">
         <SearchBar 
             x:Name="searchBar"
             Placeholder="video name"
             SearchCommand="{Binding SearchCommand}" SearchCommandParameter="{Binding Source={x:Reference searchBar}, Path=Text}"/>
-        <ListView ItemsSource="{Binding SearchResult, Mode=OneWay}">
-            <ListView.ItemTemplate>
+        <CollectionView ItemsSource="{Binding SearchResult, Mode=OneWay}"
+                        x:Name="dataList"
+                        SelectionMode="Single"
+                        SelectionChangedCommand="{Binding DataSelectChangedCommand}"
+                        SelectionChangedCommandParameter="{Binding Source={x:Reference dataList}, Path = SelectedItem}"
+                        RemainingItemsThreshold="1"
+                        RemainingItemsThresholdReachedCommand="{Binding SearchNextCommand}"
+                        Grid.Row="1">
+            <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:VideoSummary">
-                    <ViewCell Height="150">
-                        <Border StrokeThickness="1"
-                                Stroke="LightGray"
-                                Padding="10"
-                                Margin="10">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="15"/>
-                            </Border.StrokeShape>
-                            <Grid ColumnDefinitions="auto,*">
-                                <Image Grid.Column="0"/>
-                                <StackLayout Grid.Column="1">
-                                    <Label Text="{Binding Name}" FontSize="Title"/>
-                                    <Label Text="{Binding Description}" FontSize="Subtitle" MaxLines="3" HeightRequest="80"/>
-                                    <Label Text="{Binding SourceFrom}" FontSize="Small"/>
-                                </StackLayout>
-                            </Grid>
-                        </Border>
-
-                    </ViewCell>
+                    <Border StrokeThickness="1"
+                            Stroke="LightGray"
+                            Padding="10"
+                            Margin="10"
+                            HeightRequest="150">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="15"/>
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="auto,*">
+                            <Image Grid.Column="0"/>
+                            <StackLayout Grid.Column="1">
+                                <Label Text="{Binding Name}" FontSize="Title"/>
+                                <Label Text="{Binding Description}" FontSize="Subtitle" MaxLines="3" HeightRequest="80"/>
+                                <Label Text="{Binding SiteName}" FontSize="Small"/>
+                            </StackLayout>
+                        </Grid>
+                    </Border>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </StackLayout>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>

@@ -26,25 +26,25 @@ namespace PolarShadow.ResourcePack
         {
             VideoDetail detail = new VideoDetail
             {
-                Name = this.Name,
-                SourceFrom = this.Domain,
+                SiteName = this.Name,
                 DetailSrc = detailUrl
             };
 
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync(detailUrl, Encoding.GetEncoding("gb2312"));
             var node = doc.DocumentNode.SelectSingleNode("//body/div[1]/div/div[3]/div/div[6]/div[2]/ul//div[@id='Zoom']");
+
+            detail.Name = doc.DocumentNode.SelectSingleNode("//body/div[1]/div/div[3]/div/div[6]/div[1]/h1").InnerText;
             detail.ImageSrc = node.SelectSingleNode("img")?.GetAttributeValue("src", "");
 
             detail.Description = HttpUtility.HtmlDecode(node.InnerText);
-            detail.Episodes = new List<VideoEpisode>();
 
             var downloadNodes = node.SelectNodes("//div[@id='downlist']//a");
             if (downloadNodes != null)
             {
                 foreach (var aNode in downloadNodes)
                 {
-                    VideoEpisode ve = new VideoEpisode
+                    VideoEpisode ve = new VideoEpisode()
                     {
                         Name = aNode.InnerText,
                         Sources = new VideoSource[]

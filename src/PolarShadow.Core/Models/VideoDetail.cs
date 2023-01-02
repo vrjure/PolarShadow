@@ -19,12 +19,14 @@ namespace PolarShadow.Core
             this.Description = summary.Description;
             this.DetailSrc = summary.DetailSrc;
             this.ImageSrc = summary.ImageSrc;
-            this.SourceFrom = summary.SourceFrom;
+            this.SiteName = summary.SiteName;
             this.Name = summary.Name;
+
+            Episodes = new VideoEpisodeCollection(summary);
         }
         /// <summary>
         /// 视频集数信息
         /// </summary>
-        public ICollection<VideoEpisode> Episodes { get; set; }
+        public ICollection<VideoEpisode> Episodes { get; }
     }
 }
