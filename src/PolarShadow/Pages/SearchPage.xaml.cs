@@ -18,4 +18,10 @@ public partial class SearchPage : ContentPage
 			await _vm.SearchNextAsync();
 		}
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+		dataList.SelectedItem = null;
+    }
 }

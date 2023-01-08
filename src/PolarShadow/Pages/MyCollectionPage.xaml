@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PolarShadow.Pages.MyCollectionPage"
+             xmlns:vm="clr-namespace:PolarShadow.Pages.ViewModels"
+             x:DataType="vm:MyCollectionViewModel"
+             xmlns:model="clr-namespace:PolarShadow.Core;assembly=PolarShadow.Core.Models">
+    <VerticalStackLayout>
+        <CollectionView ItemsSource="{Binding MyCollections}"
+                        x:Name="cv"
+                        Margin="10"
+                        SelectionMode="Single"
+                        SelectionChangedCommand="{Binding ItemSelectedCommand}"
+                        SelectionChangedCommandParameter="{Binding Source={x:RelativeSource Mode=Self}, Path=SelectedItem}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:VideoSummary">
+                    <Border Stroke="LightGray"
+                            StrokeThickness="1"
+                            Padding="10">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="5"/>
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="auto,*"
+                              RowDefinitions="*,auto"
+                              ColumnSpacing="10">
+                            <Image Source="{Binding ImageSrc}"
+                                   WidthRequest="100"
+                                   VerticalOptions="Start"/>
+                            <VerticalStackLayout VerticalOptions="Center"
+                                                 Grid.Column="1">
+                                <Label Text="{Binding Name}"
+                                   FontSize="Title"/>
+                                <Label Text="{Binding Description}"
+                                   FontSize="Subtitle"
+                                   MaxLines="3"/>
+                            </VerticalStackLayout>
+
+                            <Label Text="{Binding SiteName}" 
+                                   FontSize="Small"
+                                   Grid.Row="1"
+                                   Grid.ColumnSpan="2"
+                                   HorizontalOptions="End"/>
+                        </Grid>
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <!--<FlexLayout BindableLayout.ItemsSource="{Binding MyCollections}"
+                    Wrap="Wrap"
+                    JustifyContent="SpaceAround">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="model:VideoSummary">
+                    <VerticalStackLayout>
+                        <Image Source="{Binding ImageSrc}"/>
+                        <Label Text="{Binding Name}"
+                               FontSize="Title"/>
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </FlexLayout>-->
+    </VerticalStackLayout>
+</ContentPage>

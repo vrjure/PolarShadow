@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Core
+namespace PolarShadow.Services
 {
-    public interface IPolarShadowSite
+    internal interface ISyncService
     {
-        string Name { get; }
-        string Domain { get; }
+        
     }
 }

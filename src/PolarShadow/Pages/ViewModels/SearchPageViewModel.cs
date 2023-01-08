@@ -68,6 +68,10 @@ namespace PolarShadow.Pages.ViewModels
         [RelayCommand]
         public async Task DataSelectChanged(VideoSummary summary)
         {
+            if (summary == null)
+            {
+                return;
+            }
             await Shell.Current.GoToAsync(nameof(VideoDetailPage), new Dictionary<string, object>
             {
                 { VideoDetailViewModel.Key_VideoSummary, summary }

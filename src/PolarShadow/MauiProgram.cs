@@ -3,8 +3,9 @@ using PolarShadow.Pages.ViewModels;
 using PolarShadow.ResourcePack;
 using CommunityToolkit.Maui;
 using PolarShadow.Pages;
-using NLog;
 using NLog.Extensions.Logging;
+using PolarShadow.Storage;
+using Microsoft.EntityFrameworkCore;
 
 namespace PolarShadow;
 
@@ -20,19 +21,28 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            });
-
-        ConfigureServices(builder);
-        return builder.Build();
+            })
+            .ConfigureServices();
+        return builder.Build().InitializeApp();
 	}
 
-    private static void ConfigureServices(MauiAppBuilder builder)
+    private static MauiAppBuilder ConfigureServices(this MauiAppBuilder builder)
     {
         ConfigureLogger(builder.Services);
 
         builder.Services.AddSingleton(BuildIPolarShadow());
 
         RegisterViewModels(builder.Services);
+
+        builder.Services.AddDbContextFactory<PolarShadowDbContext>(options =>
+        {
+            var path = Path.Combine(FileSystem.Current.AppDataDirectory, "polar.db3");
+            options.UseSqlite($"Data Source={path}", op => op.MigrationsAssembly(typeof(PolarShadowDbContext).Assembly.FullName));
+        });
+
+        builder.Services.AddStorageServices();
+
+        return builder;
     }
 
     private static void RegisterViewModels(IServiceCollection services)
@@ -40,6 +50,8 @@ public static class MauiProgram
         services.AddTransientWithShellRoute<SearchPage, SearchPageViewModel>(nameof(SearchPage));
         services.AddTransientWithShellRoute<VideoDetailPage, VideoDetailViewModel>(nameof(VideoDetailPage));
         services.AddTransientWithShellRoute<WebBrowserPage, WebBrowserPageViewModel>(nameof(WebBrowserPage));
+        services.AddTransientWithShellRoute<ConfigurePage, ConfigPageViewModel>(nameof(ConfigurePage));
+        services.AddTransientWithShellRoute<MyCollectionPage, MyCollectionViewModel>(nameof(MyCollectionPage));
     }
 
     private static IPolarShadow BuildIPolarShadow()
@@ -55,5 +67,15 @@ public static class MauiProgram
         {
             loggerBuilder.AddNLog();
         });
+    }
+
+    private static MauiApp InitializeApp(this MauiApp app)
+    {
+        var dbFactory = app.Services.GetRequiredService<IDbContextFactory<PolarShadowDbContext>>();
+        using (var context = dbFactory.CreateDbContext())
+        {
+            context.Database.Migrate();
+        }
+        return app;
     }
 }

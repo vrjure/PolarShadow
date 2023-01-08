@@ -70,7 +70,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\ConfigurePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\Controls\HtmlAnalysisSelector.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\MyCollectionPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\SearchPage.xaml">
@@ -90,14 +96,17 @@
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Maui" Version="3.1.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.1" />
 	  <PackageReference Include="NLog.Extensions.Logging" Version="5.2.0" />
 	  <PackageReference Include="NLog.Targets.MauiLog" Version="1.0.2" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\PolarShadow.Core.Models\PolarShadow.Core.Models.csproj" />
 	  <ProjectReference Include="..\PolarShadow.Core\PolarShadow.Core.csproj" />
 	  <ProjectReference Include="..\PolarShadow.ResourcePack\PolarShadow.ResourcePack.csproj" />
+	  <ProjectReference Include="..\PolarShadow.Storage\PolarShadow.Storage.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -107,7 +116,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Database\" />
+	  <Folder Include="Preferences\" />
 	</ItemGroup>
-
 </Project>

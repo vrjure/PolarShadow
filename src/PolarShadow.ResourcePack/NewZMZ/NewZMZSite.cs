@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace PolarShadow.ResourcePack
 {
-    public class NewZMZSite : IPolarShadowSite, ISearchAble, IDownloadAble
+    public class NewZMZSite : IPolarShadowSite, ISearchAble, IDownloadAble, IGetDetailAble
     {
         public string Name => "NEWZMZ";
 
@@ -28,7 +28,7 @@ namespace PolarShadow.ResourcePack
             var desc = doc.DocumentNode.SelectSingleNode("//div[@class='details']//div[@class='aliasname']")?.InnerText;
             var href = doc.DocumentNode.SelectSingleNode("//div[@class='details']/div[@class='details-wrap']/div[@class='epmetas']/a")?.GetAttributeValue("href", "");
 
-            var result = new VideoDetail
+            var result = new VideoDetail(summary)
             {
                 Name = summary?.Name,
                 Description = desc,

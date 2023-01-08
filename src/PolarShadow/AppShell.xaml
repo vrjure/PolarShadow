@@ -6,10 +6,13 @@
     xmlns:local="clr-namespace:PolarShadow"
     xmlns:page="clr-namespace:PolarShadow.Pages"
     Shell.FlyoutBehavior="{OnIdiom Locked, Desktop = Locked, Tablet = Locked, Phone = Disabled}">
-    <FlyoutItem Title="Home">
-        <ShellContent ContentTemplate="{DataTemplate local:MainPage}"/>
+    <FlyoutItem Title="MyCollections">
+        <ShellContent ContentTemplate="{DataTemplate page:MyCollectionPage}"/>
     </FlyoutItem>
     <FlyoutItem Title="Search">
         <ShellContent ContentTemplate="{DataTemplate page:SearchPage}"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Set">
+        <ShellContent ContentTemplate="{DataTemplate page:ConfigurePage}"/>
     </FlyoutItem>
 </Shell>

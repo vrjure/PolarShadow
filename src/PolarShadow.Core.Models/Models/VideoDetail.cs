@@ -8,7 +8,10 @@ namespace PolarShadow.Core
 {
     public class VideoDetail : VideoSummary
     {
-        public VideoDetail() { }
+        public VideoDetail()
+        { 
+            
+        }
 
         public VideoDetail(VideoSummary summary)
         {

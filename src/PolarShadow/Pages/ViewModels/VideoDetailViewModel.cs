@@ -2,8 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Core;
 using PolarShadow.Pages.Controls;
+using PolarShadow.Storage;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -14,11 +16,15 @@ namespace PolarShadow.Pages.ViewModels
     public partial class VideoDetailViewModel : ObservableObject, IQueryAttributable
     {
         private readonly IPolarShadow _polarShadow;
+        private readonly IMyCollectionService _myCollectionService;
+        private readonly IWatchRecordService _watchRecordService;
 
         public static string Key_VideoSummary = "videosummary";
-        public VideoDetailViewModel(IPolarShadow polarShadow)
+        public VideoDetailViewModel(IPolarShadow polarShadow, IMyCollectionService myCollectionService, IWatchRecordService watchRecordService)
         {
             _polarShadow = polarShadow;
+            _myCollectionService = myCollectionService;
+            _watchRecordService = watchRecordService;
         }
 
         public async void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -44,17 +50,54 @@ namespace PolarShadow.Pages.ViewModels
                 return;
             }
 
-            var detail = await site.GetVideoDetailAsync(detailSrc, summary);
-            if (detail == null)
+            if (site is IGetDetailAble detialHandler)
             {
-                return;
+                var detail = await detialHandler.GetVideoDetailAsync(detailSrc, summary);
+                if (detail == null)
+                {
+                    return;
+                }
+
+                this.Detail = detail;
+
+                IsCollected = await _myCollectionService.HasAsync(detail);
+
+                await UpdateEpisodeAsync();
+            }
+        }
+
+        private async Task UpdateEpisodeAsync()
+        {
+            var episodeList = new List<CombinationObject<VideoEpisode, string>>();
+            var records = await _watchRecordService.GetRecordsAsync(detail.Name);
+            foreach (var episode in detail.Episodes)
+            {
+                var record = records.FirstOrDefault(f => f.EpisodeName == episode.Name);
+                if (record == null)
+                {
+                    episodeList.Add(new CombinationObject<VideoEpisode, string>
+                    {
+                        Object1 = episode,
+                        Object2 = "(未看)"
+                    });
+                }
+                else
+                {
+                    episodeList.Add(new CombinationObject<VideoEpisode, string>
+                    {
+                        Object1 = episode,
+                        Object2 = "(已看)"
+                    });
+                }
             }
 
-            this.Detail = detail;
+            CombinationEpisodes = new ObservableCollection<CombinationObject<VideoEpisode, string>>(episodeList);
         }
 
         [ObservableProperty]
         private VideoDetail detail;
+        [ObservableProperty]
+        private ObservableCollection<CombinationObject<VideoEpisode, string>> combinationEpisodes;
 
         [RelayCommand]
         public void EpisodeSelectedChange(VideoEpisode episode)
@@ -90,6 +133,8 @@ namespace PolarShadow.Pages.ViewModels
         private bool btnDownloadEnable;
         [ObservableProperty]
         private bool btnPlayEnable;
+        [ObservableProperty]
+        private bool isCollected;
 
         [RelayCommand]
         public Task BtnDownloadClick(VideoEpisode selectItem)
@@ -110,7 +155,25 @@ namespace PolarShadow.Pages.ViewModels
                 return;
             }
             await Launcher.OpenAsync(selectItem.Sources.First().Src);
+            await _watchRecordService.AddOrUpdateRecordAsync(new WatchRecord
+            {
+                EpisodeName = selectItem.Name,
+                Name = Detail.Name,
+            });
+            await UpdateEpisodeAsync();
         }
 
+        [RelayCommand]
+        public async Task ToggedChanged(ToggledEventArgs arg)
+        {
+            if (arg.Value)
+            {
+                await _myCollectionService.AddToMyCollectionAsync(this.Detail);
+            }
+            else
+            {
+                await _myCollectionService.RemoveFromMyCollectionAsync(this.detail.Name);
+            }
+        }
     }
 }

@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace PolarShadow.ResourcePack
 {
-    public class YHDMSite : IPolarShadowSite, ISearchAble
+    public class YHDMSite : IPolarShadowSite, ISearchAble, IGetDetailAble
     {
         public string Name => "YHDM";
 

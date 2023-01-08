@@ -2,9 +2,11 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PolarShadow.Pages.VideoDetailPage"
-             xmlns:mode="clr-namespace:PolarShadow.Core;assembly=PolarShadow.Core"
              xmlns:vm="clr-namespace:PolarShadow.Pages.ViewModels"
-             x:DataType="vm:VideoDetailViewModel">
+             xmlns:model="clr-namespace:PolarShadow.Core;assembly=PolarShadow.Core.Models"
+             x:DataType="vm:VideoDetailViewModel"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+
     <Grid RowDefinitions="*, auto">
         <ScrollView>
             <StackLayout Orientation="Vertical"
@@ -20,20 +22,26 @@
                 <Label Text="{Binding Detail.Description}" 
                        FontSize="Caption"
                        HorizontalOptions="Center"/>
-
-                <CollectionView ItemsSource="{Binding Detail.Episodes}"
+                <CollectionView ItemsSource="{Binding CombinationEpisodes}"
                             x:Name="episode"
                             ItemsLayout="VerticalGrid,4"
                             SelectionMode="Single"
                             HorizontalOptions="Center"       
                             SelectionChangedCommand="{Binding EpisodeSelectedChangeCommand}"
-                            SelectionChangedCommandParameter="{Binding Source={x:Reference episode}, Path=SelectedItem}">
+                            SelectionChangedCommandParameter="{Binding Source={x:Reference episode}, Path=SelectedItem.Object1}">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="mode:VideoEpisode">
-                            <Label Text="{Binding Name}"
-                               HorizontalOptions="Center"
-                               HorizontalTextAlignment="Center"
-                               VerticalTextAlignment="Center"/>
+                        <DataTemplate x:DataType="{x:Null}">
+                            <HorizontalStackLayout>
+                                <Label Text="{Binding Object1.Name}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"/>
+                                <Label Text="{Binding Object2}"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"/>
+                            </HorizontalStackLayout>
+
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
@@ -46,11 +54,36 @@
             <Button Text="下载"
                     IsEnabled="{Binding BtnDownloadEnable, Mode=OneWay}"
                     Command="{Binding BtnDownloadClickCommand}"
-                    CommandParameter="{Binding Source={x:Reference episode}, Path=SelectedItem}"/>
+                    CommandParameter="{Binding Source={x:Reference episode}, Path=SelectedItem.Object1}"/>
             <Button Text="播放" 
-                    IsEnabled="{Binding BtnPlayEnable}"
-                    Command="{Binding BtnPlayClickCommand, Mode=OneWay}"
-                    CommandParameter="{Binding Source={x:Reference episode}, Path=SelectedItem}"/>
+                    IsEnabled="{Binding BtnPlayEnable, Mode=OneWay}"
+                    Command="{Binding BtnPlayClickCommand}"
+                    CommandParameter="{Binding Source={x:Reference episode}, Path=SelectedItem.Object1}"/>
+            <Switch IsToggled="{Binding IsCollected}"
+                    x:Name="sw_collected">
+                <Switch.Behaviors>
+                    <toolkit:EventToCommandBehavior
+                        EventName="Toggled"
+                        x:TypeArguments="ToggledEventArgs"
+                        Command="{Binding ToggedChangedCommand}"/>
+                </Switch.Behaviors>
+            </Switch>
+            <Label>
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label"
+                                 Binding="{Binding Source={x:Reference sw_collected}, Path=IsToggled}"
+                                 Value="true">
+                        <Setter Property="Text"
+                                Value="已收藏"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Label"
+                                 Binding="{Binding Source={x:Reference sw_collected}, Path=IsToggled}"
+                                 Value="false">
+                        <Setter Property="Text"
+                                Value="未收藏"/>
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
         </StackLayout>
     </Grid>
 
