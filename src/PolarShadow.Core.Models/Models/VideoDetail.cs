@@ -30,6 +30,6 @@ namespace PolarShadow.Core
         /// <summary>
         /// 视频集数信息
         /// </summary>
-        public ICollection<VideoEpisode> Episodes { get; }
+        public ICollection<VideoEpisode> Episodes { get; set; }
     }
 }

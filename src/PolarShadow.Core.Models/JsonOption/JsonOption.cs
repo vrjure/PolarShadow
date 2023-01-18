@@ -14,7 +14,8 @@ namespace PolarShadow.Core
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
-                Converters = { new EnumStringConverter() }
+                Converters = { new EnumStringConverter() },
+                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
             };
 
             ForDashSerializer = new JsonSerializerOptions
@@ -22,13 +23,21 @@ namespace PolarShadow.Core
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 PropertyNamingPolicy = new JsonCamelCaseNamingPolicyDash(),
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
-                Converters = { new EnumStringConverter() }
+                Converters = { new EnumStringConverter() },
+                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+            };
+
+            DefaultWriteOption = new JsonWriterOptions
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
         }
 
         public static JsonSerializerOptions DefaultSerializer { get; }
 
         public static JsonSerializerOptions ForDashSerializer { get; }
+
+        public static JsonWriterOptions DefaultWriteOption { get; }
 
         public static void Default(JsonSerializerOptions option)
         {

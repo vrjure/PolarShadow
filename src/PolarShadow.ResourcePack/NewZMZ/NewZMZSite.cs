@@ -21,6 +21,11 @@ namespace PolarShadow.ResourcePack
 
         public SrcType DownloadType => SrcType.Magnet | SrcType.BaiDu | SrcType.Quark | SrcType.ALiYun;
 
+        public object GetAbility(string abilityName)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<VideoDetail> GetVideoDetailAsync(string detailUrl, VideoSummary summary = default)
         {
             var web = new HtmlWeb();
@@ -88,6 +93,11 @@ namespace PolarShadow.ResourcePack
             }
 
             return result;
+        }
+
+        public bool HasAbility(string abilityName)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<PageResult<VideoSummary>> SearchVideosAsync(SearchVideoFilter filter, CancellationToken cancellation = default)

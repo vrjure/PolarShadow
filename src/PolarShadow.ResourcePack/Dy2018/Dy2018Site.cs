@@ -63,5 +63,15 @@ namespace PolarShadow.ResourcePack
             return detail;
 
         }
+
+        public bool HasAbility(string abilityName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetAbility(string abilityName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

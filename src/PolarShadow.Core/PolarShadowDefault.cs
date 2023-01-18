@@ -27,6 +27,8 @@ namespace PolarShadow.Core
                 }
                 _sites[item.Name] = item;
             }
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
         }
 
         public IPolarShadowSite GetSite(string name)

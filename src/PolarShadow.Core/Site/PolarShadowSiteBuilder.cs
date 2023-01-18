@@ -1,13 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
-namespace PolarShadow.Core.Site
+namespace PolarShadow.Core
 {
-    internal class PolarShadowSiteBuilder : IPolarShadowSiteBuilder
+    internal sealed class PolarShadowSiteBuilder : IPolarShadowSiteBuilder
     {
-        public PolarShadowSiteBuilder()
+        private readonly Dictionary<string, object> _support;
+        private PolarShadowSiteConfig _config;
+        public PolarShadowSiteBuilder(PolarShadowSiteConfig config, Dictionary<string, object> abilities)
         {
+            if (string.IsNullOrEmpty(config.Name))
+            {
+                throw new ArgumentException(nameof(config.Name));
+            }
+            _config = config;
         }
 
         public IPolarShadowSite Build()

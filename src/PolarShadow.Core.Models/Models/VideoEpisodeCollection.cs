@@ -20,6 +20,7 @@ namespace PolarShadow.Core
 
         public bool IsReadOnly => false;
 
+ 
         public void Add(VideoEpisode item)
         {
             item.Summary = _summary;

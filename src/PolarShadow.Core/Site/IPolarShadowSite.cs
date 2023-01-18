@@ -10,5 +10,7 @@ namespace PolarShadow.Core
     {
         string Name { get; }
         string Domain { get; }
+        bool HasAbility(string abilityName);
+        object GetAbility(string abilityName);
     }
 }

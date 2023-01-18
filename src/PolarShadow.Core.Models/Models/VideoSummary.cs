@@ -8,7 +8,7 @@ namespace PolarShadow.Core
 {
     public class VideoSummary
     {
-        public virtual string Name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// 摘要
         /// </summary>
