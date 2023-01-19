@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PolarShadowTests
@@ -78,5 +80,98 @@ namespace PolarShadowTests
 
             Console.WriteLine("-------------------------------");
         }
+
+        [Test]
+        public void TestJsonPath()
+        {
+            var sample = new SampleClass()
+            {
+                Expensive = 10,
+                Store = new Store
+                {
+                    Book = new Book[]
+                    {
+                        new Book { Category = "reference", Author = "Nigel Rees", Title="Sayings of the Century", Price = 8.98},
+                        new Book { Category = "fiction", Author = "Evelyn waugh", Title = "Sword of Honour", Price =12.99}
+
+                    },
+                    Bicycle = new Bicycle
+                    {
+                        Color = "red",
+                        Price = 19.95
+                    }
+                }
+            };
+            var doc = JsonDocument.Parse(JsonSerializer.Serialize(sample, JsonOption.DefaultSerializer));
+
+            var paths = new string[]
+            {
+                "$.expensive",
+                "$..store",
+                "$..book",
+                "$..bicycle",
+                "store"
+            };
+            foreach (var item in paths)
+            {
+                Console.WriteLine(item);
+                var isSuccess = JsonPath.TryGetPropertyWithJsonPath(doc.RootElement, item, out JsonElement result);
+                if (isSuccess)
+                {
+                    switch (result.ValueKind)
+                    {
+                        case JsonValueKind.Undefined:
+                            break;
+                        case JsonValueKind.Object:
+                            Console.WriteLine(string.Join(",", result.EnumerateObject().Select(f => f.Name)));
+                            break;
+                        case JsonValueKind.Array:
+                            Console.WriteLine(result.GetArrayLength());
+                            break;
+                        case JsonValueKind.String:
+                            Console.WriteLine(result.GetString());
+                            break;
+                        case JsonValueKind.Number:
+                            Console.WriteLine(result.GetDecimal());
+                            break;
+                        case JsonValueKind.True:
+                        case JsonValueKind.False:
+                            Console.WriteLine(result.GetBoolean());
+                            break;
+                        case JsonValueKind.Null:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("get failed");
+                }
+            }
+        }
+    }
+
+    public class Book
+    {
+        public string Category { get; set; }
+        public string Author { get; set; }
+        public string Title { get; set; }
+        public double Price { get; set; }
+    }
+    public class Bicycle
+    {
+        public string Color { get; set; }
+        public double Price { get; set; }
+    }
+    public class Store
+    {
+        public ICollection<Book>? Book { get; set; }
+        public Bicycle Bicycle { get; set; }
+    }
+    public class SampleClass
+    {
+        public Store Store { get; set; }
+        public int Expensive { get; set; }
     }
 }

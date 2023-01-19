@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    internal class JsonAnalysisHandle : AnalysisHandler<JsonElement>
+    internal class JsonAnalysisHandle : AnalysisActionHandler<JsonElement>
     {
         protected override bool VerifyInput(JsonElement obj)
         {
@@ -14,7 +14,7 @@ namespace PolarShadow.Core
 
         protected override IEnumerable<JsonElement> HandleArray(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetProperty(action.Path, out JsonElement element))
+            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
             {
                 return element.EnumerateArray();
             }
@@ -23,7 +23,7 @@ namespace PolarShadow.Core
 
         protected override string HandleString(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetProperty(action.Path, out JsonElement element))
+            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
             {
                 return element.GetString();
             }
@@ -32,7 +32,7 @@ namespace PolarShadow.Core
 
         protected override bool? HandleBoolean(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetProperty(action.Path, out JsonElement element))
+            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
             {
                 return element.GetBoolean();
             }
@@ -41,7 +41,7 @@ namespace PolarShadow.Core
 
         protected override decimal? HandleNumber(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetProperty(action.Path, out JsonElement element) && element.TryGetDecimal(out decimal value))
+            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element) && element.TryGetDecimal(out decimal value))
             {
                 return value;
             }
@@ -51,11 +51,12 @@ namespace PolarShadow.Core
 
         protected override JsonElement HandleObject(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetProperty(action.Path, out JsonElement element))
+            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
             {
                 return element;
             }
             return default;
         }
+
     }
 }

@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace PolarShadow.Core
 {
-    public abstract class AnalysisHandler<TInput> : IAnalysisHandler<TInput>
+    public abstract class AnalysisActionHandler<TInput> : IAnalysisHandler<TInput>
     {
         T IAnalysisHandler.Analysis<T>(object obj, IReadOnlyDictionary<string, AnalysisAction> actions) where T : class
         {

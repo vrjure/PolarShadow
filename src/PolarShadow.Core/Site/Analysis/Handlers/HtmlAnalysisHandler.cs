@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    internal class HtmlAnalysisHandler : AnalysisHandler<HtmlNode>
+    internal class HtmlAnalysisHandler : AnalysisActionHandler<HtmlNode>
     {
         protected override bool VerifyInput(HtmlNode obj)
         {
