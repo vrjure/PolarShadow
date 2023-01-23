@@ -10,7 +10,7 @@ namespace PolarShadow.Core
     public interface IPolarShadow
     {
         IPolarShadowSite GetSite(string name);
-        IReadOnlyCollection<IPolarShadowSite> GetSites();
+        IEnumerable<IPolarShadowSite> GetSites();
         ISearcHandler BuildSearchHandler(SearchVideoFilter filter);
     }
 }

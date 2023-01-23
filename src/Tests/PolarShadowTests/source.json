@@ -1,0 +1,41 @@
+[
+  {
+    "name": "YHDM",
+    "domain": "www.yhdmp.cc",
+    "abilities": {
+      "searchAble": {
+        "url": "https://www.yhdmp.cc/s_all?kw={searchKey}&pagesize={pageSize}&pageindex={page - 1}",
+        "analysisType": "html",
+        "responseAnalysis": {
+          "data": {
+            "path": "//body//div[@class='lpic']/ul/li",
+            "pathValueType": "array",
+            "analysisItem": {
+              "name": {
+                "path": "h2/a",
+                "pathValueType": "innerText"
+              },
+              "description": {
+                "path": "p",
+                "pathValueType": "innerText"
+              },
+              "imageSrc": {
+                "path": "a/img",
+                "pathValueType": "attribute",
+                "attributeName": "src"
+              },
+              "siteName": {
+                "path": "YHDM"
+              },
+              "detailSrc": {
+                "path": "a",
+                "pathValueType": "attribute",
+                "attributeName": "href"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

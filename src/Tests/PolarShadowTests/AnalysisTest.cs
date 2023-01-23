@@ -18,7 +18,7 @@ namespace PolarShadowTests
             {
                 Url = $"https://www.yhdmp.cc/s_all?kw={HttpUtility.UrlEncode("死神")}&pagesize=10&pageindex=0",
                 AnalysisType = AnalysisType.Html,
-                Analysis = new Dictionary<string, AnalysisAction>
+                ResponseAnalysis = new Dictionary<string, AnalysisAction>
                 {
                     {
                         "data",
@@ -78,7 +78,7 @@ namespace PolarShadowTests
 
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync(ability.Url);
-            var page = doc.DocumentNode.Analysis<PageResult<VideoSummary>>(ability.Analysis);
+            var page = doc.DocumentNode.Analysis<PageResult<VideoSummary>>(ability.ResponseAnalysis);
             Console.WriteLine(JsonSerializer.Serialize(page, JsonOption.DefaultSerializer));
         }
     }

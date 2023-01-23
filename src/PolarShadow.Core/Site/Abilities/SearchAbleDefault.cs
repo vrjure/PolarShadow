@@ -17,19 +17,9 @@ namespace PolarShadow.Core
 
         public async Task<PageResult<VideoSummary>> SearchVideosAsync(SearchVideoFilter filter, CancellationToken cancellation = default)
         {
-            var result = new PageResult<VideoSummary>();
+            var result = await HandleValueAsync<SearchVideoFilter , PageResult<VideoSummary>>(filter);
             result.Page = filter.Page;
             result.PageSize = filter.PageSize;
-
-            var url = AbilityConfig.Url.FormatUrl(new KeyValuePair<string, string>[]
-            {
-                new KeyValuePair<string, string>(nameof(filter.Page), filter.Page.ToString()),
-                new KeyValuePair<string, string>(nameof(filter.SearchKey), HttpUtility.UrlEncode(filter.SearchKey.ToString())),
-                new KeyValuePair<string, string>(nameof(filter.PageSize), filter.PageSize.ToString())
-            });
-
-            //var result = await HandleValueAsync<PageResult<VideoSummary>>(url);
-            
             return result;
         }
     }

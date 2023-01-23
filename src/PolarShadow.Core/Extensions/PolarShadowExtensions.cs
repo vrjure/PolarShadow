@@ -8,9 +8,9 @@ namespace PolarShadow.Core
 {
     public static class PolarShadowExtensions
     {
-        public static IEnumerable<T> GetSites<T>(this IPolarShadow polarShadow)
+        public static IEnumerable<T> GetAbilities<T>(this IPolarShadow ps, string abilityName)
         {
-            return polarShadow.GetSites().Where(f => f is T).Cast<T>();
+            return ps.GetSites().Where(f=>f.HasAbility(abilityName)).Select(f=> (T)f.GetAbility(abilityName));
         }
 
         public static IPolarShadowBuilder AutoSite(this IPolarShadowBuilder builder, Assembly assembly)

@@ -9,96 +9,33 @@ namespace PolarShadow.Core
 {
     public static class JsonPath
     {
+        private static JsonAnalysisHandler _jsonHandler = new JsonAnalysisHandler();
+
         public static T Analysis<T>(this JsonElement obj, IReadOnlyDictionary<string, AnalysisAction> actions)
         {
-            using var ms = new MemoryStream();
-            Analysis(obj, ms, actions);
-            ms.Seek(0, SeekOrigin.Begin);
-            return JsonSerializer.Deserialize<T>(ms, JsonOption.DefaultSerializer);
+            return _jsonHandler.Analysis<T>(obj, actions);
         }
 
         public static void Analysis(this JsonElement obj, Stream stream, IReadOnlyDictionary<string, AnalysisAction> actions)
         {
-            using var jsonWriter = new Utf8JsonWriter(stream, JsonOption.DefaultWriteOption);
-
-            jsonWriter.WriteStartObject();
-            foreach (var action in actions)
-            {
-                WriteJson(obj, jsonWriter, action);
-            }
-            jsonWriter.WriteEndObject();
-            jsonWriter.Flush();
+            _jsonHandler.Analysis(obj, stream, actions);
         }
 
-        private static void WriteJson(JsonElement obj, Utf8JsonWriter jsonWriter, KeyValuePair<string, AnalysisAction> action)
+        public static bool TryGetPropertyWithJsonPath(this JsonElement obj, ReadOnlySpan<byte> jsonPath, out JsonElement result)
         {
-            if (string.IsNullOrEmpty(action.Value.Path))
+            if (jsonPath.Length == 0)
             {
-                return;
+                result = new JsonElement();
+                return false;
             }
-
-            if (action.Value.PathValueType == PathValueType.None)
-            {
-                jsonWriter.WriteString(action.Key, action.Value.Path);
-            }
-
-            if (TryGetPropertyWithJsonPath(obj, action.Value.Path, out JsonElement element))
-            {
-                switch (action.Value.PathValueType)
-                {
-                    case PathValueType.String:
-                        jsonWriter.WriteString(action.Key, element.GetString());
-                        break;
-                    case PathValueType.Number:
-                        jsonWriter.WriteNumber(action.Key, element.GetDecimal());
-                        break;
-                    case PathValueType.Boolean:
-                        jsonWriter.WriteBoolean(action.Key, element.GetBoolean());
-                        break;
-                    case PathValueType.Array:
-                        if (action.Value.AnalysisItem == null || action.Value.AnalysisItem.Count == 0)
-                        {
-                            break;
-                        }
-                        foreach (var item in element.EnumerateArray())
-                        {
-                            WriteJsonArray(item, jsonWriter, action.Value.AnalysisItem);
-                        }
-                        break;
-                    case PathValueType.Object:
-                        WriteJson(element, jsonWriter, new KeyValuePair<string, AnalysisAction>(action.Key, action.Value));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        private static void WriteJsonArray(JsonElement obj, Utf8JsonWriter jsonWriter, IReadOnlyDictionary<string, AnalysisAction> actions)
-        {
-            if (actions == null || actions.Count == 0)
-            {
-                return;
-            }
-
-            jsonWriter.WriteStartObject();
-            foreach (var item in actions)
-            {
-                WriteJson(obj, jsonWriter, item);
-            }
-            jsonWriter.WriteEndObject();
-        }
-
-        public static bool TryGetPropertyWithJsonPath(this JsonElement obj, string jsonPath, out JsonElement result)
-        {
-            if (!jsonPath.TrimStart().StartsWith('$'))
+            if (!jsonPath[0].Equals(JsonPathConstants.Root))
             {
                 return obj.TryGetProperty(jsonPath, out result);
             }
 
-            var reader = new JsonPathReader(Encoding.UTF8.GetBytes(jsonPath));
+            var reader = new JsonPathReader(jsonPath);
             var lastTokenType = JsonPathTokenType.None;
-            result = obj;
+            result = new JsonElement();
             while (reader.Read())
             {
                 switch (reader.TokenType)
@@ -135,6 +72,11 @@ namespace PolarShadow.Core
             }
 
             return true;
+        }
+
+        public static bool TryGetPropertyWithJsonPath(this JsonElement obj, string jsonPath, out JsonElement result)
+        {
+            return TryGetPropertyWithJsonPath(obj, Encoding.UTF8.GetBytes(jsonPath), out result);
         }
 
         private static bool TryDeepScanProperty(JsonElement root, string propertyName, out JsonElement element)

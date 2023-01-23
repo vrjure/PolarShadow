@@ -52,14 +52,14 @@ namespace PolarShadow.Core
 
             _currentPosition++;
 
+            SkipInvaild();
+
             if (_currentPosition >= _buffer.Length)
             {
                 return false;
             }
 
-            SkipInvaild();
-
-            if(_isFirstToken)
+            if (_isFirstToken)
             {
                 ReadFirstRoot();
                 _isFirstToken = false;

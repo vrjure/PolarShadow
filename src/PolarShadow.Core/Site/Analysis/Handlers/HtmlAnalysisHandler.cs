@@ -14,7 +14,7 @@ namespace PolarShadow.Core
         protected override string HandleInnerText(HtmlNode obj, AnalysisAction action)
         {
             var node = obj.SelectSingleNode(action.Path);
-            if (node != null)
+            if (node == null)
             {
                 return string.Empty;
             }
@@ -25,7 +25,7 @@ namespace PolarShadow.Core
         protected override string HandleAttribute(HtmlNode obj, AnalysisAction action)
         {
             var node = obj.SelectSingleNode(action.Path);
-            if (node != null)
+            if (node == null)
             {
                 return string.Empty;
             }

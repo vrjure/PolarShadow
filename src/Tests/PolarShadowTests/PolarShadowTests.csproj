@@ -21,4 +21,10 @@
     <ProjectReference Include="..\..\PolarShadow.ResourcePack\PolarShadow.ResourcePack.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="source.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

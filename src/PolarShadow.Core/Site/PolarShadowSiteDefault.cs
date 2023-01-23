@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace PolarShadow.Core
@@ -7,11 +8,11 @@ namespace PolarShadow.Core
     internal class PolarShadowSiteDefault : IPolarShadowSite
     {
         private readonly Dictionary<string, object> _abilities;
-        internal PolarShadowSiteDefault(string name, string domain, Dictionary<string, object> abilities)
+        internal PolarShadowSiteDefault(string name, string domain, IEnumerable<KeyValuePair<string, object>> abilities)
         {
             this.Name = name;
             this.Domain = domain;
-            _abilities = abilities;
+            _abilities = new Dictionary<string, object>(abilities);
         }
 
         public string Name { get; }

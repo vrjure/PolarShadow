@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    internal class JsonAnalysisHandle : AnalysisActionHandler<JsonElement>
+    internal class JsonAnalysisHandler : AnalysisActionHandler<JsonElement>
     {
         protected override bool VerifyInput(JsonElement obj)
         {

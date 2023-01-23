@@ -10,16 +10,9 @@ namespace PolarShadow.Core
 {
     public abstract class AnalysisActionHandler<TInput> : IAnalysisHandler<TInput>
     {
-        T IAnalysisHandler.Analysis<T>(object obj, IReadOnlyDictionary<string, AnalysisAction> actions) where T : class
+        public void Analysis(TInput obj, Stream stream, IReadOnlyDictionary<string, AnalysisAction> actions)
         {
-            return Analysis<T>((TInput)obj, actions);
-            
-        }
-
-        public T Analysis<T>(TInput obj, IReadOnlyDictionary<string, AnalysisAction> actions) where T : class
-        {
-            using var ms = new MemoryStream();
-            using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.DefaultWriteOption);
+            using var jsonWriter = new Utf8JsonWriter(stream, JsonOption.DefaultWriteOption);
             jsonWriter.WriteStartObject();
             foreach (var action in actions)
             {
@@ -27,6 +20,13 @@ namespace PolarShadow.Core
             }
             jsonWriter.WriteEndObject();
             jsonWriter.Flush();
+        }
+
+        public T Analysis<T>(TInput obj, IReadOnlyDictionary<string, AnalysisAction> actions)
+        {
+            using var ms = new MemoryStream();
+
+            Analysis(obj, ms, actions);
 
             ms.Seek(0, SeekOrigin.Begin);
             return JsonSerializer.Deserialize<T>(ms, JsonOption.DefaultSerializer);

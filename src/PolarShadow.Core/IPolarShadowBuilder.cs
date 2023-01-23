@@ -9,7 +9,9 @@ namespace PolarShadow.Core
     public interface IPolarShadowBuilder
     {
         void AddSite(IPolarShadowSite site);
+        void AddSite(PolarShadowSiteConfig config);
         void AddSearcHandlerFactory(Func<SearchVideoFilter, ISearcHandler> factory);
+        void RegisterSupportAbilityFactory(string name, IAbilityFactory ability);
         IPolarShadow Build();
     }
 }

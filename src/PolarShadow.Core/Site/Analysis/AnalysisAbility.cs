@@ -9,8 +9,10 @@ namespace PolarShadow.Core
         public string Url { get; set; }
         public AnalysisType AnalysisType { get; set; }
         public string Method { get; set; }
+        public string ContentType { get; set; }
         public string Encoding { get; set; }
-        public Dictionary<string, AnalysisAction> Analysis { get; set; }
+        public Dictionary<string, AnalysisAction> RequestAnalysis { get; set; }
+        public Dictionary<string, AnalysisAction> ResponseAnalysis { get; set; }
         public AnalysisAbility Next { get; set; }
     }
 }

@@ -41,16 +41,16 @@ namespace PolarShadow.Core
             return null;
         }
 
-        public IReadOnlyCollection<IPolarShadowSite> GetSites()
+        public IEnumerable<IPolarShadowSite> GetSites()
         {
-            return _sites.Values;
+            return _sites.Values.AsEnumerable();
         }
 
         public ISearcHandler BuildSearchHandler(SearchVideoFilter filter)
         {
             if (_searchHandlerFactory == null)
             {
-                return new SearcHandlerDefault(filter.SearchKey, filter.PageSize, this.GetSites<ISearchAble>().ToArray());
+                return new SearcHandlerDefault(filter.SearchKey, filter.PageSize, this.GetAbilities<ISearchAble>(Abilities.SearchAble).ToArray());
             }
 
             return _searchHandlerFactory(filter);

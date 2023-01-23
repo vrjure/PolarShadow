@@ -53,20 +53,20 @@ namespace PolarShadow.Core
             try
             {
                 _resultCache = await search.SearchVideosAsync(_filter, cancellation);
-
-                if (_resultCache == null || _resultCache.Data.Count == 0)
-                {
-                    _filter.Page = 1;
-                    return await SearchNextAsync(cancellation);
-                }
-                return _resultCache?.Data;
             }
             catch
             {
                 _resultCache = null;
                 return null;
             }
-            
+
+            if (_resultCache == null || _resultCache.Data?.Count == 0)
+            {
+                _filter.Page = 1;
+                return await SearchNextAsync(cancellation);
+            }
+            return _resultCache?.Data;
+
         }
     }
 }

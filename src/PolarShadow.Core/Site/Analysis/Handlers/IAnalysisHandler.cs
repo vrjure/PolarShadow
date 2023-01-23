@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace PolarShadow.Core
 {
-    public interface IAnalysisHandler
+    public interface IAnalysisHandler<TInput>
     {
-        T Analysis<T>(object obj, IReadOnlyDictionary<string, AnalysisAction> actions) where T : class;
-    }
-
-    public interface IAnalysisHandler<TInput> : IAnalysisHandler
-    {
-        T Analysis<T>(TInput obj, IReadOnlyDictionary<string, AnalysisAction> actions) where T : class;
+        void Analysis(TInput obj, Stream stream, IReadOnlyDictionary<string, AnalysisAction> actions);
+        T Analysis<T>(TInput obj, IReadOnlyDictionary<string, AnalysisAction> actions);
     }
 }
