@@ -56,12 +56,12 @@ namespace PolarShadow.Core
                     }
                     jsonWriter.WriteEndArray();
                     break;
-                case PathValueType.Object:
+                case PathValueType.Next:
                     if (action.Value.Next == null)
                     {
                         break;
                     }
-                    var nextNode = HandleObject(obj, action.Value);
+                    var nextNode = HandleNext(obj, action.Value);
                     if (!VerifyInput(nextNode))
                     {
                         break;
@@ -94,6 +94,36 @@ namespace PolarShadow.Core
                     jsonWriter.WriteString(action.Key, action.Value.Path);
                     break;
                 case PathValueType.String:
+                    var str = HandleString(obj, action.Value);
+                    if (string.IsNullOrEmpty(str))
+                    {
+                        break;
+                    }
+                    HandleValue(jsonWriter, str, action);
+                    break;
+                case PathValueType.Number:
+                    var num = HandleNumber(obj, action.Value);
+                    if (num == default)
+                    {
+                        break;
+                    }
+                    HandleValue(jsonWriter, num.Value, action);
+                    break;
+                case PathValueType.Boolean:
+                    var val = HandleBoolean(obj, action.Value);
+                    if (!val.HasValue)
+                    {
+                        break;
+                    }
+                    HandleValue(jsonWriter, val.Value, action);
+                    break;
+                case PathValueType.Raw:
+                    var raw = HandleRaw(obj, action.Value);
+                    if (string.IsNullOrEmpty(raw))
+                    {
+                        break;
+                    }
+                    HandleValue(jsonWriter, raw, action);
                     break;
                 default:
                     break;
@@ -131,6 +161,16 @@ namespace PolarShadow.Core
             }
         }
 
+        private void HandleValue(Utf8JsonWriter jsonWriter, decimal value, KeyValuePair<string, AnalysisAction> action)
+        {
+            jsonWriter.WriteNumber(action.Key, value);
+        }
+
+        private void HandleValue(Utf8JsonWriter jsonWriter, bool value, KeyValuePair<string, AnalysisAction> action)
+        {
+            jsonWriter.WriteBoolean(action.Key, value);
+        }
+
         protected virtual string HandleInnerText(TInput obj, AnalysisAction action)
         {
             return string.Empty;
@@ -141,7 +181,7 @@ namespace PolarShadow.Core
             return string.Empty;
         }
 
-        protected virtual TInput HandleObject(TInput obj, AnalysisAction action)
+        protected virtual TInput HandleNext(TInput obj, AnalysisAction action)
         {
             return default;
         }
@@ -164,6 +204,11 @@ namespace PolarShadow.Core
         protected virtual bool? HandleBoolean(TInput obj, AnalysisAction action)
         {
             return default;
+        }
+
+        protected virtual string HandleRaw(TInput obj, AnalysisAction action)
+        {
+            return string.Empty;
         }
     }
 }

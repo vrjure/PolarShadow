@@ -22,16 +22,15 @@ namespace PolarShadow.ResourcePack
         }
 
 
-        public async Task<VideoDetail> GetVideoDetailAsync(string detailUrl, VideoSummary summary = default)
+        public async Task<VideoDetail> GetVideoDetailAsync(VideoSummary summary)
         {
-            VideoDetail detail = new VideoDetail
+            VideoDetail detail = new VideoDetail(summary)
             {
-                SiteName = this.Name,
-                DetailSrc = detailUrl
+                SiteName = this.Name
             };
 
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(detailUrl, Encoding.GetEncoding("gb2312"));
+            var doc = await web.LoadFromWebAsync(summary.DetailSrc, Encoding.GetEncoding("gb2312"));
             var node = doc.DocumentNode.SelectSingleNode("//body/div[1]/div/div[3]/div/div[6]/div[2]/ul//div[@id='Zoom']");
 
             detail.Name = doc.DocumentNode.SelectSingleNode("//body/div[1]/div/div[3]/div/div[6]/div[1]/h1").InnerText;

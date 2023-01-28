@@ -28,6 +28,7 @@ namespace PolarShadow.Core
                 result = new JsonElement();
                 return false;
             }
+
             if (!jsonPath[0].Equals(JsonPathConstants.Root))
             {
                 return obj.TryGetProperty(jsonPath, out result);

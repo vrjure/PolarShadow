@@ -26,10 +26,10 @@ namespace PolarShadow.ResourcePack
             throw new NotImplementedException();
         }
 
-        public async Task<VideoDetail> GetVideoDetailAsync(string detailUrl, VideoSummary summary = default)
+        public async Task<VideoDetail> GetVideoDetailAsync(VideoSummary summary)
         {
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(detailUrl);
+            var doc = await web.LoadFromWebAsync(summary.DetailSrc);
             var desc = doc.DocumentNode.SelectSingleNode("//div[@class='details']//div[@class='aliasname']")?.InnerText;
             var href = doc.DocumentNode.SelectSingleNode("//div[@class='details']/div[@class='details-wrap']/div[@class='epmetas']/a")?.GetAttributeValue("href", "");
 
@@ -37,7 +37,7 @@ namespace PolarShadow.ResourcePack
             {
                 Name = summary?.Name,
                 Description = desc,
-                DetailSrc = detailUrl,
+                DetailSrc = summary.DetailSrc,
                 ImageSrc = summary?.ImageSrc,
                 SiteName = this.Name
             };

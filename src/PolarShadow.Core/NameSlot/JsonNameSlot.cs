@@ -13,7 +13,6 @@ namespace PolarShadow.Core
             return NameSlot(Encoding.UTF8.GetBytes(nameSlotString),element);
         }
 
-        //TODO 支持简单计算
         public static string NameSlot(this ReadOnlySpan<byte> span, JsonElement element)
         {
             if (span.Length == 0)

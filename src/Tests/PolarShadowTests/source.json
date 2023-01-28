@@ -35,6 +35,50 @@
             }
           }
         }
+      },
+      "getDetailAble": {
+        "url": "https://www.yhdmp.cc/{detailSrc}",
+        "analysisType": "html",
+        "responseAnalysis": {
+          "defIndex": {
+            "path": "//body//div[@class='tabs']/script[@id='DEF_PLAYINDEX']",
+            "pathValueType": "innerText"
+          },
+          "playList": {
+            "path": "//body//div[@class='tabs']/div[@id=main0]",
+            "pathValueType": "array",
+            "analysisItem": {
+              "name": {
+                "path": "ul/li/a",
+                "pathValueType": "attribute",
+                "attributeName": "title"
+              },
+              "sources": {
+                "path": "ul/li",
+                "pathValueType": "array",
+                "analysisItem": { 
+                  "src": {
+                    "path": "a",
+                    "pathValueType": "attribute",
+                    "attributeName": "href"
+                  },
+                  "srcType": {
+                    "path": "html"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "next": {
+          "analysisType": "json",
+          "responseAnalysis": {
+            "episodes": {
+              "path": "$.playList[{$.defIndex$}]",
+              "pathValueType": "raw"
+            }
+          }
+        }
       }
     }
   }

@@ -7,6 +7,6 @@ namespace PolarShadow.Core
 {
     public interface IGetDetailAble
     {
-        Task<VideoDetail> GetVideoDetailAsync(string detailSrc, VideoSummary summary = default);
+        Task<VideoDetail> GetVideoDetailAsync(VideoSummary summary);
     }
 }

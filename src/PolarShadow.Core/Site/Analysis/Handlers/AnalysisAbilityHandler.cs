@@ -19,66 +19,120 @@ namespace PolarShadow.Core
         private static readonly string _applicationjson = "application/json";
         private static readonly string _userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62";
 
-        protected readonly AnalysisAbility AbilityConfig;
+        protected readonly AnalysisAbility _abilityConfig;
         private static HtmlWeb _web;
         public AnalysisAbilityHandler(AnalysisAbility ability)
         {
-            AbilityConfig = ability;
+            _abilityConfig = ability;
         }
 
         protected virtual async Task<TResult> HandleValueAsync<TInput, TResult>(TInput input)
         {
-            if (AbilityConfig.ResponseAnalysis == null || AbilityConfig.ResponseAnalysis.Count == 0)
+            if (_abilityConfig.ResponseAnalysis == null || _abilityConfig.ResponseAnalysis.Count == 0)
             {
                 return default;
             }
 
             var doc = JsonDocument.Parse(JsonSerializer.Serialize(input, JsonOption.DefaultSerializer));
+            return await HandleValueAsync<TResult>(doc, _abilityConfig);         
+        }
 
-            var url = AbilityConfig.Url.NameSlot(doc.RootElement);
-
-            switch (AbilityConfig.AnalysisType)
+        private async Task<TResult> HandleValueAsync<TResult>(JsonDocument input, AnalysisAbility ability)
+        {
+            if (ability.ResponseAnalysis == null || ability.ResponseAnalysis.Count == 0)
             {
-                case AnalysisType.Json:
-                    using (var client = new HttpClient())
-                    {
-                        client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62");
-                        var method = HttpMethod.Get;
-                        if (!string.IsNullOrEmpty(AbilityConfig.Method))
-                        {
-                            method = new HttpMethod(AbilityConfig.Method);
-                        }
+                return default;
+            }
 
-                        using (var request = new HttpRequestMessage(method, url))
-                        {
-                            var response = await client.SendAsync(request);
-                            if (response.IsSuccessStatusCode)
-                            {
-                                var json = await request.Content.ReadAsStringAsync();
-                                var jsondoc = JsonDocument.Parse(json);
-                                return jsondoc.RootElement.Analysis<TResult>(AbilityConfig.ResponseAnalysis);
-                            }
-                        }
-                    }
-                    break;
-                case AnalysisType.Html:
-                    if (_web == null)
-                    {
-                        _web = new HtmlWeb();
-                    }
-
-                    Encoding encoding = null;
-                    if (!string.IsNullOrEmpty(AbilityConfig.Encoding))
-                    {
-                        encoding = Encoding.GetEncoding(AbilityConfig.Encoding);
-                    }
-                    var htmlDoc = await _web.LoadFromWebAsync(url, encoding);
-                    return htmlDoc.DocumentNode.Analysis<TResult>(AbilityConfig.ResponseAnalysis);
-                default:
-                    break;
+            if (ability.AnalysisType == AnalysisType.Json)
+            {
+                return await HandleJsonAsync<TResult>(input, ability);
+            }
+            else if (ability.AnalysisType == AnalysisType.Html)
+            {
+                return await HandleHtmlAsync<TResult>(input, ability);
             }
 
             return default;
+        }
+
+        private async Task<TResult> HandleJsonAsync<TResult>(JsonDocument input, AnalysisAbility ability)
+        {
+            var url = ability.Url;
+            if (!string.IsNullOrEmpty(url))
+            {
+                url = url.NameSlot(input.RootElement);
+                using (var client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("user-agent", _userAgent);
+                    client.DefaultRequestHeaders.Add("content-type", _applicationjson);
+                    var method = HttpMethod.Get;
+                    if (!string.IsNullOrEmpty(ability.Method))
+                    {
+                        method = new HttpMethod(ability.Method);
+                    }
+
+                    using (var request = new HttpRequestMessage(method, url))
+                    {
+                        var response = await client.SendAsync(request);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var json = await request.Content.ReadAsStringAsync();
+                            var jsondoc = JsonDocument.Parse(json);
+                            if (ability.Next == null)
+                            {
+                                return jsondoc.RootElement.Analysis<TResult>(ability.ResponseAnalysis);
+                            }
+                            else
+                            {
+                                return await HandleJsonAsync<TResult>(jsondoc, ability.Next);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                return input.RootElement.Analysis<TResult>(ability.ResponseAnalysis);
+            }
+
+            return default;
+        }
+
+        private async Task<TResult> HandleHtmlAsync<TResult>(JsonDocument input, AnalysisAbility ability)
+        {
+            var url = ability.Url;
+            if (!string.IsNullOrEmpty(url))
+            {
+                if (_web == null)
+                {
+                    _web = new HtmlWeb();
+                }
+
+                Encoding encoding = null;
+                if (!string.IsNullOrEmpty(ability.Encoding))
+                {
+                    encoding = Encoding.GetEncoding(ability.Encoding);
+                }
+                var htmlDoc = await _web.LoadFromWebAsync(url, encoding);
+
+                if (ability.Next == null)
+                {
+                    return htmlDoc.DocumentNode.Analysis<TResult>(ability.ResponseAnalysis);
+                }
+                else
+                {
+                    using var ms = new MemoryStream();
+                    htmlDoc.DocumentNode.Analysis(ms, ability.ResponseAnalysis);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    var doc = JsonDocument.Parse(ms);
+                    return await HandleValueAsync<TResult>(doc, ability.Next);
+                }
+            }
+            else
+            {
+                return await HandleJsonAsync<TResult>(input, ability);
+            }
         }
     }
 }

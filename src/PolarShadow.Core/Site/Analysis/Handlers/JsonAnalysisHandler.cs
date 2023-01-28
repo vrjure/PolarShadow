@@ -49,7 +49,7 @@ namespace PolarShadow.Core
             return default;
         }
 
-        protected override JsonElement HandleObject(JsonElement obj, AnalysisAction action)
+        protected override JsonElement HandleNext(JsonElement obj, AnalysisAction action)
         {
             if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
             {
@@ -58,5 +58,13 @@ namespace PolarShadow.Core
             return default;
         }
 
+        protected override string HandleRaw(JsonElement obj, AnalysisAction action)
+        {
+            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
+            {
+                return element.GetRawText();
+            }
+            return default;
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace PolarShadow.Core
             return node.GetAttributeValue(action.AttributeName, "");
         }
 
-        protected override HtmlNode HandleObject(HtmlNode obj, AnalysisAction action)
+        protected override HtmlNode HandleNext(HtmlNode obj, AnalysisAction action)
         {
             return obj.SelectSingleNode(action.Path);
         }

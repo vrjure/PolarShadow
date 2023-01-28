@@ -66,12 +66,13 @@ namespace PolarShadow.ResourcePack
             return page;
         }
 
-        public async Task<VideoDetail> GetVideoDetailAsync(string detailSrc, VideoSummary summary = null)
+        public async Task<VideoDetail> GetVideoDetailAsync(VideoSummary summary)
         {
             var detail = new VideoDetail(summary);
 
             var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(detailSrc);
+            
+            var doc = await web.LoadFromWebAsync(summary.DetailSrc);
 
             var tabs = doc.DocumentNode.SelectSingleNode("//body//div[@class='tabs']");
             var defaultIndexStr = tabs.SelectSingleNode("script[@id='DEF_PLAYINDEX']")?.InnerText;
