@@ -50,7 +50,7 @@ namespace PolarShadow.Core
         {
             if (_searchHandlerFactory == null)
             {
-                return new SearcHandlerDefault(filter.SearchKey, filter.PageSize, this.GetAbilities<ISearchAble>(Abilities.SearchAble).ToArray());
+                return new SearcHandlerDefault(filter.SearchKey, filter.PageSize, this.GetAbilitySites<ISearchAble>(Abilities.SearchAble).ToArray());
             }
 
             return _searchHandlerFactory(filter);

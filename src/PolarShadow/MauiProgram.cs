@@ -6,11 +6,13 @@ using PolarShadow.Pages;
 using NLog.Extensions.Logging;
 using PolarShadow.Storage;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace PolarShadow;
 
 public static class MauiProgram
 {
+    private static string _optionFileName = "source.json";
 	public static MauiApp CreateMauiApp()
 	{
         var builder = MauiApp.CreateBuilder();
@@ -30,7 +32,12 @@ public static class MauiProgram
     {
         ConfigureLogger(builder.Services);
 
-        builder.Services.AddSingleton(BuildIPolarShadow());
+        builder.Services.AddSingleton(CreatePolarShadowBuilder());
+        builder.Services.AddTransient(sp =>
+        {
+            var b = sp.GetRequiredService<IPolarShadowBuilder>();
+            return b.Build();
+        });
 
         RegisterViewModels(builder.Services);
 
@@ -52,13 +59,25 @@ public static class MauiProgram
         services.AddTransientWithShellRoute<WebBrowserPage, WebBrowserPageViewModel>(nameof(WebBrowserPage));
         services.AddTransientWithShellRoute<ConfigurePage, ConfigPageViewModel>(nameof(ConfigurePage));
         services.AddTransientWithShellRoute<MyCollectionPage, MyCollectionViewModel>(nameof(MyCollectionPage));
+        services.AddTransientWithShellRoute<SourceManagerPage, SourceManagerViewModel>(nameof(SourceManagerPage));
     }
 
-    private static IPolarShadow BuildIPolarShadow()
+    private static IPolarShadowBuilder CreatePolarShadowBuilder()
     {
-        var builder = new PolarShadowBuilder();
-        builder.AutoSite(typeof(NewZMZSite).Assembly);
-        return builder.Build();
+        var sourcePath = Path.Combine(FileSystem.AppDataDirectory, _optionFileName);
+        using var fs = new FileStream(sourcePath, FileMode.OpenOrCreate, FileAccess.Read);
+        if (fs.Length == 0)
+        {
+            var builder = new PolarShadowBuilder();
+            return builder;
+        }
+        else
+        {
+            var option = JsonSerializer.Deserialize<PolarShadowOption>(fs, JsonOption.DefaultSerializer);
+            var builder = new PolarShadowBuilder(option);
+            return builder;
+        }
+
     }
 
     private static void ConfigureLogger(IServiceCollection services)
@@ -77,5 +96,19 @@ public static class MauiProgram
             context.Database.Migrate();
         }
         return app;
+    }
+
+    public static void SavePolarShadowOption(PolarShadowOption option)
+    {
+        var sourcePath = Path.Combine(FileSystem.AppDataDirectory, _optionFileName);
+        if (!File.Exists(sourcePath))
+        {
+            File.Create(sourcePath);
+        }
+        using var fs = new FileStream(sourcePath, FileMode.Truncate, FileAccess.Write);
+        var s = JsonSerializer.Serialize(option, JsonOption.DefaultSerializer);
+        using var sw = new StreamWriter(fs);
+        sw.Write(s);
+        sw.Flush();
     }
 }

@@ -10,7 +10,7 @@ namespace PolarShadow.Core
         public PathValueType PathValueType { get; set; }
         public string AttributeName { get; set; }
         public string Regex { get; set; }
-        public bool AsParam { get; set; }
+        public string Format { get; set; }
         public AnalysisAction Next { get; set; }
         public Dictionary<string, AnalysisAction> AnalysisItem { get; set; }
     }

@@ -20,7 +20,7 @@ namespace PolarShadow.ResourcePack.Test
             }));
 
             var summary = result.Data.Skip(1).FirstOrDefault();
-            var detail = await site.GetVideoDetailAsync(summary?.DetailSrc, summary);
+            var detail = await site.GetVideoDetailAsync(summary);
             Console.WriteLine(JsonSerializer.Serialize(detail, new JsonSerializerOptions
             {
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping

@@ -29,12 +29,13 @@ namespace PolarShadow.Core
             Analysis(obj, ms, actions);
 
             ms.Seek(0, SeekOrigin.Begin);
+
             return JsonSerializer.Deserialize<T>(ms, JsonOption.DefaultSerializer);
         }
 
         protected abstract bool VerifyInput(TInput obj);
 
-        protected virtual void WriteJson(TInput obj, Utf8JsonWriter jsonWriter, KeyValuePair<string, AnalysisAction> action)
+        private void WriteJson(TInput obj, Utf8JsonWriter jsonWriter, KeyValuePair<string, AnalysisAction> action)
         {
             switch (action.Value.PathValueType)
             {
@@ -46,7 +47,7 @@ namespace PolarShadow.Core
 
                     var nodes = HandleArray(obj, action.Value);
                     if (nodes == null)
-                    {
+                    {   
                         break;
                     }
                     jsonWriter.WriteStartArray(action.Key);
@@ -123,7 +124,7 @@ namespace PolarShadow.Core
                     {
                         break;
                     }
-                    HandleValue(jsonWriter, raw, action);
+                    HandleRawValue(jsonWriter, raw, action);
                     break;
                 default:
                     break;
@@ -147,18 +148,28 @@ namespace PolarShadow.Core
 
         private void HandleValue(Utf8JsonWriter jsonWriter, string input, KeyValuePair<string, AnalysisAction> action)
         {
-            if (string.IsNullOrEmpty(action.Value.Regex))
-            {
-                jsonWriter.WriteString(action.Key, input);
-            }
-            else
+            if (!string.IsNullOrEmpty(action.Value.Regex))
             {
                 var macth = Regex.Match(input, action.Value.Regex);
                 if (macth.Success)
                 {
-                    jsonWriter.WriteString(action.Key, macth.Value);
+                    input = macth.Value;             
                 }
             }
+
+            if (!string.IsNullOrEmpty(action.Value.Format))
+            {
+                input = string.Format(action.Value.Format, input);
+            }
+
+            jsonWriter.WriteString(action.Key, input);
+
+        }
+
+        private void HandleRawValue(Utf8JsonWriter jsonWriter, string raw, KeyValuePair<string, AnalysisAction> action)
+        {
+            jsonWriter.WritePropertyName(action.Key);
+            jsonWriter.WriteRawValue(raw);
         }
 
         private void HandleValue(Utf8JsonWriter jsonWriter, decimal value, KeyValuePair<string, AnalysisAction> action)

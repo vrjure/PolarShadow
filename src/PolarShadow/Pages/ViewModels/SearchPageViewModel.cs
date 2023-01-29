@@ -29,7 +29,7 @@ namespace PolarShadow.Pages.ViewModels
         {
             if (string.IsNullOrEmpty(query))
             {
-                SearchResult = null;
+                SearchResult.Clear();
                 return;
             }
 
@@ -41,11 +41,14 @@ namespace PolarShadow.Pages.ViewModels
 
             _seacHandler.Reset();
             var result = await _seacHandler.SearchNextAsync();
-            SearchResult = new ObservableCollection<VideoSummary>(result);
+            SearchResult.Clear();
+            foreach (var item in result)
+            {
+                SearchResult.Add(item);
+            }
         }
 
-        [ObservableProperty]
-        private ObservableCollection<VideoSummary> searchResult;
+        public ObservableCollection<VideoSummary> SearchResult { get; } = new();
 
         [RelayCommand]
         public async Task SearchNextAsync()

@@ -8,5 +8,6 @@ namespace PolarShadow.Core
     {
         public const string SearchAble = "searchAble";
         public const string GetDetailAble = "getDetailAble";
+        public const string HtmlAnalysisAble = "htmlAnalysisAble";
     }
 }

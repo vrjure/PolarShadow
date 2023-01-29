@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    public class PolarShadowSiteConfig
+    public class SiteOption
     {
         public string Name { get; set; }
         public string Domain { get; set; }

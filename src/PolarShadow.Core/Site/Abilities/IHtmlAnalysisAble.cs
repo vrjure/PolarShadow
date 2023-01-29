@@ -6,6 +6,6 @@ namespace PolarShadow.Core
 {
     public interface IHtmlAnalysisAble
     {
-        ICollection<HtmlAnalysisSource> SupportSources { get; }
+        string GetAnalysisedSource(VideoSource source, HtmlAnalysisSource analysisSource);
     }
 }

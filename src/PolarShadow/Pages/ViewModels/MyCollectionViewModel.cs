@@ -20,8 +20,7 @@ namespace PolarShadow.Pages.ViewModels
             _myCollectionService = myCollectionService;
         }
 
-        [ObservableProperty]
-        private ObservableCollection<VideoSummary> myCollections;
+        public ObservableCollection<VideoSummary> MyCollections { get; } = new();
 
         [RelayCommand]
         public async Task ItemSelected(VideoSummary videoSummary)
@@ -39,7 +38,11 @@ namespace PolarShadow.Pages.ViewModels
         public async Task InitializeAsync()
         {
             var data = await _myCollectionService.GetMyCollectionAsync(1, 100);
-            MyCollections = new ObservableCollection<VideoSummary>(data);
+            MyCollections.Clear();
+            foreach (var item in data)
+            {
+                MyCollections.Add(item);
+            }
         }
     }
 }

@@ -8,9 +8,9 @@ namespace PolarShadow.Core
 {
     internal sealed class PolarShadowSiteBuilder : IPolarShadowSiteBuilder
     {
-        private readonly PolarShadowSiteConfig _config;
+        private readonly SiteOption _config;
         private readonly PolarShadowBuilder _builder;
-        public PolarShadowSiteBuilder(PolarShadowSiteConfig config, PolarShadowBuilder builder)
+        public PolarShadowSiteBuilder(SiteOption config, PolarShadowBuilder builder)
         {
             if (string.IsNullOrEmpty(config.Name))
             {

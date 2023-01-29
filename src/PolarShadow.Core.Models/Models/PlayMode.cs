@@ -6,7 +6,7 @@ namespace PolarShadow.Core
 {
     public enum PlayMode
     {
-        Local,
-        Web
+        Web,
+        Local
     }
 }

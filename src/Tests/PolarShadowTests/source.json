@@ -1,85 +1,102 @@
-[
-  {
-    "name": "YHDM",
-    "domain": "www.yhdmp.cc",
-    "abilities": {
-      "searchAble": {
-        "url": "https://www.yhdmp.cc/s_all?kw={searchKey}&pagesize={pageSize}&pageindex={page - 1}",
-        "analysisType": "html",
-        "responseAnalysis": {
-          "data": {
-            "path": "//body//div[@class='lpic']/ul/li",
-            "pathValueType": "array",
-            "analysisItem": {
-              "name": {
-                "path": "h2/a",
-                "pathValueType": "innerText"
-              },
-              "description": {
-                "path": "p",
-                "pathValueType": "innerText"
-              },
-              "imageSrc": {
-                "path": "a/img",
-                "pathValueType": "attribute",
-                "attributeName": "src"
-              },
-              "siteName": {
-                "path": "YHDM"
-              },
-              "detailSrc": {
-                "path": "a",
-                "pathValueType": "attribute",
-                "attributeName": "href"
-              }
-            }
-          }
-        }
-      },
-      "getDetailAble": {
-        "url": "https://www.yhdmp.cc/{detailSrc}",
-        "analysisType": "html",
-        "responseAnalysis": {
-          "defIndex": {
-            "path": "//body//div[@class='tabs']/script[@id='DEF_PLAYINDEX']",
-            "pathValueType": "innerText"
-          },
-          "playList": {
-            "path": "//body//div[@class='tabs']/div[@id=main0]",
-            "pathValueType": "array",
-            "analysisItem": {
-              "name": {
-                "path": "ul/li/a",
-                "pathValueType": "attribute",
-                "attributeName": "title"
-              },
-              "sources": {
-                "path": "ul/li",
-                "pathValueType": "array",
-                "analysisItem": { 
-                  "src": {
-                    "path": "a",
-                    "pathValueType": "attribute",
-                    "attributeName": "href"
-                  },
-                  "srcType": {
-                    "path": "html"
-                  }
+{
+  "analysisSources": [
+    {
+      "name": "夜幕",
+      "src": "https://www.yemu.xyz?url={src}"
+    }
+  ],
+  "sites": [
+    {
+      "name": "YHDM",
+      "domain": "www.yhdmp.cc",
+      "abilities": {
+        "searchAble": {
+          "url": "https://www.yhdmp.cc/s_all?kw={searchKey}&pagesize={pageSize}&pageindex={page - 1}",
+          "analysisType": "html",
+          "responseAnalysis": {
+            "data": {
+              "path": "//body//div[@class='lpic']/ul/li",
+              "pathValueType": "array",
+              "analysisItem": {
+                "name": {
+                  "path": "h2/a",
+                  "pathValueType": "innerText"
+                },
+                "description": {
+                  "path": "p",
+                  "pathValueType": "innerText"
+                },
+                "imageSrc": {
+                  "path": "a/img",
+                  "pathValueType": "attribute",
+                  "attributeName": "src"
+                },
+                "siteName": {
+                  "path": "YHDM"
+                },
+                "detailSrc": {
+                  "path": "a",
+                  "pathValueType": "attribute",
+                  "attributeName": "href"
                 }
               }
             }
           }
         },
-        "next": {
-          "analysisType": "json",
+        "getDetailAble": {
+          "url": "https://www.yhdmp.cc/{detailSrc}",
+          "analysisType": "html",
           "responseAnalysis": {
-            "episodes": {
-              "path": "$.playList[{$.defIndex$}]",
-              "pathValueType": "raw"
+            "defIndex": {
+              "path": "//body//div[@class='tabs']/script[@id='DEF_PLAYINDEX']",
+              "pathValueType": "innerText"
+            },
+            "playList": {
+              "path": "//body//div[@class='tabs']/div[@id='main0']/div",
+              "pathValueType": "array",
+              "analysisItem": {
+                "name": {
+                  "path": "div"
+                },
+                "episodes": {
+                  "path": "ul/li",
+                  "pathValueType": "array",
+                  "analysisItem": {
+                    "name": {
+                      "path": "a",
+                      "pathValueType": "attribute",
+                      "attributeName": "title"
+                    },
+                    "sources": {
+                      "path": "a",
+                      "pathValueType": "array",
+                      "analysisItem": {
+                        "src": {
+                          "path": ".",
+                          "pathValueType": "attribute",
+                          "attributeName": "href"
+                        },
+                        "srcType": {
+                          "path": "html"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "next": {
+            "analysisType": "json",
+            "responseAnalysis": {
+              "episodes": {
+                "path": "$.playList[{$.defIndex$}].episodes",
+                "pathValueType": "raw"
+              }
             }
           }
         }
       }
     }
-  }
-]
+  ]
+}

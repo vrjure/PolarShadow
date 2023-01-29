@@ -12,6 +12,9 @@
     <FlyoutItem Title="Search">
         <ShellContent ContentTemplate="{DataTemplate page:SearchPage}"/>
     </FlyoutItem>
+    <FlyoutItem Title="Source">
+        <ShellContent ContentTemplate="{DataTemplate page:SourceManagerPage}"/>
+    </FlyoutItem>
     <FlyoutItem Title="Set">
         <ShellContent ContentTemplate="{DataTemplate page:ConfigurePage}"/>
     </FlyoutItem>

@@ -9,16 +9,16 @@ namespace PolarShadow.Core
 {
     public static class JsonPath
     {
-        private static JsonAnalysisHandler _jsonHandler = new JsonAnalysisHandler();
 
         public static T Analysis<T>(this JsonElement obj, IReadOnlyDictionary<string, AnalysisAction> actions)
         {
-            return _jsonHandler.Analysis<T>(obj, actions);
+            
+            return new JsonAnalysisHandler(obj).Analysis<T>(obj, actions);
         }
 
         public static void Analysis(this JsonElement obj, Stream stream, IReadOnlyDictionary<string, AnalysisAction> actions)
         {
-            _jsonHandler.Analysis(obj, stream, actions);
+            new JsonAnalysisHandler(obj).Analysis(obj, stream, actions);
         }
 
         public static bool TryGetPropertyWithJsonPath(this JsonElement obj, ReadOnlySpan<byte> jsonPath, out JsonElement result)
@@ -36,6 +36,7 @@ namespace PolarShadow.Core
 
             var reader = new JsonPathReader(jsonPath);
             var lastTokenType = JsonPathTokenType.None;
+            var inIndexFilter = false;
             result = new JsonElement();
             while (reader.Read())
             {
@@ -62,6 +63,35 @@ namespace PolarShadow.Core
                                 {
                                     return false;
                                 }
+                            }
+                        }
+                        break;
+                    case JsonPathTokenType.ArrayIndexFilterStart:
+                        inIndexFilter = true;
+                        break;
+                    case JsonPathTokenType.ArrayIndexFilterEnd:
+                        inIndexFilter = false;
+                        break;
+                    case JsonPathTokenType.Number:
+                        if (!reader.TryReadNumber(out int num))
+                        {
+                            return false;
+                        }
+                        if (inIndexFilter)
+                        {
+                            int i = 0;
+                            foreach (var item in result.EnumerateArray())
+                            {
+                                if (i == num)
+                                {
+                                    result = item;
+                                    break;
+                                }
+                                i++;
+                            }
+                            if (i != num)
+                            {
+                                return false;
                             }
                         }
                         break;

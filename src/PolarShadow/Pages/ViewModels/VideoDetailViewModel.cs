@@ -33,16 +33,12 @@ namespace PolarShadow.Pages.ViewModels
             {
                 if (val is VideoSummary summary)
                 {
-                    await GetDetailAsync(summary.DetailSrc, summary);
-                }
-                else if (val is string detailSrc)
-                {
-                    await GetDetailAsync(detailSrc, null);
+                    await GetDetailAsync(summary);
                 }
             }
         }
 
-        private async Task GetDetailAsync(string detailSrc, VideoSummary summary)
+        private async Task GetDetailAsync( VideoSummary summary)
         {
             var site = _polarShadow.GetSite(summary.SiteName);
             if (site == null)
@@ -50,9 +46,9 @@ namespace PolarShadow.Pages.ViewModels
                 return;
             }
 
-            if (site is IGetDetailAble detialHandler)
+            if (site.TryGetAbility(out IGetDetailAble detailHandler))
             {
-                var detail = await detialHandler.GetVideoDetailAsync(detailSrc, summary);
+                var detail = await detailHandler.GetVideoDetailAsync(summary);
                 if (detail == null)
                 {
                     return;
@@ -91,13 +87,16 @@ namespace PolarShadow.Pages.ViewModels
                 }
             }
 
-            CombinationEpisodes = new ObservableCollection<CombinationObject<VideoEpisode, string>>(episodeList);
+            CombinationEpisodes.Clear();
+            foreach (var item in episodeList)
+            {
+                CombinationEpisodes.Add(item);
+            }
         }
 
         [ObservableProperty]
         private VideoDetail detail;
-        [ObservableProperty]
-        private ObservableCollection<CombinationObject<VideoEpisode, string>> combinationEpisodes;
+        public ObservableCollection<CombinationObject<VideoEpisode, string>> CombinationEpisodes { get; } = new();
 
         [RelayCommand]
         public void EpisodeSelectedChange(VideoEpisode episode)

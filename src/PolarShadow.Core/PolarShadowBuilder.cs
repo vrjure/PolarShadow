@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PolarShadow.Core.Site;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,19 +10,28 @@ namespace PolarShadow.Core
 {
     public class PolarShadowBuilder : IPolarShadowBuilder
     {
-        private readonly List<IPolarShadowSite> _sites = new List<IPolarShadowSite>();
+        public static Dictionary<Type, string> SupportAbilityTypes = new Dictionary<Type, string>();
+
         private Func<SearchVideoFilter, ISearcHandler> _searcHandlerFactory;
-        private readonly List<PolarShadowSiteConfig> _siteConfigs = new List<PolarShadowSiteConfig>();
+        private IPolarShadow _cache;
+
         internal Dictionary<string, IAbilityFactory> _supportAbilityFactories = new Dictionary<string, IAbilityFactory>();
-        
-        public PolarShadowBuilder()
+
+
+        public PolarShadowOption Option { get; }
+
+        public PolarShadowBuilder() :this(default)
         {
-            RegisterSupportDefaultAbility();
         }
 
-        public PolarShadowBuilder(IEnumerable<PolarShadowSiteConfig> siteConfigs) : this()
+        public PolarShadowBuilder(PolarShadowOption option)
         {
-            _siteConfigs.AddRange(siteConfigs);
+            this.Option = option;
+            if (this.Option == null)
+            {
+                this.Option = new PolarShadowOption();
+            }
+            RegisterSupportDefaultAbility();
         }
 
         public void AddSearcHandlerFactory(Func<SearchVideoFilter, ISearcHandler> factory)
@@ -29,36 +39,37 @@ namespace PolarShadow.Core
             _searcHandlerFactory = factory;
         }
 
-        public void AddSite(IPolarShadowSite site)
-        {
-            _sites.Add(site);
-        }
-
-        public void AddSite(PolarShadowSiteConfig config)
-        {
-            _siteConfigs.Add(config);
-        }
-
-        public void RegisterSupportAbilityFactory(string name, IAbilityFactory ability)
+        public void RegisterSupportAbilityFactory<T>(string name, IAbilityFactory<T> ability)
         {
             _supportAbilityFactories[name] = ability;
+            SupportAbilityTypes[typeof(T).GetInterfaces()[0]] = name;
         }
 
         public IPolarShadow Build()
         {
-            if (_siteConfigs != null && _siteConfigs.Count > 0)
+            if (Option.IsChanged || _cache == null)
             {
-                foreach (var item in _siteConfigs)
+                List<IPolarShadowSite> sites = new List<IPolarShadowSite>();
+                if (Option.Sites != null && Option.Sites.Count > 0)
                 {
-                    _sites.Add(new PolarShadowSiteBuilder(item, this).Build());
+                    foreach (var item in Option.Sites)
+                    {
+                        sites.Add(new PolarShadowSiteBuilder(item, this).Build());
+                    }
                 }
+                _cache = new PolarShadowDefault(sites, _searcHandlerFactory);
+                Option.IsChanged = false;
             }
-            return new PolarShadowDefault(_sites, _searcHandlerFactory);
+
+            return _cache;
+            
         }
 
         private void RegisterSupportDefaultAbility()
         {
             RegisterSupportAbilityFactory(Abilities.SearchAble, new AbilityFactoryDefault<SearchAbleDefault>());
+            RegisterSupportAbilityFactory(Abilities.GetDetailAble, new AbilityFactoryDefault<GetDetailAbleDefault>());
+            RegisterSupportAbilityFactory(Abilities.HtmlAnalysisAble, new AbilityFactoryDefault<HtmlAnalysisAbleDefault>());
         }
     }
 }

@@ -7,6 +7,11 @@ namespace PolarShadow.Core
 {
     internal class JsonAnalysisHandler : AnalysisActionHandler<JsonElement>
     {
+        private readonly JsonElement _input;
+        public JsonAnalysisHandler(JsonElement input)
+        {
+            _input = input;
+        }
         protected override bool VerifyInput(JsonElement obj)
         {
             return obj.ValueKind != JsonValueKind.Undefined;
@@ -14,7 +19,8 @@ namespace PolarShadow.Core
 
         protected override IEnumerable<JsonElement> HandleArray(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
+            var path = action.Path.NameSlot(_input);
+            if (obj.TryGetPropertyWithJsonPath(path, out JsonElement element))
             {
                 return element.EnumerateArray();
             }
@@ -23,7 +29,8 @@ namespace PolarShadow.Core
 
         protected override string HandleString(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
+            var path = action.Path.NameSlot(_input);
+            if (obj.TryGetPropertyWithJsonPath(path, out JsonElement element))
             {
                 return element.GetString();
             }
@@ -32,7 +39,8 @@ namespace PolarShadow.Core
 
         protected override bool? HandleBoolean(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
+            var path = action.Path.NameSlot(_input);
+            if (obj.TryGetPropertyWithJsonPath(path, out JsonElement element))
             {
                 return element.GetBoolean();
             }
@@ -41,7 +49,8 @@ namespace PolarShadow.Core
 
         protected override decimal? HandleNumber(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element) && element.TryGetDecimal(out decimal value))
+            var path = action.Path.NameSlot(_input);
+            if (obj.TryGetPropertyWithJsonPath(path, out JsonElement element) && element.TryGetDecimal(out decimal value))
             {
                 return value;
             }
@@ -51,7 +60,8 @@ namespace PolarShadow.Core
 
         protected override JsonElement HandleNext(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
+            var path = action.Path.NameSlot(_input);
+            if (obj.TryGetPropertyWithJsonPath(path, out JsonElement element))
             {
                 return element;
             }
@@ -60,7 +70,8 @@ namespace PolarShadow.Core
 
         protected override string HandleRaw(JsonElement obj, AnalysisAction action)
         {
-            if (obj.TryGetPropertyWithJsonPath(action.Path, out JsonElement element))
+            var path = action.Path.NameSlot(_input);
+            if (obj.TryGetPropertyWithJsonPath(path, out JsonElement element))
             {
                 return element.GetRawText();
             }

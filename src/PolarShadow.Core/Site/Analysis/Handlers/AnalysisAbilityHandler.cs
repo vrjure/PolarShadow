@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    internal abstract class AnalysisAbilityHandler
+    public abstract class AnalysisAbilityHandler
     {
         private static readonly string _formUrlEncoded = "application/x-www-form-urlencoded";
         private static readonly string _applicationjson = "application/json";
@@ -28,7 +28,7 @@ namespace PolarShadow.Core
 
         protected virtual async Task<TResult> HandleValueAsync<TInput, TResult>(TInput input)
         {
-            if (_abilityConfig.ResponseAnalysis == null || _abilityConfig.ResponseAnalysis.Count == 0)
+            if (_abilityConfig == null || _abilityConfig.ResponseAnalysis == null || _abilityConfig.ResponseAnalysis.Count == 0)
             {
                 return default;
             }
@@ -104,6 +104,7 @@ namespace PolarShadow.Core
             var url = ability.Url;
             if (!string.IsNullOrEmpty(url))
             {
+                url = url.NameSlot(input.RootElement);
                 if (_web == null)
                 {
                     _web = new HtmlWeb();
@@ -126,6 +127,7 @@ namespace PolarShadow.Core
                     htmlDoc.DocumentNode.Analysis(ms, ability.ResponseAnalysis);
                     ms.Seek(0, SeekOrigin.Begin);
                     var doc = JsonDocument.Parse(ms);
+
                     return await HandleValueAsync<TResult>(doc, ability.Next);
                 }
             }

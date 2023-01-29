@@ -92,7 +92,11 @@ namespace PolarShadowTests
                     Book = new Book[]
                     {
                         new Book { Category = "reference", Author = "Nigel Rees", Title="Sayings of the Century", Price = 8.98},
-                        new Book { Category = "fiction", Author = "Evelyn waugh", Title = "Sword of Honour", Price =12.99}
+                        new Book { Category = "fiction", Author = "Evelyn waugh", Title = "Sword of Honour", Price =12.99, Bicycles = new Bicycle[]
+                            {
+                                new Bicycle{ Color = "red", Price = 1}
+                            }
+                        }
 
                     },
                     Bicycle = new Bicycle
@@ -110,7 +114,9 @@ namespace PolarShadowTests
                 "$..store",
                 "$..book",
                 "$..bicycle",
-                "store"
+                "store",
+                "$..book[1]",
+                "$..book[1].bicycles[0]"
             };
             foreach (var item in paths)
             {
@@ -158,6 +164,7 @@ namespace PolarShadowTests
         public string Author { get; set; }
         public string Title { get; set; }
         public double Price { get; set; }
+        public ICollection<Bicycle> Bicycles { get; set; }
     }
     public class Bicycle
     {

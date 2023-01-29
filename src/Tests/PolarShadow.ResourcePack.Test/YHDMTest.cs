@@ -15,7 +15,7 @@ namespace PolarShadow.ResourcePack.Test
             var summay = await site.SearchVideosAsync(new Core.SearchVideoFilter(1, 10, "死神"));
             Console.WriteLine(JsonSerializer.Serialize(summay, JsonOption.DefaultSerializer));
 
-            var detail = await site.GetVideoDetailAsync(summay.Data.First().DetailSrc, summay.Data.First());
+            var detail = await site.GetVideoDetailAsync(summay.Data.First());
             Console.WriteLine(JsonSerializer.Serialize(detail, JsonOption.DefaultSerializer));
         }
     }

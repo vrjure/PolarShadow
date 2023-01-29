@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    public class AbilityFactoryDefault<T>: IAbilityFactory
+    internal class AbilityFactoryDefault<T> : IAbilityFactory<T>
     {
         public T Create(AnalysisAbility ability)
         {
@@ -13,7 +13,7 @@ namespace PolarShadow.Core
 
         object IAbilityFactory.Create(AnalysisAbility ability)
         {
-            return Create(ability);
+            return this.Create(ability);
         }
     }
 }

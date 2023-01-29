@@ -8,4 +8,9 @@ namespace PolarShadow.Core
     {
         object Create(AnalysisAbility ability);
     }
+
+    public interface IAbilityFactory<T> : IAbilityFactory
+    {
+        new T Create(AnalysisAbility ability);
+    }
 }
