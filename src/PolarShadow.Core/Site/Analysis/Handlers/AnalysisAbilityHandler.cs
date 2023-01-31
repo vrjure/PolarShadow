@@ -33,11 +33,11 @@ namespace PolarShadow.Core
                 return default;
             }
 
-            var doc = JsonDocument.Parse(JsonSerializer.Serialize(input, JsonOption.DefaultSerializer));
-            return await HandleValueAsync<TResult>(doc, _abilityConfig);         
+            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(input, JsonOption.DefaultSerializer));
+            return await HandleValueAsync<TResult>(doc.RootElement.Clone(), _abilityConfig);         
         }
 
-        private async Task<TResult> HandleValueAsync<TResult>(JsonDocument input, AnalysisAbility ability)
+        private async Task<TResult> HandleValueAsync<TResult>(JsonElement input, AnalysisAbility ability)
         {
             if (ability.ResponseAnalysis == null || ability.ResponseAnalysis.Count == 0)
             {
@@ -56,12 +56,12 @@ namespace PolarShadow.Core
             return default;
         }
 
-        private async Task<TResult> HandleJsonAsync<TResult>(JsonDocument input, AnalysisAbility ability)
+        private async Task<TResult> HandleJsonAsync<TResult>(JsonElement input, AnalysisAbility ability)
         {
             var url = ability.Url;
             if (!string.IsNullOrEmpty(url))
             {
-                url = url.NameSlot(input.RootElement);
+                url = url.NameSlot(input);
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("user-agent", _userAgent);
@@ -78,14 +78,16 @@ namespace PolarShadow.Core
                         if (response.IsSuccessStatusCode)
                         {
                             var json = await request.Content.ReadAsStringAsync();
-                            var jsondoc = JsonDocument.Parse(json);
+                            using var jsondoc = JsonDocument.Parse(json);
+                            
+                            var newInput = jsondoc.RootElement.Append(input);
                             if (ability.Next == null)
                             {
-                                return jsondoc.RootElement.Analysis<TResult>(ability.ResponseAnalysis);
+                                return newInput.Analysis<TResult>(ability.ResponseAnalysis);
                             }
                             else
                             {
-                                return await HandleJsonAsync<TResult>(jsondoc, ability.Next);
+                                return await HandleJsonAsync<TResult>(newInput, ability.Next);
                             }
                         }
                     }
@@ -93,18 +95,18 @@ namespace PolarShadow.Core
             }
             else
             {
-                return input.RootElement.Analysis<TResult>(ability.ResponseAnalysis);
+                return input.Analysis<TResult>(ability.ResponseAnalysis);
             }
 
             return default;
         }
 
-        private async Task<TResult> HandleHtmlAsync<TResult>(JsonDocument input, AnalysisAbility ability)
+        private async Task<TResult> HandleHtmlAsync<TResult>(JsonElement input, AnalysisAbility ability)
         {
             var url = ability.Url;
             if (!string.IsNullOrEmpty(url))
             {
-                url = url.NameSlot(input.RootElement);
+                url = url.NameSlot(input);
                 if (_web == null)
                 {
                     _web = new HtmlWeb();
@@ -119,16 +121,15 @@ namespace PolarShadow.Core
 
                 if (ability.Next == null)
                 {
-                    return htmlDoc.DocumentNode.Analysis<TResult>(ability.ResponseAnalysis);
+                    return htmlDoc.DocumentNode.Analysis<TResult>(input, ability.ResponseAnalysis);
                 }
                 else
                 {
                     using var ms = new MemoryStream();
-                    htmlDoc.DocumentNode.Analysis(ms, ability.ResponseAnalysis);
+                    htmlDoc.DocumentNode.Analysis(input, ms, ability.ResponseAnalysis);
                     ms.Seek(0, SeekOrigin.Begin);
-                    var doc = JsonDocument.Parse(ms);
-
-                    return await HandleValueAsync<TResult>(doc, ability.Next);
+                    using var doc = JsonDocument.Parse(ms);
+                    return await HandleValueAsync<TResult>(doc.RootElement.Clone(), ability.Next);
                 }
             }
             else

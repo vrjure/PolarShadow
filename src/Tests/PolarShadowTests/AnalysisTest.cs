@@ -78,7 +78,7 @@ namespace PolarShadowTests
 
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync(ability.Url);
-            var page = doc.DocumentNode.Analysis<PageResult<VideoSummary>>(ability.ResponseAnalysis);
+            var page = doc.DocumentNode.Analysis<PageResult<VideoSummary>>(default ,ability.ResponseAnalysis);
             Console.WriteLine(JsonSerializer.Serialize(page, JsonOption.DefaultSerializer));
         }
     }

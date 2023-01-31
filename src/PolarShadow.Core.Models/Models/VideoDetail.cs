@@ -13,23 +13,6 @@ namespace PolarShadow.Core
             
         }
 
-        public VideoDetail(VideoSummary summary)
-        {
-            if (summary == null)
-            {
-                return;
-            }
-            this.Description = summary.Description;
-            this.DetailSrc = summary.DetailSrc;
-            this.ImageSrc = summary.ImageSrc;
-            this.SiteName = summary.SiteName;
-            this.Name = summary.Name;
-
-            Episodes = new VideoEpisodeCollection(summary);
-        }
-        /// <summary>
-        /// 视频集数信息
-        /// </summary>
-        public ICollection<VideoEpisode> Episodes { get; set; }
+        public ICollection<VideoSeason> Seasons { get; set; }
     }
 }

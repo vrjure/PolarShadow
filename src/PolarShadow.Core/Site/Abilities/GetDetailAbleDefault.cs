@@ -14,11 +14,27 @@ namespace PolarShadow.Core
         public async Task<VideoDetail> GetVideoDetailAsync(VideoSummary summary)
         {
             var detail = await HandleValueAsync<VideoSummary, VideoDetail>(summary);
-            detail.Description = summary.Description;
-            detail.Name = summary.Name;
-            detail.ImageSrc = summary.ImageSrc;
-            detail.SiteName = summary.SiteName;
-            detail.DetailSrc = summary.DetailSrc;
+            if (string.IsNullOrEmpty(detail.Description))
+            {
+                detail.Description = summary.Description;
+            }
+            if (string.IsNullOrEmpty(detail.Name))
+            {
+                detail.Name = summary.Name;
+
+            }
+            if (string.IsNullOrEmpty(detail.ImageSrc))
+            {
+                detail.ImageSrc = summary.ImageSrc;
+            }
+            if (string.IsNullOrEmpty(detail.SiteName))
+            {
+                detail.SiteName = summary.SiteName;
+            }
+            if (string.IsNullOrEmpty(detail.DetailSrc))
+            {
+                detail.DetailSrc = summary.DetailSrc;
+            }
             return detail;
         }
     }

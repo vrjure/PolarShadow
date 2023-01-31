@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using PolarShadow.Core;
 
 namespace PolarShadowTests
 {
@@ -49,12 +50,35 @@ namespace PolarShadowTests
             };
             Console.WriteLine(JsonSerializer.Serialize(status, JsonOption.DefaultSerializer));
         }
+
+        [Test]
+        public void JsonAppendTest()
+        {
+            using var a = JsonDocument.Parse(JsonSerializer.Serialize(new A { AA = "a" }, JsonOption.DefaultSerializer));
+            using var b = JsonDocument.Parse(JsonSerializer.Serialize(new B { BB = "b" }, JsonOption.DefaultSerializer));
+
+            using var ms = new MemoryStream();
+            a.RootElement.Append(b.RootElement, ms);
+            
+            using var sr = new StreamReader(ms);
+            Console.WriteLine(sr.ReadToEnd());
+        }
     }
 
     class DashClass
     {
         public string? Dash_Name { get; set; }
         internal string? A { get; set; }
+    }
+
+    class A
+    {
+        public string AA { get; set; }
+    }
+
+    class B
+    {
+        public string BB { get; set; }
     }
 
 }

@@ -38,7 +38,7 @@ namespace PolarShadow.Pages.ViewModels
             }
         }
 
-        private async Task GetDetailAsync( VideoSummary summary)
+        private async Task GetDetailAsync(VideoSummary summary)
         {
             var site = _polarShadow.GetSite(summary.SiteName);
             if (site == null)
@@ -66,26 +66,26 @@ namespace PolarShadow.Pages.ViewModels
         {
             var episodeList = new List<CombinationObject<VideoEpisode, string>>();
             var records = await _watchRecordService.GetRecordsAsync(detail.Name);
-            foreach (var episode in detail.Episodes)
-            {
-                var record = records.FirstOrDefault(f => f.EpisodeName == episode.Name);
-                if (record == null)
-                {
-                    episodeList.Add(new CombinationObject<VideoEpisode, string>
-                    {
-                        Object1 = episode,
-                        Object2 = "(未看)"
-                    });
-                }
-                else
-                {
-                    episodeList.Add(new CombinationObject<VideoEpisode, string>
-                    {
-                        Object1 = episode,
-                        Object2 = "(已看)"
-                    });
-                }
-            }
+            //foreach (var episode in detail.Episodes)
+            //{
+            //    var record = records.FirstOrDefault(f => f.EpisodeName == episode.Name);
+            //    if (record == null)
+            //    {
+            //        episodeList.Add(new CombinationObject<VideoEpisode, string>
+            //        {
+            //            Object1 = episode,
+            //            Object2 = "(未看)"
+            //        });
+            //    }
+            //    else
+            //    {
+            //        episodeList.Add(new CombinationObject<VideoEpisode, string>
+            //        {
+            //            Object1 = episode,
+            //            Object2 = "(已看)"
+            //        });
+            //    }
+            //}
 
             CombinationEpisodes.Clear();
             foreach (var item in episodeList)
