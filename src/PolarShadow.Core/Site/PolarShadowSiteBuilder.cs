@@ -8,31 +8,25 @@ namespace PolarShadow.Core
 {
     internal sealed class PolarShadowSiteBuilder : IPolarShadowSiteBuilder
     {
-        private readonly SiteOption _config;
         private readonly PolarShadowBuilder _builder;
-        public PolarShadowSiteBuilder(SiteOption config, PolarShadowBuilder builder)
+        public PolarShadowSiteBuilder(PolarShadowBuilder builder)
         {
-            if (string.IsNullOrEmpty(config.Name))
-            {
-                throw new ArgumentException(nameof(config.Name));
-            }
-            _config = config;
             _builder = builder;
         }
 
-        public IPolarShadowSite Build()
+        public IPolarShadowSite Build(SiteOption option)
         {
-            var abilities = new List<KeyValuePair<string, object>>(_config.Abilities.Count);
+            var abilities = new List<IAnalysisAbility>(option.Abilities.Count);
             
-            foreach (var item in _config.Abilities)
+            foreach (var item in option.Abilities)
             {
-                if (_builder._supportAbilityFactories.TryGetValue(item.Key, out IAbilityFactory factory))
+                if (_builder._supportAbilities.TryGetValue(item.Key, out IAnalysisAbility ability))
                 {
-                    abilities.Add(new KeyValuePair<string, object>(item.Key, factory.Create(item.Value)));
+                    abilities.Add(ability);
                 }
             }
 
-            return new PolarShadowSiteDefault(_config.Name, _config.Domain, abilities);
+            return new PolarShadowSiteDefault(option, abilities);
         }
     }
 }

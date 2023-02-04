@@ -9,54 +9,64 @@ using System.Net.Http.Json;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public abstract class AnalysisAbilityHandler
+    public static class AnalysisAbilityHandler
     {
         private static readonly string _formUrlEncoded = "application/x-www-form-urlencoded";
         private static readonly string _applicationjson = "application/json";
         private static readonly string _userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62";
+        private static HtmlWeb _web = new HtmlWeb();
 
-        protected readonly AnalysisAbility _abilityConfig;
-        private static HtmlWeb _web;
-        public AnalysisAbilityHandler(AnalysisAbility ability)
+        public static async Task<string> ExecuteAsync(this AnalysisAbility ability, string input, CancellationToken cancellation = default)
         {
-            _abilityConfig = ability;
+            if (ability == null || ability.ResponseAnalysis == null || ability.ResponseAnalysis.Count == 0)
+            {
+                return default;
+            }
+            using var doc = JsonDocument.Parse(input);
+            using var ms = new MemoryStream();
+            await HandleValueAsync(doc.RootElement, ms, ability);
+            ms.Seek(0, SeekOrigin.Begin);
+            using var sr = new StreamReader(ms);
+            return sr.ReadToEnd();
         }
 
-        protected virtual async Task<TResult> HandleValueAsync<TInput, TResult>(TInput input)
+        public static async Task<TOutput> ExecuteAsync<TInput, TOutput>(this AnalysisAbility ability, TInput input, CancellationToken cancellation = default)
         {
-            if (_abilityConfig == null || _abilityConfig.ResponseAnalysis == null || _abilityConfig.ResponseAnalysis.Count == 0)
+            if (ability == null || ability.ResponseAnalysis == null || ability.ResponseAnalysis.Count == 0)
             {
                 return default;
             }
 
             using var doc = JsonDocument.Parse(JsonSerializer.Serialize(input, JsonOption.DefaultSerializer));
-            return await HandleValueAsync<TResult>(doc.RootElement.Clone(), _abilityConfig);         
+            using var ms = new MemoryStream();
+            await HandleValueAsync(doc.RootElement, ms, ability);
+            ms.Seek(0, SeekOrigin.Begin);
+            return JsonSerializer.Deserialize<TOutput>(ms, JsonOption.DefaultSerializer);
         }
 
-        private async Task<TResult> HandleValueAsync<TResult>(JsonElement input, AnalysisAbility ability)
+        private static async Task HandleValueAsync(JsonElement input, Stream stream, AnalysisAbility ability)
         {
             if (ability.ResponseAnalysis == null || ability.ResponseAnalysis.Count == 0)
             {
-                return default;
+                return;
             }
 
             if (ability.AnalysisType == AnalysisType.Json)
             {
-                return await HandleJsonAsync<TResult>(input, ability);
+                await HandleJsonAsync(input, stream, ability);
             }
             else if (ability.AnalysisType == AnalysisType.Html)
             {
-                return await HandleHtmlAsync<TResult>(input, ability);
+                await HandleHtmlAsync(input, stream, ability);
             }
-
-            return default;
         }
 
-        private async Task<TResult> HandleJsonAsync<TResult>(JsonElement input, AnalysisAbility ability)
+        private static async Task HandleJsonAsync(JsonElement input, Stream stream, AnalysisAbility ability)
         {
             var url = ability.Url;
             if (!string.IsNullOrEmpty(url))
@@ -80,14 +90,14 @@ namespace PolarShadow.Core
                             var json = await request.Content.ReadAsStringAsync();
                             using var jsondoc = JsonDocument.Parse(json);
                             
-                            var newInput = jsondoc.RootElement.Append(input);
                             if (ability.Next == null)
                             {
-                                return newInput.Analysis<TResult>(ability.ResponseAnalysis);
+                                jsondoc.RootElement.Analysis(stream, ability.ResponseAnalysis);
                             }
                             else
                             {
-                                return await HandleJsonAsync<TResult>(newInput, ability.Next);
+                                var newInput = jsondoc.RootElement.Append(input);
+                                await HandleJsonAsync(newInput, stream, ability.Next);
                             }
                         }
                     }
@@ -95,33 +105,28 @@ namespace PolarShadow.Core
             }
             else
             {
-                return input.Analysis<TResult>(ability.ResponseAnalysis);
+                input.Analysis(stream, ability.ResponseAnalysis);
             }
-
-            return default;
         }
 
-        private async Task<TResult> HandleHtmlAsync<TResult>(JsonElement input, AnalysisAbility ability)
+        private static async Task HandleHtmlAsync(JsonElement input, Stream stream, AnalysisAbility ability)
         {
             var url = ability.Url;
             if (!string.IsNullOrEmpty(url))
             {
                 url = url.NameSlot(input);
-                if (_web == null)
-                {
-                    _web = new HtmlWeb();
-                }
 
                 Encoding encoding = null;
                 if (!string.IsNullOrEmpty(ability.Encoding))
                 {
                     encoding = Encoding.GetEncoding(ability.Encoding);
                 }
+
                 var htmlDoc = await _web.LoadFromWebAsync(url, encoding);
 
                 if (ability.Next == null)
                 {
-                    return htmlDoc.DocumentNode.Analysis<TResult>(input, ability.ResponseAnalysis);
+                    htmlDoc.DocumentNode.Analysis(input, stream, ability.ResponseAnalysis);
                 }
                 else
                 {
@@ -129,12 +134,12 @@ namespace PolarShadow.Core
                     htmlDoc.DocumentNode.Analysis(input, ms, ability.ResponseAnalysis);
                     ms.Seek(0, SeekOrigin.Begin);
                     using var doc = JsonDocument.Parse(ms);
-                    return await HandleValueAsync<TResult>(doc.RootElement.Clone(), ability.Next);
+                    await HandleValueAsync(doc.RootElement, stream, ability.Next);
                 }
             }
             else
             {
-                return await HandleJsonAsync<TResult>(input, ability);
+                await HandleJsonAsync(input, stream, ability);
             }
         }
     }

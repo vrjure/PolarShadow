@@ -1,39 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    internal class GetDetailAbleDefault : AnalysisAbilityHandler, IGetDetailAble
+    internal class GetDetailAbleDefault : AnalysisAbilityBase, IGetDetailAble
     {
-        public GetDetailAbleDefault(AnalysisAbility ability) : base(ability)
-        {
-        }
+        public override string Name => Abilities.GetDetailAble;
 
-        public async Task<VideoDetail> GetVideoDetailAsync(VideoSummary summary)
+        public async Task<VideoDetail> ExecuteAsync(AnalysisAbility ability, VideoSummary input, CancellationToken cancellation = default)
         {
-            var detail = await HandleValueAsync<VideoSummary, VideoDetail>(summary);
+            var detail = await ExecuteAsync<VideoSummary, VideoDetail>(ability, input, cancellation);
             if (string.IsNullOrEmpty(detail.Description))
             {
-                detail.Description = summary.Description;
+                detail.Description = input.Description;
             }
             if (string.IsNullOrEmpty(detail.Name))
             {
-                detail.Name = summary.Name;
+                detail.Name = input.Name;
 
             }
             if (string.IsNullOrEmpty(detail.ImageSrc))
             {
-                detail.ImageSrc = summary.ImageSrc;
+                detail.ImageSrc = input.ImageSrc;
             }
             if (string.IsNullOrEmpty(detail.SiteName))
             {
-                detail.SiteName = summary.SiteName;
+                detail.SiteName = input.SiteName;
             }
             if (string.IsNullOrEmpty(detail.DetailSrc))
             {
-                detail.DetailSrc = summary.DetailSrc;
+                detail.DetailSrc = input.DetailSrc;
             }
             return detail;
         }

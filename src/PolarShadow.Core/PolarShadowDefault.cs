@@ -9,23 +9,21 @@ namespace PolarShadow.Core
     internal class PolarShadowDefault : IPolarShadow
     {
         private readonly Dictionary<string, IPolarShadowSite> _sites = new Dictionary<string, IPolarShadowSite>();
+        private readonly Dictionary<string, IAnalysisAbility> _supportAbilitis = new Dictionary<string, IAnalysisAbility>();
         private readonly Func<SearchVideoFilter, ISearcHandler> _searchHandlerFactory;
 
-        internal PolarShadowDefault(IEnumerable<IPolarShadowSite> sites): this(sites, default)
-        {
-
-        }
-
-        internal PolarShadowDefault(IEnumerable<IPolarShadowSite> sites, Func<SearchVideoFilter, ISearcHandler> searcHandlerFactory)
+        internal PolarShadowDefault(IEnumerable<IAnalysisAbility> supportAbilities, Func<SearchVideoFilter, ISearcHandler> searcHandlerFactory)
         {
             _searchHandlerFactory = searcHandlerFactory;
-            foreach (var item in sites)
+
+            foreach (var item in supportAbilities)
             {
-                if (string.IsNullOrEmpty(item.Domain))
+                if (string.IsNullOrEmpty(item.Name))
                 {
                     continue;
                 }
-                _sites[item.Name] = item;
+
+                _supportAbilitis[item.Name] = item;
             }
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -50,10 +48,20 @@ namespace PolarShadow.Core
         {
             if (_searchHandlerFactory == null)
             {
-                return new SearcHandlerDefault(filter.SearchKey, filter.PageSize, this.GetAbilitySites<ISearchAble>(Abilities.SearchAble).ToArray());
+                return new SearcHandlerDefault(filter.SearchKey, filter.PageSize, this.GetAbilitieSites<ISearchAble>().ToArray());
             }
 
             return _searchHandlerFactory(filter);
+        }
+
+        public IEnumerable<IAnalysisAbility> GetSupportAbilities()
+        {
+            return _supportAbilitis.Values;
+        }
+
+        public void AddSite(IPolarShadowSite site)
+        {
+            _sites[site.Name] = site;
         }
     }
 }

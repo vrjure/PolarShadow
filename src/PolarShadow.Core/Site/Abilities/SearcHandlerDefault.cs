@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,15 +9,15 @@ namespace PolarShadow.Core
 {
     internal class SearcHandlerDefault : ISearcHandler
     {
-        private readonly ISearchAble[] _searches;
+        private readonly IPolarShadowSite[] _searcheSites;
         private readonly SearchVideoFilter _filter;
 
         private int _searchIndex = -1;
         private PageResult<VideoSummary> _resultCache;
 
-        public SearcHandlerDefault(string searchKey, int pageSize, params ISearchAble[] searches)
+        public SearcHandlerDefault(string searchKey, int pageSize, params IPolarShadowSite[] searcheSites)
         {
-            _searches = searches;
+            _searcheSites = searcheSites;
             _filter = new SearchVideoFilter(1, pageSize, searchKey);
         }
 
@@ -29,7 +30,7 @@ namespace PolarShadow.Core
 
         public async Task<ICollection<VideoSummary>> SearchNextAsync(CancellationToken cancellation = default)
         {
-            if (_searches == null || _searches.Length == 0 || cancellation.IsCancellationRequested)
+            if (_searcheSites == null || _searcheSites.Length == 0 || cancellation.IsCancellationRequested)
             {
                 return null;
             }
@@ -43,16 +44,17 @@ namespace PolarShadow.Core
                 _filter.Page++;
             }
 
-            if (_searchIndex >= _searches.Length)
+            if (_searchIndex >= _searcheSites.Length)
             {
                 return null;
             }
 
-            var search = _searches[_searchIndex];
+            var site = _searcheSites[_searchIndex];
 
             try
             {
-                _resultCache = await search.SearchVideosAsync(_filter, cancellation);
+                site.TryGetAbility(out ISearchAble search);
+                _resultCache = await site.ExecuteAsync(search, _filter, cancellation);
             }
             catch
             {

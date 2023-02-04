@@ -8,59 +8,38 @@ namespace PolarShadow.Core
 {
     public static class PolarShadowExtensions
     {
-        public static IEnumerable<T> GetAbilitySites<T>(this IPolarShadow ps, string abilityName)
+        public static bool HasAbility(this IPolarShadowSite site, string abilityName)
         {
-            return ps.GetSites().Where(f=>f.HasAbility(abilityName)).Select(f=> (T)f.GetAbility(abilityName));
+            return site.EnumerableAbilities().Any(f=>f.Name.Equals(abilityName));
         }
 
-        public static bool TryGetAbility<T>(this IPolarShadowSite site, out T ability)
+        public static IAnalysisAbility GetAbility(this IPolarShadowSite site, string abilityName)
         {
-            ability = default;
-            if (!PolarShadowBuilder.SupportAbilityTypes.TryGetValue(typeof(T), out string abilityName))
-            {
-                return false;
-            }
-
-            if (!site.HasAbility(abilityName))
-            {
-                return false;
-            }
-
-            ability = (T)site.GetAbility(abilityName);
-            if (ability == null)
-            {
-                return false;
-            }
-            return true;
+            return site.EnumerableAbilities().Where(f=>f.Name.Equals(abilityName)).FirstOrDefault();
+        }
+        public static IEnumerable<IPolarShadowSite> GetAbilitieSites<T>(this IPolarShadow ps) where T : IAnalysisAbility
+        {
+            return ps.GetSites().Where(f => f.EnumerableAbilities().Any(f => f is T));
         }
 
-        public static IPolarShadowBuilder RegisterSupportAbilityFactory<T>(this IPolarShadowBuilder builder, string name)
+        public static bool TryGetAbility<T>(this IPolarShadowSite site, out T ability) where T : IAnalysisAbility
         {
-            builder.RegisterSupportAbilityFactory(name, new AbilityFactoryDefault<T>());
+            var result = site.EnumerableAbilities().FirstOrDefault(f => f is T);
+            ability = (T)result;
+            return result == default;
+        }
+
+        public static IPolarShadowBuilder AddAbility<T>(this IPolarShadowBuilder builder) where T : IAnalysisAbility, new()
+        {
+            builder.AddAbility(new T());
             return builder;
         }
 
-        public static IPolarShadowBuilder AutoSite(this IPolarShadowBuilder builder, Assembly assembly)
+        public static IPolarShadowBuilder AddDefaultAbilities(this IPolarShadowBuilder builder)
         {
-            //var types = assembly.GetExportedTypes();
-            //foreach (var item in types)
-            //{
-            //    var isSite = item.GetInterface(nameof(IPolarShadowSite));
-            //    if (isSite == null)
-            //    {
-            //        continue;
-            //    }
-
-            //    var npc = item.GetConstructor(Type.EmptyTypes);
-            //    if (npc == null)
-            //    {
-            //        continue;
-            //    }
-
-            //    builder.AddSite((IPolarShadowSite)Activator.CreateInstance(item));
-            //}
-
-            return builder;
+            return builder.AddAbility<SearchAbleDefault>()
+                .AddAbility<GetDetailAbleDefault>()
+                .AddAbility<AnalysisSourceAbleDefault>();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace PolarShadow.Core
     {
         PolarShadowOption Option { get; }
         void AddSearcHandlerFactory(Func<SearchVideoFilter, ISearcHandler> factory);
-        void RegisterSupportAbilityFactory<T>(string name, IAbilityFactory<T> ability);
+        void AddAbility(IAnalysisAbility ability);
         IPolarShadow Build();
     }
 }

@@ -2,46 +2,39 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
     internal class PolarShadowSiteDefault : IPolarShadowSite
     {
-        private readonly Dictionary<string, object> _abilities;
-        internal PolarShadowSiteDefault(string name, string domain, IEnumerable<KeyValuePair<string, object>> abilities)
+        private readonly ICollection<IAnalysisAbility> _abilities;
+        private readonly Dictionary<string, AnalysisAbility> _analysisAbilities = new Dictionary<string, AnalysisAbility>();
+        internal PolarShadowSiteDefault(SiteOption option, IEnumerable<IAnalysisAbility> abilities)
         {
-            this.Name = name;
-            this.Domain = domain;
-            _abilities = new Dictionary<string, object>(abilities);
+            this.Name = option.Name;
+            this.Domain = option.Domain;
+            _abilities = new List<IAnalysisAbility>(abilities);
         }
 
         public string Name { get; }
 
         public string Domain { get; }
 
-        public object GetAbility(string abilityName)
+
+        public IEnumerable<IAnalysisAbility> EnumerableAbilities()
         {
-            if (_abilities == null)
-            {
-                return null;
-            }
-
-            if (_abilities.TryGetValue(abilityName, out object val))
-            {
-                return val;
-            }
-
-            return null;
+            return _abilities;
         }
 
-        public bool HasAbility(string abilityName)
+        public async Task<TOutput> ExecuteAsync<TInput, TOutput>(IAnalysisAbility<TInput,TOutput> ability, TInput input, CancellationToken cancellation = default)
         {
-            if (_abilities == null)
+            if (_analysisAbilities.TryGetValue(ability.Name, out AnalysisAbility analysis))
             {
-                return false;
+                return await ability.ExecuteAsync(analysis, input, default);
             }
-
-            return _abilities.ContainsKey(abilityName);
+            return default;
         }
     }
 }

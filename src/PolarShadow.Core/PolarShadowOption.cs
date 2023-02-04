@@ -8,7 +8,7 @@ namespace PolarShadow.Core
     public class PolarShadowOption
     {
         public bool IsChanged { get; set; }
-        public ICollection<HtmlAnalysisSource> AnalysisSources { get; set; } = new List<HtmlAnalysisSource>();
+        public ICollection<WebAnalysisSource> AnalysisSources { get; set; } = new List<WebAnalysisSource>();
         public ICollection<SiteOption> Sites { get; set; } = new List<SiteOption>();
     }
 }

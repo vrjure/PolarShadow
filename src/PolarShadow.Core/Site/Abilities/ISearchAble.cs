@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public interface ISearchAble
+    public interface ISearchAble : IAnalysisAbility<SearchVideoFilter, PageResult<VideoSummary>>
     {
-        Task<PageResult<VideoSummary>> SearchVideosAsync(SearchVideoFilter filter, CancellationToken cancellation = default);
+
     }
 }

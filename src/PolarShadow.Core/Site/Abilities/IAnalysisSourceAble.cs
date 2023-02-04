@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public interface IGetDetailAble: IAnalysisAbility<VideoSummary, VideoDetail>
+    public interface IAnalysisSourceAble : IAnalysisAbility<WebAnalysisSourceFilter, WebAnalysisSource>
     {
-
+        
     }
 }

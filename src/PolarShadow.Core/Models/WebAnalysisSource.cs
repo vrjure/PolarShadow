@@ -4,9 +4,10 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    public sealed class HtmlAnalysisSource
+    public sealed class WebAnalysisSource
     {
         public string Name { get; set; }
+        public string Title { get; set; }
 
         public string Src { get; set; }
     }

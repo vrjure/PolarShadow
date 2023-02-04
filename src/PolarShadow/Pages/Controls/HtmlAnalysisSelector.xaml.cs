@@ -6,7 +6,7 @@ namespace PolarShadow.Pages.Controls;
 
 public partial class HtmlAnalysisSelector : Popup
 {
-	public HtmlAnalysisSelector(ICollection<HtmlAnalysisSource> sources)
+	public HtmlAnalysisSelector(ICollection<WebAnalysisSource> sources)
 	{
 		InitializeComponent();
 

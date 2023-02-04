@@ -10,17 +10,15 @@ namespace PolarShadow.Core
 {
     public class PolarShadowBuilder : IPolarShadowBuilder
     {
-        public static Dictionary<Type, string> SupportAbilityTypes = new Dictionary<Type, string>();
-
         private Func<SearchVideoFilter, ISearcHandler> _searcHandlerFactory;
         private IPolarShadow _cache;
 
-        internal Dictionary<string, IAbilityFactory> _supportAbilityFactories = new Dictionary<string, IAbilityFactory>();
+        internal Dictionary<string, IAnalysisAbility> _supportAbilities = new Dictionary<string, IAnalysisAbility>();
 
 
         public PolarShadowOption Option { get; }
 
-        public PolarShadowBuilder() :this(default)
+        public PolarShadowBuilder() : this(default)
         {
         }
 
@@ -31,7 +29,6 @@ namespace PolarShadow.Core
             {
                 this.Option = new PolarShadowOption();
             }
-            RegisterSupportDefaultAbility();
         }
 
         public void AddSearcHandlerFactory(Func<SearchVideoFilter, ISearcHandler> factory)
@@ -39,37 +36,34 @@ namespace PolarShadow.Core
             _searcHandlerFactory = factory;
         }
 
-        public void RegisterSupportAbilityFactory<T>(string name, IAbilityFactory<T> ability)
+        public void AddAbility(IAnalysisAbility ability)
         {
-            _supportAbilityFactories[name] = ability;
-            SupportAbilityTypes[typeof(T).GetInterfaces()[0]] = name;
+            if (string.IsNullOrEmpty(ability.Name))
+            {
+                throw new ArgumentException(nameof(ability.Name));
+            }
+            _supportAbilities[ability.Name] = ability;
         }
 
         public IPolarShadow Build()
         {
             if (Option.IsChanged || _cache == null)
             {
-                List<IPolarShadowSite> sites = new List<IPolarShadowSite>();
+                var ps = new PolarShadowDefault(_supportAbilities.Values, _searcHandlerFactory);
+                var siteBuilder = new PolarShadowSiteBuilder(this);
                 if (Option.Sites != null && Option.Sites.Count > 0)
                 {
                     foreach (var item in Option.Sites)
                     {
-                        sites.Add(new PolarShadowSiteBuilder(item, this).Build());
+                        ps.AddSite(siteBuilder.Build(item));
                     }
                 }
-                _cache = new PolarShadowDefault(sites, _searcHandlerFactory);
                 Option.IsChanged = false;
+                _cache = ps;
             }
 
             return _cache;
             
-        }
-
-        private void RegisterSupportDefaultAbility()
-        {
-            RegisterSupportAbilityFactory(Abilities.SearchAble, new AbilityFactoryDefault<SearchAbleDefault>());
-            RegisterSupportAbilityFactory(Abilities.GetDetailAble, new AbilityFactoryDefault<GetDetailAbleDefault>());
-            RegisterSupportAbilityFactory(Abilities.HtmlAnalysisAble, new AbilityFactoryDefault<HtmlAnalysisAbleDefault>());
         }
     }
 }

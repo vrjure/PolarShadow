@@ -106,7 +106,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\PolarShadow.Core.Models\PolarShadow.Core.Models.csproj" />
 	  <ProjectReference Include="..\PolarShadow.Core\PolarShadow.Core.csproj" />
 	  <ProjectReference Include="..\PolarShadow.Storage\PolarShadow.Storage.csproj" />
 	</ItemGroup>
