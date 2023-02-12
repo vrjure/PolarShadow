@@ -1,6 +1,5 @@
 ﻿using PolarShadow.Core;
 using PolarShadow.Pages.ViewModels;
-using PolarShadow.ResourcePack;
 
 namespace PolarShadow;
 

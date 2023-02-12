@@ -48,7 +48,7 @@ namespace PolarShadow.Pages.ViewModels
 
             if (site.TryGetAbility(out IGetDetailAble detailHandler))
             {
-                var detail = await detailHandler.GetVideoDetailAsync(summary);
+                var detail = await site.ExecuteAsync(detailHandler, summary);
                 if (detail == null)
                 {
                     return;

@@ -5,9 +5,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace PolarShadow.Tool.Pages.ViewModels
@@ -26,7 +30,7 @@ namespace PolarShadow.Tool.Pages.ViewModels
         }
 
         public ObservableCollection<ListItem> Sites { get; } = new();
-        public ObservableCollection<string> AbilitiyNames { get; } = new();
+        public ObservableCollection<ListItem> Abilities { get; } = new();
 
         [ObservableProperty]
         private string input;
@@ -34,6 +38,7 @@ namespace PolarShadow.Tool.Pages.ViewModels
         private string output;
 
         private IPolarShadowSite _selectSite;
+        private IAnalysisAbility _selectAbility;
         [RelayCommand]
         public void SiteSelectionChanged(SelectionChangedEventArgs e)
         {
@@ -41,11 +46,11 @@ namespace PolarShadow.Tool.Pages.ViewModels
             {
                 var item = e.AddedItems[0] as ListItem;
 
-                AbilitiyNames.Clear();
+                Abilities.Clear();
                 _selectSite = item.Value as IPolarShadowSite;
-                foreach (var ability in _selectSite.EnumerableAbilities())
+                foreach (var ability in _selectSite.GetAbilities())
                 {
-                    AbilitiyNames.Add(ability.Name);
+                    Abilities.Add(new ListItem(ability.Name, ability));
                 }
             }
         }
@@ -55,14 +60,38 @@ namespace PolarShadow.Tool.Pages.ViewModels
         {
             if (e.AddedItems.Count > 0)
             {
-                var abilityName = e.AddedItems[0].ToString();
+                var item = e.AddedItems[0] as ListItem;
+                _selectAbility = item.Value as IAnalysisAbility;
+                var type = item.Value.GetType().GetInterface(typeof(IAnalysisAbility<,>).Name);
+                if (type != default)
+                {
+                    var args = type.GenericTypeArguments;
+                    var input = Activator.CreateInstance(args[0]);
+                    Input = JsonSerializer.Serialize(input, JsonOption.FormatSerializer);
+                }
             }
         }
 
         [RelayCommand]
-        public void TestAbility()
+        public async Task TestAbility()
         {
+            try
+            {
+                var result = await _selectSite.ExecuteAsync(_selectAbility, Input);
+                using var doc = JsonDocument.Parse(result);
 
+                using var ms = new MemoryStream();
+                using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.FormatWriteOption);
+                doc.WriteTo(jsonWriter);
+                jsonWriter.Flush();
+                ms.Seek(0, SeekOrigin.Begin);
+                using var sr = new StreamReader(ms);
+                Output = sr.ReadToEnd();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

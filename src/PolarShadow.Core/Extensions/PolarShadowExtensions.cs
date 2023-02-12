@@ -10,21 +10,21 @@ namespace PolarShadow.Core
     {
         public static bool HasAbility(this IPolarShadowSite site, string abilityName)
         {
-            return site.EnumerableAbilities().Any(f=>f.Name.Equals(abilityName));
+            return site.GetAbilities().Any(f=>f.Name.Equals(abilityName));
         }
 
         public static IAnalysisAbility GetAbility(this IPolarShadowSite site, string abilityName)
         {
-            return site.EnumerableAbilities().Where(f=>f.Name.Equals(abilityName)).FirstOrDefault();
+            return site.GetAbilities().Where(f=>f.Name.Equals(abilityName)).FirstOrDefault();
         }
         public static IEnumerable<IPolarShadowSite> GetAbilitieSites<T>(this IPolarShadow ps) where T : IAnalysisAbility
         {
-            return ps.GetSites().Where(f => f.EnumerableAbilities().Any(f => f is T));
+            return ps.GetSites().Where(f => f.GetAbilities().Any(f => f is T));
         }
 
         public static bool TryGetAbility<T>(this IPolarShadowSite site, out T ability) where T : IAnalysisAbility
         {
-            var result = site.EnumerableAbilities().FirstOrDefault(f => f is T);
+            var result = site.GetAbilities().FirstOrDefault(f => f is T);
             ability = (T)result;
             return result == default;
         }

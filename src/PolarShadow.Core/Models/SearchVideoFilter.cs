@@ -8,6 +8,7 @@ namespace PolarShadow.Core
 {
     public class SearchVideoFilter : PageFilter
     {
+        public SearchVideoFilter() { }
         public SearchVideoFilter(int page, int pageSize, string searchKey)
         {
             this.Page = page;
@@ -15,6 +16,6 @@ namespace PolarShadow.Core
             this.SearchKey = searchKey;
         }
 
-        public string SearchKey { get; }
+        public string SearchKey { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace PolarShadow.Core
         Http  = 1,
         Magnet = 2,
         BaiDu = 4,
-        ALiYun = 8,
+        ALiYunDrive = 8,
         Quark = 16,
         M3U8 = 32,
         HTML = 64,

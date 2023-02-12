@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:PolarShadow.Pages.ViewModels"
              x:DataType="vm:WebBrowserPageViewModel">
     <Grid>
-        <WebView x:Name="webView" Source="{Binding WebViewSource}" />
+        <WebView x:Name="webView" Source="{Binding WebViewSource}" IsVisible="true"/>
+        <Label x:Name="text"/>
     </Grid>
 </ContentPage>

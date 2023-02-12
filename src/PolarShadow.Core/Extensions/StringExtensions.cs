@@ -27,6 +27,10 @@ namespace PolarShadow.Core
                 {
                     return SrcType.BaiDu;
                 }
+                else if (uri.Host.Equals("www.aliyundrive.com", StringComparison.OrdinalIgnoreCase))
+                {
+                    return SrcType.ALiYunDrive;
+                }
             }
 
             return SrcType.None;

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PolarShadow.Pages.SearchPage"
              xmlns:vm="clr-namespace:PolarShadow.Pages.ViewModels"
-             xmlns:model="clr-namespace:PolarShadow.Core;assembly=PolarShadow.Core.Models"
+             xmlns:model="clr-namespace:PolarShadow.Core;assembly=PolarShadow.Core"
              x:DataType="vm:SearchPageViewModel">
     
     <Grid Margin="10"

@@ -7,5 +7,6 @@
             Text="Welcome to .NET MAUI!"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
+        <Button Text="ToWebBrowser" Clicked="Button_Clicked"/>
     </VerticalStackLayout>
 </ContentPage>

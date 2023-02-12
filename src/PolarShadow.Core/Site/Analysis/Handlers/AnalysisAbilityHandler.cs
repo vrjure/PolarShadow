@@ -75,7 +75,6 @@ namespace PolarShadow.Core
                 using (var client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("user-agent", _userAgent);
-                    client.DefaultRequestHeaders.Add("content-type", _applicationjson);
                     var method = HttpMethod.Get;
                     if (!string.IsNullOrEmpty(ability.Method))
                     {
@@ -83,11 +82,11 @@ namespace PolarShadow.Core
                     }
 
                     using (var request = new HttpRequestMessage(method, url))
-                    {
+                    {                       
                         var response = await client.SendAsync(request);
                         if (response.IsSuccessStatusCode)
                         {
-                            var json = await request.Content.ReadAsStringAsync();
+                            var json = await response.Content.ReadAsStringAsync();
                             using var jsondoc = JsonDocument.Parse(json);
                             
                             if (ability.Next == null)
@@ -121,9 +120,9 @@ namespace PolarShadow.Core
                 {
                     encoding = Encoding.GetEncoding(ability.Encoding);
                 }
-
+                
                 var htmlDoc = await _web.LoadFromWebAsync(url, encoding);
-
+                
                 if (ability.Next == null)
                 {
                     htmlDoc.DocumentNode.Analysis(input, stream, ability.ResponseAnalysis);

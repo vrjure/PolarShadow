@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public sealed class JsonOption
+    public static class JsonOption
     {
         static JsonOption()
         {
@@ -27,17 +27,33 @@ namespace PolarShadow.Core
                 NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
             };
 
+            FormatSerializer = new JsonSerializerOptions(DefaultSerializer)
+            {
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never,
+                WriteIndented = true,
+            };
+
             DefaultWriteOption = new JsonWriterOptions
             {
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+
+            FormatWriteOption = new JsonWriterOptions
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                Indented = true,
             };
         }
 
         public static JsonSerializerOptions DefaultSerializer { get; }
 
         public static JsonSerializerOptions ForDashSerializer { get; }
+        
+        public static JsonSerializerOptions FormatSerializer { get; }
 
         public static JsonWriterOptions DefaultWriteOption { get; }
+
+        public static JsonWriterOptions FormatWriteOption { get; }
 
         public static void Default(JsonSerializerOptions option)
         {

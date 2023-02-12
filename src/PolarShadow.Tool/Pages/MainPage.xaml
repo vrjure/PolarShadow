@@ -33,7 +33,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <ListBox Width="120"
-                 ItemsSource="{Binding AbilitiyNames}"
+                 ItemsSource="{Binding Abilities}"
                  SelectionMode="Single"
                  Grid.Column="1">
             <b:Interaction.Triggers>
@@ -41,6 +41,11 @@
                     <b:InvokeCommandAction Command="{Binding AbilitySelectionChangedCommand}" PassEventArgsToCommand="True"/>
                 </b:EventTrigger>
             </b:Interaction.Triggers>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
@@ -54,9 +59,13 @@
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Input:"/>
-                    <Button Content="Test" Command="{Binding TestAbilityCommand}"/>
+                    <Button Width="100" Margin="10,0,0,0" Content="Test" Command="{Binding TestAbilityCommand}"/>
                 </StackPanel>
-                <TextBox Grid.Row="1" Text="{Binding Input, Mode=TwoWay}" />
+                <TextBox Grid.Row="1"
+                         Text="{Binding Input, Mode=TwoWay}" 
+                         HorizontalScrollBarVisibility="Auto"
+                         VerticalScrollBarVisibility="Auto"
+                         AcceptsReturn="True"/>
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
@@ -64,7 +73,10 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Label Content="Output"/>
-                <TextBlock Grid.Row="1" Text="{Binding Output, Mode=OneWay}"/>
+                <TextBox Grid.Row="1" 
+                         Text="{Binding Output, Mode=OneWay}"
+                         HorizontalScrollBarVisibility="Auto"
+                         VerticalScrollBarVisibility="Auto"/>
             </Grid>
         </Grid>
     </Grid>

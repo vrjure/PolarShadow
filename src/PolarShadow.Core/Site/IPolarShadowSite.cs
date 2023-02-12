@@ -11,7 +11,8 @@ namespace PolarShadow.Core
     {
         string Name { get; }
         string Domain { get; }
-        IEnumerable<IAnalysisAbility> EnumerableAbilities();
-        Task<TOutput> ExecuteAsync<TInput, TOutput>(IAnalysisAbility<TInput, TOutput> ability, TInput input, CancellationToken cancellation = default);
+        IReadOnlyCollection<IAnalysisAbility> GetAbilities();
+        Task<string> ExecuteAsync(IAnalysisAbility ability, string input, CancellationToken cancellation = default);
+        Task<TOutput> ExecuteAsync<TInput, TOutput>(IAnalysisAbility<TInput, TOutput> ability, TInput input, CancellationToken cancellation = default) where TInput: new() where TOutput: new();
     }
 }

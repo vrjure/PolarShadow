@@ -2,22 +2,26 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
 namespace PolarShadow.Core
 {
-    internal class SearchAbleDefault : AnalysisAbilityBase, ISearchAble
+    internal class SearchAbleDefault : AnalysisAbilityBase<SearchVideoFilter, PageResult<VideoSummary>>, ISearchAble
     {
         public override string Name => Abilities.SearchAble;
 
-        public async Task<PageResult<VideoSummary>> ExecuteAsync(AnalysisAbility ability, SearchVideoFilter input, CancellationToken cancellation = default)
+        protected override void HandleInput(SearchVideoFilter input)
         {
-            var result = await ExecuteAsync<SearchVideoFilter, PageResult<VideoSummary>>(ability, input, cancellation);
-            result.Page = input.Page;
-            result.PageSize = input.PageSize;
-            return result;
+
+            input.SearchKey = HttpUtility.UrlEncode(input.SearchKey);
+        }
+
+        protected override void ValueHandler(SearchVideoFilter input, PageResult<VideoSummary> output)
+        {
+            output.Page = input.Page;
         }
     }
 }
