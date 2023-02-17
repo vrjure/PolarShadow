@@ -1,14 +1,12 @@
-﻿using PolarShadow.Core;
-using PolarShadow.Pages.ViewModels;
-
-namespace PolarShadow;
-
-public partial class App : Application
+﻿namespace PolarShadow
 {
-	public App()
-	{
-		InitializeComponent();
+    public partial class App : Application
+    {
+        public App()
+        {
+            InitializeComponent();
 
-		MainPage = new AppShell();
-	}
+            MainPage = new MainPage();
+        }
+    }
 }

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow", "PolarShadow\PolarShadow.csproj", "{F45A0208-30F6-4472-9537-C21684FB14DA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Core", "PolarShadow.Core\PolarShadow.Core.csproj", "{D8814AF4-51A4-4AEF-8B06-2F54157C364A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A0DA3243-6E13-4A97-A794-9AF90DF06F28}"
@@ -21,18 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Api", "PolarSha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Tool", "PolarShadow.Tool\PolarShadow.Tool.csproj", "{69C1D0FD-6ED3-4518-8EC7-E8204CD3B539}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolarShadow", "PolarShadow\PolarShadow.csproj", "{A96FC63B-F59F-4700-9040-1591E6DAD6C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F45A0208-30F6-4472-9537-C21684FB14DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F45A0208-30F6-4472-9537-C21684FB14DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F45A0208-30F6-4472-9537-C21684FB14DA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{F45A0208-30F6-4472-9537-C21684FB14DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F45A0208-30F6-4472-9537-C21684FB14DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F45A0208-30F6-4472-9537-C21684FB14DA}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -61,6 +55,12 @@ Global
 		{69C1D0FD-6ED3-4518-8EC7-E8204CD3B539}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69C1D0FD-6ED3-4518-8EC7-E8204CD3B539}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69C1D0FD-6ED3-4518-8EC7-E8204CD3B539}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A96FC63B-F59F-4700-9040-1591E6DAD6C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A96FC63B-F59F-4700-9040-1591E6DAD6C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A96FC63B-F59F-4700-9040-1591E6DAD6C5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A96FC63B-F59F-4700-9040-1591E6DAD6C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A96FC63B-F59F-4700-9040-1591E6DAD6C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A96FC63B-F59F-4700-9040-1591E6DAD6C5}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
