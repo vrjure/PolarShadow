@@ -14,6 +14,7 @@
         <Menu Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Header="Open" Command="{Binding ImportConfigCommand}"/>
+                <MenuItem Header="Refresh" Command="{Binding RefreshCommand}" IsEnabled="{Binding RefreshEnable}"/>
             </MenuItem>
         </Menu>
         <ContentControl x:Name="content" Grid.Row="1"/>

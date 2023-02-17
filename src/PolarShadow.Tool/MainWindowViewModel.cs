@@ -19,13 +19,17 @@ namespace PolarShadow.Tool
     public partial class MainWindowViewModel : ObservableObject, IReferenceUI
     {
         private readonly IPolarShadowBuilder _builder;
+        private string _importPath;
         public MainWindowViewModel(IPolarShadowBuilder builder)
         {
             _builder = builder;
-
+            RefreshEnable = false;
         }
 
         public FrameworkElement UI { get; set; }
+
+        [ObservableProperty]
+        private bool refreshEnable;
 
         [RelayCommand]
         public void ImportConfig()
@@ -36,6 +40,7 @@ namespace PolarShadow.Tool
                 return;
             }
 
+            _importPath = fileDialog.FileName;
             using var fs = new FileStream(fileDialog.FileName, FileMode.Open, FileAccess.Read);
             var config = JsonSerializer.Deserialize<PolarShadowOption>(fs, JsonOption.DefaultSerializer);
             _builder.Option.AnalysisSources = config.AnalysisSources;
@@ -43,7 +48,20 @@ namespace PolarShadow.Tool
             _builder.Option.IsChanged = true;
 
             UI.Navigate<MainPage>("content");
+
+            RefreshEnable = true;
             
+        }
+
+        [RelayCommand]
+        public void Refresh()
+        {
+            using var fs = new FileStream(_importPath, FileMode.Open, FileAccess.Read);
+            var config = JsonSerializer.Deserialize<PolarShadowOption>(fs, JsonOption.DefaultSerializer);
+            _builder.Option.AnalysisSources = config.AnalysisSources;
+            _builder.Option.Sites = config.Sites;
+            _builder.Option.IsChanged = true;
+            UI.Refresh("content");
         }
     }
 }

@@ -16,7 +16,7 @@ using System.Windows.Controls;
 
 namespace PolarShadow.Tool.Pages.ViewModels
 {
-    public partial class MainPageViewModel : ObservableObject
+    public partial class MainPageViewModel : ObservableObject, IContextStorage
     {
         private readonly IPolarShadow _polarShadow;
         public MainPageViewModel(IPolarShadow polarShadow)
@@ -92,6 +92,16 @@ namespace PolarShadow.Tool.Pages.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        public object Save()
+        {
+            return Input;
+        }
+
+        public void Apply(object context)
+        {
+            Input = context?.ToString();
         }
     }
 }
