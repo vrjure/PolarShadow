@@ -39,7 +39,7 @@ namespace PolarShadow.Core
         {
             return builder.AddAbility<SearchAbleDefault>()
                 .AddAbility<GetDetailAbleDefault>()
-                .AddAbility<AnalysisSourceAbleDefault>();
+                .AddAbility<WebAnalysisAbleDefault>();
         }
     }
 }

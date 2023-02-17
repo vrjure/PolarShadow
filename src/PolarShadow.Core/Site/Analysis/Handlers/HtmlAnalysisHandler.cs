@@ -8,11 +8,9 @@ namespace PolarShadow.Core
 {
     internal class HtmlAnalysisHandler : AnalysisActionHandler<HtmlNode>
     {
-        private readonly HtmlNode _input;
         private readonly JsonElement _param;
-        public HtmlAnalysisHandler(HtmlNode input, JsonElement param)
+        public HtmlAnalysisHandler(JsonElement param)
         {
-            _input = input;
             _param = param;
         }
         protected override bool VerifyInput(HtmlNode obj)

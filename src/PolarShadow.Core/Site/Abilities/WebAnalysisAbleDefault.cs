@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    internal class AnalysisSourceAbleDefault: AnalysisAbilityBase<WebAnalysisSourceFilter, WebAnalysisSource>, IAnalysisSourceAble
+    internal class WebAnalysisAbleDefault: AnalysisAbilityBase<WebAnalysisSourceFilter, WebAnalysisSource>, IWebAnalysisAble
     {
         public override string Name => Abilities.WebAnalysisAble;
     }

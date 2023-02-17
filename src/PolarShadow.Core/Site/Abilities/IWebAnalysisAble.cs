@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public interface IAnalysisSourceAble : IAnalysisAbility<WebAnalysisSourceFilter, WebAnalysisSource>
+    public interface IWebAnalysisAble : IAnalysisAbility<WebAnalysisSourceFilter, WebAnalysisSource>
     {
         
     }
