@@ -1,0 +1,31 @@
+﻿@page "/"
+
+<Layout>
+    <Header Class="ps-header">
+        <Tabs Centered>
+            @foreach (var tab in _tabs)
+            {
+                <TabPane Tab="@tab.Value" Key="@tab.Key">
+
+                </TabPane>
+            }
+        </Tabs>
+    </Header>
+    <Content>
+
+    </Content>
+</Layout>
+
+<style>
+    .ant-tabs-nav::before {
+        border-bottom: 0px solid #f0f0f0 !important;
+    }
+</style>
+
+@code {
+    private Dictionary<string, string> _tabs = new Dictionary<string, string>
+    {
+        {"all", "全部"},
+        {"group1", "分组1"}
+    };
+}

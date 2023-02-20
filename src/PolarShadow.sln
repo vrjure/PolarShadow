@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Api", "PolarSha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Tool", "PolarShadow.Tool\PolarShadow.Tool.csproj", "{69C1D0FD-6ED3-4518-8EC7-E8204CD3B539}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolarShadow", "PolarShadow\PolarShadow.csproj", "{A96FC63B-F59F-4700-9040-1591E6DAD6C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow", "PolarShadow\PolarShadow.csproj", "{A96FC63B-F59F-4700-9040-1591E6DAD6C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

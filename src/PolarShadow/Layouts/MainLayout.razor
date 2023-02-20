@@ -1,0 +1,49 @@
+﻿@inherits LayoutComponentBase
+@layout TopLevelLayout
+
+<Layout Class="main-layout">
+    <Content Class="main-layout-content">@Body</Content>
+    <Footer class="main-layout-footer">
+        <Menu Mode="@MenuMode.Horizontal" Class="main-layout-footer-menu">
+            <MenuItem>
+                <Icon Class="main-layout-footer-menu-icon" Type="home" Theme="outline" />
+            </MenuItem>
+            <MenuItem>
+                <Icon Class="main-layout-footer-menu-icon" Type="clock-circle" Theme="outline" />
+            </MenuItem>
+            <MenuItem>
+                <Icon Class="main-layout-footer-menu-icon" Type="compass" Theme="outline" />
+            </MenuItem>
+            <MenuItem>
+                <Icon Class="main-layout-footer-menu-icon" Type="user" Theme="outline" />
+            </MenuItem>
+        </Menu>
+    </Footer>
+</Layout>
+
+<style>
+    .main-layout {
+        height:100%;
+    }
+
+    .main-layout-content {
+        flex: 1 0 auto;
+        z-index:0;
+    }
+
+    .main-layout-footer{
+        padding:0px !important;
+        z-index:1;
+    }
+
+    .main-layout-footer-menu {
+        display:flex;
+        flex-direction:row;
+        justify-content:space-around;
+    }
+
+    .main-layout-footer-menu-icon {
+        font-size:30px !important;
+    }
+</style>
+
