@@ -1,0 +1,77 @@
+﻿@page "/search"
+@layout TopLevelLayout
+@inject NavigationManager _nav
+@inject IPolarShadow _polarShadow
+
+<Layout>
+    <Header>
+        <GridRow Gutter="16" Align="center" Class="header-content">
+            <GridCol Flex=@("none")>
+                <Icon Type="left" Theme="outline" OnClick="Back"/>
+            </GridCol>
+            <GridCol Flex=@("auto")>
+                <Input Placeholder="视频搜索" Size="@InputSize.Small" 
+                @bind-Value="@_serchName" 
+                BindOnInput="true" 
+                WrapperStyle="border-radius:15px" 
+                OnPressEnter="Search">
+                    <Prefix>
+                        <Icon Type="search" Theme="outline" />
+                    </Prefix>
+                    <Suffix>
+                        @if (hasContent)
+                        {
+                            <Icon Type="close" Theme="outline" OnClick="Clear" />
+                        }
+                        else
+                        {
+                            <Icon Type="right" Theme="outline" OnClick="Search" />
+                        }
+                    </Suffix>
+                </Input>
+            </GridCol>
+            <GridCol Flex=@("none")>
+                <Icon Type="more" Theme="outline" />
+            </GridCol>
+        </GridRow>
+    </Header>
+    <Content>
+        <AntList TItem="VideoSummary" DataSource="@_source" Grid="grid">
+            <ListItem>
+                <VideoCard Summary="@(context)"/>
+            </ListItem>
+        </AntList>
+    </Content>
+</Layout>
+@code {
+    private string _serchName;
+    private bool hasContent { get => !string.IsNullOrEmpty(_serchName); }
+
+    private ICollection<VideoSummary> _source;
+
+    private ListGridType grid = new ListGridType
+    {
+        Gutter = 16,
+        Xs = 1,
+        Sm = 2,
+        Md = 4,
+        Lg = 4,
+        Xl = 6,
+        Xxl = 8
+    };
+
+    private void Back(MouseEventArgs arg)
+    {
+        _nav.NavigateTo("/");
+    }
+
+    private void Search()
+    {
+
+    }
+
+    private void Clear()
+    {
+        _serchName = string.Empty;
+    }
+}

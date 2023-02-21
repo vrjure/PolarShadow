@@ -1,31 +1,74 @@
 ﻿@page "/"
+@layout MainLayout
+@inject IMyCollectionService _myCollectionService;
+@inject NavigationManager _nav;
 
 <Layout>
-    <Header Class="ps-header">
-        <Tabs Centered>
-            @foreach (var tab in _tabs)
-            {
-                <TabPane Tab="@tab.Value" Key="@tab.Key">
+    <Header>
+        <GridRow Gutter="16" Class="header-content">
+            <GridCol Flex=@("auto")>
+                <Tabs Centered OnChange="@TabChange">
+                    @foreach (var tab in _tabs)
+                    {
+                        <TabPane Tab="@tab.Value" Key="@tab.Key">
 
-                </TabPane>
-            }
-        </Tabs>
+                        </TabPane>
+                    }
+                </Tabs>
+            </GridCol>
+            <GridCol Flex=@("none")>
+                <Icon Type="search" Theme="outline" OnClick="@SearchClick" />
+            </GridCol>
+            <GridCol Flex=@("none") Offset="-1">
+                <Icon Type="more" Theme="outline" />
+            </GridCol>
+        </GridRow>
+
     </Header>
     <Content>
-
+        <AntList Grid="grid" TItem="VideoSummary" DataSource="@_source">
+            <ListItem>
+                <VideoCard Summary="@(context)"/>
+            </ListItem>
+        </AntList>
     </Content>
 </Layout>
 
 <style>
-    .ant-tabs-nav::before {
-        border-bottom: 0px solid #f0f0f0 !important;
-    }
+
 </style>
 
-@code {
+    @code {
     private Dictionary<string, string> _tabs = new Dictionary<string, string>
     {
         {"all", "全部"},
         {"group1", "分组1"}
     };
+
+    private ListGridType grid = new ListGridType
+    {
+        Gutter = 16,
+        Xs = 1,
+        Sm = 2,
+        Md = 4,
+        Lg = 4,
+        Xl = 6,
+        Xxl = 8
+    };
+
+    private ICollection<VideoSummary> _source;
+
+    private async void TabChange(string tab)
+    {
+        if (tab == "all")
+        {
+            _source = await _myCollectionService.GetMyCollectionAsync(1, 10);
+        }
+    }
+
+    private void SearchClick(MouseEventArgs arg)
+    {
+        _nav.NavigateTo("/search");
+    }
+
 }

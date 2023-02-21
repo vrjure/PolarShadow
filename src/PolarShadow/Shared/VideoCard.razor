@@ -1,0 +1,20 @@
+﻿    
+<Card Bordered>
+    <Cover>
+        <img src="@Summary.ImageSrc" alt="img" />
+    </Cover>
+    <ChildContent>
+        <div>
+            <Text Strong>@Summary.Name</Text>
+        </div>
+        <div>
+            <Text Ellipsis="true" >@Summary.Description</Text>
+        </div>
+    </ChildContent>
+</Card>
+
+@code {
+
+    [Parameter]
+    public VideoSummary Summary{ get; set; }
+}

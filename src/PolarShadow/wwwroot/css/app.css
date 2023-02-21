@@ -10,12 +10,21 @@ html, body {
     position:absolute;
 }
 
-.ps-header {
+.ant-layout-header {
     background: #ffff !important;
+    padding:0px !important;
+}
+
+.anticon{
+    font-size:30px !important;
 }
 
 .ant-tabs-nav::before {
     border-bottom: 0px solid #f0f0f0 !important;
+}
+
+.header-content {
+    padding: 0px 20px;
 }
 
 h1:focus {

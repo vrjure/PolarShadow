@@ -5,7 +5,7 @@
     <Content Class="main-layout-content">@Body</Content>
     <Footer class="main-layout-footer">
         <Menu Mode="@MenuMode.Horizontal" Class="main-layout-footer-menu">
-            <MenuItem>
+            <MenuItem RouterLink="/" RouterMatch="NavLinkMatch.All">
                 <Icon Class="main-layout-footer-menu-icon" Type="home" Theme="outline" />
             </MenuItem>
             <MenuItem>
@@ -40,10 +40,6 @@
         display:flex;
         flex-direction:row;
         justify-content:space-around;
-    }
-
-    .main-layout-footer-menu-icon {
-        font-size:30px !important;
     }
 </style>
 
