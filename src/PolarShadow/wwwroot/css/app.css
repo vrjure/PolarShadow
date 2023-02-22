@@ -10,13 +10,20 @@ html, body {
     position:absolute;
 }
 
+.ant-layout{
+    height:100%;
+    background-color:white !important;
+}
 .ant-layout-header {
-    background: #ffff !important;
-    padding:0px !important;
+    background: #f9f9f9 !important;
+    padding: 0px !important;
+}
+.ant-layout-footer {
+    background-color:#f9f9f9 !important;
 }
 
-.anticon{
-    font-size:30px !important;
+.anticon {
+    font-size: 30px !important;
 }
 
 .ant-tabs-nav::before {

@@ -1,0 +1,37 @@
+﻿
+<Input Placeholder="@Placeholder" Size="@InputSize.Small"
+       @bind-Value="SearchText"
+       BindOnInput="true"
+       WrapperStyle="border-radius:15px"
+       OnPressEnter="SearchHandler">
+        <Prefix>
+            <Icon Type="search" Theme="outline" />
+        </Prefix>
+        <Suffix>
+                @if (hasContent)
+                {
+                <Icon Type="close" Theme="outline" OnClick="Clear" />
+                }
+                else
+                {
+                <Icon Type="right" Theme="outline" OnClick="SearchHandler" />
+                }
+        </Suffix>
+</Input>
+@code {
+
+    [Parameter]
+    public string Placeholder{ get; set; }
+    [Parameter]
+    public string SearchText{ get; set; }
+
+    [Parameter]
+    public EventCallback SearchHandler { get; set; }
+
+    private bool hasContent => !string.IsNullOrEmpty(SearchText);
+
+    private void Clear()
+    {
+        SearchText = string.Empty;
+    }
+}

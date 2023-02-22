@@ -1,0 +1,94 @@
+﻿@page "/source"
+@layout MainLayout
+@inject IPolarShadowBuilder _builder
+@inject IMessageService _msg
+
+<Layout>
+    <Header>
+        <GridRow Gutter="16" Align="center" Class="header-content">
+            <GridCol Flex=@("auto")>
+                <SearchInput Placeholder="搜索" SearchHandler="Search" />
+            </GridCol>
+            <GridCol Flex=@("none")>
+                <Dropdown Trigger="@(new Trigger[]{ Trigger.Click} )">
+                    <Overlay>
+                        <Menu OnMenuItemClicked="ItemClick" AutoCloseDropdown="true">
+                            <MenuItem Id="import">导入</MenuItem>
+                        </Menu>
+                    </Overlay>
+                    <ChildContent>
+                        <Icon Type="more" Theme="outline" />
+                    </ChildContent>
+                </Dropdown>
+            </GridCol>
+        </GridRow>
+    </Header>
+    <Content>
+        <AntList TItem="SiteOption" DataSource="_source">
+            <ListItem Class="list-item">
+                <span>@(context.Name)</span>
+                <Icon Type="right" Theme="outline" />
+
+            </ListItem>
+        </AntList>
+    </Content>
+</Layout>
+
+<style>
+    .list-item {
+        padding:5px 20px !important;
+        margin:10px 20px;
+        border-radius:15px;
+        border: 1px solid #f0f0f0 !important
+    }
+</style>
+
+@code {
+    private ICollection<SiteOption> _source;
+
+    protected override void OnInitialized()
+    {
+        _source = _builder.Option.Sites;
+    }
+
+    private void Search()
+    {
+
+    }
+
+    private async Task ItemClick(MenuItem item)
+    {
+        if (item.Id == "import")
+        {
+            await Import();
+        }
+    }
+
+    private async Task Import()
+    {
+        try
+        {
+            var result = await FilePicker.Default.PickAsync(new PickOptions
+                {
+                    FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+                 {
+                    { DevicePlatform.Android, new[] { "application/json" } }, // MIME type
+                    { DevicePlatform.WinUI, new[] { ".json", ".json" } }, // file extension
+                 })
+                });
+
+            using var stream = await result.OpenReadAsync();
+            var config = JsonSerializer.Deserialize<PolarShadowOption>(stream, JsonOption.DefaultSerializer);
+            _builder.Option.AnalysisSources = config.AnalysisSources;
+            _builder.Option.Sites = config.Sites;
+            _builder.Option.IsChanged = true;
+            await _builder.SaveToFileAsync();
+
+            _source = config.Sites;
+        }
+        catch (Exception ex)
+        {
+            await _msg.Error(ex.Message);
+        }
+    }
+}

@@ -10,25 +10,7 @@
                 <Icon Type="left" Theme="outline" OnClick="Back"/>
             </GridCol>
             <GridCol Flex=@("auto")>
-                <Input Placeholder="视频搜索" Size="@InputSize.Small" 
-                @bind-Value="@_serchName" 
-                BindOnInput="true" 
-                WrapperStyle="border-radius:15px" 
-                OnPressEnter="Search">
-                    <Prefix>
-                        <Icon Type="search" Theme="outline" />
-                    </Prefix>
-                    <Suffix>
-                        @if (hasContent)
-                        {
-                            <Icon Type="close" Theme="outline" OnClick="Clear" />
-                        }
-                        else
-                        {
-                            <Icon Type="right" Theme="outline" OnClick="Search" />
-                        }
-                    </Suffix>
-                </Input>
+                <SearchInput Placeholder="视频搜索" SearchHandler="Search"/>
             </GridCol>
             <GridCol Flex=@("none")>
                 <Icon Type="more" Theme="outline" />
@@ -36,7 +18,7 @@
         </GridRow>
     </Header>
     <Content>
-        <AntList TItem="VideoSummary" DataSource="@_source" Grid="grid">
+        <AntList TItem="VideoSummary" DataSource="_source" Grid="grid">
             <ListItem>
                 <VideoCard Summary="@(context)"/>
             </ListItem>
@@ -44,8 +26,6 @@
     </Content>
 </Layout>
 @code {
-    private string _serchName;
-    private bool hasContent { get => !string.IsNullOrEmpty(_serchName); }
 
     private ICollection<VideoSummary> _source;
 
@@ -70,8 +50,4 @@
 
     }
 
-    private void Clear()
-    {
-        _serchName = string.Empty;
-    }
 }
