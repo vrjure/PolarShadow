@@ -7,7 +7,7 @@
     <Header>
         <GridRow Gutter="16" Align="center" Class="header-content">
             <GridCol Flex=@("auto")>
-                <SearchInput Placeholder="搜索" SearchHandler="Search" />
+                <SearchInput Placeholder="搜索" SearchHandler="Search"/>
             </GridCol>
             <GridCol Flex=@("none")>
                 <Dropdown Trigger="@(new Trigger[]{ Trigger.Click} )">
@@ -51,9 +51,16 @@
         _source = _builder.Option.Sites;
     }
 
-    private void Search()
+    private void Search(string searchText)
     {
-
+        if (string.IsNullOrEmpty(searchText))
+        {
+            _source = _builder.Option.Sites;
+        }
+        else
+        {
+            _source = _builder.Option.Sites.Where(f => f.Name.Contains(searchText) || f.Domain.Contains(searchText)).ToList();
+        }
     }
 
     private async Task ItemClick(MenuItem item)

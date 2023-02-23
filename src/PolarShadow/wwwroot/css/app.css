@@ -18,6 +18,22 @@ html, body {
     background: #f9f9f9 !important;
     padding: 0px !important;
 }
+.scroll-content {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px;
+}
+    .scroll-content::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    .scroll-content::-webkit-scrollbar-corner {
+        background-color: transparent;
+    }
+    .scroll-content::-webkit-scrollbar-thumb {
+        border-radius: 3px;
+        background-color: #a8a8a8a8
+    }
 .ant-layout-footer {
     background-color:#f9f9f9 !important;
 }

@@ -8,11 +8,21 @@
             <Text Strong>@Summary.Name</Text>
         </div>
         <div>
-            <Text Ellipsis="true" >@Summary.Description</Text>
+            <Paragraph Class="text-auto-hidden" Ellipsis="true">@Summary.Description</Paragraph>
         </div>
     </ChildContent>
 </Card>
 
+<style>
+    .text-auto-hidden{
+        display: -webkit-box;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+</style>
 @code {
 
     [Parameter]

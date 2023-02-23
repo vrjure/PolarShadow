@@ -1,9 +1,9 @@
 ﻿
 <Input Placeholder="@Placeholder" Size="@InputSize.Small"
-       @bind-Value="SearchText"
+       @bind-Value="_searchText"
        BindOnInput="true"
        WrapperStyle="border-radius:15px"
-       OnPressEnter="SearchHandler">
+       OnPressEnter="Search">
         <Prefix>
             <Icon Type="search" Theme="outline" />
         </Prefix>
@@ -14,24 +14,31 @@
                 }
                 else
                 {
-                <Icon Type="right" Theme="outline" OnClick="SearchHandler" />
+                <Icon Type="right" Theme="outline"/>
                 }
         </Suffix>
 </Input>
 @code {
 
+    private string _searchText{ get; set; }
     [Parameter]
     public string Placeholder{ get; set; }
-    [Parameter]
-    public string SearchText{ get; set; }
 
     [Parameter]
-    public EventCallback SearchHandler { get; set; }
+    public EventCallback<string> SearchHandler { get; set; }
 
-    private bool hasContent => !string.IsNullOrEmpty(SearchText);
+    private bool hasContent => !string.IsNullOrEmpty(_searchText);
+
+    private async Task Search()
+    {
+        if (SearchHandler.HasDelegate)
+        {
+            await SearchHandler.InvokeAsync(this._searchText);
+        }
+    }
 
     private void Clear()
     {
-        SearchText = string.Empty;
+        _searchText = string.Empty;
     }
 }

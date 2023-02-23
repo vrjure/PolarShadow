@@ -10,21 +10,27 @@ namespace PolarShadow.Core
     internal class SearcHandlerDefault : ISearcHandler
     {
         private readonly IPolarShadowSite[] _searcheSites;
-        private readonly SearchVideoFilter _filter;
+        private readonly PageFilter _page;
+        private readonly string _searchKey;
 
-        private int _searchIndex = -1;
+        private int _searchIndex = 0;
         private PageResult<VideoSummary> _resultCache;
 
         public SearcHandlerDefault(string searchKey, int pageSize, params IPolarShadowSite[] searcheSites)
         {
             _searcheSites = searcheSites;
-            _filter = new SearchVideoFilter(1, pageSize, searchKey);
+            _searchKey = searchKey;
+            _page = new PageFilter
+            {
+                Page = 1,
+                PageSize = pageSize
+            };
         }
 
         public void Reset()
         {
-            _searchIndex = -1;
-            _filter.Page = 1;
+            _searchIndex = 0;
+            _page.Page = 1;
             _resultCache = null;
         }
 
@@ -35,13 +41,9 @@ namespace PolarShadow.Core
                 return null;
             }
 
-            if (_resultCache == null || _resultCache.Data?.Count == 0)
+            if (_resultCache != null && _resultCache.Data != null && _resultCache.Data.Count != 0)
             {
-                _searchIndex++;
-            }
-            else
-            {
-                _filter.Page++;
+                _page.Page++;
             }
 
             if (_searchIndex >= _searcheSites.Length)
@@ -54,17 +56,17 @@ namespace PolarShadow.Core
             try
             {
                 site.TryGetAbility(out ISearchAble search);
-                _resultCache = await site.ExecuteAsync(search, _filter, cancellation);
+                _resultCache = await site.ExecuteAsync(search, new SearchVideoFilter(_page, _searchKey), cancellation);
             }
             catch
             {
                 _resultCache = null;
-                return null;
             }
 
-            if (_resultCache == null || _resultCache.Data?.Count == 0)
+            if (_resultCache == null || _resultCache.Data == null || _resultCache.Data.Count == 0)
             {
-                _filter.Page = 1;
+                _page.Page = 1;
+                _searchIndex++;
                 return await SearchNextAsync(cancellation);
             }
             return _resultCache?.Data;

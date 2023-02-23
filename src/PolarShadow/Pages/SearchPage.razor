@@ -10,29 +10,52 @@
                 <Icon Type="left" Theme="outline" OnClick="Back"/>
             </GridCol>
             <GridCol Flex=@("auto")>
-                <SearchInput Placeholder="视频搜索" SearchHandler="Search"/>
+                <SearchInput Placeholder="视频搜索" SearchHandler="SearchAsync"/>
             </GridCol>
             <GridCol Flex=@("none")>
                 <Icon Type="more" Theme="outline" />
             </GridCol>
         </GridRow>
     </Header>
-    <Content>
-        <AntList TItem="VideoSummary" DataSource="_source" Grid="grid">
-            <ListItem>
-                <VideoCard Summary="@(context)"/>
-            </ListItem>
-        </AntList>
+    <Content Class="scroll-content">
+        @if(_source != null && _source.Count != 0)
+        {
+            <AntList TItem="VideoSummary" DataSource="_source" Grid="grid">
+                <ChildContent>
+                    <ListItem>
+                        <VideoCard Summary="@(context)"/>
+                    </ListItem>
+                </ChildContent>
+                <LoadMore>
+                    @if (_source != null && _source.Count != 0 && _hasMore)
+                    {
+                        <Button Class="horizonal-cneter" Type="@ButtonType.Text" OnClick="LoadMoreAsync">加载更多</Button>
+                    }
+                </LoadMore>
+            </AntList>
+        }
+        else
+        {
+            <Empty/>
+        }
     </Content>
 </Layout>
+<style>
+    .horizonal-cneter{
+        left: 50%;
+        transform:translate(50%,0);
+    }
+</style>
 @code {
 
     private ICollection<VideoSummary> _source;
 
+    private ISearcHandler _searcHandler;
+    private bool _hasMore = true;
     private ListGridType grid = new ListGridType
     {
         Gutter = 16,
-        Xs = 1,
+        Xs = 2,
         Sm = 2,
         Md = 4,
         Lg = 4,
@@ -45,9 +68,46 @@
         _nav.NavigateTo("/");
     }
 
-    private void Search()
+    private async Task SearchAsync(string searchText)
     {
+        if (string.IsNullOrEmpty(searchText))
+        {
+            _hasMore = false;
+            _source?.Clear();
+            return;
+        }
+        _searcHandler = _polarShadow.BuildSearchHandler(new SearchVideoFilter
+        {
+            Page = 1,
+            PageSize = 10,
+            SearchKey = searchText
+        });
 
+        var result = await _searcHandler.SearchNextAsync();
+        if (result == null)
+        {
+            _hasMore = false;
+            _source?.Clear();
+            return;
+        }
+        _hasMore = true;
+        _source = new List<VideoSummary>(result);    
+    }
+
+    private async Task LoadMoreAsync()
+    {
+        if (_searcHandler == null)
+        {
+            return;
+        }
+
+        var result = await _searcHandler.SearchNextAsync();
+        if (result == null || result.Count == 0)
+        {
+            _hasMore = false;
+            return;
+        }
+        (_source as List<VideoSummary>).AddRange(result);
     }
 
 }

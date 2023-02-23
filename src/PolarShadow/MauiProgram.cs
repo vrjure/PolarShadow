@@ -59,13 +59,13 @@ namespace PolarShadow
             if (fs.Length == 0)
             {
                 var builder = new PolarShadowBuilder();
-                return builder;
+                return builder.AddDefaultAbilities();
             }
             else
             {
                 var option = JsonSerializer.Deserialize<PolarShadowOption>(fs, JsonOption.DefaultSerializer);
                 var builder = new PolarShadowBuilder(option);
-                return builder;
+                return builder.AddDefaultAbilities();
             }
 
         }
