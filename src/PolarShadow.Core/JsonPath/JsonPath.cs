@@ -9,16 +9,16 @@ namespace PolarShadow.Core
 {
     public static class JsonPath
     {
-
+        private readonly static JsonAnalysisHandler _handler = new JsonAnalysisHandler();
         public static T Analysis<T>(this JsonElement obj, IReadOnlyDictionary<string, AnalysisAction> actions)
         {
             
-            return new JsonAnalysisHandler(obj).Analysis<T>(obj, actions);
+            return _handler.Analysis<T>(obj, actions, obj);
         }
 
         public static void Analysis(this JsonElement obj, Stream stream, IReadOnlyDictionary<string, AnalysisAction> actions)
         {
-            new JsonAnalysisHandler(obj).Analysis(obj, stream, actions);
+            _handler.Analysis(obj, stream, actions, obj);
         }
 
         public static bool TryGetPropertyWithJsonPath(this JsonElement obj, ReadOnlySpan<byte> jsonPath, out JsonElement result)

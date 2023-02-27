@@ -13,7 +13,7 @@ namespace PolarShadow.Core
     {
         public override string Name => Abilities.SearchAble;
 
-        protected override void HandleInput(SearchVideoFilter input)
+        protected override void InputHandler(SearchVideoFilter input)
         {
             input.SearchKey = HttpUtility.UrlEncode(input.SearchKey);
         }

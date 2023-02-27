@@ -10,23 +10,23 @@ namespace PolarShadow.Core
 {
     public abstract class AnalysisActionHandler<TInput> : IAnalysisHandler<TInput>
     {
-        public void Analysis(TInput obj, Stream stream, IReadOnlyDictionary<string, AnalysisAction> actions)
+        public void Analysis(TInput obj, Stream stream, IReadOnlyDictionary<string, AnalysisAction> actions, JsonElement param)
         {
             using var jsonWriter = new Utf8JsonWriter(stream, JsonOption.DefaultWriteOption);
             jsonWriter.WriteStartObject();
             foreach (var action in actions)
             {
-                WriteJson(obj, jsonWriter, action);
+                WriteJson(obj, jsonWriter, action, param);
             }
             jsonWriter.WriteEndObject();
             jsonWriter.Flush();
         }
 
-        public T Analysis<T>(TInput obj, IReadOnlyDictionary<string, AnalysisAction> actions)
+        public T Analysis<T>(TInput obj, IReadOnlyDictionary<string, AnalysisAction> actions, JsonElement param)
         {
             using var ms = new MemoryStream();
 
-            Analysis(obj, ms, actions);
+            Analysis(obj, ms, actions, param);
 
             ms.Seek(0, SeekOrigin.Begin);
 
@@ -35,7 +35,7 @@ namespace PolarShadow.Core
 
         protected abstract bool VerifyInput(TInput obj);
 
-        private void WriteJson(TInput obj, Utf8JsonWriter jsonWriter, KeyValuePair<string, AnalysisAction> action)
+        private void WriteJson(TInput obj, Utf8JsonWriter jsonWriter, KeyValuePair<string, AnalysisAction> action, JsonElement param)
         {
             switch (action.Value.PathValueType)
             {
@@ -45,7 +45,7 @@ namespace PolarShadow.Core
                         break;
                     }
 
-                    var nodes = HandleArray(obj, action.Value);
+                    var nodes = HandleArray(obj, action.Value, param);
                     if (nodes == null)
                     {   
                         break;
@@ -53,7 +53,7 @@ namespace PolarShadow.Core
                     jsonWriter.WriteStartArray(action.Key);
                     foreach (var item in nodes)
                     {
-                        WriteJsonArray(item, jsonWriter, action.Value.AnalysisItem);
+                        WriteJsonArray(item, jsonWriter, action.Value.AnalysisItem, param);
                     }
                     jsonWriter.WriteEndArray();
                     break;
@@ -62,12 +62,12 @@ namespace PolarShadow.Core
                     {
                         break;
                     }
-                    var nextNode = HandleNext(obj, action.Value);
+                    var nextNode = HandleNext(obj, action.Value, param);
                     if (!VerifyInput(nextNode))
                     {
                         break;
                     }
-                    WriteJson(nextNode, jsonWriter, new KeyValuePair<string, AnalysisAction>(action.Key, action.Value.Next));
+                    WriteJson(nextNode, jsonWriter, new KeyValuePair<string, AnalysisAction>(action.Key, action.Value.Next), param);
                     break;
                 case PathValueType.Attribute:
                     if (string.IsNullOrEmpty(action.Value.AttributeName))
@@ -75,7 +75,7 @@ namespace PolarShadow.Core
                         break;
                     }
 
-                    var attr = HandleAttribute(obj, action.Value);  
+                    var attr = HandleAttribute(obj, action.Value, param);  
                     if (string.IsNullOrEmpty(attr))
                     {
                         break;
@@ -84,7 +84,7 @@ namespace PolarShadow.Core
                     HandleValue(jsonWriter, attr, action);
                     break;
                 case PathValueType.InnerText:
-                    var innerText = HandleInnerText(obj, action.Value);
+                    var innerText = HandleInnerText(obj, action.Value, param);
                     if (string.IsNullOrEmpty(innerText))
                     {
                         break;
@@ -95,7 +95,7 @@ namespace PolarShadow.Core
                     jsonWriter.WriteString(action.Key, action.Value.Path);
                     break;
                 case PathValueType.String:
-                    var str = HandleString(obj, action.Value);
+                    var str = HandleString(obj, action.Value, param);
                     if (string.IsNullOrEmpty(str))
                     {
                         break;
@@ -103,7 +103,7 @@ namespace PolarShadow.Core
                     HandleValue(jsonWriter, str, action);
                     break;
                 case PathValueType.Number:
-                    var num = HandleNumber(obj, action.Value);
+                    var num = HandleNumber(obj, action.Value, param);
                     if (num == default)
                     {
                         break;
@@ -111,7 +111,7 @@ namespace PolarShadow.Core
                     HandleValue(jsonWriter, num.Value, action);
                     break;
                 case PathValueType.Boolean:
-                    var val = HandleBoolean(obj, action.Value);
+                    var val = HandleBoolean(obj, action.Value, param);
                     if (!val.HasValue)
                     {
                         break;
@@ -119,7 +119,7 @@ namespace PolarShadow.Core
                     HandleValue(jsonWriter, val.Value, action);
                     break;
                 case PathValueType.Raw:
-                    var raw = HandleRaw(obj, action.Value);
+                    var raw = HandleRaw(obj, action.Value, param);
                     if (string.IsNullOrEmpty(raw))
                     {
                         break;
@@ -131,7 +131,7 @@ namespace PolarShadow.Core
             }
         }
 
-        private void WriteJsonArray(TInput obj, Utf8JsonWriter jsonWriter, IReadOnlyDictionary<string, AnalysisAction> actions)
+        private void WriteJsonArray(TInput obj, Utf8JsonWriter jsonWriter, IReadOnlyDictionary<string, AnalysisAction> actions, JsonElement param)
         {
             if (actions == null || actions.Count == 0)
             {
@@ -140,7 +140,7 @@ namespace PolarShadow.Core
             jsonWriter.WriteStartObject();
             foreach (var item in actions)
             {
-                WriteJson(obj, jsonWriter, item);
+                WriteJson(obj, jsonWriter, item, param);
             }
             jsonWriter.WriteEndObject();
 
@@ -182,42 +182,42 @@ namespace PolarShadow.Core
             jsonWriter.WriteBoolean(action.Key, value);
         }
 
-        protected virtual string HandleInnerText(TInput obj, AnalysisAction action)
+        protected virtual string HandleInnerText(TInput obj, AnalysisAction action, JsonElement param)
         {
             return string.Empty;
         }
 
-        protected virtual string HandleAttribute(TInput obj, AnalysisAction action)
+        protected virtual string HandleAttribute(TInput obj, AnalysisAction action, JsonElement param)
         {
             return string.Empty;
         }
 
-        protected virtual TInput HandleNext(TInput obj, AnalysisAction action)
+        protected virtual TInput HandleNext(TInput obj, AnalysisAction action, JsonElement param)
         {
             return default;
         }
 
-        protected virtual IEnumerable<TInput> HandleArray(TInput obj, AnalysisAction action)
+        protected virtual IEnumerable<TInput> HandleArray(TInput obj, AnalysisAction action, JsonElement param)
         {
             return default;
         }
 
-        protected virtual string HandleString(TInput obj, AnalysisAction action)
+        protected virtual string HandleString(TInput obj, AnalysisAction action, JsonElement param)
         {
             return string.Empty;
         }
 
-        protected virtual decimal? HandleNumber(TInput obj, AnalysisAction action)
+        protected virtual decimal? HandleNumber(TInput obj, AnalysisAction action, JsonElement param)
         {
             return default;
         }
 
-        protected virtual bool? HandleBoolean(TInput obj, AnalysisAction action)
+        protected virtual bool? HandleBoolean(TInput obj, AnalysisAction action, JsonElement param)
         {
             return default;
         }
 
-        protected virtual string HandleRaw(TInput obj, AnalysisAction action)
+        protected virtual string HandleRaw(TInput obj, AnalysisAction action, JsonElement param)
         {
             return string.Empty;
         }

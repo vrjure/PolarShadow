@@ -15,7 +15,7 @@ namespace PolarShadow.Core
 
         public async Task<TOutput> ExecuteAsync(AnalysisAbility ability, TInput input, CancellationToken cancellation = default)
         {
-            HandleInput(input);
+            InputHandler(input);
             var result = await ability.ExecuteAsync<TInput, TOutput>(input, cancellation);
             ValueHandler(input, result);
             return result;
@@ -28,7 +28,7 @@ namespace PolarShadow.Core
             return JsonSerializer.Serialize(result, JsonOption.DefaultSerializer);
         }
 
-        protected virtual void HandleInput(TInput input)
+        protected virtual void InputHandler(TInput input)
         {
 
         }

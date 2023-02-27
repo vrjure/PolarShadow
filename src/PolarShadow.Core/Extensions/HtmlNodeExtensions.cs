@@ -14,14 +14,15 @@ namespace PolarShadow.Core
 {
     public static class HtmlNodeExtensions
     {
+        private readonly static HtmlAnalysisHandler _handler = new HtmlAnalysisHandler();
         public static T Analysis<T>(this HtmlNode node, JsonElement param, IReadOnlyDictionary<string, AnalysisAction> actions)
         {
-            return new HtmlAnalysisHandler(param).Analysis<T>(node, actions);
+            return _handler.Analysis<T>(node, actions, param);
         }
 
         public static void Analysis(this HtmlNode node, JsonElement param, Stream stream, IReadOnlyDictionary<string, AnalysisAction> actions)
         {
-            new HtmlAnalysisHandler(param).Analysis(node, stream, actions);
+            _handler.Analysis(node, stream, actions, param);
         }
     }
 }
