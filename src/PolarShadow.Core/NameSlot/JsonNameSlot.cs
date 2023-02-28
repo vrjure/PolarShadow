@@ -94,6 +94,9 @@ namespace PolarShadow.Core
                             case JsonValueKind.False:
                                 sb.Append(leftProperty.GetBoolean());
                                 break;
+                            case JsonValueKind.Array:
+                                sb.Append(leftProperty.GetRawText());
+                                break;
                             case JsonValueKind.Null:
                                 break;
                             default:

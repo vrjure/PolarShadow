@@ -19,8 +19,15 @@
         </Suffix>
 </Input>
 @code {
-
-    private string _searchText{ get; set; }
+    private string _searchText
+    {
+        get => SearchText;
+        set => SearchTextChanged.InvokeAsync(value);
+    }
+    [Parameter]
+    public string SearchText{ get; set; }
+    [Parameter]
+    public EventCallback<string> SearchTextChanged{ get; set; }
     [Parameter]
     public string Placeholder{ get; set; }
 
@@ -31,14 +38,17 @@
 
     private async Task Search()
     {
-        if (SearchHandler.HasDelegate)
-        {
-            await SearchHandler.InvokeAsync(this._searchText);
-        }
+        await SearchHandler.InvokeAsync(this._searchText);
     }
 
     private void Clear()
     {
         _searchText = string.Empty;
+    }
+
+    private async Task TextChangedAsync(ChangeEventArgs e)
+    {
+        _searchText = e?.Value?.ToString();
+        await SearchTextChanged.InvokeAsync(_searchText);
     }
 }

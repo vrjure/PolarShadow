@@ -26,7 +26,7 @@ namespace PolarShadow.Core
         {
             var result = site.GetAbilities().FirstOrDefault(f => f is T);
             ability = (T)result;
-            return result == default;
+            return result != default;
         }
 
         public static IPolarShadowBuilder AddAbility<T>(this IPolarShadowBuilder builder) where T : IAnalysisAbility, new()

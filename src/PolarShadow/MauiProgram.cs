@@ -33,6 +33,7 @@ namespace PolarShadow
             builder.Logging.AddDebug();
 #endif
             builder.Services.AddAntDesign();
+            builder.Services.AddSingleton<IStateContext, StateContext>();
 
             builder.Services.AddSingleton(CreatePolarShadowBuilder());
             builder.Services.AddTransient(sp =>

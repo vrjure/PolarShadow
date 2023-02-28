@@ -1,14 +1,14 @@
 ﻿    
-<Card Bordered>
+<Card Bordered BodyStyle="padding:5px">
     <Cover>
         <img src="@Summary.ImageSrc" alt="img" />
     </Cover>
     <ChildContent>
-        <div>
-            <Text Strong>@Summary.Name</Text>
+        <div style="height:45px">
+            <Text Strong Class="text-auto-hidden">@Summary.Name</Text>
         </div>
         <div>
-            <Paragraph Class="text-auto-hidden" Ellipsis="true">@Summary.Description</Paragraph>
+            <Text Strong Style="float:right">@Summary.SiteName</Text>
         </div>
     </ChildContent>
 </Card>

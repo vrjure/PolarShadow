@@ -1,0 +1,105 @@
+﻿@page "/detail"
+@layout TopLevelLayout
+@inject IStateContext _context
+@inject IPolarShadow _polarShadow
+@inject NavigationManager _nav
+
+<Layout>
+    <Header>
+        <Icon Type="left" Theme="outline" OnClick="Back" />
+    </Header>
+    <Content Class="scroll-content">
+        @if (_detail != null)
+        {
+            <Space Style="width:100%" Direction="DirectionVHType.Vertical" Align="center">
+                <SpaceItem>
+                    <Card Bordered="false" BodyStyle="padding:0px">
+                        <Cover>
+                            <Image Width="200px" Src="@_detail.ImageSrc" />
+                        </Cover>
+                        <ChildContent>
+                            <div style="height:45px">
+                                <Text Strong Class="text-auto-hidden">@_detail.Name</Text>
+                            </div>
+                        </ChildContent>
+                        </Card>
+                </SpaceItem>
+            </Space>
+            <Space Direction="DirectionVHType.Vertical" Align="left">
+                <SpaceItem>
+                    <Title Level="4">简介</Title>
+                    <Paragraph>@_detail.Description</Paragraph>
+                </SpaceItem>
+                <SpaceItem>
+                    <Title Level="4">来源</Title>
+                    <Text>@_detail.SiteName</Text>
+                </SpaceItem>
+                <SpaceItem>
+                    <Title Level="4">支持</Title>
+                </SpaceItem>
+                <SpaceItem>
+                    <Title Level="4">剧集</Title>
+                    @if(_detail.Seasons != null && _detail.Seasons.Count > 0)
+                    {
+                        foreach (var item in _detail.Seasons)
+                        {    
+                            <strong>@item.Name</strong>
+                            <AntList Grid="grid" DataSource="@item.Episodes">
+                                <ListItem>
+                                    <Button Type="@ButtonType.Default" Shape="@ButtonShape.Round">@context.Name</Button>
+                                </ListItem>
+                            </AntList>
+                        }
+                    }
+                    
+                </SpaceItem>
+            </Space>
+        }
+        else
+        {
+            <span>nothing</span>
+        }
+    </Content>
+</Layout>
+
+<style>
+    .text-auto-hidden {
+        display: -webkit-box;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+@code {
+    public static string _summaryKey = "summary";
+    private VideoDetail _detail;
+
+    private ListGridType grid = new ListGridType()
+    {
+        Gutter = 16,
+        Xs = 1,
+        Sm = 2,
+        Md = 4,
+        Lg = 4,
+        Xl = 6,
+        Xxl = 8
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_context.TryGet(_summaryKey, out object val) && val is VideoSummary summary)
+        {
+            var site = _polarShadow.GetSite(summary.SiteName);
+            if (site.TryGetAbility(out IGetDetailAble getDetail))
+            {
+                _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);
+            }
+        }
+    }
+
+    private void Back()
+    {
+        _nav.NavigateTo("/search");
+    }
+}

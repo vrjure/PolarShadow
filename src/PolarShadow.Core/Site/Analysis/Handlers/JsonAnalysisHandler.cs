@@ -17,6 +17,10 @@ namespace PolarShadow.Core
             var path = action.Path.NameSlot(param);
             if (obj.TryGetPropertyWithJsonPath(path, out JsonElement element))
             {
+                if (element.ValueKind == JsonValueKind.Object)
+                {
+                    return new JsonElement[] { element };
+                }
                 return element.EnumerateArray();
             }
             return null;
