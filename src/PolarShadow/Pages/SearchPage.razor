@@ -19,7 +19,11 @@
         </GridRow>
     </Header>
     <Content Class="scroll-content">
-        @if(_source != null && _source.Count != 0)
+        @if (_isLoading)
+        {
+            <Spin Class="horizonal-cneter"/>
+        }
+        else if(_source != null && _source.Count != 0)
         {
             <AntList TItem="VideoSummary" DataSource="_source" Grid="grid">
                 <ChildContent>
@@ -28,7 +32,11 @@
                     </ListItem>
                 </ChildContent>
                 <LoadMore>
-                    @if (_source != null && _source.Count != 0 && _hasMore)
+                    @if (_isMoreLoading)
+                    {
+                        <Spin Class="horizonal-cneter"/>
+                    }
+                    else if (_source != null && _source.Count != 0 && _hasMore)
                     {
                         <Button Class="horizonal-cneter" Type="@ButtonType.Text" OnClick="LoadMoreAsync">加载更多</Button>
                     }
@@ -41,12 +49,7 @@
         }
     </Content>
 </Layout>
-<style>
-    .horizonal-cneter{
-        left: 50%;
-        transform:translate(-50%,0);
-    }
-</style>
+
 @code {
 
     private ICollection<VideoSummary> _source;
@@ -67,6 +70,9 @@
     public static string _lastResultKey = "last_search_result";
     public static string _lastSearchTextKey = "last_search_text";
 
+    private bool _isLoading = false;
+    private bool _isMoreLoading = false;
+
     protected override void OnInitialized()
     {
         if (_stateContext.TryGet(_lastSearchTextKey, out object searchText))
@@ -76,6 +82,7 @@
         if (_stateContext.TryGet(_lastResultKey, out object val))
         {
             _source = val as ICollection<VideoSummary>;
+            _hasMore = false;
         }
     }
 
@@ -101,15 +108,25 @@
             SearchKey = searchText
         });
 
-        var result = await _searcHandler.SearchNextAsync();
-        if (result == null)
+        _isLoading = true;
+
+        try
         {
-            _hasMore = false;
-            _source?.Clear();
-            return;
+            var result = await _searcHandler.SearchNextAsync();
+            if (result == null)
+            {
+                _hasMore = false;
+                _source?.Clear();
+                return;
+            }
+            _hasMore = true;
+            _source = new List<VideoSummary>(result);
         }
-        _hasMore = true;
-        _source = new List<VideoSummary>(result);    
+        finally
+        {
+            _isLoading = false;
+        }
+
     }
 
     private async Task LoadMoreAsync()
@@ -119,13 +136,22 @@
             return;
         }
 
-        var result = await _searcHandler.SearchNextAsync();
-        if (result == null || result.Count == 0)
+        _isMoreLoading = true;
+        try
         {
-            _hasMore = false;
-            return;
+            var result = await _searcHandler.SearchNextAsync();
+            if (result == null || result.Count == 0)
+            {
+                _hasMore = false;
+                return;
+            }
+            (_source as List<VideoSummary>).AddRange(result);
         }
-        (_source as List<VideoSummary>).AddRange(result);
+        finally
+        {
+            _isMoreLoading = false;
+        }
+
     }
 
     private void ItemClick(VideoSummary summary)

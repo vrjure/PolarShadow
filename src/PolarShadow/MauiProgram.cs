@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PolarShadow.Core;
-using PolarShadow.Data;
 using PolarShadow.Storage;
 using System.Text.Json;
 
@@ -18,9 +17,7 @@ namespace PolarShadow
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                }).ConfigureServices();
-
-            builder.Services.AddSingleton<WeatherForecastService>();
+                }).ConfigureServices();          
 
             return builder.Build().InitializeApp();
         }

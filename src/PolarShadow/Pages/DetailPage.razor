@@ -9,7 +9,11 @@
         <Icon Type="left" Theme="outline" OnClick="Back" />
     </Header>
     <Content Class="scroll-content">
-        @if (_detail != null)
+        @if (_isLoading)
+        {
+            <Spin Class="horizonal-cneter"/>
+        }
+        else if (_detail != null)
         {
             <Space Style="width:100%" Direction="DirectionVHType.Vertical" Align="center">
                 <SpaceItem>
@@ -41,15 +45,25 @@
                     <Title Level="4">剧集</Title>
                     @if(_detail.Seasons != null && _detail.Seasons.Count > 0)
                     {
-                        foreach (var item in _detail.Seasons)
-                        {    
-                            <strong>@item.Name</strong>
-                            <AntList Grid="grid" DataSource="@item.Episodes">
-                                <ListItem>
-                                    <Button Type="@ButtonType.Default" Shape="@ButtonShape.Round">@context.Name</Button>
-                                </ListItem>
-                            </AntList>
-                        }
+                        <Space Direction="DirectionVHType.Vertical">
+                            @foreach (var item in _detail.Seasons)
+                            {
+                                <SpaceItem>
+                                    <strong>@item.Name</strong>
+                                    <Space Size="@(("16", "16"))" Direction="DirectionVHType.Horizontal" Wrap>
+                                        @foreach (var item in item.Episodes)
+                                        {
+                                            <SpaceItem>
+                                                <Button Type="@ButtonType.Default" Shape="@ButtonShape.Round">@item.Name</Button>
+                                            </SpaceItem>
+                                        }
+
+                                    </Space>
+                                </SpaceItem>
+                                
+                            }
+                        </Space>
+                        
                     }
                     
                 </SpaceItem>
@@ -57,7 +71,7 @@
         }
         else
         {
-            <span>nothing</span>
+            <Empty/>
         }
     </Content>
 </Layout>
@@ -74,6 +88,7 @@
 @code {
     public static string _summaryKey = "summary";
     private VideoDetail _detail;
+    private bool _isLoading = true;
 
     private ListGridType grid = new ListGridType()
     {
@@ -93,13 +108,24 @@
             var site = _polarShadow.GetSite(summary.SiteName);
             if (site.TryGetAbility(out IGetDetailAble getDetail))
             {
-                _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);
+                try
+                {
+                    _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);
+
+                }
+                finally
+                {
+                    _isLoading = false;
+
+                }
             }
         }
+
     }
 
     private void Back()
     {
+        _context.Remove(_summaryKey);
         _nav.NavigateTo("/search");
     }
 }

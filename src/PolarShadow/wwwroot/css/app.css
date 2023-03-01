@@ -50,6 +50,12 @@ html, body {
     padding: 0px 20px;
 }
 
+.horizonal-cneter {
+    position:absolute !important;
+    left: 50%;
+    transform: translate(-50%,0);
+}
+
 h1:focus {
     outline: none;
 }
