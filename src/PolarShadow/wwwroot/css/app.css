@@ -10,10 +10,33 @@ html, body {
     position:absolute;
 }
 
+.three-stage-layout {
+    height: 100%;
+}
+
+.three-stage-layout-content {
+    flex: 1 0 auto;
+    z-index: 0;
+}
+
+.three-stage-layout-footer {
+    padding: 0px !important;
+    z-index: 1;
+    background-color: #f9f9f9 !important;
+}
+
+.flex-menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background-color: transparent !important;
+}
+
 .ant-layout{
     height:100%;
     background-color:white !important;
 }
+
 .ant-layout-header {
     background: #f9f9f9 !important;
     padding: 0px !important;

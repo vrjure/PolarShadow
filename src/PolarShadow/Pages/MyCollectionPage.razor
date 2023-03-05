@@ -1,7 +1,8 @@
 ﻿@page "/"
 @layout MainLayout
-@inject IMyCollectionService _myCollectionService;
-@inject NavigationManager _nav;
+@inject IMyCollectionService _myCollectionService
+@inject INavigationService _nav
+@inject IStateContext _context
 
 <Layout>
     <Header>
@@ -27,7 +28,7 @@
     </Header>
     <Content>
         <AntList Grid="grid" TItem="VideoSummary" DataSource="@_source">
-            <ListItem>
+            <ListItem OnClick="()=>ItemClick(context)">
                 <VideoCard Summary="@(context)"/>
             </ListItem>
         </AntList>
@@ -38,7 +39,7 @@
 
 </style>
 
-    @code {
+@code {
     private Dictionary<string, string> _tabs = new Dictionary<string, string>
     {
         {"all", "全部"},
@@ -68,7 +69,15 @@
 
     private void SearchClick(MouseEventArgs arg)
     {
-        _nav.NavigateTo("/search");
+        _nav.NavigateTo("/search", true);
+    }
+
+    private void ItemClick(VideoSummary summary)
+    {
+        _nav.NavigateTo("/detail", new Dictionary<string, object>()
+        {
+            {DetailPage._summaryKey, summary}
+        }, true);
     }
 
 }

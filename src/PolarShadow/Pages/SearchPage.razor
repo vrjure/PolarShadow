@@ -1,6 +1,6 @@
 ﻿@page "/search"
 @layout TopLevelLayout
-@inject NavigationManager _nav
+@inject INavigationService _nav
 @inject IPolarShadow _polarShadow
 @inject IStateContext _stateContext;
 
@@ -8,7 +8,10 @@
     <Header>
         <GridRow Gutter="16" Align="center" Class="header-content">
             <GridCol Flex=@("none")>
-                <Icon Type="left" Theme="outline" OnClick="Back"/>
+                @if (_nav.CanBack())
+                {
+                    <Icon Type="left" Theme="outline" OnClick="Back" />
+                }
             </GridCol>
             <GridCol Flex=@("auto")>
                 <SearchInput Placeholder="视频搜索" SearchHandler="SearchAsync" @bind-SearchText="@_searchText"/>
@@ -88,9 +91,7 @@
 
     private void Back(MouseEventArgs arg)
     {
-        _stateContext.Remove(_lastResultKey);
-        _stateContext.Remove(_lastSearchTextKey);
-        _nav.NavigateTo("/");
+        _nav.Back();
     }
 
     private async Task SearchAsync(string searchText)
@@ -156,11 +157,14 @@
 
     private void ItemClick(VideoSummary summary)
     {
-        _stateContext.Set(_lastSearchTextKey, _searchText);
-        _stateContext.Set(_lastResultKey, _source);
-        _stateContext.Set(DetailPage._summaryKey, summary);
-
-        _nav.NavigateTo("/detail");
+        _nav.NavigateTo("/detail", new Dictionary<string, object>
+        {
+            { DetailPage._summaryKey, summary}
+        }, new Dictionary<string, object>
+        {
+            { _lastSearchTextKey, _searchText},
+            { _lastResultKey, _source }
+        }, true);
     }
 
 }

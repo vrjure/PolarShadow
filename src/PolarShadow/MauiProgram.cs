@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PolarShadow.Core;
+using PolarShadow;
 using PolarShadow.Storage;
 using System.Text.Json;
 
@@ -30,7 +31,8 @@ namespace PolarShadow
             builder.Logging.AddDebug();
 #endif
             builder.Services.AddAntDesign();
-            builder.Services.AddSingleton<IStateContext, StateContext>();
+            builder.Services.AddScoped<IStateContext, StateContext>();
+            builder.Services.AddScoped<INavigationService, NavigationService>();
 
             builder.Services.AddSingleton(CreatePolarShadowBuilder());
             builder.Services.AddTransient(sp =>

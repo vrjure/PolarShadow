@@ -2,13 +2,17 @@
 @layout TopLevelLayout
 @inject IStateContext _context
 @inject IPolarShadow _polarShadow
-@inject NavigationManager _nav
+@inject INavigationService _nav
+@inject IMyCollectionService _myCollection
 
 <Layout>
     <Header>
-        <Icon Type="left" Theme="outline" OnClick="Back" />
+        @if (_nav.CanBack())
+        {
+            <Icon Type="left" Theme="outline" OnClick="Back" />
+        }
     </Header>
-    <Content Class="scroll-content">
+    <Content Class="scroll-content three-stage-layout-content">
         @if (_isLoading)
         {
             <Spin Class="horizonal-cneter"/>
@@ -49,7 +53,7 @@
                             @foreach (var item in _detail.Seasons)
                             {
                                 <SpaceItem>
-                                    <strong>@item.Name</strong>
+                                    <strong style="display:block">@item.Name</strong>
                                     <Space Size="@(("16", "16"))" Direction="DirectionVHType.Horizontal" Wrap>
                                         @foreach (var item in item.Episodes)
                                         {
@@ -74,6 +78,17 @@
             <Empty/>
         }
     </Content>
+    <Footer Class="three-stage-layout-footer" Style="height:60px">
+        @if (!_isCollected.HasValue) { }
+        else if (_isCollected == true)
+        {
+            <Button Style="width:100%;height:100%" OnClick="UncollectClick">取消收藏</Button>
+        }
+        else
+        {
+            <Button Style="width:100%;height:100%" OnClick="CollectClick">收藏</Button>
+        }
+    </Footer>
 </Layout>
 
 <style>
@@ -89,6 +104,8 @@
     public static string _summaryKey = "summary";
     private VideoDetail _detail;
     private bool _isLoading = true;
+
+    private bool? _isCollected = false;
 
     private ListGridType grid = new ListGridType()
     {
@@ -111,7 +128,7 @@
                 try
                 {
                     _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);
-
+                    _isCollected = await _myCollection.HasAsync(_detail);
                 }
                 finally
                 {
@@ -125,7 +142,18 @@
 
     private void Back()
     {
-        _context.Remove(_summaryKey);
-        _nav.NavigateTo("/search");
+        _nav.Back();
+    }
+
+    private async Task CollectClick(MouseEventArgs arg)
+    {
+        await _myCollection.AddToMyCollectionAsync(_detail);
+        _isCollected = true;
+    }
+
+    private async Task UncollectClick(MouseEventArgs arg)
+    {
+        await _myCollection.RemoveFromMyCollectionAsync(_detail.Name);
+        _isCollected = false;
     }
 }

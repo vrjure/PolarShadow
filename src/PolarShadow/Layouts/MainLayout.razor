@@ -1,10 +1,10 @@
 ﻿@inherits LayoutComponentBase
 @layout TopLevelLayout
 
-<Layout Class="main-layout">
-    <Content Class="main-layout-content">@Body</Content>
-    <Footer class="main-layout-footer">
-        <Menu Mode="@MenuMode.Horizontal" Class="main-layout-footer-menu">
+<Layout Class="three-stage-layout">
+    <Content Class="three-stage-layout-content">@Body</Content>
+    <Footer class="three-stage-layout-footer">
+        <Menu Mode="@MenuMode.Horizontal" Class="flex-menu">
             <MenuItem RouterLink="/" RouterMatch="NavLinkMatch.All">
                 <Icon Type="home" Theme="outline" />
             </MenuItem>
@@ -20,28 +20,4 @@
         </Menu>
     </Footer>
 </Layout>
-
-<style>
-    .main-layout {
-        height:100%;
-    }
-
-    .main-layout-content {
-        flex: 1 0 auto;
-        z-index:0;
-    }
-
-    .main-layout-footer{
-        padding:0px !important;
-        z-index:1;
-        background-color: #f9f9f9 !important;
-    }
-
-    .main-layout-footer-menu {
-        display:flex;
-        flex-direction:row;
-        justify-content:space-around;
-        background-color:transparent !important;
-    }
-</style>
 
