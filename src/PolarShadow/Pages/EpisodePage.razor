@@ -1,0 +1,63 @@
+﻿@page "/episode"
+@layout TopLevelLayout
+@inject IStateContext _context
+@inject INavigationService _nav
+
+<Layout>
+    <Header>
+        <Space Size="@("16")" Direction="DirectionVHType.Horizontal" Align="baseline">
+            <SpaceItem>
+                @if (_nav.CanBack())
+                {
+                    <Icon Type="left" Theme="outline" OnClick="()=>_nav.Back()" Class="cursor-point-style" />
+                }
+            </SpaceItem>
+            <SpaceItem>
+                <Title Level="4">@_episode.Name</Title>
+            </SpaceItem>
+        </Space>
+    </Header>
+    <Content Class="scroll-content">
+        <Space Size="@("16")" Direction="DirectionVHType.Vertical" Style="width:100%">
+            @if (_episode != null && _episode.Sources != null)
+            {
+                foreach (var item in _episode.Sources)
+                {
+                    <SpaceItem>
+                        @switch (item.SrcType)
+                        {
+                            case SrcType.HTML:
+                                <Button Type="@ButtonType.Default" Shape="@ButtonShape.Round" OnClick="()=>EpisodeLinkClick(item)" Style="width:100%">Html</Button>
+                                break;
+                        }
+                    </SpaceItem>
+                }
+            }
+        </Space>
+    </Content>
+</Layout>
+
+@code {
+    public static readonly string EpisodeKey = "episode";
+    private VideoEpisode _episode;
+
+    protected override void OnInitialized()
+    {
+        if (_context.TryGet(EpisodeKey, out object val) && val is VideoEpisode episode)
+        {
+            _episode = episode;
+        }
+    }
+
+    private void EpisodeLinkClick(VideoSource source)
+    {
+        switch (source.SrcType)
+        {
+            case SrcType.HTML:
+                _nav.NavigateTo(source.Src, false, true);
+                break;
+            default:
+                break;
+        }
+    }
+}

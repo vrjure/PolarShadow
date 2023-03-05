@@ -18,7 +18,7 @@
                 </Tabs>
             </GridCol>
             <GridCol Flex=@("none")>
-                <Icon Type="search" Theme="outline" OnClick="@SearchClick" />
+                <Icon Type="search" Theme="outline" OnClick="@SearchClick" Class="cursor-point-style"/>
             </GridCol>
             <GridCol Flex=@("none") Offset="-1">
                 <Icon Type="more" Theme="outline" />
@@ -26,7 +26,7 @@
         </GridRow>
 
     </Header>
-    <Content>
+    <Content Class="scroll-content">
         <AntList Grid="grid" TItem="VideoSummary" DataSource="@_source">
             <ListItem OnClick="()=>ItemClick(context)">
                 <VideoCard Summary="@(context)"/>
@@ -42,14 +42,13 @@
 @code {
     private Dictionary<string, string> _tabs = new Dictionary<string, string>
     {
-        {"all", "全部"},
-        {"group1", "分组1"}
+        {"all", "全部"}
     };
 
     private ListGridType grid = new ListGridType
     {
         Gutter = 16,
-        Xs = 1,
+        Xs = 2,
         Sm = 2,
         Md = 4,
         Lg = 4,

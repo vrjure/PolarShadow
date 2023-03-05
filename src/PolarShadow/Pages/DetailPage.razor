@@ -9,7 +9,7 @@
     <Header>
         @if (_nav.CanBack())
         {
-            <Icon Type="left" Theme="outline" OnClick="Back" />
+            <Icon Type="left" Theme="outline" OnClick="Back" Class="cursor-point-style" />
         }
     </Header>
     <Content Class="scroll-content three-stage-layout-content">
@@ -43,9 +43,6 @@
                     <Text>@_detail.SiteName</Text>
                 </SpaceItem>
                 <SpaceItem>
-                    <Title Level="4">支持</Title>
-                </SpaceItem>
-                <SpaceItem>
                     <Title Level="4">剧集</Title>
                     @if(_detail.Seasons != null && _detail.Seasons.Count > 0)
                     {
@@ -58,7 +55,7 @@
                                         @foreach (var item in item.Episodes)
                                         {
                                             <SpaceItem>
-                                                <Button Type="@ButtonType.Default" Shape="@ButtonShape.Round">@item.Name</Button>
+                                                <Button Type="@ButtonType.Default" Shape="@ButtonShape.Round" OnClick="()=>EpisodeClick(item)">@item.Name</Button>
                                             </SpaceItem>
                                         }
 
@@ -102,6 +99,7 @@
 </style>
 @code {
     public static string _summaryKey = "summary";
+    public static string _stateDetailKey = "state_detail";
     private VideoDetail _detail;
     private bool _isLoading = true;
 
@@ -120,24 +118,30 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (_context.TryGet(_summaryKey, out object val) && val is VideoSummary summary)
+        try
         {
-            var site = _polarShadow.GetSite(summary.SiteName);
-            if (site.TryGetAbility(out IGetDetailAble getDetail))
+            if (_context.TryGet(_stateDetailKey, out object stateVal) && stateVal is VideoDetail detail)
             {
-                try
+                _detail = detail;
+            }
+            else if (_context.TryGet(_summaryKey, out object val) && val is VideoSummary summary)
+            {
+                var site = _polarShadow.GetSite(summary.SiteName);
+                if (site.TryGetAbility(out IGetDetailAble getDetail))
                 {
-                    _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);
-                    _isCollected = await _myCollection.HasAsync(_detail);
-                }
-                finally
-                {
-                    _isLoading = false;
-
+                    _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);              
                 }
             }
-        }
 
+            if (_detail != null)
+            {
+                _isCollected = await _myCollection.HasAsync(_detail);
+            }
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 
     private void Back()
@@ -155,5 +159,16 @@
     {
         await _myCollection.RemoveFromMyCollectionAsync(_detail.Name);
         _isCollected = false;
+    }
+
+    private void EpisodeClick(VideoEpisode episode)
+    {
+        _nav.NavigateTo("/episode", new Dictionary<string, object>
+        {
+            { EpisodePage.EpisodeKey, episode }
+        }, new Dictionary<string, object>
+        {
+            { _stateDetailKey, _detail }
+        }, true);
     }
 }
