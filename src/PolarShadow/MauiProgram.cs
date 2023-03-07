@@ -4,6 +4,7 @@ using PolarShadow.Core;
 using PolarShadow;
 using PolarShadow.Storage;
 using System.Text.Json;
+using PolarShadow.Core.Aria2;
 
 namespace PolarShadow
 {

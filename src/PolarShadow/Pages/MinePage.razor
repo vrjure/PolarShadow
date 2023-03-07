@@ -1,0 +1,35 @@
+﻿@page "/mine"
+@layout MainLayout
+
+<Layout>
+    <Content Class="scroll-content">
+        <Space Direction="DirectionVHType.Vertical" Style="width:100%">
+            <SpaceItem>
+                <Title Level="4">下载</Title>
+                <Divider />
+                <GridRow Justify="start">
+                    <GridCol Flex="@("100px")">
+                        <Text>RPC</Text>
+                    </GridCol>
+                    <GridCol Flex="@("auto")">
+                        <Input @bind-Value="_rpc"></Input>
+                    </GridCol>
+                </GridRow>
+                <GridRow Justify="start">
+                    <GridCol Flex="@("100px")">
+                        <Text>下载地址</Text>
+                    </GridCol>
+                    <GridCol Flex="@("auto")">
+                        <Input @bind-Value="_downloadPath"></Input>
+                    </GridCol>
+                </GridRow>
+            </SpaceItem>
+        </Space>
+    </Content>
+</Layout>
+
+
+@code {
+    private string _rpc;
+    private string _downloadPath;
+}

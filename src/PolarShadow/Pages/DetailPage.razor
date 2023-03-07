@@ -165,7 +165,8 @@
     {
         _nav.NavigateTo("/episode", new Dictionary<string, object>
         {
-            { EpisodePage.EpisodeKey, episode }
+            { EpisodePage.EpisodeKey, episode },
+            { EpisodePage.VideoNameKey, _detail.Name }
         }, new Dictionary<string, object>
         {
             { _stateDetailKey, _detail }

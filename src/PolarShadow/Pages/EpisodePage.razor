@@ -2,6 +2,7 @@
 @layout TopLevelLayout
 @inject IStateContext _context
 @inject INavigationService _nav
+@inject IMessageService _message;
 
 <Layout>
     <Header>
@@ -24,12 +25,7 @@
                 foreach (var item in _episode.Sources)
                 {
                     <SpaceItem>
-                        @switch (item.SrcType)
-                        {
-                            case SrcType.HTML:
-                                <Button Type="@ButtonType.Default" Shape="@ButtonShape.Round" OnClick="()=>EpisodeLinkClick(item)" Style="width:100%">Html</Button>
-                                break;
-                        }
+                        <Button Type="@ButtonType.Default" Shape="@ButtonShape.Round" OnClick="()=>EpisodeLinkClick(item)" Style="width:100%">@item.SrcType.ToString()</Button>
                     </SpaceItem>
                 }
             }
@@ -39,7 +35,9 @@
 
 @code {
     public static readonly string EpisodeKey = "episode";
+    public static readonly string VideoNameKey = "videoNameKey";
     private VideoEpisode _episode;
+    private string _videoName;
 
     protected override void OnInitialized()
     {
@@ -47,14 +45,41 @@
         {
             _episode = episode;
         }
+
+        if (_context.TryGet(VideoNameKey, out object nameVal))
+        {
+            _videoName = nameVal.ToString();
+        }
     }
 
-    private void EpisodeLinkClick(VideoSource source)
+    private async Task EpisodeLinkClick(VideoSource source)
     {
         switch (source.SrcType)
         {
             case SrcType.HTML:
                 _nav.NavigateTo(source.Src, false, true);
+                break;
+            case SrcType.Magnet:
+                using(var _aria2 = new Aria2Http(new Uri("http://localhost:16800/jsonrpc")))
+                {
+                    var request = _aria2.CreateAddUri(new string[] { source.Src }, new Aria2InputFileOption
+                    {
+                        Dir = @$"D:\Videos\{_videoName}"
+                    });
+                    var result = await _aria2.PostAsync(request);
+                    if (result.IsOk())
+                    {
+                        await _message.Info("发送成功");
+                    }
+                    else if (result.IsError())
+                    {
+                        await _message.Error(result.Error.Message);
+                    }
+                    else
+                    {
+                        await _message.Warning(result.Result);
+                    }
+                }            
                 break;
             default:
                 break;
