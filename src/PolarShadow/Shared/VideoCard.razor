@@ -1,7 +1,8 @@
-﻿    
+﻿@inject IImageCache _imageCache
+
 <Card Bordered BodyStyle="padding:5px" Style="cursor:pointer;max-width:220px">
     <Cover>
-        <img src="@Summary.ImageSrc" alt="img" style="max-height:290px" />
+        <img src="@_imageSrc" alt="img" style="max-height:290px" @onload="ImgLoad" />
     </Cover>
     <ChildContent>
         <div style="height:45px">
@@ -23,8 +24,22 @@
     }
 
 </style>
-@code {
+    @code {
+    private string _imageSrc;
 
     [Parameter]
     public VideoSummary Summary{ get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Summary != null)
+        {
+            _imageSrc = await _imageCache.GetCacheUrlAsync(Summary.ImageSrc);
+        }
+    }
+
+    private async Task ImgLoad(ProgressEventArgs arg)
+    {
+        await _imageCache.RevokeUrlAsync(_imageSrc);
+    }
 }

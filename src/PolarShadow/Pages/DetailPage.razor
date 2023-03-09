@@ -4,6 +4,7 @@
 @inject IPolarShadow _polarShadow
 @inject INavigationService _nav
 @inject IMyCollectionService _myCollection
+@inject IImageCache _imageCache;
 
 <Layout>
     <Header>
@@ -23,7 +24,7 @@
                 <SpaceItem>
                     <Card Bordered="false" BodyStyle="padding:0px">
                         <Cover>
-                            <Image Width="200px" Src="@_detail.ImageSrc" />
+                            <img src="@_imageUrl" alt="img" style="width:200px" @onload="ImageOnLoad" />
                         </Cover>
                         <ChildContent>
                             <div style="height:45px">
@@ -101,6 +102,7 @@
     public static string _summaryKey = "summary";
     public static string _stateDetailKey = "state_detail";
     private VideoDetail _detail;
+    private string _imageUrl;
     private bool _isLoading = true;
 
     private bool? _isCollected = false;
@@ -136,12 +138,18 @@
             if (_detail != null)
             {
                 _isCollected = await _myCollection.HasAsync(_detail);
+                _imageUrl = await _imageCache.GetCacheUrlAsync(_detail.ImageSrc);
             }
         }
         finally
         {
             _isLoading = false;
         }
+    }
+
+    private async Task ImageOnLoad(ProgressEventArgs arg)
+    {
+        await _imageCache.RevokeUrlAsync(_imageUrl);
     }
 
     private void Back()

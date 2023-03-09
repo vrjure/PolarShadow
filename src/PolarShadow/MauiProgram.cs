@@ -5,6 +5,7 @@ using PolarShadow;
 using PolarShadow.Storage;
 using System.Text.Json;
 using PolarShadow.Core.Aria2;
+using PolarShadow.Cache;
 
 namespace PolarShadow
 {
@@ -32,8 +33,10 @@ namespace PolarShadow
             builder.Logging.AddDebug();
 #endif
             builder.Services.AddAntDesign();
+            builder.Services.AddHttpClient();
             builder.Services.AddScoped<IStateContext, StateContext>();
             builder.Services.AddScoped<INavigationService, NavigationService>();
+            builder.Services.AddScoped<IImageCache, FileImageCache>();
 
             builder.Services.AddSingleton(CreatePolarShadowBuilder());
             builder.Services.AddTransient(sp =>

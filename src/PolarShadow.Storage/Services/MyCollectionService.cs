@@ -15,7 +15,7 @@ namespace PolarShadow.Storage
         {
             _dbFactory = dbFactory;
         }
-        public async Task AddToMyCollectionAsync(VideoSummary summary)
+        public async Task AddToMyCollectionAsync(VideoDetail summary)
         {
             using (var context = _dbFactory.CreateDbContext())
             {
