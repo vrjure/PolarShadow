@@ -27,7 +27,7 @@
 
     </Header>
     <Content Class="scroll-content">
-        <AntList Grid="grid" TItem="VideoSummary" DataSource="@_source">
+        <AntList Grid="grid" TItem="VideoDetail" DataSource="@_source">
             <ListItem OnClick="()=>ItemClick(context)">
                 <VideoCard Summary="@(context)"/>
             </ListItem>
@@ -56,13 +56,13 @@
         Xxl = 8
     };
 
-    private ICollection<VideoSummary> _source;
+    private ICollection<VideoDetail> _source;
 
     private async void TabChange(string tab)
     {
         if (tab == "all")
         {
-            _source = await _myCollectionService.GetMyCollectionAsync(1, 10);
+            _source = await _myCollectionService.GetMyCollectionAsync(1, 100);
         }
     }
 
@@ -71,11 +71,11 @@
         _nav.NavigateTo("/search", true);
     }
 
-    private void ItemClick(VideoSummary summary)
+    private void ItemClick(VideoDetail detail)
     {
         _nav.NavigateTo("/detail", new Dictionary<string, object>()
         {
-            {DetailPage._summaryKey, summary}
+            {DetailPage._stateDetailKey, detail}
         }, true);
     }
 

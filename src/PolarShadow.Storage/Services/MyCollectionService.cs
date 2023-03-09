@@ -23,17 +23,18 @@ namespace PolarShadow.Storage
                 {
                     return;
                 }
-                context.MyCollection.Add(summary);
+                context.MyCollection.Add(summary.ToEntity());
                 await context.SaveChangesAsync();
             }
         }
 
-        public async Task<ICollection<VideoSummary>> GetMyCollectionAsync(int page, int pageSize)
+        public async Task<ICollection<VideoDetail>> GetMyCollectionAsync(int page, int pageSize)
         {
             var skip = (page - 1) * pageSize;
             using (var context = _dbFactory.CreateDbContext())
             {
-                return await context.MyCollection.Skip(skip).Take(pageSize).AsNoTracking().ToListAsync();
+                var result = await context.MyCollection.Skip(skip).Take(pageSize).AsNoTracking().ToListAsync();
+                return result.Select(f=>f.ToModel()).ToList();
             }
         }
 
@@ -49,7 +50,7 @@ namespace PolarShadow.Storage
         {
             using (var context = _dbFactory.CreateDbContext())
             {
-                context.MyCollection.Remove(new VideoSummary { Name = name});
+                context.MyCollection.Remove(new VideoDetailEntity { Name = name});
                 await context.SaveChangesAsync();
             }
         }

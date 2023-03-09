@@ -15,14 +15,14 @@ namespace PolarShadow.Storage
             
         }
 
-        public DbSet<VideoSummary> MyCollection { get; set; }
+        public DbSet<VideoDetailEntity> MyCollection { get; set; }
         public DbSet<WatchRecord> Record { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<VideoSummary>().HasKey(f => f.Name);
+            modelBuilder.Entity<VideoDetailEntity>().HasKey(f => f.Name);
 
             modelBuilder.Entity<WatchRecord>().HasKey(f => f.Id);
             modelBuilder.Entity<WatchRecord>().HasIndex(f => f.Name);

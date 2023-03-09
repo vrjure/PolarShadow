@@ -8,8 +8,8 @@ namespace PolarShadow.Storage
 {
     public interface IMyCollectionService
     {
-        Task<ICollection<VideoSummary>> GetMyCollectionAsync(int page, int pageSize);
-        Task AddToMyCollectionAsync(VideoSummary summary);
+        Task<ICollection<VideoDetail>> GetMyCollectionAsync(int page, int pageSize);
+        Task AddToMyCollectionAsync(VideoDetail summary);
         Task RemoveFromMyCollectionAsync(string name);
         Task<bool> HasAsync(VideoSummary summary);
     }
