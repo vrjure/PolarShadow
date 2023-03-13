@@ -29,17 +29,29 @@
 
     [Parameter]
     public VideoSummary Summary{ get; set; }
+    [Parameter]
+    public bool UseCache { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         if (Summary != null)
         {
-            _imageSrc = await _imageCache.GetCacheUrlAsync(Summary.ImageSrc);
+            if (UseCache)
+            {
+                _imageSrc = await _imageCache.GetCacheUrlAsync(Summary.ImageSrc);
+            }
+            else
+            {
+                _imageSrc = Summary.ImageSrc;
+            }
         }
     }
 
     private async Task ImgLoad(ProgressEventArgs arg)
     {
-        await _imageCache.RevokeUrlAsync(_imageSrc);
+        if (UseCache)
+        {
+            await _imageCache.RevokeUrlAsync(_imageSrc);
+        }
     }
 }

@@ -10,14 +10,14 @@
             <GridCol Flex=@("none")>
                 @if (_nav.CanBack())
                 {
-                    <Icon Type="left" Theme="outline" OnClick="Back" Class="cursor-point-style" />
+                    <Icon Type="left" Theme="outline" OnClick="Back" Class="cursor-point-style menu-icon" />
                 }
             </GridCol>
             <GridCol Flex=@("auto")>
                 <SearchInput Placeholder="视频搜索" SearchHandler="SearchAsync" @bind-SearchText="@_searchText"/>
             </GridCol>
             <GridCol Flex=@("none")>
-                <Icon Type="more" Theme="outline" />
+                <Icon Type="more" Theme="outline" Class="menu-icon" />
             </GridCol>
         </GridRow>
     </Header>

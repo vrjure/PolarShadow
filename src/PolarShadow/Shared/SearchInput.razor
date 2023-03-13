@@ -5,16 +5,16 @@
        WrapperStyle="border-radius:15px"
        OnPressEnter="Search">
         <Prefix>
-            <Icon Type="search" Theme="outline" />
+            <Icon Type="search" Theme="outline" Class="menu-icon" />
         </Prefix>
         <Suffix>
                 @if (hasContent)
                 {
-                <Icon Type="close" Theme="outline" OnClick="Clear" Class="cursor-point-style" />
+                <Icon Type="close" Theme="outline" OnClick="Clear" Class="cursor-point-style menu-icon" />
                 }
                 else
                 {
-                <Icon Type="right" Theme="outline" Class="cursor-point-style"/>
+                <Icon Type="right" Theme="outline" Class="cursor-point-style menu-icon"/>
                 }
         </Suffix>
 </Input>

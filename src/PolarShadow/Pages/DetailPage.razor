@@ -10,7 +10,7 @@
     <Header>
         @if (_nav.CanBack())
         {
-            <Icon Type="left" Theme="outline" OnClick="Back" Class="cursor-point-style" />
+            <Icon Type="left" Theme="outline" OnClick="Back" Class="cursor-point-style menu-icon" />
         }
     </Header>
     <Content Class="scroll-content three-stage-layout-content">
@@ -75,6 +75,9 @@
         {
             <Empty/>
         }
+        <div Class="fixed-widgets">
+            <Button Icon="@IconType.Outline.Sync" Type="@ButtonType.Primary" Shape="@ButtonShape.Circle" OnClick="Refresh"></Button>
+        </div>
     </Content>
     <Footer Class="three-stage-layout-footer" Style="height:60px">
         @if (!_isCollected.HasValue) { }
@@ -179,5 +182,32 @@
         {
             { _stateDetailKey, _detail }
         }, true);
+    }
+
+    private async Task Refresh()
+    {
+        try
+        {
+            _isLoading = true;
+            var site = _polarShadow.GetSite(_detail.SiteName);
+            if (site.TryGetAbility(out IGetDetailAble getDetail))
+            {
+                _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, _detail);
+            }
+
+            if (_detail != null)
+            {
+                _imageUrl = await _imageCache.GetCacheUrlAsync(_detail.ImageSrc);
+            }
+            if (_isCollected.HasValue && _isCollected.Value)
+            {
+                await _myCollection.AddToMyCollectionAsync(_detail);
+            }
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+
     }
 }

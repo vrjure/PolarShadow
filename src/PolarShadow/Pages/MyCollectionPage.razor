@@ -18,10 +18,10 @@
                 </Tabs>
             </GridCol>
             <GridCol Flex=@("none")>
-                <Icon Type="search" Theme="outline" OnClick="@SearchClick" Class="cursor-point-style"/>
+                <Icon Type="search" Theme="outline" OnClick="@SearchClick" Class="cursor-point-style menu-icon"/>
             </GridCol>
             <GridCol Flex=@("none") Offset="-1">
-                <Icon Type="more" Theme="outline" />
+                <Icon Type="more" Theme="outline" Class="menu-icon" />
             </GridCol>
         </GridRow>
 
@@ -29,7 +29,7 @@
     <Content Class="scroll-content">
         <AntList Grid="grid" TItem="VideoDetail" DataSource="@_source">
             <ListItem OnClick="()=>ItemClick(context)">
-                <VideoCard Summary="@(context)"/>
+                <VideoCard Summary="@(context)" UseCache="true"/>
             </ListItem>
         </AntList>
     </Content>
