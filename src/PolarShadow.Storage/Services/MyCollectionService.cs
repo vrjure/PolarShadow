@@ -21,9 +21,12 @@ namespace PolarShadow.Storage
             {
                 if (await context.MyCollection.AnyAsync(f=>f.Name == summary.Name))
                 {
-                    return;
+                    context.MyCollection.Update(summary.ToEntity());
                 }
-                context.MyCollection.Add(summary.ToEntity());
+                else
+                {
+                    context.MyCollection.Add(summary.ToEntity());
+                }
                 await context.SaveChangesAsync();
             }
         }

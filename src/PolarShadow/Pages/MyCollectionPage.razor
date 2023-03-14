@@ -3,6 +3,7 @@
 @inject IMyCollectionService _myCollectionService
 @inject INavigationService _nav
 @inject IStateContext _context
+@inject IPolarShadow _polarShadow
 
 <Layout>
     <Header>
@@ -29,7 +30,7 @@
     <Content Class="scroll-content">
         <AntList Grid="grid" TItem="VideoDetail" DataSource="@_source">
             <ListItem OnClick="()=>ItemClick(context)">
-                <VideoCard Summary="@(context)" UseCache="true"/>
+                <VideoCard Summary="@(context)" UseCache="true" />
             </ListItem>
         </AntList>
     </Content>

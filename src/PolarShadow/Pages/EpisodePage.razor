@@ -30,6 +30,10 @@
                 }
             }
         </Space>
+
+        <Modal>
+
+        </Modal>
     </Content>
 </Layout>
 
@@ -54,35 +58,53 @@
 
     private async Task EpisodeLinkClick(VideoSource source)
     {
-        switch (source.SrcType)
+        try
         {
-            case SrcType.HTML:
-                _nav.NavigateTo(source.Src, false, true);
-                break;
-            case SrcType.Magnet:
-                using(var _aria2 = new Aria2Http(new Uri("http://localhost:16800/jsonrpc")))
-                {
-                    var request = _aria2.CreateAddUri(new string[] { source.Src }, new Aria2InputFileOption
+            switch (source.SrcType)
+            {
+                case SrcType.HTML:
+                    _nav.NavigateTo(source.Src, false, true);
+                    break;
+                case SrcType.Magnet:
+                    if (string.IsNullOrEmpty(PreferenceSettings.Rpc) || string.IsNullOrEmpty(PreferenceSettings.DownloadPath))
                     {
-                        Dir = @$"D:\Videos\{_videoName}"
-                    });
-                    var result = await _aria2.PostAsync(request);
-                    if (result.IsOk())
-                    {
-                        await _message.Info("发送成功");
+                        _nav.NavigateTo("/mine", default, new Dictionary<string, object>
+                        {
+                            { VideoNameKey, _videoName},
+                            { EpisodeKey, _episode}
+                        }, true);
+                        await _message.Info("请先设置Rpc地址和下载路径");
+                        return;
                     }
-                    else if (result.IsError())
+                    using (var _aria2 = new Aria2Http(new Uri($"http://{PreferenceSettings.Rpc}/jsonrpc")))
                     {
-                        await _message.Error(result.Error.Message);
+                        var request = _aria2.CreateAddUri(new string[] { source.Src }, new Aria2InputFileOption
+                            {
+                                Dir = @$"{PreferenceSettings.DownloadPath}\{_videoName}"
+                            });
+                        var result = await _aria2.PostAsync(request);
+                        if (result.IsOk())
+                        {
+                            await _message.Info("发送成功");
+                        }
+                        else if (result.IsError())
+                        {
+                            await _message.Error(result.Error.Message);
+                        }
+                        else
+                        {
+                            await _message.Warning(result.Result);
+                        }
                     }
-                    else
-                    {
-                        await _message.Warning(result.Result);
-                    }
-                }            
-                break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
+            }
         }
+        catch (Exception ex)
+        {
+            await _message.Error(ex.Message);
+        }
+        
     }
 }
