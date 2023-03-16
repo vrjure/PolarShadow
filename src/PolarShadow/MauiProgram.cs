@@ -11,7 +11,6 @@ namespace PolarShadow
 {
     public static class MauiProgram
     {
-        private static string _optionFileName = "source.json";
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -58,19 +57,8 @@ namespace PolarShadow
 
         private static IPolarShadowBuilder CreatePolarShadowBuilder()
         {
-            var sourcePath = Path.Combine(FileSystem.AppDataDirectory, _optionFileName);
-            using var fs = new FileStream(sourcePath, FileMode.OpenOrCreate, FileAccess.Read);
-            if (fs.Length == 0)
-            {
-                var builder = new PolarShadowBuilder();
-                return builder.AddDefaultAbilities();
-            }
-            else
-            {
-                var option = JsonSerializer.Deserialize<PolarShadowOption>(fs, JsonOption.DefaultSerializer);
-                var builder = new PolarShadowBuilder(option);
-                return builder.AddDefaultAbilities();
-            }
+            var builder = new PolarShadowBuilder();
+            return builder.ReadFromFile().AddDefaultAbilities();
 
         }
 

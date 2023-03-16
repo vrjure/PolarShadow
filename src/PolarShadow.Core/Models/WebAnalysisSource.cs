@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    public sealed class WebAnalysisSource
+    public sealed class WebAnalysisSource : IKeyName
     {
         public string Name { get; set; }
         public string Title { get; set; }

@@ -2,13 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace PolarShadow.Core
 {
     public class PolarShadowOption
     {
         public bool IsChanged { get; set; }
-        public ICollection<WebAnalysisSource> AnalysisSources { get; set; } = new List<WebAnalysisSource>();
-        public ICollection<SiteOption> Sites { get; set; } = new List<SiteOption>();
+        [JsonInclude]
+        public ICollection<WebAnalysisSource> AnalysisSources { get; private set; } = new KeyNameCollection<WebAnalysisSource>();
+        [JsonInclude]
+        public ICollection<SiteOption> Sites { get; private set; } = new KeyNameCollection<SiteOption>();
     }
 }

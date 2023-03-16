@@ -22,21 +22,20 @@ namespace PolarShadow
             await fs.FlushAsync();
         }
 
-        public static void ReadFromFile(this IPolarShadowBuilder builder)
+        public static IPolarShadowBuilder ReadFromFile(this IPolarShadowBuilder builder)
         {
             var sourcePath = Path.Combine(FileSystem.AppDataDirectory, _optionFileName);
             using var fs = new FileStream(sourcePath, FileMode.OpenOrCreate, FileAccess.Read);
             if (fs.Length == 0)
             {
-                return;
+                return builder;
             }
             else
             {
-                var option = JsonSerializer.Deserialize<PolarShadowOption>(fs, JsonOption.DefaultSerializer);
-                builder.Option.AnalysisSources = option.AnalysisSources;
-                builder.Option.Sites = option.Sites;
-                builder.Option.IsChanged = true;
+                builder.ImportFrom(fs);
             }
+
+            return builder;
         }
     }
 }

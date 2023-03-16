@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    public class SiteOption
+    public class SiteOption : IKeyName
     {
         public string Name { get; set; }
         public string Domain { get; set; }
