@@ -3,6 +3,7 @@
 @inject IStateContext _context
 @inject INavigationService _nav
 @inject IMessageService _message;
+@inject IPolarShadow _polarShadow;
 
 <Layout>
     <Header>
@@ -40,19 +41,26 @@
 @code {
     public static readonly string EpisodeKey = "episode";
     public static readonly string VideoNameKey = "videoNameKey";
+    public static readonly string SiteNameKey = "siteNameKey";
     private VideoEpisode _episode;
     private string _videoName;
+    private string _siteName;
 
     protected override void OnInitialized()
     {
-        if (_context.TryGet(EpisodeKey, out object val) && val is VideoEpisode episode)
+        if (_context.TryGet(EpisodeKey, out VideoEpisode episode))
         {
             _episode = episode;
         }
 
-        if (_context.TryGet(VideoNameKey, out object nameVal))
+        if (_context.TryGet(VideoNameKey, out string nameVal))
         {
             _videoName = nameVal.ToString();
+        }
+
+        if (_context.TryGet(SiteNameKey, out string siteName))
+        {
+            _siteName = siteName;
         }
     }
 
@@ -95,6 +103,13 @@
                         {
                             await _message.Warning(result.Result);
                         }
+                    }
+                    break;
+                case SrcType.HTMLAnalysis:
+                    if(_polarShadow.TryGetSite(_siteName, out IPolarShadowSite site) && site.TryGetAbility(out IWebAnalysisAble webAnalysis))
+                    {
+                        var url = await site.ExecuteAsync(webAnalysis, source.Src);
+                        _nav.NavigateTo(url, false, true);
                     }
                     break;
                 default:

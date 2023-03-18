@@ -78,13 +78,13 @@
 
     protected override void OnInitialized()
     {
-        if (_stateContext.TryGet(_lastSearchTextKey, out object searchText))
+        if (_stateContext.TryGet(_lastSearchTextKey, out string searchText))
         {
             _searchText = searchText?.ToString();
         }
-        if (_stateContext.TryGet(_lastResultKey, out object val))
+        if (_stateContext.TryGet(_lastResultKey, out ICollection<VideoSummary> val))
         {
-            _source = val as ICollection<VideoSummary>;
+            _source = val;
             _hasMore = false;
         }
     }

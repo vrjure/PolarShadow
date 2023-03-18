@@ -40,28 +40,40 @@ namespace PolarShadow.Tool
                 return;
             }
 
-            _importPath = fileDialog.FileName;
-            using var fs = new FileStream(fileDialog.FileName, FileMode.Open, FileAccess.Read);
-            var config = JsonSerializer.Deserialize<PolarShadowOption>(fs, JsonOption.DefaultSerializer);
-            _builder.Option.AnalysisSources = config.AnalysisSources;
-            _builder.Option.Sites = config.Sites;
-            _builder.Option.IsChanged = true;
+            try
+            {
+                _importPath = fileDialog.FileName;
+                using var fs = new FileStream(fileDialog.FileName, FileMode.Open, FileAccess.Read);
+                _builder.ImportFrom(fs);
+                _builder.Option.IsChanged = true;
 
-            UI.Navigate<MainPage>("content");
+                UI.Navigate<MainPage>("content");
 
-            RefreshEnable = true;
+                RefreshEnable = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
             
         }
 
         [RelayCommand]
         public void Refresh()
         {
-            using var fs = new FileStream(_importPath, FileMode.Open, FileAccess.Read);
-            var config = JsonSerializer.Deserialize<PolarShadowOption>(fs, JsonOption.DefaultSerializer);
-            _builder.Option.AnalysisSources = config.AnalysisSources;
-            _builder.Option.Sites = config.Sites;
-            _builder.Option.IsChanged = true;
-            UI.Refresh("content");
+            try
+            {
+                using var fs = new FileStream(_importPath, FileMode.Open, FileAccess.Read);
+                _builder.ImportFrom(fs);
+                _builder.Option.IsChanged = true;
+                UI.Refresh("content");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
     }
 }

@@ -10,6 +10,12 @@ namespace PolarShadow.Core
 {
     public static class PolarShadowExtensions
     {
+        public static bool TryGetSite(this IPolarShadow polarShadow, string siteName, out IPolarShadowSite site)
+        {
+            site = polarShadow.GetSite(siteName);
+            return site != null;
+        }
+
         public static bool HasAbility(this IPolarShadowSite site, string abilityName)
         {
             return site.GetAbilities().Any(f=>f.Name.Equals(abilityName));
