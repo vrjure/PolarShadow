@@ -10,5 +10,6 @@ namespace PolarShadow.Cache
     {
         Task<string> GetCacheUrlAsync(string imageSrc);
         Task RevokeUrlAsync(string url);
+        void RemoveCache(string imageSrc);
     }
 }

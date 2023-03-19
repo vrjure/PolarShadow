@@ -57,18 +57,6 @@ namespace PolarShadow.Core
                     }
                     jsonWriter.WriteEndArray();
                     break;
-                case PathValueType.Next:
-                    if (action.Value.Next == null)
-                    {
-                        break;
-                    }
-                    var nextNode = HandleNext(obj, action.Value, param);
-                    if (!VerifyInput(nextNode))
-                    {
-                        break;
-                    }
-                    WriteJson(nextNode, jsonWriter, new KeyValuePair<string, AnalysisAction>(action.Key, action.Value.Next), param);
-                    break;
                 case PathValueType.Attribute:
                     if (string.IsNullOrEmpty(action.Value.AttributeName))
                     {
@@ -81,7 +69,7 @@ namespace PolarShadow.Core
                         break;
                     }
 
-                    HandleValue(jsonWriter, attr, action);
+                    HandleValue(jsonWriter, attr, action, param);
                     break;
                 case PathValueType.InnerText:
                     var innerText = HandleInnerText(obj, action.Value, param);
@@ -89,7 +77,7 @@ namespace PolarShadow.Core
                     {
                         break;
                     }
-                    HandleValue(jsonWriter, innerText, action);
+                    HandleValue(jsonWriter, innerText, action, param);
                     break;
                 case PathValueType.None:
                     jsonWriter.WriteString(action.Key, action.Value.Path);
@@ -100,7 +88,7 @@ namespace PolarShadow.Core
                     {
                         break;
                     }
-                    HandleValue(jsonWriter, str, action);
+                    HandleValue(jsonWriter, str, action, param);
                     break;
                 case PathValueType.Number:
                     var num = HandleNumber(obj, action.Value, param);
@@ -146,7 +134,7 @@ namespace PolarShadow.Core
 
         }
 
-        private void HandleValue(Utf8JsonWriter jsonWriter, string input, KeyValuePair<string, AnalysisAction> action)
+        private void HandleValue(Utf8JsonWriter jsonWriter, string input, KeyValuePair<string, AnalysisAction> action, JsonElement param)
         {
             if (!string.IsNullOrEmpty(action.Value.Regex))
             {
@@ -160,6 +148,7 @@ namespace PolarShadow.Core
             if (!string.IsNullOrEmpty(action.Value.Format))
             {
                 input = string.Format(action.Value.Format, input);
+                input = input.NameSlot(param);
             }
 
             jsonWriter.WriteString(action.Key, input);

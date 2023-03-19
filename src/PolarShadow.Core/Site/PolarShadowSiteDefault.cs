@@ -23,7 +23,7 @@ namespace PolarShadow.Core
         {
             if (_siteOption.Abilities != null && _siteOption.Abilities.TryGetValue(ability.Name, out AnalysisAbility analysis))
             {
-                return await ability.ExecuteAsync(analysis, input, default);
+                return await ability.ExecuteAsync(analysis, input, cancellation);
             }
             return default;
         }

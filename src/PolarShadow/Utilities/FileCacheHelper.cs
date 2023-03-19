@@ -14,6 +14,14 @@ namespace PolarShadow
             return File.Exists(Path.Combine(_imageCacheDir, fileName));
         }
 
+        public static void RemoveImageCache(this string fileName)
+        {
+            if (IsImageCached(fileName))
+            {
+                var path = Path.Combine(_imageCacheDir, fileName);
+                File.Delete(path);
+            }
+        }
 
         public static async Task CacheImageAsync(this string fileName, Stream stream)
         {

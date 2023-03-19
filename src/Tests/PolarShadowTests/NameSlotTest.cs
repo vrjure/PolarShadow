@@ -31,7 +31,7 @@ namespace PolarShadowTests
                 }
             };
 
-            var ns = "expensive:{expensive}, bicycle:{$..store.bicycle.price$}, ns:{$..store.bicycle.price$ - 1}";
+            var ns = "expensive:{expensive}, bicycle:{$..store.bicycle.price$}, ns:{$..store.bicycle.price$ - 1}{0}";
             Console.WriteLine(ns.NameSlot(JsonDocument.Parse(JsonSerializer.Serialize(sample, JsonOption.DefaultSerializer)).RootElement));
         }
     }

@@ -125,20 +125,30 @@
     {
         try
         {
+            bool isFromCache = false;
             if (_context.TryGet(_stateDetailKey, out VideoDetail detail))
             {
                 _detail = detail;
+                isFromCache = true;
             }
             else if (_context.TryGet(_summaryKey, out VideoSummary summary) 
             && _polarShadow.TryGetSiteWithAbility(summary.SiteName, out IPolarShadowSite site, out IGetDetailAble getDetail))
             {
-                _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);              
+                isFromCache = false;
+                _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);
             }
 
             if (_detail != null)
             {
                 _isCollected = await _myCollection.HasAsync(_detail);
-                _imageUrl = await _imageCache.GetCacheUrlAsync(_detail.ImageSrc);
+                if (isFromCache)
+                {
+                    _imageUrl = await _imageCache.GetCacheUrlAsync(_detail.ImageSrc);
+                }
+                else
+                {
+                    _imageUrl = _detail.ImageSrc;
+                }
             }
         }
         finally
@@ -167,6 +177,7 @@
     {
         await _myCollection.RemoveFromMyCollectionAsync(_detail.Name);
         _isCollected = false;
+        _imageCache.RemoveCache(_detail.ImageSrc);
     }
 
     private void EpisodeClick(VideoEpisode episode)
@@ -193,11 +204,16 @@
 
             if (_detail != null)
             {
-                _imageUrl = await _imageCache.GetCacheUrlAsync(_detail.ImageSrc);
-            }
-            if (_isCollected.HasValue && _isCollected.Value)
-            {
-                await _myCollection.AddToMyCollectionAsync(_detail);
+                if (_isCollected.HasValue && _isCollected.Value)
+                {
+                    _imageUrl = await _imageCache.GetCacheUrlAsync(_detail.ImageSrc);
+                    await _myCollection.AddToMyCollectionAsync(_detail);
+
+                }
+                else
+                {
+                    _imageUrl = _detail.ImageSrc;
+                }
             }
         }
         finally

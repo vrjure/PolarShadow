@@ -14,7 +14,7 @@
                 }
             </GridCol>
             <GridCol Flex=@("auto")>
-                <SearchInput Placeholder="视频搜索" SearchHandler="SearchAsync" @bind-SearchText="@_searchText"/>
+                <SearchInput Placeholder="视频搜索" SearchHandler="SearchAsync" @bind-SearchText="@_searchText" CancelHandler="SearchCancel"/>
             </GridCol>
             <GridCol Flex=@("none")>
                 <Icon Type="more" Theme="outline" Class="menu-icon" />
@@ -75,6 +75,7 @@
 
     private bool _isLoading = false;
     private bool _isMoreLoading = false;
+    private CancellationTokenSource _cts;
 
     protected override void OnInitialized()
     {
@@ -94,6 +95,20 @@
         _nav.Back();
     }
 
+    private void CheckCancellationToken()
+    {
+        if (_cts == null)
+        {
+            _cts = new CancellationTokenSource();
+        }
+        else if (_cts.IsCancellationRequested)
+        {
+            _cts.Dispose();
+            _cts = null;
+            _cts = new CancellationTokenSource();
+        }
+    }
+
     private async Task SearchAsync(string searchText)
     {
         if (string.IsNullOrEmpty(searchText))
@@ -102,6 +117,8 @@
             _source?.Clear();
             return;
         }
+
+
         _searcHandler = _polarShadow.BuildSearchHandler(new SearchVideoFilter
         {
             Page = 1,
@@ -113,7 +130,8 @@
 
         try
         {
-            var result = await _searcHandler.SearchNextAsync();
+            CheckCancellationToken();
+            var result = await _searcHandler.SearchNextAsync(_cts.Token);
             if (result == null)
             {
                 _hasMore = false;
@@ -140,7 +158,8 @@
         _isMoreLoading = true;
         try
         {
-            var result = await _searcHandler.SearchNextAsync();
+            CheckCancellationToken();
+            var result = await _searcHandler.SearchNextAsync(_cts.Token);
             if (result == null || result.Count == 0)
             {
                 _hasMore = false;
@@ -151,6 +170,15 @@
         finally
         {
             _isMoreLoading = false;
+        }
+
+    }
+
+    private void SearchCancel()
+    {
+        if(_cts != null)
+        {
+            _cts.Cancel();
         }
 
     }

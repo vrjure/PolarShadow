@@ -35,6 +35,17 @@ namespace PolarShadow.Cache
             return await _js.InvokeAsync<string>("createObjectUrl", dotnetStream);
         }
 
+        public void RemoveCache(string imageSrc)
+        {
+            if (string.IsNullOrEmpty(imageSrc))
+            {
+                return;
+            }
+
+            var hash = imageSrc.Hash();
+            hash.RemoveImageCache();
+        }
+
         public async Task RevokeUrlAsync(string url)
         {
             await _js.InvokeVoidAsync("revokeObjectUrl", url);

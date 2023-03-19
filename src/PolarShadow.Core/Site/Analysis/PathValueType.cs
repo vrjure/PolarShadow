@@ -11,7 +11,6 @@ namespace PolarShadow.Core
         Number,
         Boolean,
         Array,
-        Next,
         Attribute,
         InnerText,
         Raw
