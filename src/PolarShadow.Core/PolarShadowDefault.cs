@@ -9,34 +9,33 @@ namespace PolarShadow.Core
     internal class PolarShadowDefault : IPolarShadow
     {
         private readonly Dictionary<string, IPolarShadowSite> _sites = new Dictionary<string, IPolarShadowSite>();
-        private readonly Dictionary<string, IAnalysisAbility> _supportAbilitis = new Dictionary<string, IAnalysisAbility>();
+        private readonly Dictionary<string, IAnalysisAbility> _abilities = new Dictionary<string, IAnalysisAbility>();
         private readonly Func<SearchVideoFilter, ISearcHandler> _searchHandlerFactory;
 
-        internal PolarShadowDefault(IEnumerable<IAnalysisAbility> supportAbilities, Func<SearchVideoFilter, ISearcHandler> searcHandlerFactory)
+        private readonly PolarShadowOption _option;
+        private IPolarShadowSiteBuilder _siteBuilder;
+
+        internal PolarShadowDefault(PolarShadowOption option, IPolarShadowSiteBuilder siteBuilder, IEnumerable<IAnalysisAbility> abilities, Func<SearchVideoFilter, ISearcHandler> searcHandlerFactory)
         {
+            _option = option;
+            _siteBuilder = siteBuilder;
             _searchHandlerFactory = searcHandlerFactory;
 
-            foreach (var item in supportAbilities)
+            foreach (var item in _option.Sites)
+            {
+                _sites[item.Name] = _siteBuilder.Build(item);
+            }
+
+            foreach (var item in abilities)
             {
                 if (string.IsNullOrEmpty(item.Name))
                 {
                     continue;
                 }
 
-                _supportAbilitis[item.Name] = item;
+                _abilities[item.Name] = item;
             }
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-        }
-
-        public IPolarShadowSite GetSite(string name)
-        {
-            if (_sites.TryGetValue(name, out IPolarShadowSite site))
-            {
-                return site;
-            }
-
-            return null;
         }
 
         public IEnumerable<IPolarShadowSite> GetSites()
@@ -46,22 +45,27 @@ namespace PolarShadow.Core
 
         public ISearcHandler BuildSearchHandler(SearchVideoFilter filter)
         {
-            if (_searchHandlerFactory == null)
+            if (_searchHandlerFactory == null && this.TryGetAbility(out ISearchAble searchAble))
             {
-                return new SearcHandlerDefault(filter.SearchKey, filter.PageSize, this.GetAbilitieSites<ISearchAble>().ToArray());
+                return new SearcHandlerDefault(filter.SearchKey, filter.PageSize, searchAble, this.GetAbilitySites<ISearchAble>().ToArray());
             }
 
             return _searchHandlerFactory(filter);
         }
 
-        public IEnumerable<IAnalysisAbility> GetSupportAbilities()
+        public IEnumerable<IAnalysisAbility> GetAbilities()
         {
-            return _supportAbilitis.Values;
+            return _abilities.Values;
         }
 
-        public void AddSite(IPolarShadowSite site)
+        public bool TryGetSite(string name, out IPolarShadowSite site)
         {
-            _sites[site.Name] = site;
+            return _sites.TryGetValue(name, out site);
+        }
+
+        public bool TryGetAbility(string name, out IAnalysisAbility ability)
+        {
+            return _abilities.TryGetValue(name, out ability);
         }
     }
 }

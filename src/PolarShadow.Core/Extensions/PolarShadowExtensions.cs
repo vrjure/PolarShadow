@@ -10,31 +10,25 @@ namespace PolarShadow.Core
 {
     public static class PolarShadowExtensions
     {
-        public static bool TryGetSite(this IPolarShadow polarShadow, string siteName, out IPolarShadowSite site)
+        public static bool TryGetAbility<T>(this IPolarShadow polarShadow, out T ability) where T : IAnalysisAbility
         {
-            site = polarShadow.GetSite(siteName);
-            return site != null;
+            ability = (T)polarShadow.GetAbilities().Where(f => f is T).FirstOrDefault();
+            return ability != null;
         }
 
-        public static bool HasAbility(this IPolarShadowSite site, string abilityName)
+        public static ICollection<IPolarShadowSite> GetAbilitySites<T>(this IPolarShadow polarShadow) where T : IAnalysisAbility
         {
-            return site.GetAbilities().Any(f=>f.Name.Equals(abilityName));
+            if (TryGetAbility(polarShadow, out T ability))
+            {
+                return polarShadow.GetSites().Where(f => f.HasAbility(ability.Name)).ToList();
+            }
+            return default;
         }
 
-        public static IAnalysisAbility GetAbility(this IPolarShadowSite site, string abilityName)
+        public static bool TryGetSiteWithAbility<T>(this IPolarShadow polarShadow, string siteName, out IPolarShadowSite site, out T ability) where T: IAnalysisAbility
         {
-            return site.GetAbilities().Where(f=>f.Name.Equals(abilityName)).FirstOrDefault();
-        }
-        public static IEnumerable<IPolarShadowSite> GetAbilitieSites<T>(this IPolarShadow ps) where T : IAnalysisAbility
-        {
-            return ps.GetSites().Where(f => f.GetAbilities().Any(f => f is T));
-        }
-
-        public static bool TryGetAbility<T>(this IPolarShadowSite site, out T ability) where T : IAnalysisAbility
-        {
-            var result = site.GetAbilities().FirstOrDefault(f => f is T);
-            ability = (T)result;
-            return result != default;
+            ability = default;
+            return polarShadow.TryGetSite(siteName, out site) && polarShadow.TryGetAbility(out ability) && site.HasAbility(ability.Name);
         }
 
         public static IPolarShadowBuilder AddAbility<T>(this IPolarShadowBuilder builder) where T : IAnalysisAbility, new()

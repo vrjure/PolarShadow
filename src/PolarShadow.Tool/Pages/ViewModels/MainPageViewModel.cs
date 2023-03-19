@@ -48,9 +48,12 @@ namespace PolarShadow.Tool.Pages.ViewModels
 
                 Abilities.Clear();
                 _selectSite = item.Value as IPolarShadowSite;
-                foreach (var ability in _selectSite.GetAbilities())
+                foreach (var ability in _polarShadow.GetAbilities())
                 {
-                    Abilities.Add(new ListItem(ability.Name, ability));
+                    if (_selectSite.HasAbility(ability.Name))
+                    {
+                        Abilities.Add(new ListItem(ability.Name, ability));
+                    }
                 }
             }
         }

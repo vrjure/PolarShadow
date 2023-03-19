@@ -11,7 +11,18 @@ namespace PolarShadow.Core
 {
     internal class SearchAbleDefault : AnalysisAbilityBase<SearchVideoFilter, PageResult<VideoSummary>>, ISearchAble
     {
+        private static readonly string _pageingFlag = "searchPaging";
         public override string Name => Abilities.SearchAble;
+
+        public bool CanPaging(IPolarShadowSite site)
+        {
+            if (site.TryGetParameter(_pageingFlag, out bool value))
+            {
+                return value;
+            }
+
+            return true;
+        }
 
         protected override void InputHandler(SearchVideoFilter input)
         {

@@ -10,13 +10,14 @@ namespace PolarShadow.Core
 {
     public class PolarShadowBuilder : IPolarShadowBuilder
     {
+        private static object _lock = new object();
         private Func<SearchVideoFilter, ISearcHandler> _searcHandlerFactory;
         private IPolarShadow _cache;
 
-        internal Dictionary<string, IAnalysisAbility> _supportAbilities = new Dictionary<string, IAnalysisAbility>();
-
+        private readonly ICollection<IAnalysisAbility> _abilities = new List<IAnalysisAbility>();
 
         public PolarShadowOption Option { get; }
+        public IPolarShadowSiteBuilder SiteBuilder { get; set; }
 
         public PolarShadowBuilder() : this(default)
         {
@@ -42,28 +43,27 @@ namespace PolarShadow.Core
             {
                 throw new ArgumentException(nameof(ability.Name));
             }
-            _supportAbilities[ability.Name] = ability;
+            _abilities.Add(ability);
         }
 
         public IPolarShadow Build()
         {
-            if (Option.IsChanged || _cache == null)
+            lock(_lock )
             {
-                var ps = new PolarShadowDefault(_supportAbilities.Values, _searcHandlerFactory);
-                var siteBuilder = new PolarShadowSiteBuilder(this);
-                if (Option.Sites != null && Option.Sites.Count > 0)
+                if (SiteBuilder == null)
                 {
-                    foreach (var item in Option.Sites)
-                    {
-                        ps.AddSite(siteBuilder.Build(item));
-                    }
+                    SiteBuilder = new PolarShadowSiteBuilder();
                 }
-                Option.IsChanged = false;
-                _cache = ps;
-            }
 
-            return _cache;
-            
+                if (Option.IsChanged || _cache == null)
+                {
+                    var ps = new PolarShadowDefault(Option, SiteBuilder, _abilities, _searcHandlerFactory);
+                    Option.IsChanged = false;
+                    _cache = ps;
+                }
+
+                return _cache;
+            }
         }
     }
 }

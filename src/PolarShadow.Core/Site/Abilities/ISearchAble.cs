@@ -8,6 +8,6 @@ namespace PolarShadow.Core
 {
     public interface ISearchAble : IAnalysisAbility<SearchVideoFilter, PageResult<VideoSummary>>
     {
-
+        bool CanPaging(IPolarShadowSite site);
     }
 }

@@ -106,7 +106,7 @@
                     }
                     break;
                 case SrcType.HTMLAnalysis:
-                    if(_polarShadow.TryGetSite(_siteName, out IPolarShadowSite site) && site.TryGetAbility(out IWebAnalysisAble webAnalysis))
+                    if (_polarShadow.TryGetSiteWithAbility(_siteName, out IPolarShadowSite site, out IWebAnalysisAble webAnalysis))
                     {
                         var url = await site.ExecuteAsync(webAnalysis, source.Src);
                         _nav.NavigateTo(url, false, true);

@@ -8,6 +8,7 @@ namespace PolarShadow.Core
     {
         public string Name { get; set; }
         public string Domain { get; set; }
+        public Dictionary<string, object> Parameters { get; set; }
         public Dictionary<string, AnalysisAbility> Abilities { get; set; }
     }
 }

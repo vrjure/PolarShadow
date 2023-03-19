@@ -9,9 +9,10 @@ namespace PolarShadow.Core
 {
     public interface IPolarShadow
     {
-        IPolarShadowSite GetSite(string name);
+        bool TryGetSite(string name, out IPolarShadowSite site);
         IEnumerable<IPolarShadowSite> GetSites();
         ISearcHandler BuildSearchHandler(SearchVideoFilter filter);
-        IEnumerable<IAnalysisAbility> GetSupportAbilities();
+        IEnumerable<IAnalysisAbility> GetAbilities();
+        bool TryGetAbility(string name, out IAnalysisAbility ability);
     }
 }

@@ -9,28 +9,19 @@ namespace PolarShadow.Core
 {
     internal class PolarShadowSiteDefault : IPolarShadowSite
     {
-        private readonly ICollection<IAnalysisAbility> _abilities;
-        private readonly Dictionary<string, AnalysisAbility> _analysisAbilities;
-        internal PolarShadowSiteDefault(SiteOption option, IEnumerable<IAnalysisAbility> abilities)
+        private readonly SiteOption _siteOption;
+        internal PolarShadowSiteDefault(SiteOption option)
         {
-            this.Name = option.Name;
-            this.Domain = option.Domain;
-            _abilities = new List<IAnalysisAbility>(abilities);
-            _analysisAbilities = new Dictionary<string, AnalysisAbility>(option.Abilities);
+            _siteOption = option;
         }
 
-        public string Name { get; }
+        public string Name => _siteOption.Name;
 
-        public string Domain { get; }
-
-        public IReadOnlyCollection<IAnalysisAbility> GetAbilities()
-        {
-            return new List<IAnalysisAbility>(_abilities);
-        }
+        public string Domain => _siteOption.Domain;
 
         public async Task<TOutput> ExecuteAsync<TInput, TOutput>(IAnalysisAbility<TInput,TOutput> ability, TInput input, CancellationToken cancellation = default) where TInput : new() where TOutput : new()
         {
-            if (_analysisAbilities.TryGetValue(ability.Name, out AnalysisAbility analysis))
+            if (_siteOption.Abilities != null && _siteOption.Abilities.TryGetValue(ability.Name, out AnalysisAbility analysis))
             {
                 return await ability.ExecuteAsync(analysis, input, default);
             }
@@ -39,11 +30,28 @@ namespace PolarShadow.Core
 
         public async Task<string> ExecuteAsync(IAnalysisAbility ability, string input, CancellationToken cancellation = default)
         {
-            if (_analysisAbilities.TryGetValue(ability.Name, out AnalysisAbility analysis))
+            if (_siteOption.Abilities != null && _siteOption.Abilities.TryGetValue(ability.Name, out AnalysisAbility analysis))
             {
                 return await ability.ExecuteAsync(analysis, input, cancellation);
             }
             return default;
+        }
+
+        public bool HasAbility(string name)
+        {
+            return _siteOption.Abilities != null && _siteOption.Abilities.ContainsKey(name);
+        }
+
+        public bool TryGetParameter<TValue>(string name, out TValue value)
+        {
+            if (_siteOption.Parameters != null && _siteOption.Parameters.TryGetValue(name, out object v) && v is TValue val)
+            {
+                value = val;
+                return true;
+            }
+
+            value = default;
+            return false;
         }
     }
 }

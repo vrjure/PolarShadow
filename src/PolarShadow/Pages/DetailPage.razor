@@ -129,13 +129,10 @@
             {
                 _detail = detail;
             }
-            else if (_context.TryGet(_summaryKey, out VideoSummary summary))
+            else if (_context.TryGet(_summaryKey, out VideoSummary summary) 
+            && _polarShadow.TryGetSiteWithAbility(summary.SiteName, out IPolarShadowSite site, out IGetDetailAble getDetail))
             {
-                var site = _polarShadow.GetSite(summary.SiteName);
-                if (site.TryGetAbility(out IGetDetailAble getDetail))
-                {
-                    _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);              
-                }
+                _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, summary);              
             }
 
             if (_detail != null)
@@ -189,7 +186,7 @@
         try
         {
             _isLoading = true;
-            if (_polarShadow.TryGetSite(_detail.SiteName, out IPolarShadowSite site) && site.TryGetAbility(out IGetDetailAble getDetail))
+            if (_polarShadow.TryGetSiteWithAbility(_detail.SiteName, out IPolarShadowSite site, out IGetDetailAble getDetail))
             {
                 _detail = await site.ExecuteAsync<VideoSummary, VideoDetail>(getDetail, _detail);
             }

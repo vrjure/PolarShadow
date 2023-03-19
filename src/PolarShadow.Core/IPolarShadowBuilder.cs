@@ -8,6 +8,7 @@ namespace PolarShadow.Core
 {
     public interface IPolarShadowBuilder
     {
+        IPolarShadowSiteBuilder SiteBuilder { get; set; }
         PolarShadowOption Option { get; }
         void AddSearcHandlerFactory(Func<SearchVideoFilter, ISearcHandler> factory);
         void AddAbility(IAnalysisAbility ability);
