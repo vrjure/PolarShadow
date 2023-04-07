@@ -34,6 +34,12 @@ namespace PolarShadow.Core
         public const byte Num0 = (byte)'0';
         public const byte Num9 = (byte)'9';
 
+        public const byte A = (byte)'A';
+        public const byte Z = (byte)'Z';
+        public const byte a = (byte)'a';
+        public const byte z = (byte)'z';
+        public const byte UnderLine = (byte)'_';
+
         public static ReadOnlySpan<byte> SkipChars => new byte[] { Space, Tab, Return };
         public static ReadOnlySpan<byte> PropertyEndChars => new byte[] { Dot, Space, StartFilter, ArraySeparator, Tab, Return, SingleQuote, RightBracket };
         public static ReadOnlySpan<byte> OperatorStartChars => new byte[] { Equal, Not, LessThan, GreaterThan};
@@ -46,6 +52,8 @@ namespace PolarShadow.Core
         public static ReadOnlySpan<byte> NoneOfChars => new byte[] { (byte)'n', (byte)'o', (byte)'n', (byte)'e', (byte)'o', (byte)'f' };
         public static ReadOnlySpan<byte> SizeChars => new byte[] { (byte)'s', (byte)'i', (byte)'z', (byte)'e' };
         public static ReadOnlySpan<byte> EmptyChars => new byte[] { (byte)'e', (byte)'m', (byte)'p', (byte)'t', (byte)'y' };
+
+        public static ReadOnlySpan<byte> RegexModifyChars => new byte[] { (byte)'g', (byte)'i', (byte)'m', (byte)'s' };
 
     }
 }

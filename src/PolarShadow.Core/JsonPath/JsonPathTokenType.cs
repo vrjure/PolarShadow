@@ -7,22 +7,78 @@ namespace PolarShadow.Core
     public enum JsonPathTokenType
     {
         None = 0,
+        /// <summary>
+        /// $
+        /// </summary>
         Root,
-        SelectCurrentNode,
+        /// <summary>
+        /// @
+        /// </summary>
+        Current,
+        /// <summary>
+        /// *
+        /// </summary>
         Wildcard,
+        /// <summary>
+        /// ..
+        /// </summary>
         DeepScan,
+        /// <summary>
+        /// .
+        /// </summary>
         Child,
-        PropertyNameFilterStart,
-        PropertyNameFilterEnd,
-        ArrayIndexFilterStart,
-        ArrayIndexFilterEnd,
-        ArraySliceFilterStart,
-        ArraySliceFilterEnd,
-        ExpressionFilterStart,
-        ExpressionFilterEnd,
         PropertyName,
+        String,
+        StartFilter,
+        EndFilter,
         Number,
-        Operator,
-        SliceRange
+        Regex,
+        /// <summary>
+        /// [start:end]
+        /// </summary>
+        Slice,
+        /// <summary>
+        /// [?(<expression>)]
+        /// </summary>
+        StartExpression,
+        /// <summary>
+        /// [?(<expression>)]
+        /// </summary>
+        EndExpression,
+        /// <summary>
+        /// ==
+        /// </summary>
+        Equal,
+        /// <summary>
+        /// <
+        /// </summary>
+        LessThan,
+        /// <summary>
+        /// >
+        /// </summary>
+        GreaterThan,
+        /// <summary>
+        /// <=
+        /// </summary>
+        LessThenOrEqual,
+        /// <summary>
+        /// >=
+        /// </summary>
+        GreaterThanOrEqual,
+        /// <summary>
+        /// !=
+        /// </summary>
+        NotEqual,
+        /// <summary>
+        /// =~
+        /// </summary>
+        Matches,
+        In,
+        Nin,
+        Subsetof,
+        Anyof,
+        Noneof,
+        Size,
+        Empty
     }
 }

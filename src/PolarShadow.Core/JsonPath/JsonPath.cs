@@ -48,7 +48,7 @@ namespace PolarShadow.Core
                         result = obj;
                         break;
                     case JsonPathTokenType.PropertyName:
-                        if (reader.TryReadProperty(out string property))
+                        if (reader.TryGetString(out string property))
                         {
                             if (lastTokenType == JsonPathTokenType.Child)
                             {
@@ -66,14 +66,9 @@ namespace PolarShadow.Core
                             }
                         }
                         break;
-                    case JsonPathTokenType.ArrayIndexFilterStart:
-                        inIndexFilter = true;
-                        break;
-                    case JsonPathTokenType.ArrayIndexFilterEnd:
-                        inIndexFilter = false;
-                        break;
+                    
                     case JsonPathTokenType.Number:
-                        if (!reader.TryReadNumber(out int num))
+                        if (!reader.TryGetInt(out int num))
                         {
                             return false;
                         }

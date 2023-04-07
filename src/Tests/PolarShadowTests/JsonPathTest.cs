@@ -50,27 +50,21 @@ namespace PolarShadowTests
                 switch (reader.TokenType)
                 {
                     case JsonPathTokenType.PropertyName:
-                        if (reader.TryReadProperty(out string pro))
+                        if (reader.TryGetString(out string pro))
                         {
                             Console.WriteLine("  --  "+pro);
                         }
                         break;
                     case JsonPathTokenType.Number:
-                        if (reader.TryReadNumber(out int num))
+                        if (reader.TryGetDecimal(out decimal num))
                         {
                             Console.WriteLine("  --  " + num);
                         }
                         break;
-                    case JsonPathTokenType.Operator:
-                        if (reader.TryReadOperator(out JsonPathExpressionOperator op))
+                    case JsonPathTokenType.String:
+                        if (reader.TryGetString(out string s))
                         {
-                            Console.WriteLine("  --  " +op.ToString());
-                        }
-                        break;
-                    case JsonPathTokenType.SliceRange:
-                        if (reader.TryReadSliceRange(out JsonPathSliceRange range))
-                        {
-                            Console.WriteLine("  --  " + range.ToString());
+                            Console.WriteLine(" -- " + s);
                         }
                         break;
                     default:

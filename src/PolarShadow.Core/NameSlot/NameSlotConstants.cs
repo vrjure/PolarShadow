@@ -21,5 +21,8 @@ namespace PolarShadow.Core
         public const byte SlotStart = (byte)'{';
         public const byte SlotEnd = (byte)'}';
         public const byte JsonPathRoot = (byte)'$';
+        public const byte Colon = (byte)':';
+        public const byte At = (byte)'@';
+        public const byte Tilde = (byte)'~';
     }
 }

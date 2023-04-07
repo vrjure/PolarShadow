@@ -1,6 +1,8 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,16 +13,11 @@ namespace PolarShadow.Core
     {
         private readonly ReadOnlySpan<byte> _buffer;
         private JsonPathTokenType _tokenType;
-        private JsonPathTokenType _lastTokenType;
         private int _currentPosition;
-        private bool _inExpressionFilter;
-        private bool _isFirstToken;
+        private bool _inExpression;
         private int _segmentStart;
-        private int _segmentLength;
+        private int _segmentEnd;
         private bool _readFinal;
-        private bool _inPropertyNameFilter;
-        private bool _inSliceFilter;
-        private bool _inIndexFilter;
 
         public JsonPathReader(ReadOnlySpan<byte> jsonPath)
         {
@@ -29,19 +26,25 @@ namespace PolarShadow.Core
                 throw new ArgumentException("json path must start with '$'", nameof(jsonPath));
             }
             _buffer = jsonPath;
-            _tokenType = _lastTokenType = JsonPathTokenType.None;
+            _tokenType = JsonPathTokenType.None;
             _currentPosition = -1;
-            _inExpressionFilter = false;
-            _isFirstToken = true;
-            _segmentStart = -1;
-            _segmentLength = 0;
+            _inExpression = false;
+            _segmentStart = _segmentEnd = -1;
             _readFinal = false;
-            _inPropertyNameFilter = false;
-            _inSliceFilter = false;
-            _inIndexFilter = false;
+        }
+
+        public JsonPathReader(ReadOnlySpan<byte> buffer, int start) : this(buffer.Slice(start))
+        {
+
+        }
+
+        public JsonPathReader(ReadOnlySpan<byte> buffer, int start, int length) : this(buffer.Slice(start, length))
+        {
+
         }
 
         public readonly JsonPathTokenType TokenType => _tokenType;
+
 
         public bool Read()
         {
@@ -51,575 +54,709 @@ namespace PolarShadow.Core
             }
 
             _currentPosition++;
-
+            if (ShouldSkipInvaild())
             SkipInvaild();
 
-            if (_currentPosition >= _buffer.Length)
+            if (IsEnd()) return false;
+
+            if (_tokenType == JsonPathTokenType.None)
             {
+                if (!ReadRoot())
+                {
+                    ThrowInvalidDataException();
+                }
+
+                return true;
+            }
+            if (!ReadNext())
+            {
+                _readFinal = true;
+                ThrowInvalidDataException();
                 return false;
             }
 
-            if (_isFirstToken)
+            return true;
+        }
+
+        public string GetString()
+        {
+            return Encoding.UTF8.GetString(_buffer.Slice(_segmentStart, _segmentEnd - _segmentStart + 1));
+        }
+
+        public bool TryGetString(out string value)
+        {
+            value = string.Empty;
+            try
             {
-                ReadFirstRoot();
-                _isFirstToken = false;
+                value = Encoding.UTF8.GetString(_buffer.Slice(_segmentStart, _segmentEnd - _segmentStart + 1));
                 return true;
             }
-
-            _lastTokenType = _tokenType;
-
-            switch (_buffer[_currentPosition])
+            catch
             {
-                case JsonPathConstants.Root:
-                    _tokenType = JsonPathTokenType.Root;
-                    return true;
-                case JsonPathConstants.Dot:
-                    if (_buffer[_currentPosition + 1] == JsonPathConstants.Dot)
-                    {
-                        _tokenType = JsonPathTokenType.DeepScan;
-                        _currentPosition++;
-                    }
-                    else
-                    {
-                        _tokenType = JsonPathTokenType.Child;
-                    }
-                    return true;
-                case JsonPathConstants.StartFilter:
-                    if (_lastTokenType == JsonPathTokenType.Root || _lastTokenType == JsonPathTokenType.PropertyName)
-                    {
-                        _currentPosition++;
-                        SkipInvaild();
-                        if (_buffer[_currentPosition] == JsonPathConstants.ExpressionStart
-                            && _buffer[_currentPosition+1] == JsonPathConstants.LeftBracket)
-                        {
-                            _currentPosition++;
-                            _tokenType = JsonPathTokenType.ExpressionFilterStart;
-                            _inExpressionFilter = true;
-                        }
-                        else if (_buffer[_currentPosition] == JsonPathConstants.SingleQuote)
-                        {
-                            _tokenType = JsonPathTokenType.PropertyNameFilterStart;
-                            _inPropertyNameFilter = true;
-                        }
-                        else if (_buffer[_currentPosition] == JsonPathConstants.Minus)
-                        {
-                            if (TryFindNotNumberFirst(out byte ch))
-                            {
-                                if (ch == JsonPathConstants.Colon)
-                                {
-                                    _tokenType = JsonPathTokenType.ArraySliceFilterStart;
-                                    _inSliceFilter = true;
-                                    _currentPosition--;
-                                }
-                                else if (ch == JsonPathConstants.EndFilter || ch == JsonPathConstants.EndFilter)
-                                {
-                                    _tokenType = JsonPathTokenType.ArrayIndexFilterStart;
-                                    _inIndexFilter = true;
-                                    _currentPosition--;
-                                }
-                                else
-                                {
-                                    ThrowInvalidDataException();
-                                }
-                            }
-                        }
-                        else if (_buffer[_currentPosition] >= JsonPathConstants.Num0 && _buffer[_currentPosition] <= JsonPathConstants.Num9)
-                        {
-                            if (TryFindNotNumberFirst(out byte ch))
-                            {
-                                if (ch == JsonPathConstants.Colon)
-                                {
-                                    _tokenType = JsonPathTokenType.ArraySliceFilterStart;
-                                    _inSliceFilter = true;
-                                    _currentPosition--;
-                                }
-                                else if (ch == JsonPathConstants.Comma || ch == JsonPathConstants.EndFilter)
-                                {
-                                    _tokenType = JsonPathTokenType.ArrayIndexFilterStart;
-                                    _inIndexFilter = true;
-                                    _currentPosition--;
-                                }
-                                else
-                                {
-                                    ThrowInvalidDataException();
-                                }
-                            }
+                return false;
+            }
+        }
 
-                        }
-                        else if (_buffer[_currentPosition] == JsonPathConstants.Colon)
-                        {
-                            if (_buffer[_currentPosition + 1] < JsonPathConstants.Num0 || _buffer[_currentPosition + 1] > JsonPathConstants.Num9)
-                            {
-                                ThrowInvalidDataException();
-                                return false;
-                            }
-                            _tokenType = JsonPathTokenType.ArraySliceFilterStart;
-                            _inSliceFilter = true;
-                            _currentPosition--;
-                        }
-                        else if (_buffer[_currentPosition] == JsonPathConstants.Wildcard)
-                        {
-                            _tokenType = JsonPathTokenType.ArraySliceFilterStart;
-                            _inSliceFilter = true;
-                            _currentPosition--;
-                        }
-                        return true;
-                    }
-                    ThrowInvalidDataException();
-                    return false;
-                case JsonPathConstants.EndFilter:
-                    EndFilter();
-                    return true;
-                case JsonPathConstants.RightBracket:
-                    if (!_inExpressionFilter)
-                    {
-                        ThrowInvalidDataException();
-                    }
-                    _currentPosition++;
-                    SkipInvaild();
-                    if (_buffer[_currentPosition] == JsonPathConstants.EndFilter)
-                    {
-                        EndFilter();
-                        return true;
-                    }
-                    ThrowInvalidDataException();
-                    return false;
-                case JsonPathConstants.SelectCurrent:
-                    if (!_inExpressionFilter)
-                    {
-                        ThrowInvalidDataException();
-                        return false;
-                    }
-                    _tokenType = JsonPathTokenType.SelectCurrentNode;
-                    return true;
-                case JsonPathConstants.Comma:
-                    if (_inIndexFilter && _lastTokenType == JsonPathTokenType.Number)
-                    {
-                        ReadToNextArrayIndexInArrayIndexFilter();
-                        ReadNumberSegment();
-                        CheckSegment();
-                        return true;
-                    }
-                    else if (_inPropertyNameFilter && _lastTokenType == JsonPathTokenType.PropertyName)
-                    {
-                        ReadToNextPropertyNameInPropertyNameFilter();
-                        ReadPropertySegment();
-                        CheckSegment();
-                        return true;
-                    }
-                    ThrowInvalidDataException();
-                    return false;
-                case JsonPathConstants.Wildcard:
-                    if (_lastTokenType == JsonPathTokenType.ArraySliceFilterStart
-                        || _lastTokenType == JsonPathTokenType.Child
-                        || _lastTokenType == JsonPathTokenType.DeepScan)
-                    {
-                        _tokenType = JsonPathTokenType.Wildcard;
-                        return true;
-                    }
-                    ThrowInvalidDataException();
-                    return false;
+        public int GetInt()
+        {
+            return int.Parse(GetString());
+        }
+
+        public bool TryGetInt(out int value)
+        {
+            value = 0;
+            return TryGetString(out string s) && int.TryParse(s, out value);
+        }
+
+        public double GetDouble()
+        {
+            return double.Parse(GetString());
+        }
+
+        public bool TryGetDouble(out double value)
+        {
+            value = 0d;
+            return TryGetString(out string s) && double.TryParse(s, out value);
+        }
+
+        public decimal GetDecimal()
+        {
+            return decimal.Parse(GetString());
+        }
+
+        public bool TryGetDecimal(out decimal value)
+        {
+            value = 0;
+            return TryGetString(out string s) && decimal.TryParse(s, out value);
+        }
+
+        private bool ReadNext()
+        {
+            switch (_tokenType)
+            {
+                case JsonPathTokenType.Root:
+                    return ReadRootNext();
+                case JsonPathTokenType.Current:
+                    return ReadSelectCurrentNext();
+                case JsonPathTokenType.Wildcard:
+                    return ReadWildcardNext();
+                case JsonPathTokenType.DeepScan:
+                case JsonPathTokenType.Child:
+                    return ReadChildOrDeepScanNext();
+                case JsonPathTokenType.PropertyName:
+                    return ReadPropertyNameNext();
+                case JsonPathTokenType.String:
+                    return ReadStringNext();
+                case JsonPathTokenType.StartFilter:
+                    return ReadStartFilterNext();
+                case JsonPathTokenType.EndFilter:
+                    return ReadEndFilterNext();
+                case JsonPathTokenType.Number:
+                    return ReadNumberNext();
+                case JsonPathTokenType.Slice:
+                    return ReadSliceNext();
+                case JsonPathTokenType.StartExpression:
+                    return ReadStartExpressionNext();
+                case JsonPathTokenType.EndExpression:
+                    return ReadEndExpressionNext();
                 default:
-                    if (_inSliceFilter)
-                    {
-                        ReadSliceSegment();
-                        CheckSegment();
-                        _tokenType = JsonPathTokenType.SliceRange;
-                        return true;
-                    }
-                    else if (IsNumber())
-                    {
-                        ReadNumberSegment();
-                        CheckSegment();
-                        _tokenType = JsonPathTokenType.Number;
-                        return true;
-                    }
-                    else if (_inExpressionFilter && JsonPathConstants.OperatorStartChars.IndexOf(_buffer[_currentPosition]) >= 0)
-                    {
-                        ReadOperatorSegment();
-                        CheckSegment();
-                        _tokenType = JsonPathTokenType.Operator;
-                        return true;
-                    }
-                    else if (_lastTokenType == JsonPathTokenType.DeepScan
-                            || _tokenType == JsonPathTokenType.Child
-                            || _lastTokenType == JsonPathTokenType.PropertyNameFilterStart
-                            || _lastTokenType == JsonPathTokenType.PropertyName)
-                    {
-                        ReadPropertySegment();
-                        CheckSegment();
-                        _tokenType = JsonPathTokenType.PropertyName;
-                        return true;
-                    }
-                    ThrowInvalidDataException();
-                    return false;
+                    return ReadOperateNext();
             }
         }
 
-        public bool TryReadOperator(out JsonPathExpressionOperator expressionOperator)
+        private bool ReadRootNext()
         {
-            expressionOperator = JsonPathExpressionOperator.None;
-            if (_tokenType != JsonPathTokenType.Operator)
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.StartFilter)
             {
-                return false;
+                _tokenType = JsonPathTokenType.StartFilter;
+                return true;
             }
-            if (_inExpressionFilter)
-            {
-                var operatorSpan = _buffer.Slice(_segmentStart, _segmentLength);
-                switch (operatorSpan[0])
-                {
-                    case JsonPathConstants.Equal:
-                        if (operatorSpan.Length == 2)
-                        {
-                            if (operatorSpan[1] == JsonPathConstants.Equal)
-                            {
-                                expressionOperator = JsonPathExpressionOperator.Equal;
-                                return true;
-                            }
-                            else if (operatorSpan[1] == JsonPathConstants.MatchRegex)
-                            {
-                                expressionOperator = JsonPathExpressionOperator.Regex;
-                                return true;
-                            }
-                        }
-                        break;
-                    case JsonPathConstants.LessThan:
-                        if (operatorSpan.Length == 1)
-                        {
-                            expressionOperator = JsonPathExpressionOperator.LessThan;
-                            return true;
-                        }
-                        else if(operatorSpan.Length == 2 && operatorSpan[1] == JsonPathConstants.Equal)
-                        {
-                            expressionOperator = JsonPathExpressionOperator.LessThanOrEqual;
-                            return true;
-                        }
-                        break;
-                    case JsonPathConstants.GreaterThan:
-                        if (operatorSpan.Length == 1)
-                        {
-                            expressionOperator = JsonPathExpressionOperator.GreaterThan;
-                            return true;
-                        }
-                        else if (operatorSpan.Length == 2 && operatorSpan[1] == JsonPathConstants.Equal)
-                        {
-                            expressionOperator = JsonPathExpressionOperator.GreaterThanOrEqual;
-                            return true;
-                        }
-                        break;
-                    case JsonPathConstants.Not:
-                        if (operatorSpan.Length == 2 && operatorSpan[1] == JsonPathConstants.Equal)
-                        {
-                            expressionOperator = JsonPathExpressionOperator.NotEqual;
-                            return true;
-                        }
-                        break;
-                    case (byte)'i':
-                        if (operatorSpan.SequenceEqual(JsonPathConstants.InChars))
-                        {
-                            expressionOperator = JsonPathExpressionOperator.In;
-                            return true;
-                        }
-                        break;
-                    case (byte)'n':
-                        if (operatorSpan.SequenceEqual(JsonPathConstants.NInChars))
-                        {
-                            expressionOperator = JsonPathExpressionOperator.NIn;
-                            return true;
-                        }
-                        else if (operatorSpan.SequenceEqual(JsonPathConstants.NoneOfChars))
-                        {
-                            expressionOperator = JsonPathExpressionOperator.NoneOf;
-                            return true;
-                        }
-                        break;
-                    case (byte)'s':
-                        if (operatorSpan.SequenceEqual(JsonPathConstants.SubsetOfChars))
-                        {
-                            expressionOperator = JsonPathExpressionOperator.SubsetOf;
-                            return true;
-                        }
-                        else if (operatorSpan.SequenceEqual(JsonPathConstants.SizeChars))
-                        {
-                            expressionOperator = JsonPathExpressionOperator.Size;
-                            return true;
-                        }
-                        break;
-                    case (byte)'a':
-                        if (operatorSpan.SequenceEqual(JsonPathConstants.AnyOfChars))
-                        {
-                            expressionOperator = JsonPathExpressionOperator.AnyOf;
-                            return true;
-                        }
-                        break;
-                    case (byte)'e':
-                        if (operatorSpan.SequenceEqual(JsonPathConstants.EmptyChars))
-                        {
-                            expressionOperator = JsonPathExpressionOperator.Empty;
-                            return true;
-                        }
-                        break;
-                }
-            }
-
-            expressionOperator = JsonPathExpressionOperator.None;
-            return false;
+            return TryReadChildOrDeepScan();
         }
-        
-        public bool TryReadProperty(out string property)
+
+        private bool ReadStartFilterNext()
         {
-            if (_tokenType == JsonPathTokenType.PropertyName)
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.SingleQuote)
             {
-                property = Encoding.UTF8.GetString(_buffer.Slice(_segmentStart, _segmentLength));
+                _tokenType = JsonPathTokenType.String;
+                return ReadStringEnd();
+            }
+            else if (IsNumberCharStart(ch))
+            {
+                _tokenType = JsonPathTokenType.Number;
+                return ReadIntegerEnd();
+            }
+            else if (ch == JsonPathConstants.Colon)
+            {
+                _tokenType = JsonPathTokenType.Slice;
+                return true;
+            }
+            else if (ch == JsonPathConstants.Wildcard)
+            {
+                _tokenType = JsonPathTokenType.Wildcard;
                 return true;
             }
 
-            property = default;
-            return false;
+            return TryReadStartExpression();
         }
 
-        public bool TryReadNumber(out int num)
+        private bool ReadEndFilterNext()
         {
-            num = 0;
-
-            if (_tokenType == JsonPathTokenType.Number)
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.Dot && NextCharIs(JsonPathConstants.Dot))
             {
-                return int.TryParse(Encoding.UTF8.GetString(_buffer.Slice(_segmentStart, _segmentLength)), out num);
-            }
-
-            return false;
-        }
-
-        public bool TryReadSliceRange(out JsonPathSliceRange range)
-        {
-            var slice = _buffer.Slice(_segmentStart, _segmentLength);
-
-            var colonIndex = slice.IndexOf(JsonPathConstants.Colon);
-            if (colonIndex < 0)
-            {
-                range = new JsonPathSliceRange(default, default);
-                return false;
-            }
-
-            var startIndex = SkipInvaild(slice, 0);
-            if (startIndex == colonIndex)//":9"
-            {
-                var endIndex = SkipInvaild(slice, colonIndex + 1);
-                if (startIndex == endIndex)//":"
-                {
-                    range = new JsonPathSliceRange(default, default);
-                    return false;
-                }
-                else 
-                {
-                    var endLength = ReadUntilNotNumber(slice, endIndex);
-                    if (!int.TryParse(Encoding.UTF8.GetString(slice.Slice(endIndex, endLength)), out int end))
-                    {
-                        range = new JsonPathSliceRange(default, default);
-                        return false;
-                    }
-                    range = new JsonPathSliceRange(default, end);
-                    return true;
-                }
-            }
-            else
-            {
-                var startLength = ReadUntilNotNumber(slice, startIndex);
-                if (!int.TryParse(Encoding.UTF8.GetString(slice.Slice(startIndex, colonIndex - startIndex)), out int start))
-                {
-                    range = new JsonPathSliceRange(default, default);
-                    return false;
-                }
-
-                var endIndex = SkipInvaild(slice, colonIndex + 1);
-                var endLength = ReadUntilNotNumber(slice, endIndex);
-                if (endLength == 0)
-                {
-                    range = new JsonPathSliceRange(start, default);
-                    return true;
-                }
-
-                if (!int.TryParse(Encoding.UTF8.GetString(slice.Slice(endIndex, endLength)), out int end))
-                {
-                    range = new JsonPathSliceRange(default, default);
-                    return false;
-                }
-                range = new JsonPathSliceRange(start, end);
+                _tokenType = JsonPathTokenType.DeepScan;
                 return true;
             }
-        }
-
-        private void ReadPropertySegment()
-        {
-            _segmentStart = _currentPosition;
-            _segmentLength = ReadUntiNotProperty();
-        }
-
-        private void ReadNumberSegment()
-        {
-            _segmentStart = _currentPosition;
-            _segmentLength = ReadUntilNotNumber();
-        }
-
-        private void ReadOperatorSegment()
-        {
-            _segmentStart = _currentPosition;
-            _segmentLength = ReadUntilNotOperator();
-        }
-
-        private void ReadSliceSegment()
-        {
-            _segmentStart = _currentPosition;
-            _segmentLength = ReadSliceRange();
-        }
-
-        private int ReadUntiNotProperty()
-        {
-            var start = _currentPosition;
-            var next = start + 1;
-            while (!IsEnd(next) && JsonPathConstants.PropertyEndChars.IndexOf(_buffer[next]) < 0
-                && JsonPathConstants.OperatorStartChars.IndexOf(_buffer[next]) < 0)
+            else if (ch == JsonPathConstants.Dot)
             {
+                _tokenType = JsonPathTokenType.Child;
+                return true;
+            }
+            else if (ch == JsonPathConstants.RightBracket)
+            {
+                _tokenType = JsonPathTokenType.EndExpression;
+                return true;
+            }
+            return false;
+        }
+
+        private bool ReadPropertyNameNext()
+        {
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.RightBracket)
+            {
+                return ReadEndExpression();
+            }
+            else if (!_inExpression && ch == JsonPathConstants.StartFilter)
+            {
+                _tokenType = JsonPathTokenType.StartFilter;
+                return true;
+            }
+            else if (_inExpression)
+            {
+                SkipInvaild();
+                return ReadInExpressionPropertyNameEndNext();
+            }
+
+            return TryReadChildOrDeepScan();
+        }
+
+        private bool ReadInExpressionPropertyNameEndNext()
+        {
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.Equal && NextCharIs(JsonPathConstants.Equal))
+            {
+                _tokenType = JsonPathTokenType.Equal;
+                return true;
+            }
+            else if (ch == JsonPathConstants.LessThan && NextCharIs(JsonPathConstants.Equal))
+            {
+                _tokenType = JsonPathTokenType.LessThenOrEqual;
                 _currentPosition++;
-                next++;
+                return true;
             }
-
-            if (!IsEnd(next) && _buffer[next] == JsonPathConstants.SingleQuote)
+            else if (ch == JsonPathConstants.GreaterThan && NextCharIs(JsonPathConstants.Equal))
             {
-                _currentPosition = next;
-                return _currentPosition - start;
+                _tokenType = JsonPathTokenType.GreaterThanOrEqual;
+                _currentPosition++;
+                return true;
+            }
+            else if (ch == JsonPathConstants.Not && NextCharIs(JsonPathConstants.Equal))
+            {
+                _tokenType = JsonPathTokenType.NotEqual;
+                _currentPosition++;
+                return true;
+            }
+            else if (ch == JsonPathConstants.Equal && NextCharIs(JsonPathConstants.MatchRegex))
+            {
+                _tokenType = JsonPathTokenType.Matches;
+                _currentPosition++;
+                return true;
+            }
+            else if (ch == JsonPathConstants.LessThan)
+            {
+                _tokenType = JsonPathTokenType.LessThan;
+                return true;
+            }
+            else if (ch == JsonPathConstants.GreaterThan)
+            {
+                _tokenType = JsonPathTokenType.GreaterThan;
+                return true;
+            }
+            else if (StartsWithAndEndWithSpace(JsonPathConstants.InChars))
+            {
+                _tokenType = JsonPathTokenType.In;
+                _currentPosition += JsonPathConstants.InChars.Length;
+                return true;
+            }
+            else if (StartsWithAndEndWithSpace(JsonPathConstants.NInChars))
+            {
+                _tokenType = JsonPathTokenType.Nin;
+                _currentPosition += JsonPathConstants.NInChars.Length;
+                return true;
+            }
+            else if (StartsWithAndEndWithSpace(JsonPathConstants.SubsetOfChars))
+            {
+                _tokenType = JsonPathTokenType.Subsetof;
+                _currentPosition += JsonPathConstants.SubsetOfChars.Length;
+                return true;
+            }
+            else if (StartsWithAndEndWithSpace(JsonPathConstants.AnyOfChars))
+            {
+                _tokenType = JsonPathTokenType.Anyof;
+                _currentPosition += JsonPathConstants.AnyOfChars.Length;
+                return true;
+            }
+            else if (StartsWithAndEndWithSpace(JsonPathConstants.NoneOfChars))
+            {
+                _tokenType = JsonPathTokenType.Noneof;
+                _currentPosition += JsonPathConstants.NoneOfChars.Length;
+                return true;
+            }
+            else if (StartsWithAndEndWithSpace(JsonPathConstants.SizeChars))
+            {
+                _tokenType = JsonPathTokenType.Size;
+                _currentPosition += JsonPathConstants.SizeChars.Length;
+                return true;
+            }
+            else if (StartsWithAndEndWithSpace(JsonPathConstants.EmptyChars))
+            {
+                _tokenType = JsonPathTokenType.Empty;
+                _currentPosition += JsonPathConstants.EmptyChars.Length;
+                return true;
             }
 
-            return _currentPosition - start + 1;
+            return false;
         }
 
-        private int ReadUntilNotNumber()
+        private bool ReadOperateNext()
         {
-            var start = _currentPosition;
-            var ch = _buffer[++_currentPosition];
-            while (_currentPosition < _buffer.Length && (ch >= JsonPathConstants.Num0 && ch <= JsonPathConstants.Num9))
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.Root)
             {
-                ch = _buffer[++_currentPosition];
+                _tokenType = JsonPathTokenType.Root;
+                return true;
             }
-            _currentPosition--;
-            return _currentPosition - start + 1;
-        }
-
-        private int ReadUntilNotNumber(ReadOnlySpan<byte> buffer, int startIndex)
-        {
-            var index = startIndex;
-            while (index < buffer.Length && (buffer[index] >= JsonPathConstants.Num0 && buffer[index] <= JsonPathConstants.Num9))
+            else if (ch == JsonPathConstants.SelectCurrent)
             {
-                index++;
+                _tokenType = JsonPathTokenType.Current;
+                return true;
             }
-            return index - startIndex;
-        }
-
-        private int ReadUntilNotOperator()
-        {
-            var start = _currentPosition;
-            var ch = _buffer[++_currentPosition];
-            while (JsonPathConstants.OperatorChars.IndexOf(ch) >= 0)
+            else if (IsNumberCharStart(ch))
             {
-                ch = _buffer[++_currentPosition];
+                _tokenType = JsonPathTokenType.Number;
+                return ReadNumberEnd();
+            }
+            else if (ch == JsonPathConstants.RegexStart)
+            {
+                _tokenType = JsonPathTokenType.Regex;
+                return ReadRegexEnd();
             }
 
-            _currentPosition--;
-            return _currentPosition - start + 1;
+            return false;
         }
 
-        private int ReadSliceRange()
+        private bool ReadStringNext()
         {
-            var start = _currentPosition;
-            var ch = _buffer[++_currentPosition];
-            while (ch != JsonPathConstants.EndFilter)
-            {
-                ch = _buffer[++_currentPosition];
-            }
-
-            _currentPosition--;
-            return _currentPosition - start + 1; 
-        }
-
-        private void ReadToNextPropertyNameInPropertyNameFilter()
-        {
-            if (_buffer[_currentPosition] == JsonPathConstants.Comma)
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.Comma)
             {
                 _currentPosition++;
                 SkipInvaild();
                 if (_buffer[_currentPosition] == JsonPathConstants.SingleQuote)
                 {
-                    _currentPosition++;
-                    SkipInvaild();
-                    return;
+                    _tokenType = JsonPathTokenType.String;
+                    return ReadStringEnd();
                 }
             }
-            else if (_buffer[_currentPosition] == JsonPathConstants.EndFilter)
+            else if (ch == JsonPathConstants.EndFilter)
             {
-                _currentPosition--;
-                return;
+                _tokenType = JsonPathTokenType.EndFilter;
+                return true;
             }
-            ThrowInvalidDataException();
+            else if (ch == JsonPathConstants.RightBracket)
+            {
+                return ReadEndExpression();
+            }
+
+            return false;
         }
 
-        private void ReadToNextArrayIndexInArrayIndexFilter()
+        private bool ReadNumberNext()
         {
-            if (_buffer[_currentPosition] == JsonPathConstants.Comma)
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.Comma)
             {
                 _currentPosition++;
                 SkipInvaild();
-                if (IsNumber())
+                if (IsNumberCharStart(_buffer[_currentPosition]))
                 {
-                    return;
+                    _tokenType = JsonPathTokenType.Number;
+                    return ReadIntegerEnd();
                 }
             }
-
-            ThrowInvalidDataException();
-        }
-
-        private bool IsVaildSegment()
-        {
-            return _segmentLength > 0;
-        }
-        private void CheckSegment()
-        {
-            if (!IsVaildSegment())
+            else if (ch == JsonPathConstants.EndFilter)
             {
-                ThrowInvalidDataException();
+                _tokenType = JsonPathTokenType.EndFilter;
+                return true;
             }
+            else if (ch == JsonPathConstants.RightBracket)
+            {
+                return ReadEndExpression();
+            }
+            else if (ch == JsonPathConstants.Colon)
+            {
+                _tokenType = JsonPathTokenType.Slice;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadChildOrDeepScanNext()
+        {
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.Wildcard)
+            {
+                _tokenType = JsonPathTokenType.Wildcard;
+                return true;
+            }
+            else if (IsPropertyNameChar(ch))
+            {
+                _tokenType = JsonPathTokenType.PropertyName;
+                return ReadPropertyNameEnd();
+            }
+            else if (ch == JsonPathConstants.StartFilter)
+            {
+                _tokenType = JsonPathTokenType.StartFilter;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadWildcardNext()
+        {
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.StartFilter)
+            {
+                _tokenType = JsonPathTokenType.StartFilter;
+                return true;
+            }
+            else if (ch == JsonPathConstants.EndFilter)
+            {
+                _tokenType = JsonPathTokenType.EndFilter;
+                return true;
+            }
+            return TryReadChildOrDeepScan();
+        }
+
+        private bool ReadSliceNext()
+        {
+            var ch = _buffer[_currentPosition];
+            if (IsNumberCharStart(ch))
+            {
+                _tokenType = JsonPathTokenType.Number;
+                return ReadIntegerEnd();
+            }
+            else if (ch == JsonPathConstants.EndFilter)
+            {
+                _tokenType = JsonPathTokenType.EndFilter;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadStartExpressionNext()
+        {
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.SelectCurrent)
+            {
+                _tokenType = JsonPathTokenType.Current;
+                return true;
+            }
+            else if (ch == JsonPathConstants.Root)
+            {
+                _tokenType = JsonPathTokenType.Root;
+                return true;
+            }
+            return false;
+        }
+
+        private bool ReadEndExpressionNext()
+        {
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.EndFilter)
+            {
+                _tokenType = JsonPathTokenType.EndFilter;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadSelectCurrentNext()
+        {
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.Dot && NextCharIs(JsonPathConstants.Dot))
+            {
+                _tokenType = JsonPathTokenType.DeepScan;
+                return true;
+            }
+            else if (ch == JsonPathConstants.Dot)
+            {
+                _tokenType = JsonPathTokenType.Child;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool NextCharIs(byte ch)
+        {
+            return NextCharIs(_currentPosition, ch);
+        }
+
+        private bool NextCharIs(int start, byte ch)
+        {
+            var nextIndex = start + 1;
+            if (nextIndex >= _buffer.Length)
+            {
+                return false;
+            }
+            return _buffer[nextIndex] == ch;
+        }
+
+        private bool NextCharIsIn(ReadOnlySpan<byte> chs)
+        {
+            return NextCharIsIn(_currentPosition, chs);
+        }
+
+        private bool NextCharIsIn(int start, ReadOnlySpan<byte> chs)
+        {
+            var nextIndex = start + 1;
+            if (nextIndex >= _buffer.Length)
+            {
+                return false;
+            }
+
+            return chs.IndexOf(_buffer[nextIndex]) > -1;
+        }
+
+        private bool ReadPropertyNameEnd()
+        {
+            _segmentStart = _segmentEnd = _currentPosition;
+            _currentPosition++;
+            while (!IsEnd() && IsPropertyNameChar(_buffer[_currentPosition]))
+            {
+                _currentPosition++;
+            }
+            _segmentEnd = --_currentPosition;
+            return _segmentEnd >= _segmentStart;
+        }
+
+        private bool ReadStringEnd()
+        {
+            _currentPosition++;
+            _segmentStart = _segmentEnd = _currentPosition;
+            while (!IsEnd() && IsPropertyNameChar(_buffer[_currentPosition]))
+            {
+                _currentPosition++;
+            }
+            _segmentEnd = _currentPosition - 1;
+
+            if (_buffer[_currentPosition] == JsonPathConstants.SingleQuote && _segmentStart <= _segmentEnd)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadIntegerEnd()
+        {
+            _segmentStart = _segmentEnd = _currentPosition;
+            _currentPosition++;
+            while (!IsEnd() && IsIntegerChar(_buffer[_currentPosition]))
+            {
+                _currentPosition++;
+            }
+            _segmentEnd = --_currentPosition;
+            if (_segmentStart == _segmentEnd && _buffer[_segmentStart] != JsonPathConstants.Minus
+                || _segmentEnd > _segmentStart)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadNumberEnd()
+        {
+            _segmentStart = _segmentEnd = _currentPosition;
+            _currentPosition++;
+            bool hasdot = false;
+            while (!IsEnd() && IsNumberChar(_buffer[_currentPosition]))
+            {
+                if (_buffer[_currentPosition] == JsonPathConstants.Dot)
+                {
+                    if (!hasdot)
+                    {
+                        hasdot = true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                _currentPosition++;
+            }
+            _segmentEnd = --_currentPosition;
+
+            if (_segmentStart == _segmentEnd
+                && _buffer[_segmentStart] != JsonPathConstants.Minus
+                || _segmentEnd > _segmentStart && _buffer[_segmentEnd] != JsonPathConstants.Dot)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadRegexEnd()
+        {
+            _segmentStart = _segmentEnd = _currentPosition;
+            _currentPosition++;
+            while (!IsEnd())
+            {
+                if (_buffer[_currentPosition] == JsonPathConstants.RegexStart)
+                {
+                    if (!NextCharIs(JsonPathConstants.RightBracket)
+                        && !NextCharIs(JsonPathConstants.Space)
+                        && NextCharIsIn(JsonPathConstants.RegexModifyChars))
+                    {
+                        _currentPosition++;
+                    }
+
+                    _segmentEnd = _currentPosition;
+                    return true;
+                }
+                _currentPosition++;
+            }
+
+            return false;
+        }
+
+        private bool TryReadStartExpression()
+        {
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.ExpressionStart && NextCharIs(JsonPathConstants.LeftBracket))
+            {
+                _currentPosition++;
+                _tokenType = JsonPathTokenType.StartExpression;
+                _inExpression = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadEndExpression()
+        {
+            _tokenType = JsonPathTokenType.EndExpression;
+            _inExpression = false;
+            return true;
+        }
+
+        private bool TryReadChildOrDeepScan()
+        {
+            var ch = _buffer[_currentPosition];
+            if (ch == JsonPathConstants.Dot && NextCharIs(JsonPathConstants.Dot))
+            {
+                _tokenType = JsonPathTokenType.DeepScan;
+                _currentPosition++;
+                return true;
+            }
+            else if (ch == JsonPathConstants.Dot)
+            {
+                _tokenType = JsonPathTokenType.Child;
+                return true;
+            }
+            return false;
+        }
+
+        private bool IsPropertyNameChar(byte ch)
+        {
+            return ch >= JsonPathConstants.A && ch <= JsonPathConstants.Z
+                || ch >= JsonPathConstants.a && ch <= JsonPathConstants.z
+                || ch == JsonPathConstants.UnderLine;
+        }
+
+        private bool IsNumberCharStart(byte ch)
+        {
+            return ch == JsonPathConstants.Minus
+                || ch >= JsonPathConstants.Num0 && ch <= JsonPathConstants.Num9;
+        }
+
+        private bool IsIntegerChar(byte ch)
+        {
+            return ch >= JsonPathConstants.Num0 && ch <= JsonPathConstants.Num9;
+        }
+
+        private bool IsNumberChar(byte ch)
+        {
+            return IsIntegerChar(ch) || ch == JsonPathConstants.Dot;
+        }
+
+        private bool StartsWithAndEndWithSpace(ReadOnlySpan<byte> buffer)
+        {
+            return _buffer.Slice(_currentPosition).StartsWith(buffer) && NextCharIs(_currentPosition + buffer.Length, JsonPathConstants.Space);
         }
 
         private void SkipInvaild()
         {
             while (!IsEnd()
-                && _buffer[_currentPosition] <= JsonPathConstants.Space 
-                && JsonPathConstants.SkipChars.IndexOf(_buffer[_currentPosition]) >= 0)
+                && _buffer[_currentPosition] == JsonPathConstants.Space)
             {
                 _currentPosition++;
             }
         }
 
-        private int SkipInvaild(ReadOnlySpan<byte> buffer, int startindex)
+        private bool ShouldSkipInvaild()
         {
-            while (startindex < buffer.Length 
-                && buffer[startindex] <= JsonPathConstants.Space
-                && JsonPathConstants.SkipChars.IndexOf(_buffer[startindex]) >= 0)
-            {
-                startindex++;
-            }
-
-            return startindex;
+            return _tokenType == JsonPathTokenType.Equal
+                || _tokenType == JsonPathTokenType.GreaterThan
+                || _tokenType == JsonPathTokenType.LessThan
+                || _tokenType == JsonPathTokenType.GreaterThanOrEqual
+                || _tokenType == JsonPathTokenType.LessThenOrEqual
+                || _tokenType == JsonPathTokenType.In
+                || _tokenType == JsonPathTokenType.Nin
+                || _tokenType == JsonPathTokenType.Noneof
+                || _tokenType == JsonPathTokenType.Anyof
+                || _tokenType == JsonPathTokenType.Empty
+                || _tokenType == JsonPathTokenType.EndExpression
+                || _tokenType == JsonPathTokenType.Matches
+                || _tokenType == JsonPathTokenType.NotEqual
+                || _tokenType == JsonPathTokenType.Number
+                || _tokenType == JsonPathTokenType.Size
+                || _tokenType == JsonPathTokenType.Slice
+                || _tokenType == JsonPathTokenType.StartExpression
+                || _tokenType == JsonPathTokenType.Subsetof
+                || _tokenType == JsonPathTokenType.StartFilter;
         }
 
-        private void ReadFirstRoot()
+        private bool ReadRoot()
         {
-            if (TryReadRoot())
+            if (_buffer[_currentPosition] == JsonPathConstants.Root)
             {
                 _tokenType = JsonPathTokenType.Root;
-                return;
+                return true;
             }
-
-            ThrowInvalidDataException();
+            return false;
         }
 
         private bool IsEnd()
@@ -627,76 +764,10 @@ namespace PolarShadow.Core
             return _currentPosition >= _buffer.Length;
         }
 
-        private bool IsEnd(int index)
-        {
-            return index >= _buffer.Length;
-        }
-
-        private bool TryReadRoot()
-        {
-            return _buffer[_currentPosition] == JsonPathConstants.Root;
-        }
-
         private void ThrowInvalidDataException()
         {
             _readFinal = true;
-            throw new InvalidDataException();
-        }
-
-        private bool IsRemainEnough(int requireRemain)
-        {
-            return _buffer.Length - 1 - _currentPosition >= requireRemain;
-        }
-
-        private void EndFilter()
-        {
-            if (_inPropertyNameFilter)
-            {
-                _tokenType = JsonPathTokenType.PropertyNameFilterEnd;
-                _inPropertyNameFilter = false;
-                return;
-            }
-            else if (_inSliceFilter)
-            {
-                _tokenType = JsonPathTokenType.ArraySliceFilterEnd;
-                _inSliceFilter = false;
-                return;
-            }
-            else if (_inIndexFilter)
-            {
-                _tokenType = JsonPathTokenType.ArrayIndexFilterEnd;
-                _inIndexFilter = false;
-                return;
-            }
-            else if (_inExpressionFilter)
-            {
-                _tokenType = JsonPathTokenType.ExpressionFilterEnd;
-                _inExpressionFilter = false;
-                return;
-            }
-
-            ThrowInvalidDataException();
-        }
-
-        private bool TryFindNotNumberFirst(out byte ch)
-        {
-            ch = 0;
-            var pos = _currentPosition;
-            while (++pos < _buffer.Length)
-            {
-                if (_buffer[pos] >= JsonPathConstants.Num0 && _buffer[pos] <= JsonPathConstants.Num9)
-                {
-                    continue;
-                }
-                ch = _buffer[pos];
-                return true;
-            }
-            return false;
-        }
-
-        private bool IsNumber()
-        {
-            return _buffer[_currentPosition] == JsonPathConstants.Minus || (_buffer[_currentPosition] >= JsonPathConstants.Num0 && _buffer[_currentPosition] <= JsonPathConstants.Num9);
+            throw new InvalidDataException($"Invalid data at {GetString()}");
         }
     }
 }

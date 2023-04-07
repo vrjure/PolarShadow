@@ -7,7 +7,45 @@ namespace PolarShadow.Core
     internal enum NameSlotTokenType
     {
         None = 0,
+        /// <summary>
+        /// {
+        /// </summary>
+        Start,
+        /// <summary>
+        /// }
+        /// </summary>
+        End,
+        /// <summary>
+        /// ::
+        /// </summary>
+        Format,
+        /// <summary>
+        /// 参数 [_][A-z]
+        /// </summary>
+        Parameter,
+        /// <summary>
+        /// :@[_][A-z]
+        /// </summary>
         Property,
-        Number
+        /// <summary>
+        /// jsonPath
+        /// </summary>
+        jsonPath,
+        /// <summary>
+        /// xPath
+        /// </summary>
+        xPath,
+        /// <summary>
+        /// 0-9 .
+        /// </summary>
+        Number,
+        /// <summary>
+        /// /.../
+        /// </summary>
+        Regex,
+        /// <summary>
+        /// ? :
+        /// </summary>
+        ConditionalExpression
     }
 }
