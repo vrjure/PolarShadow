@@ -24,5 +24,8 @@ namespace PolarShadow.Core
         public const byte Colon = (byte)':';
         public const byte At = (byte)'@';
         public const byte Tilde = (byte)'~';
+
+        public static ReadOnlySpan<byte> XPathEndChars => new byte[]
+        { (byte)' ', (byte)'}'};
     }
 }

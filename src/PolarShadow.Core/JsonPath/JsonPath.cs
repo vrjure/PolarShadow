@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,157 +8,278 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public static class JsonPath
+    public ref struct JsonPath
     {
-        private readonly static JsonAnalysisHandler _handler = new JsonAnalysisHandler();
-        public static T Analysis<T>(this JsonElement obj, IReadOnlyDictionary<string, AnalysisAction> actions)
+        private readonly ReadOnlySpan<byte> _jsonPath;
+        public JsonPath(ReadOnlySpan<byte> jsonPath)
         {
-            
-            return _handler.Analysis<T>(obj, actions, obj);
+            _jsonPath = jsonPath;
         }
 
-        public static void Analysis(this JsonElement obj, Stream stream, IReadOnlyDictionary<string, AnalysisAction> actions)
+        public T Read<T>(JsonElement root)
         {
-            _handler.Analysis(obj, stream, actions, obj);
+            var reader = new JsonPathReader(_jsonPath);
+            if(!reader.Read() || reader.TokenType != JsonPathTokenType.Root) return default(T);
+            var value = ReadRootNext(ref reader, root, root);
+            return default;
         }
 
-        public static bool TryGetPropertyWithJsonPath(this JsonElement obj, ReadOnlySpan<byte> jsonPath, out JsonElement result)
+        private JsonElement ReadRootNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
         {
-            if (jsonPath.Length == 0)
+            if (!reader.Read())
             {
-                result = new JsonElement();
-                return false;
+                return default;
             }
 
-            if (!jsonPath[0].Equals(JsonPathConstants.Root))
+            return reader.TokenType switch
             {
-                return obj.TryGetProperty(jsonPath, out result);
+                JsonPathTokenType.Child => ReadChildNext(ref reader, current, root),
+                JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, current, root),
+                JsonPathTokenType.StartFilter => ReadStartFilterNext(ref reader, current, root),
+                _ => default
+            };
+        }
+
+        private JsonElement ReadChildNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
+        {
+            if (!reader.Read())
+            {
+                return default;
             }
 
-            var reader = new JsonPathReader(jsonPath);
-            var lastTokenType = JsonPathTokenType.None;
-            var inIndexFilter = false;
-            result = new JsonElement();
-            while (reader.Read())
+            var value = reader.TokenType switch
             {
-                switch (reader.TokenType)
+                JsonPathTokenType.PropertyName => current.GetProperty(reader.Slice()),
+                JsonPathTokenType.Wildcard => current,
+                _ => default
+            };
+
+            if (!reader.Read()) return value;
+
+            return ReadPropertyNext(ref reader, value, root);
+        }
+
+        private JsonElement ReadDeepScanNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
+        {
+            if (!reader.Read())
+            {
+                return default;
+            }
+
+            var value = reader.TokenType switch
+            {
+                JsonPathTokenType.PropertyName => DeepScanProperty(current, reader.Slice()),
+                JsonPathTokenType.Wildcard => current,
+                _ => default
+            };
+
+            if (!reader.Read()) return value;
+
+            return ReadPropertyNext(ref reader, value, root);
+        }
+
+        private JsonElement ReadPropertyNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
+        {
+            if (!reader.Read()) return default;
+
+            if (current.ValueKind == JsonValueKind.Array)
+            {
+                var ms = new MemoryStream();
+                using var jsonWriter = new Utf8JsonWriter(ms);
+
+                var state = reader.State;
+                jsonWriter.WriteStartArray();
+                foreach (var item in current.EnumerateArray())
                 {
-                    case JsonPathTokenType.None:
-                        break;
-                    case JsonPathTokenType.Root:
-                        result = obj;
-                        break;
-                    case JsonPathTokenType.PropertyName:
-                        if (reader.TryGetString(out string property))
-                        {
-                            if (lastTokenType == JsonPathTokenType.Child)
-                            {
-                                if (!result.TryGetProperty(property, out result))
-                                {
-                                    return false;
-                                }
-                            }
-                            else if (lastTokenType == JsonPathTokenType.DeepScan)
-                            {
-                                if (!TryDeepScanProperty(result, property, out result))
-                                {
-                                    return false;
-                                }
-                            }
-                        }
-                        break;
-                    
-                    case JsonPathTokenType.Number:
-                        if (!reader.TryGetInt(out int num))
-                        {
-                            return false;
-                        }
-                        if (inIndexFilter)
-                        {
-                            int i = 0;
-                            foreach (var item in result.EnumerateArray())
-                            {
-                                if (i == num)
-                                {
-                                    result = item;
-                                    break;
-                                }
-                                i++;
-                            }
-                            if (i != num)
-                            {
-                                return false;
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
+                    reader.Reset(state);
+                    var value = reader.TokenType switch
+                    {
+                        JsonPathTokenType.Child => ReadChildNext(ref reader, item, root),
+                        JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, item, root),
+                        JsonPathTokenType.StartFilter => ReadStartFilterNext(ref reader, item, root),
+                        _ => default
+                    };
 
-                lastTokenType = reader.TokenType;
-            }
-
-            return true;
-        }
-
-        public static bool TryGetPropertyWithJsonPath(this JsonElement obj, string jsonPath, out JsonElement result)
-        {
-            return TryGetPropertyWithJsonPath(obj, Encoding.UTF8.GetBytes(jsonPath), out result);
-        }
-
-        private static bool TryDeepScanProperty(JsonElement root, string propertyName, out JsonElement element)
-        {
-            element = default;
-            if (root.ValueKind != JsonValueKind.Array && root.TryGetProperty(propertyName, out element))
-            {
-                return true;
-            }
-
-            if (root.ValueKind == JsonValueKind.Object)
-            {
-                foreach (var jsonProperty in root.EnumerateObject())
-                {
-                    if (!jsonProperty.NameEquals(propertyName))
+                    if (value.ValueKind == JsonValueKind.Undefined)
                     {
                         continue;
                     }
-                    element = jsonProperty.Value;
-                    return true;
+                    value.WriteTo(jsonWriter);
                 }
 
-                foreach (var jsonProperty in root.EnumerateObject())
-                {
-                    if (jsonProperty.Value.ValueKind == JsonValueKind.Object 
-                        || jsonProperty.Value.ValueKind == JsonValueKind.Array)
-                    {
-                        if (!TryDeepScanProperty(jsonProperty.Value, propertyName, out element))
-                        {
-                            continue;
-                        }
-                        return true;
-                    }
-                }
+                jsonWriter.WriteEndArray();
+                ms.Seek(0, SeekOrigin.Begin);
+                using var doc = JsonDocument.Parse(ms);
+                
+                return doc.RootElement.Clone();
             }
-            else if (root.ValueKind == JsonValueKind.Array)
+            else if (current.ValueKind == JsonValueKind.Object)
             {
-                foreach (var arrayItem in root.EnumerateArray())
+                return reader.TokenType switch
                 {
-                    if (arrayItem.ValueKind != JsonValueKind.Object)
+                    JsonPathTokenType.Child => ReadChildNext(ref reader, current, root),
+                    JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, current, root),
+                    JsonPathTokenType.StartFilter => ReadStartFilterNext(ref reader, current, root),
+                    _ => default
+                };
+            }
+
+            return default;
+
+        }
+
+        private JsonElement ReadStartFilterNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
+        {
+            if (!reader.Read()) return default;
+
+            return reader.TokenType switch
+            {
+                JsonPathTokenType.StartExpression => ReadStartExpressionNext(ref reader, current, root)
+            };
+            return default;
+        }
+
+        private JsonElement ReadStartExpressionNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
+        {
+            if (!reader.Read()) return default;
+
+            var left = reader.TokenType switch
+            {
+                JsonPathTokenType.Current => ReadCurrentNext(ref reader, current, root),
+                JsonPathTokenType.Root => ReadRootNext(ref reader, root, root),
+                _ => default
+            };
+
+            if (left.ValueKind == JsonValueKind.Undefined) return default;
+
+            if (!reader.Read()) return default;
+            var op = reader.TokenType;
+            if (op == JsonPathTokenType.EndExpression && CaculateExpression(left, default(object), JsonPathTokenType.None))
+            {
+                return current;
+            }
+
+            if (!reader.Read()) return default;
+            var right = reader.TokenType switch
+            {
+                JsonPathTokenType.Root => ReadRootNext(ref reader, root, root),
+                JsonPathTokenType.Current => ReadCurrentNext(ref reader, current, root),
+                _ => default
+            }; ;
+
+            if (CaculateExpression(left, right, op))
+            {
+                return current;
+            }
+            return default;
+        }
+
+        private JsonElement ReadCurrentNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
+        {
+            if (!reader.Read()) return default;
+
+            return reader.TokenType switch
+            {
+                JsonPathTokenType.Child => ReadChildNext(ref reader, current, root),
+                JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, current, root),
+                _ => default
+            };
+        }
+
+        private JsonElement DeepScanProperty(JsonElement current, ReadOnlySpan<byte> propertyName, Func<JsonProperty, bool> filter = default)
+        {
+            if (current.ValueKind == JsonValueKind.Object)
+            {
+                foreach (var item in current.EnumerateObject())
+                {
+                    if (!item.NameEquals(propertyName))
+                    {
+                        continue;
+                    }
+
+                    if (filter == default || filter != default && filter(item))
+                    return item.Value;
+                }
+            }
+            else if (current.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var item in current.EnumerateArray())
+                {
+                    if (item.ValueKind != JsonValueKind.Object)
                     {
                         break;
                     }
-
-                    if (!TryDeepScanProperty(arrayItem, propertyName, out element))
-                    {
-                        break;
-                    }
-
-                    return true;
+                    return DeepScanProperty(item, propertyName);
                 }
             }
 
+            return default;
+        }
 
-            return false;
+        private bool CaculateExpression<TLeft, TRight>(TLeft left, TRight right, JsonPathTokenType op)
+        {
+            if (op == JsonPathTokenType.None)
+            {
+                if (left is JsonElement json) return CaculateBoolean(json);
+
+                return false;
+            }
+
+            if (left is JsonElement jsonLeft)
+            {
+
+            }
+
+            if (right is JsonElement jsonRight)
+            {
+
+            }
+
+            switch (op)
+            {
+                case JsonPathTokenType.Equal:
+                    break;
+                case JsonPathTokenType.LessThan:
+                    break;
+                case JsonPathTokenType.GreaterThan:
+                    break;
+                case JsonPathTokenType.LessThenOrEqual:
+                    break;
+                case JsonPathTokenType.GreaterThanOrEqual:
+                    break;
+                case JsonPathTokenType.NotEqual:
+                    break;
+                case JsonPathTokenType.Matches:
+                    break;
+                case JsonPathTokenType.In:
+                    break;
+                case JsonPathTokenType.Nin:
+                    break;
+                case JsonPathTokenType.Subsetof:
+                    break;
+                case JsonPathTokenType.Anyof:
+                    break;
+                case JsonPathTokenType.Noneof:
+                    break;
+                case JsonPathTokenType.Size:
+                    break;
+                case JsonPathTokenType.Empty:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private bool CaculateBoolean(JsonElement json)
+        {
+            return json.ValueKind switch
+            {
+                JsonValueKind.String => string.IsNullOrEmpty(json.GetString()),
+                JsonValueKind.Number => !(json.GetDecimal() == 0),
+                JsonValueKind.False => false,
+                JsonValueKind.True => true,
+                _ => false
+            };
         }
     }
 }

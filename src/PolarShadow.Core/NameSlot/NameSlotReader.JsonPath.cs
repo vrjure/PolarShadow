@@ -8,7 +8,12 @@ namespace PolarShadow.Core
     {
         private bool ReadToJsonPathEnd()
         {
-            return false;
+            _segmentStart = _index;
+            var reader = new JsonPathReader(_buffer, _segmentStart);
+            var consume = reader.ReadToEnd();
+            _index += consume;
+            _segmentEnd = _index;
+            return true;
         }
     }
 }

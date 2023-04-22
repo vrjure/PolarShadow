@@ -14,7 +14,7 @@ namespace PolarShadow.Core
         private int _segmentStart;
         private int _segmentEnd;
 
-        private bool _readEnd;
+        private bool _readClose;
 
         public NameSlotReader(ReadOnlySpan<byte> buffer)
         {
@@ -22,7 +22,7 @@ namespace PolarShadow.Core
             _index = 0;
             _tokenType = NameSlotTokenType.None;
             _segmentStart = _segmentEnd = -1;
-            _readEnd = false;
+            _readClose = false;
         }
 
         public NameSlotTokenType TokenType => _tokenType;
@@ -30,21 +30,13 @@ namespace PolarShadow.Core
 
         public bool Read()
         {
-            if (CanRead())
-            {
-                return false;
-            }
-
-            if(_tokenType == NameSlotTokenType.None || _tokenType == NameSlotTokenType.End)
-            {
-                _readEnd = !ReadToStart();
-                return !_readEnd;
-            }
-
             Skip();
-            if (!CanRead())
+            if (!CanRead()) return ReadClose();
+
+            if (_tokenType == NameSlotTokenType.None || _tokenType == NameSlotTokenType.End)
             {
-                return ReadClose();
+                _readClose = !ReadToStart();
+                return !_readClose;
             }
 
             if (!ReadNext())
@@ -68,44 +60,83 @@ namespace PolarShadow.Core
         private bool ReadNext()
         {
             var ch = _buffer[_index];
-            if (_tokenType == NameSlotTokenType.Start)
+            switch (_tokenType)
             {
-                if (IsParameterStart(ch))
-                {
-                    return ReadToPropertyEnd();
-                }
-                else if (ch == NameSlotConstants.JsonPathRoot)
-                {
-                    return ReadToJsonPathEnd();
-                }
-                else if (ch == NameSlotConstants.Tilde)
-                {
-
-                }
+                case NameSlotTokenType.None:
+                    return ReadToNoneNext();
+                case NameSlotTokenType.Start:
+                    return ReadToStartNext();
+                case NameSlotTokenType.End:
+                    break;
+                case NameSlotTokenType.Format:
+                    break;
+                case NameSlotTokenType.Parameter:
+                    break;
+                case NameSlotTokenType.Property:
+                    break;
+                case NameSlotTokenType.jsonPath:
+                    break;
+                case NameSlotTokenType.xPath:
+                    break;
+                case NameSlotTokenType.Number:
+                    break;
+                case NameSlotTokenType.Regex:
+                    break;
+                case NameSlotTokenType.ConditionalExpression:
+                    break;
+                default:
+                    break;
             }
-            else if (_tokenType == NameSlotTokenType.Property || _tokenType == NameSlotTokenType.jsonPath || _tokenType == NameSlotTokenType.xPath)
+            if (_tokenType == NameSlotTokenType.Property || _tokenType == NameSlotTokenType.jsonPath || _tokenType == NameSlotTokenType.xPath)
             {
-                if (ch == NameSlotConstants.Colon)
-                {
-                    return ReadFormatStart();
-                }
-                else if (ch == NameSlotConstants.SlotEnd)
-                {
-                    return ReadEnd();
-                }
-            }
-            else if (_tokenType == NameSlotTokenType.None)
-            {
-                if (ch == NameSlotConstants.SlotEnd)
-                {
-                    return ReadEnd();
-                }
-                else if (ch == NameSlotConstants.Divide)
-                {
-                    return true;
-                }
             }
 
+            return false;
+        }
+
+        private bool ReadToNoneNext()
+        {
+            var ch = _buffer[_index];
+            if (ch == NameSlotConstants.SlotEnd)
+            {
+                return ReadEnd();
+            }
+            else if (ch == NameSlotConstants.Divide)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private bool ReadToPropertyNext()
+        {
+            var ch = _buffer[_index];
+            if (ch == NameSlotConstants.Colon)
+            {
+                return ReadFormatStart();
+            }
+            else if (ch == NameSlotConstants.SlotEnd)
+            {
+                return ReadEnd();
+            }
+            return false;
+        }
+
+        private bool ReadToStartNext()
+        {
+            var ch = _buffer[_index];
+            if (IsParameterStart(ch))
+            {
+                return ReadToParameterEnd();
+            }
+            else if (ch == NameSlotConstants.JsonPathRoot)
+            {
+                return ReadToJsonPathEnd();
+            }
+            else if (ch == NameSlotConstants.Divide)
+            {
+                return ReadToXPathEnd();
+            }
             return false;
         }
 
@@ -114,7 +145,7 @@ namespace PolarShadow.Core
             Skip();
             while (CanRead())
             {
-                return true;
+                return false;
             }
             _tokenType = NameSlotTokenType.Regex;
             _segmentStart = _segmentEnd = _index;
@@ -153,26 +184,6 @@ namespace PolarShadow.Core
             return true;
         }
 
-        private bool ReadToPropertyEnd()
-        {
-            _segmentStart = _segmentEnd = _index;
-            while (CanRead())
-            {
-                if (IsParameterChar(_buffer[_index]))
-                {
-                    _index++;
-                }
-                else
-                {
-                    _tokenType = NameSlotTokenType.Property;
-                    _segmentEnd = _index - 1;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private bool ReadtoChar(byte ch)
         {
             while (CanRead())
@@ -204,7 +215,7 @@ namespace PolarShadow.Core
 
         private bool CanRead()
         {
-            return _index < _buffer.Length && !_readEnd;
+            return _index < _buffer.Length && !_readClose;
         }
 
         private bool ReadNone()
@@ -215,7 +226,7 @@ namespace PolarShadow.Core
 
         private bool ReadClose()
         {
-            _readEnd = true;
+            _readClose = true;
             _tokenType = NameSlotTokenType.None;
             _segmentEnd = _segmentStart = -1;
             return false;

@@ -8,21 +8,12 @@ namespace PolarShadow.Core
     {
         public string GetString()
         {
-            if (_tokenType == NameSlotTokenType.Property)
-            {
-                return Encoding.UTF8.GetString(Slice());
-            }
-
-            return string.Empty;
+            return Encoding.UTF8.GetString(Slice());
         }
 
         public ReadOnlySpan<byte> GetSegment()
         {
-            if (_tokenType == NameSlotTokenType.jsonPath)
-            {
-                return Slice();
-            }
-            return default;
+            return Slice();
         }
 
         private ReadOnlySpan<byte> Slice()

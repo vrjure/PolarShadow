@@ -20,11 +20,11 @@ namespace PolarShadow.Core
         /// </summary>
         Format,
         /// <summary>
-        /// 参数 [_][A-z]
+        /// 参数 [_][A-Z a-z]
         /// </summary>
         Parameter,
         /// <summary>
-        /// :@[_][A-z]
+        /// :@[_][A-Z a-z]
         /// </summary>
         Property,
         /// <summary>

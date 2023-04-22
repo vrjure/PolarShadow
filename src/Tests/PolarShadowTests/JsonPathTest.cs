@@ -39,10 +39,20 @@ namespace PolarShadowTests
             }
         }
 
+        [Test]
+        public void JsonPathReaderToEndTest()
+        {
+            foreach (var item in _jsonPath)
+            {
+                var reader = new JsonPathReader(Encoding.UTF8.GetBytes(item));
+                var consume = reader.ReadToEnd();
+                Console.WriteLine($"total:{item.Length}, consume ：{consume}");
+            }
+        }
+
         private void Read(string jsonPath)
         {
             Console.WriteLine(jsonPath);
-            using var sr = new StringReader(jsonPath);
             var reader = new JsonPathReader(Encoding.UTF8.GetBytes(jsonPath));
             while (reader.Read())
             {
@@ -115,7 +125,7 @@ namespace PolarShadowTests
             foreach (var item in paths)
             {
                 Console.WriteLine(item);
-                var isSuccess = JsonPath.TryGetPropertyWithJsonPath(doc.RootElement, item, out JsonElement result);
+                var isSuccess = JsonHelper.TryGetPropertyWithJsonPath(doc.RootElement, item, out JsonElement result);
                 if (isSuccess)
                 {
                     switch (result.ValueKind)
