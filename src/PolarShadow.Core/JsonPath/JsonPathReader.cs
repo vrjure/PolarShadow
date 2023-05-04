@@ -20,6 +20,11 @@ namespace PolarShadow.Core
         private int _segmentEnd;
         private bool _readFinal;
 
+        public JsonPathReader(string jsonPath) : this(Encoding.UTF8.GetBytes(jsonPath))
+        {
+
+        }
+
         public JsonPathReader(ReadOnlySpan<byte> jsonPath)
         {
             if (jsonPath[0] != '$')
@@ -54,7 +59,13 @@ namespace PolarShadow.Core
         {
             _currentPosition = state.Position;
             _tokenType = state.TokenType;
+            if (_currentPosition < _buffer.Length)
+            {
+                _readFinal = false;
+            }
         }
+
+        public bool IsCompleted => _readFinal;
 
         public bool Read()
         {
@@ -265,7 +276,7 @@ namespace PolarShadow.Core
             }
             else if (ch == JsonPathConstants.LessThan && NextCharIs(JsonPathConstants.Equal))
             {
-                _tokenType = JsonPathTokenType.LessThenOrEqual;
+                _tokenType = JsonPathTokenType.LessThanOrEqual;
                 _currentPosition++;
                 return true;
             }
@@ -300,43 +311,43 @@ namespace PolarShadow.Core
             else if (StartsWithAndEndWithSpace(JsonPathConstants.InChars))
             {
                 _tokenType = JsonPathTokenType.In;
-                _currentPosition += JsonPathConstants.InChars.Length;
+                _currentPosition += JsonPathConstants.InChars.Length - 1;
                 return true;
             }
             else if (StartsWithAndEndWithSpace(JsonPathConstants.NInChars))
             {
-                _tokenType = JsonPathTokenType.Nin;
-                _currentPosition += JsonPathConstants.NInChars.Length;
+                _tokenType = JsonPathTokenType.NIn;
+                _currentPosition += JsonPathConstants.NInChars.Length - 1;
                 return true;
             }
             else if (StartsWithAndEndWithSpace(JsonPathConstants.SubsetOfChars))
             {
                 _tokenType = JsonPathTokenType.Subsetof;
-                _currentPosition += JsonPathConstants.SubsetOfChars.Length;
+                _currentPosition += JsonPathConstants.SubsetOfChars.Length - 1;
                 return true;
             }
             else if (StartsWithAndEndWithSpace(JsonPathConstants.AnyOfChars))
             {
                 _tokenType = JsonPathTokenType.Anyof;
-                _currentPosition += JsonPathConstants.AnyOfChars.Length;
+                _currentPosition += JsonPathConstants.AnyOfChars.Length - 1;
                 return true;
             }
             else if (StartsWithAndEndWithSpace(JsonPathConstants.NoneOfChars))
             {
                 _tokenType = JsonPathTokenType.Noneof;
-                _currentPosition += JsonPathConstants.NoneOfChars.Length;
+                _currentPosition += JsonPathConstants.NoneOfChars.Length - 1;
                 return true;
             }
             else if (StartsWithAndEndWithSpace(JsonPathConstants.SizeChars))
             {
                 _tokenType = JsonPathTokenType.Size;
-                _currentPosition += JsonPathConstants.SizeChars.Length;
+                _currentPosition += JsonPathConstants.SizeChars.Length - 1;
                 return true;
             }
-            else if (StartsWithAndEndWithSpace(JsonPathConstants.EmptyChars))
+            else if (StartsWith(JsonPathConstants.EmptyChars))
             {
                 _tokenType = JsonPathTokenType.Empty;
-                _currentPosition += JsonPathConstants.EmptyChars.Length;
+                _currentPosition += JsonPathConstants.EmptyChars.Length - 1;
                 return true;
             }
 
@@ -356,6 +367,10 @@ namespace PolarShadow.Core
                 _tokenType = JsonPathTokenType.Current;
                 return true;
             }
+            else if (ch == JsonPathConstants.RightBracket)
+            {
+                 return ReadEndExpression();
+            }
             else if (IsNumberCharStart(ch))
             {
                 _tokenType = JsonPathTokenType.Number;
@@ -368,10 +383,11 @@ namespace PolarShadow.Core
             }
             else if (ch == JsonPathConstants.StartFilter 
                 && (_tokenType == JsonPathTokenType.In
-                || _tokenType == JsonPathTokenType.Nin
+                || _tokenType == JsonPathTokenType.NIn
                 || _tokenType == JsonPathTokenType.Subsetof
                 || _tokenType == JsonPathTokenType.Anyof
-                || _tokenType == JsonPathTokenType.Noneof))
+                || _tokenType == JsonPathTokenType.Noneof
+                || _tokenType == JsonPathTokenType.Size))
             {
                 _tokenType = JsonPathTokenType.StartFilter;
                 _inExpressionFilter = true;
@@ -738,6 +754,11 @@ namespace PolarShadow.Core
             return IsIntegerChar(ch) || ch == JsonPathConstants.Dot;
         }
 
+        private bool StartsWith(ReadOnlySpan<byte> buffer)
+        {
+            return _buffer.Slice(_currentPosition).StartsWith(buffer);
+        }
+
         private bool StartsWithAndEndWithSpace(ReadOnlySpan<byte> buffer)
         {
             return _buffer.Slice(_currentPosition).StartsWith(buffer) && NextCharIs(_currentPosition + buffer.Length, JsonPathConstants.Space);
@@ -758,9 +779,9 @@ namespace PolarShadow.Core
                 || _tokenType == JsonPathTokenType.GreaterThan
                 || _tokenType == JsonPathTokenType.LessThan
                 || _tokenType == JsonPathTokenType.GreaterThanOrEqual
-                || _tokenType == JsonPathTokenType.LessThenOrEqual
+                || _tokenType == JsonPathTokenType.LessThanOrEqual
                 || _tokenType == JsonPathTokenType.In
-                || _tokenType == JsonPathTokenType.Nin
+                || _tokenType == JsonPathTokenType.NIn
                 || _tokenType == JsonPathTokenType.Noneof
                 || _tokenType == JsonPathTokenType.Anyof
                 || _tokenType == JsonPathTokenType.Empty

@@ -98,7 +98,8 @@ namespace PolarShadowTests
                         new Book { Category = "reference", Author = "Nigel Rees", Title="Sayings of the Century", Price = 8.98},
                         new Book { Category = "fiction", Author = "Evelyn waugh", Title = "Sword of Honour", Price =12.99, Bicycles = new Bicycle[]
                             {
-                                new Bicycle{ Color = "red", Price = 1}
+                                new Bicycle{ Color = "red", Price = 1},
+                                new Bicycle{Color = "blue", Price = 2}
                             }
                         }
 
@@ -114,50 +115,24 @@ namespace PolarShadowTests
 
             var paths = new string[]
             {
-                "$.expensive",
-                "$..store",
-                "$..book",
-                "$..bicycle",
-                "store",
-                "$..book[1]",
-                "$..book[1].bicycles[0]"
+                //"$.expensive",
+                //"$..store",
+                //"$..book",
+                //"$..bicycle",
+                //"$..book[1]",
+                //"$..book[1].bicycles[0]",
+                //"$..book[1].bicycles[0,1]",
+                "$..book[?(@.bicycles empty)]",
+                "$..book[*]",
+                "$..book[*].category",
+                "$..book[?(@.price>8.98)]",
+                "$..book[?(@.price>8.98)].category"
             };
             foreach (var item in paths)
             {
                 Console.WriteLine(item);
-                var isSuccess = JsonHelper.TryGetPropertyWithJsonPath(doc.RootElement, item, out JsonElement result);
-                if (isSuccess)
-                {
-                    switch (result.ValueKind)
-                    {
-                        case JsonValueKind.Undefined:
-                            break;
-                        case JsonValueKind.Object:
-                            Console.WriteLine(string.Join(",", result.EnumerateObject().Select(f => f.Name)));
-                            break;
-                        case JsonValueKind.Array:
-                            Console.WriteLine(result.GetArrayLength());
-                            break;
-                        case JsonValueKind.String:
-                            Console.WriteLine(result.GetString());
-                            break;
-                        case JsonValueKind.Number:
-                            Console.WriteLine(result.GetDecimal());
-                            break;
-                        case JsonValueKind.True:
-                        case JsonValueKind.False:
-                            Console.WriteLine(result.GetBoolean());
-                            break;
-                        case JsonValueKind.Null:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("get failed");
-                }
+                var value = JsonPath.Read(doc.RootElement, item);
+                Console.WriteLine(value.GetRawText());
             }
         }
     }

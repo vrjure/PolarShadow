@@ -4,12 +4,13 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    public enum JsonPathValueType
+    public enum JsonPathValueKind
     {
         Undefined,
         Json,
         String,
         Number,
-        Boolean
+        Strings,
+        Numbers
     }
 }

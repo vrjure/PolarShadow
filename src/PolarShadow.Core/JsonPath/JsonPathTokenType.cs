@@ -60,7 +60,7 @@ namespace PolarShadow.Core
         /// <summary>
         /// <=
         /// </summary>
-        LessThenOrEqual,
+        LessThanOrEqual,
         /// <summary>
         /// >=
         /// </summary>
@@ -74,7 +74,7 @@ namespace PolarShadow.Core
         /// </summary>
         Matches,
         In,
-        Nin,
+        NIn,
         Subsetof,
         Anyof,
         Noneof,
