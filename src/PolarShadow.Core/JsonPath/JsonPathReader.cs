@@ -53,12 +53,14 @@ namespace PolarShadow.Core
         public readonly JsonPathTokenType TokenType => _tokenType;
         public readonly int Position => _currentPosition;
 
-        public JsonPathReaderState State => new JsonPathReaderState(_currentPosition, _tokenType);
+        public JsonPathReaderState State => new JsonPathReaderState(_currentPosition, _tokenType, _inExpression, _inExpressionFilter);
 
         public void Reset(JsonPathReaderState state)
         {
             _currentPosition = state.Position;
             _tokenType = state.TokenType;
+            _inExpression = state.InExpression;
+            _inExpressionFilter = state.InExpressionFilter;
             if (_currentPosition < _buffer.Length)
             {
                 _readFinal = false;
@@ -272,6 +274,7 @@ namespace PolarShadow.Core
             if (ch == JsonPathConstants.Equal && NextCharIs(JsonPathConstants.Equal))
             {
                 _tokenType = JsonPathTokenType.Equal;
+                _currentPosition++;
                 return true;
             }
             else if (ch == JsonPathConstants.LessThan && NextCharIs(JsonPathConstants.Equal))
@@ -392,6 +395,11 @@ namespace PolarShadow.Core
                 _tokenType = JsonPathTokenType.StartFilter;
                 _inExpressionFilter = true;
                 return true;
+            }
+            else if (ch == JsonPathConstants.SingleQuote)
+            {
+                _tokenType = JsonPathTokenType.String;
+                return ReadStringEnd();
             }
 
             return false;
@@ -669,9 +677,7 @@ namespace PolarShadow.Core
             {
                 if (_buffer[_currentPosition] == JsonPathConstants.RegexStart)
                 {
-                    if (!NextCharIs(JsonPathConstants.RightBracket)
-                        && !NextCharIs(JsonPathConstants.Space)
-                        && NextCharIsIn(JsonPathConstants.RegexModifyChars))
+                    if (NextCharIsIn(JsonPathConstants.RegexModifyChars))
                     {
                         _currentPosition++;
                     }

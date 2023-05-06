@@ -115,18 +115,29 @@ namespace PolarShadowTests
 
             var paths = new string[]
             {
-                //"$.expensive",
-                //"$..store",
-                //"$..book",
-                //"$..bicycle",
-                //"$..book[1]",
-                //"$..book[1].bicycles[0]",
-                //"$..book[1].bicycles[0,1]",
-                "$..book[?(@.bicycles empty)]",
+                "$.expensive",
+                "$.*",
+                "$..*",
+                "$..book",
+                "$..price",
+                "$..*",
+                "$..book[1]",
+                "$..book[1].bicycles[0]",
+                "$..book[1].bicycles[0,1]",
                 "$..book[*]",
                 "$..book[*].category",
                 "$..book[?(@.price>8.98)]",
-                "$..book[?(@.price>8.98)].category"
+                "$..book[?(@.price>=8.98)]",
+                "$..book[?(@.price<8.98)]",
+                "$..book[?(@.price<=8.98)]",
+                "$..book[?(@.price>=8.98)].category",
+                "$..book[?(@.category=='fiction')]",
+                "$..book[?(@.category!='fiction')]",
+                "$..book[?(@.price>$.expensive)]",
+                "$..book[?(@.bicycles empty)]",
+                "$..book[?(@.author=~/.*Rees/g)]",
+                "$..book[?(@.author=~/.*rees/i)]",
+                "$..book[?(@.author=~/.*rees/)]"
             };
             foreach (var item in paths)
             {
