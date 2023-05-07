@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.XPath;
 
 namespace PolarShadowTests
@@ -13,8 +15,9 @@ namespace PolarShadowTests
         public void Test()
         {
             var doc  = new XPathDocument(@"C:\Users\vrjure\Desktop\Books.Xml");
+       
             var nav = doc.CreateNavigator();
-            var iterator = nav.Select("//book[1]/@genre");
+            var iterator = nav.Select("//book[matches(@genre,'.*phy')]");
             
             while (iterator!= null && iterator.MoveNext())
             {

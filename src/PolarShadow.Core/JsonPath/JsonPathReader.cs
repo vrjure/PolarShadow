@@ -239,6 +239,11 @@ namespace PolarShadow.Core
                 _tokenType = JsonPathTokenType.Child;
                 return true;
             }
+            else if (ch == JsonPathConstants.StartFilter)
+            {
+                _tokenType = JsonPathTokenType.StartFilter;
+                return true;
+            }
             return false;
         }
 

@@ -137,7 +137,10 @@ namespace PolarShadowTests
                 "$..book[?(@.bicycles empty)]",
                 "$..book[?(@.author=~/.*Rees/g)]",
                 "$..book[?(@.author=~/.*rees/i)]",
-                "$..book[?(@.author=~/.*rees/)]"
+                "$..book[?(@.author=~/.*rees/)]",
+                "$['store']",
+                "$['store']['book']",
+                "$['store']['book'][0]['author']",
             };
             foreach (var item in paths)
             {

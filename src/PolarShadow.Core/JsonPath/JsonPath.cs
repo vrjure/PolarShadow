@@ -266,7 +266,7 @@ namespace PolarShadow.Core
         {
             if (!reader.Read()) return default;
 
-            var value = reader.TokenType switch
+            return reader.TokenType switch
             {
                 JsonPathTokenType.StartExpression => ReadStartExpressionNext(ref reader, current, root),
                 JsonPathTokenType.String => ReadStringFilterNext(ref reader, current, root),
@@ -274,21 +274,53 @@ namespace PolarShadow.Core
                 JsonPathTokenType.Wildcard => current,
                 _ => default
             };
-
-            EndFilter(ref reader);
-
-            return ReadEndFilterNext(ref reader, value, root);
         }
 
         private static JsonElement ReadEndFilterNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
         {
             if (reader.IsCompleted || !reader.Read()) return current;
 
+            if (current.ValueKind == JsonValueKind.Array)
+            {
+                using var ms = new MemoryStream();
+                using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.DefaultWriteOption);
+                jsonWriter.WriteStartArray();
+                foreach (var item in current.EnumerateArray())
+                {
+                    var value = reader.TokenType switch
+                    {
+                        JsonPathTokenType.Child => ReadChildNext(ref reader, current, root),
+                        JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, current, root),
+                        JsonPathTokenType.Wildcard => current,
+                        JsonPathTokenType.StartFilter => ReadStartFilterNext(ref reader, item, root),
+                        _ => default
+                    };
+
+                    if (value.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var child in value.EnumerateArray())
+                        {
+                            child.WriteTo(jsonWriter);
+                        }
+                    }
+                    else if(value.ValueKind != JsonValueKind.Undefined)
+                    {
+                        value.WriteTo(jsonWriter);
+                    }
+                }
+                jsonWriter.WriteEndArray();
+                jsonWriter.Flush();
+                ms.Seek(0, SeekOrigin.Begin);
+                using var doc = JsonDocument.Parse(ms);
+                return doc.RootElement.Clone();
+            }
+
             return reader.TokenType switch
             {
                 JsonPathTokenType.Child => ReadChildNext(ref reader, current, root),
                 JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, current, root),
                 JsonPathTokenType.Wildcard => current,
+                JsonPathTokenType.StartFilter => ReadStartFilterNext(ref reader, current, root),
                 _ => default
             };
         }
@@ -382,17 +414,7 @@ namespace PolarShadow.Core
             var doc = JsonDocument.Parse(ms);
             var clone = doc.RootElement.Clone();
 
-            if (!reader.Read())
-            {
-                return clone;
-            }
-
-            return reader.TokenType switch
-            {
-                JsonPathTokenType.Child => ReadChildNext(ref reader, clone, root),
-                JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, clone, root),
-                _ => default
-            };
+            return ReadEndFilterNext(ref reader, clone, root);
         }
 
         private static JsonElement ReadStringFilterNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
@@ -406,7 +428,7 @@ namespace PolarShadow.Core
 
             using var ms = new MemoryStream();
             using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.DefaultWriteOption);
-            jsonWriter.WriteStartObject();
+            jsonWriter.WriteStartArray();
 
             pro.WriteTo(jsonWriter);
             while (reader.Read())
@@ -425,23 +447,13 @@ namespace PolarShadow.Core
                 return default;
             }
 
-            jsonWriter.WriteEndObject();
+            jsonWriter.WriteEndArray();
             jsonWriter.Flush();
             ms.Seek(0, SeekOrigin.Begin);
             using var doc = JsonDocument.Parse(ms);
             var clone = doc.RootElement.Clone();
 
-            if (!reader.Read())
-            {
-                return clone;
-            }
-
-            return reader.TokenType switch
-            {
-                JsonPathTokenType.Child => ReadChildNext(ref reader, clone, root),
-                JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, clone, root),
-                _ => default
-            };
+            return ReadEndFilterNext(ref reader, clone, root);
         }
 
         private static JsonElement ReadStartExpressionNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
