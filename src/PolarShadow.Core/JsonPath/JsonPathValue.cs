@@ -223,7 +223,7 @@ namespace PolarShadow.Core
                 {
                     return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^3]);
                 }
-
+                
                 return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^2]);
             }
 

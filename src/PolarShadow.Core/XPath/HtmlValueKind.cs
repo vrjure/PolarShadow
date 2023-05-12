@@ -4,12 +4,10 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    internal enum NameSlotOperator
+    public enum HtmlValueKind
     {
-        None,
-        Add,
-        Minus,
-        Multiply,
-        Divide
+        Undefined,
+        Node,
+        Nodes
     }
 }

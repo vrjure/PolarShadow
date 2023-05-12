@@ -42,67 +42,7 @@ namespace PolarShadow.Core
                     }
                     var p = span.Slice(startIndex + 1, endIndex - startIndex - 1);
 
-                    var ns = new NameSlot(p);
-                    JsonElement leftProperty = default;
-                    JsonElement rightProperty = default;
 
-                    if (ns.LeftToken.TokenType == NameSlotTokenType.Property)
-                    {
-                        if (!element.TryGetPropertyWithJsonPath(ns.LeftToken.Token, out leftProperty))
-                        {
-                            throw new InvalidOperationException($"nameslot:{Encoding.UTF8.GetString(ns.LeftToken.Token)} not found");
-                        }
-                    }
-
-                    if (ns.RightToken.TokenType == NameSlotTokenType.Property)
-                    {
-                        if (!element.TryGetPropertyWithJsonPath(ns.RightToken.Token, out rightProperty))
-                        {
-                            throw new InvalidOperationException($"nameslot:{Encoding.UTF8.GetString(ns.RightToken.Token)} not found");
-                        }
-                    }
-
-                    if (ns.Operator != NameSlotOperator.None)
-                    {
-                        if (ns.LeftToken.TokenType == NameSlotTokenType.Property 
-                            && ns.RightToken.TokenType == NameSlotTokenType.Property)
-                        {
-                            Caculate(sb, leftProperty.GetDecimal(), rightProperty.GetDecimal(), ns.Operator);
-                        }
-                        else if (ns.LeftToken.TokenType == NameSlotTokenType.Property
-                            && ns.RightToken.TokenType == NameSlotTokenType.Number)
-                        {
-                            Caculate(sb, leftProperty.GetDecimal(), decimal.Parse(Encoding.UTF8.GetString(ns.RightToken.Token)), ns.Operator);
-                        }
-                        else if (ns.LeftToken.TokenType == NameSlotTokenType.Number
-                            && ns.RightToken.TokenType == NameSlotTokenType.Property)
-                        {
-                            Caculate(sb, decimal.Parse(Encoding.UTF8.GetString(ns.LeftToken.Token)), rightProperty.GetDecimal(), ns.Operator);
-                        }
-                    }
-                    else if (ns.LeftToken.TokenType == NameSlotTokenType.Property)
-                    {
-                        switch (leftProperty.ValueKind)
-                        {
-                            case JsonValueKind.String:
-                                sb.Append(leftProperty.GetString());
-                                break;
-                            case JsonValueKind.Number:
-                                sb.Append(leftProperty.GetDecimal());
-                                break;
-                            case JsonValueKind.True:
-                            case JsonValueKind.False:
-                                sb.Append(leftProperty.GetBoolean());
-                                break;
-                            case JsonValueKind.Array:
-                                sb.Append(leftProperty.GetRawText());
-                                break;
-                            case JsonValueKind.Null:
-                                break;
-                            default:
-                                throw new InvalidOperationException($"nameslot:{Encoding.UTF8.GetString(p)} invaild value kind");
-                        }
-                    }
 
                     startIndex = endIndex;
                     continue;
@@ -115,28 +55,6 @@ namespace PolarShadow.Core
             }
 
             return sb.ToString();
-        }
-
-        private static void Caculate(StringBuilder sb, decimal leftValue, decimal rightValue, NameSlotOperator op)
-        {
-            switch (op)
-            {
-                case NameSlotOperator.Add:
-                    sb.Append(leftValue + rightValue);
-                    break;
-                case NameSlotOperator.Minus:
-                    sb.Append(leftValue - rightValue);
-                    break;
-                case NameSlotOperator.Multiply:
-                    sb.Append(leftValue * rightValue);
-                    break;
-                case NameSlotOperator.Divide:
-                    sb.Append(leftValue / rightValue);
-                    break;
-                default:
-                    break;
-            }
-
         }
     }
 }

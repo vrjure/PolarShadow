@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    internal partial struct NameSlotReader
+    public partial struct NameSlotReader
     {
         public string GetString()
         {
@@ -13,6 +13,10 @@ namespace PolarShadow.Core
 
         public ReadOnlySpan<byte> GetSegment()
         {
+            if (_tokenType == NameSlotTokenType.None)
+            {
+                return ReadOnlySpan<byte>.Empty;
+            }
             return Slice();
         }
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    internal enum NameSlotTokenType
+    public enum NameSlotTokenType
     {
         None = 0,
         /// <summary>
@@ -16,36 +16,20 @@ namespace PolarShadow.Core
         /// </summary>
         End,
         /// <summary>
-        /// ::
+        /// :
         /// </summary>
         Format,
+        /// <summary>
+        /// :/ ... /
+        /// </summary>
+        Match,
         /// <summary>
         /// 参数 [_][A-Z a-z]
         /// </summary>
         Parameter,
         /// <summary>
-        /// :@[_][A-Z a-z]
+        /// 文本
         /// </summary>
-        Property,
-        /// <summary>
-        /// jsonPath
-        /// </summary>
-        jsonPath,
-        /// <summary>
-        /// xPath
-        /// </summary>
-        xPath,
-        /// <summary>
-        /// 0-9 .
-        /// </summary>
-        Number,
-        /// <summary>
-        /// /.../
-        /// </summary>
-        Regex,
-        /// <summary>
-        /// ? :
-        /// </summary>
-        ConditionalExpression
+        Text
     }
 }

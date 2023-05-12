@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    internal partial struct NameSlotReader
+    public partial struct NameSlotReader
     {
         private bool ReadToXPathEnd()
         {
@@ -12,7 +12,7 @@ namespace PolarShadow.Core
             _segmentStart = _segmentEnd = _index;
             if (XPathSimpleReader.TryReadToEnd(_buffer.Slice(_segmentStart), out int consume))
             {
-                _segmentEnd = _segmentStart + consume;
+                _index = _segmentEnd = _segmentStart + consume - 1;
                 return true;
             }
             return false;

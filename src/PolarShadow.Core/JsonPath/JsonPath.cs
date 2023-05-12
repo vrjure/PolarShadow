@@ -9,9 +9,9 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public sealed class JsonPath
+    public static class JsonPath
     {
-        public static T ReadValue<T>(JsonElement root, string jsonPath)
+        public static T ReadValue<T>(this JsonElement root, string jsonPath)
         {
             var value = Read(root, jsonPath);
             return value.ValueKind switch
@@ -26,7 +26,7 @@ namespace PolarShadow.Core
             };
         }
 
-        public static JsonElement Read(JsonElement root, string jsonPath)
+        public static JsonElement Read(this JsonElement root, string jsonPath)
         {
             var reader = new JsonPathReader(jsonPath);
             if (!reader.Read() || reader.TokenType != JsonPathTokenType.Root) return default;
@@ -245,7 +245,6 @@ namespace PolarShadow.Core
             };
         }
 
-
         private static JsonElement ReadPropertyNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
         {
             if (!reader.Read()) return current;
@@ -260,7 +259,6 @@ namespace PolarShadow.Core
                 _ => default
             };
         }
-
 
         private static JsonElement ReadStartFilterNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
         {
@@ -323,19 +321,6 @@ namespace PolarShadow.Core
                 JsonPathTokenType.StartFilter => ReadStartFilterNext(ref reader, current, root),
                 _ => default
             };
-        }
-
-        private static void EndFilter(ref JsonPathReader reader)
-        {
-            if (reader.TokenType == JsonPathTokenType.EndFilter)
-            {
-                return;
-            }
-            else if (reader.Read() && reader.TokenType == JsonPathTokenType.EndFilter)
-            {
-                return;
-            }
-            throw new InvalidOperationException("Filter not end");
         }
 
         private static JsonElement ReadNumberNext(ref JsonPathReader reader, JsonElement current, JsonElement root)

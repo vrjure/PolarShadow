@@ -680,7 +680,7 @@ namespace PolarShadow.Core
             _currentPosition++;
             while (!IsEnd())
             {
-                if (_buffer[_currentPosition] == JsonPathConstants.RegexStart)
+                if (_buffer[_currentPosition] == JsonPathConstants.RegexStart && !NextCharIs(JsonPathConstants.RegexStart))
                 {
                     if (NextCharIsIn(JsonPathConstants.RegexModifyChars))
                     {

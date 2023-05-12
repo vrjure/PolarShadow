@@ -4,9 +4,9 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    internal partial struct NameSlotReader
+    public partial struct NameSlotReader
     {
-        private bool ReadToParameterEnd()
+        private bool ReadParameterEnd()
         {
             _segmentStart = _segmentEnd = _index;
             while (CanRead())
@@ -17,8 +17,8 @@ namespace PolarShadow.Core
                 }
                 else
                 {
-                    _tokenType = NameSlotTokenType.Property;
-                    _segmentEnd = _index - 1;
+                    _tokenType = NameSlotTokenType.Parameter;
+                    _segmentEnd = --_index;
                     return true;
                 }
             }

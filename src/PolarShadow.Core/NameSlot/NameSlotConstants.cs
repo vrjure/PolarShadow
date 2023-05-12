@@ -26,6 +26,9 @@ namespace PolarShadow.Core
         public const byte Tilde = (byte)'~';
 
         public static ReadOnlySpan<byte> XPathEndChars => new byte[]
-        { (byte)' ', (byte)'}'};
+        { (byte)' ', (byte)'}', (byte)':'};
+
+        public static ReadOnlySpan<byte> RegexModifyChars => new byte[] { (byte)'g', (byte)'i', (byte)'m', (byte)'s' };
+
     }
 }
