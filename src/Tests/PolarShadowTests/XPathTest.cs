@@ -15,7 +15,7 @@ namespace PolarShadowTests
         [Test]
         public void Test()
         {
-            var doc  = new XPathDocument(@"C:\Users\vrjure\Desktop\Books.Xml");
+            var doc  = new XPathDocument(@"./Books.Xml");
        
             var nav = doc.CreateNavigator();
 
@@ -30,7 +30,7 @@ namespace PolarShadowTests
         [Test]
         public void HtmlTest()
         {
-            var doc = new XPathDocument(@"C:\Users\vrjure\Desktop\Books.Xml");
+            var doc = new XPathDocument(@"./Books.Xml");
             var element = new HtmlElement(doc.CreateNavigator());
             var select = element.Select("//book[@genre='novel']/title");
             if (select.ValueKind == HtmlValueKind.Node)

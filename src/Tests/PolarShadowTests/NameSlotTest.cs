@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
+using System.Xml.XPath;
 
 namespace PolarShadowTests
 {
@@ -12,7 +13,7 @@ namespace PolarShadowTests
     {
         private static SampleClass sample = new SampleClass()
         {
-            Expensive = 10,
+            Expensive = 11.2,
             Store = new Store
             {
                 Book = new Book[]
@@ -39,11 +40,13 @@ namespace PolarShadowTests
                 "Test3:{name: N2}",
                 "Test4:{name:/.*/}",
                 "Test5:{name:/.*/i}",
-                "Test5:{$.name}",
-                "Test6:{/div/a/@href:/.*/i}",
-                "Test6:{//div/a/@href:/.*/i}",
-                "Test7:{/div/a/@href:/.*/i} middle {right:F1} end",
-                "Test8:erro format {/div/a/@href:/.*/i middle {right:F1} end",
+                "Test6:{$.name}",
+                "Test7:{///div/a[@href='http']/@href}",
+                "Test8:{/div/a/@href:/.*/i}",
+                "Test9:{//div/a/@href:/.*/i}",
+                "Test10:{/div/a/@href:/.*/i} middle {right:F1} end",
+                "Test11:{///div/a/@href:/.*/i} middle {right:F1} end",
+                "Test12:erro format {/div/a/@href:/.*/i middle {right:F1} end",
             };
 
             foreach (var item in readTestList)
@@ -65,8 +68,33 @@ namespace PolarShadowTests
         [Test]
         public void TestFormatNameSlot()
         {
-             //var ns = "expensive:{expensive}, bicycle:{$..store.bicycle.price$}, ns:{$..store.bicycle.price$ - 1}{0}";
-            //Console.WriteLine(ns.NameSlot(JsonDocument.Parse(JsonSerializer.Serialize(sample, JsonOption.DefaultSerializer)).RootElement));
+            var values = new NameSlotValueCollection();
+            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(sample, JsonOption.DefaultSerializer));
+            values.Add(new NameSlotValue(doc.RootElement.Clone()));
+            values.Add(new NameSlotValue(new KeyValuePair<string, decimal>("page", 1)));
+            values.Add(new NameSlotValue(new KeyValuePair<string, string>("title", "good")));
+
+            var xpathDoc = new XPathDocument("./Books.Xml");
+            values.Add(new NameSlotValue(new HtmlElement(xpathDoc)));
+
+            var list = new string[]
+            {
+                "get page: {page}",
+                "get title:{title}",
+                "get json value:{$.expensive}",
+                "get json value:{$.expensive:N5}",
+                "get json value:{$.expensive:R}",
+                "get html value:{///book[@genre='novel']/title}",
+                "get html value:{///book[@genre='novel']/title:/.*fid/}",
+                "get html value:{///book[@genre='novel']/title:/.*fid/i}"
+            };
+
+            foreach (var item in list)
+            {
+                Console.WriteLine($">>> {item}");
+                Console.WriteLine(item.Format(values));
+                Console.WriteLine("-----------------------------------");
+            }
         }
     }
 }

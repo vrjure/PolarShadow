@@ -172,6 +172,6 @@ namespace PolarShadowTests
     public class SampleClass
     {
         public Store Store { get; set; }
-        public int Expensive { get; set; }
+        public double Expensive { get; set; }
     }
 }

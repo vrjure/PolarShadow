@@ -8,10 +8,24 @@ namespace PolarShadow.Core
 {
     public static class NameSlot
     {
+        public static string Format(this string text, NameSlotValueCollection values)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return string.Empty;
+            }
+            return Format(Encoding.UTF8.GetBytes(text), values);
+        }
         public static string Format(this ReadOnlySpan<byte> text, NameSlotValueCollection values)
         {
+            if (text.IsEmpty)
+            {
+                return string.Empty;
+            }
+            var sb = new StringBuilder(text.Length);
             var reader = new NameSlotReader(text);
-            return "";
+            Format(sb, ref reader, values);
+            return sb.ToString();
         }
 
         private static void Format(StringBuilder sb, ref NameSlotReader reader, NameSlotValueCollection values)
@@ -43,25 +57,41 @@ namespace PolarShadow.Core
                 result = reader.GetString();
             }
 
-
-
             reader.Read();
-            if (reader.TokenType == NameSlotTokenType.Format)
+            if (values.TryReadValue(result, out NameSlotValue newResult))
             {
-                var format = reader.GetString();
-                result = FormatValue(result, format);
-            }
-            else if (reader.TokenType == NameSlotTokenType.Match)
-            {
-                var regex = reader.GetString();
-                result = MatchValue(result, regex);
-            }
+                result = newResult.GetValue();
 
+                if (reader.TokenType == NameSlotTokenType.Format)
+                {
+                    var format = reader.GetString();
+                    result = FormatValue(result, format);
+                }
+                else if (reader.TokenType == NameSlotTokenType.Match)
+                {
+                    var regex = reader.GetString();
+                    result = MatchValue(result, regex);
+                }
+            }
+            else
+            {
+                result = string.Empty;
+            }
+            
             sb.Append(result);
         }
 
         private static string FormatValue(string value, string format)
         {
+            if (NameSlotConstants.NumberFormatCommonChars.IndexOf((byte)format[0]) > 0)
+            {
+                return string.Format($"{{0:{format}}}", Convert.ToDecimal(value));
+            }
+            else if (NameSlotConstants.NumberFormatR.IndexOf((byte)format[0]) > 0)
+            {
+                return string.Format($"{{0:{format}}}", Convert.ToInt64(value));
+            }
+
             return string.Format($"{{0:{format}}}", value);
         }
 
@@ -70,27 +100,27 @@ namespace PolarShadow.Core
             Match result = default;
             if (regex.EndsWith("/i"))
             {
-                regex = regex[1..^3];
+                regex = regex[1..^2];
                 result = Regex.Match(value, regex, RegexOptions.IgnoreCase);
             }
             else if (regex.EndsWith("/m"))
             {
-                regex = regex[1..^3];
+                regex = regex[1..^2];
                 result = Regex.Match(value, regex, RegexOptions.Multiline);
             }
             else if (regex.EndsWith("/s"))
             {
-                regex = regex[1..^3];
+                regex = regex[1..^2];
                 result = Regex.Match(value, regex, RegexOptions.Singleline);
             }
             else if (regex.EndsWith("/g"))
             {
-                regex = regex[1..^3];
+                regex = regex[1..^2];
                 result = Regex.Match(value, regex);
             }
             else 
             {
-                regex = regex[1..2];
+                regex = regex[1..^1];
                 result = Regex.Match(value, regex);
             }
 

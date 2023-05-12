@@ -11,7 +11,7 @@ namespace PolarShadow.Core
         private KeyValuePair<string, decimal> _numberValue;
         private JsonElement _jsonValue;
         private KeyValuePair<string, string> _stringValue;
-        private XPathNavigator _xpathNav;
+        private HtmlElement _htmlValue;
 
         private NameSlotValueKind _valueKind;
 
@@ -22,7 +22,7 @@ namespace PolarShadow.Core
 
             _jsonValue = default;
             _stringValue = default;
-            _xpathNav = null;
+            _htmlValue = default;
         }
 
         public NameSlotValue(KeyValuePair<string, string> value)
@@ -32,7 +32,7 @@ namespace PolarShadow.Core
            
             _jsonValue = default;
             _numberValue = default;
-            _xpathNav = null;
+            _htmlValue = default;
         }
 
         public NameSlotValue(JsonElement value)
@@ -42,13 +42,13 @@ namespace PolarShadow.Core
 
             _numberValue = default;
             _stringValue = default;
-            _xpathNav = null;
+            _htmlValue = default;
         }
 
-        public NameSlotValue(XPathNavigator value)
+        public NameSlotValue(HtmlElement value)
         {
-            _xpathNav = value;
-            _valueKind = NameSlotValueKind.XPathNav;
+            _htmlValue = value;
+            _valueKind = NameSlotValueKind.Html;
            
             _stringValue = default;
             _numberValue = default;
@@ -58,18 +58,94 @@ namespace PolarShadow.Core
         public NameSlotValueKind ValueKind => _valueKind;
 
         public NameSlotValue ReadValue(string path)
-        {
-            
+        {          
             if(path.StartsWith("$") && _valueKind == NameSlotValueKind.Json)
             {
                 var value = JsonPath.Read(_jsonValue, path);
                 return new NameSlotValue(value);
             }
-            else if (path.StartsWith("/") && _valueKind == NameSlotValueKind.XPathNav)
+            else if (path.StartsWith("/") && _valueKind == NameSlotValueKind.Html)
             {
-                var value = _xpathNav.Select(path[1..]);
+                var value = _htmlValue.Select(path[1..]);
+                return new NameSlotValue(value);
+            }
+            else if (_numberValue.Key == path || _stringValue.Key == path)
+            {
+                return this;
             }
             return default;
+        }
+
+        public string GetValue()
+        {
+            switch (_valueKind)
+            {
+                case NameSlotValueKind.Number:
+                    return _numberValue.Value.ToString();
+                case NameSlotValueKind.String:
+                    return _stringValue.Value;
+                case NameSlotValueKind.Json:
+                    return GetJsonValue();
+                case NameSlotValueKind.Html:
+                    return GetHtmlValue();
+                default:
+                    break;
+            }
+
+            return null;
+        }
+
+
+        private string GetJsonValue()
+        {
+            if (_jsonValue.ValueKind == JsonValueKind.Object 
+                || _jsonValue.ValueKind == JsonValueKind.Array)
+            {
+                throw new InvalidOperationException("Can not get a value form json object or json array");
+            }
+
+            switch (_jsonValue.ValueKind)
+            {
+                case JsonValueKind.String:
+                    return _jsonValue.GetString();
+                case JsonValueKind.Number:
+                    return _jsonValue.GetDecimal().ToString();
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    return _jsonValue.GetBoolean().ToString();
+                default:
+                    break;
+            }
+            return null;
+        }
+
+        private string GetHtmlValue()
+        {
+            if (_htmlValue.ValueKind == HtmlValueKind.Nodes)
+            {
+                throw new InvalidOperationException("Can not get a valur from html nodes");
+            }
+
+            if (_htmlValue.ValueKind == HtmlValueKind.Node)
+            {
+                return _htmlValue.GetValue();
+            }
+            return null;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = (NameSlotValue)obj;
+            if (this.ValueKind != other._valueKind)
+            {
+                return false;
+            }
+            return this.GetValue() == other.GetValue();
+        }
+
+        public override int GetHashCode()
+        {
+            return $"{_valueKind}{GetValue()}".GetHashCode();
         }
 
     }

@@ -8,7 +8,6 @@ namespace PolarShadow.Core
     {
         private bool ReadToXPathEnd()
         {
-            _index++;
             _segmentStart = _segmentEnd = _index;
             if (XPathSimpleReader.TryReadToEnd(_buffer.Slice(_segmentStart), out int consume))
             {

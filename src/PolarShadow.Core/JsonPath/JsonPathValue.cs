@@ -209,22 +209,22 @@ namespace PolarShadow.Core
             {
                 if (regex._stringValue.EndsWith("/i"))
                 {
-                    return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^3], RegexOptions.IgnoreCase);
+                    return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^2], RegexOptions.IgnoreCase);
                 }
                 else if (regex._stringValue.EndsWith("/m"))
                 {
-                    return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^3], RegexOptions.Multiline);
+                    return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^2], RegexOptions.Multiline);
                 }
                 else if (regex._stringValue.EndsWith("/s"))
                 {
-                    return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^3], RegexOptions.Singleline);
+                    return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^2], RegexOptions.Singleline);
                 }
                 else if (regex._stringValue.EndsWith("/g"))
                 {
-                    return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^3]);
+                    return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^2]);
                 }
                 
-                return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^2]);
+                return Regex.IsMatch(_jsonValue.GetString(), regex._stringValue[1..^1]);
             }
 
             return false;

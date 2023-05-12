@@ -29,6 +29,19 @@ namespace PolarShadow.Core
         { (byte)' ', (byte)'}', (byte)':'};
 
         public static ReadOnlySpan<byte> RegexModifyChars => new byte[] { (byte)'g', (byte)'i', (byte)'m', (byte)'s' };
+        public static ReadOnlySpan<byte> NumberFormatCommonChars => new byte[] 
+        { 
+            (byte)'B', (byte)'b', (byte)'C', (byte)'c',
+            (byte)'D', (byte)'d', (byte)'E', (byte)'e',
+            (byte)'F', (byte)'f', (byte)'G', (byte)'g',
+            (byte)'N', (byte)'n', (byte)'P', (byte)'p',
+            (byte)'X', (byte)'x'
+        };
+
+        public static ReadOnlySpan<byte> NumberFormatR => new byte[]
+        {
+            (byte)'R', (byte)'r'
+        };
 
     }
 }

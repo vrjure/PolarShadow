@@ -21,4 +21,10 @@
     <ProjectReference Include="..\..\PolarShadow.Core\PolarShadow.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Books.Xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
