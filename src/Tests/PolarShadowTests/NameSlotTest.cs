@@ -70,12 +70,12 @@ namespace PolarShadowTests
         {
             var values = new NameSlotValueCollection();
             using var doc = JsonDocument.Parse(JsonSerializer.Serialize(sample, JsonOption.DefaultSerializer));
-            values.Add(new NameSlotValue(doc.RootElement.Clone()));
-            values.Add(new NameSlotValue(new KeyValuePair<string, decimal>("page", 1)));
-            values.Add(new NameSlotValue(new KeyValuePair<string, string>("title", "good")));
+            values.Add(doc.RootElement.Clone());
+            values.Add(new KeyValuePair<string, decimal>("page", 1));
+            values.Add(new KeyValuePair<string, string>("title", "good"));
 
             var xpathDoc = new XPathDocument("./Books.Xml");
-            values.Add(new NameSlotValue(new HtmlElement(xpathDoc)));
+            values.Add(new HtmlElement(xpathDoc));
 
             var list = new string[]
             {

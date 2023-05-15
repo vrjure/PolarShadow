@@ -57,6 +57,16 @@ namespace PolarShadow.Core
 
         public NameSlotValueKind ValueKind => _valueKind;
 
+        public static bool IsJsonPath(string path)
+        {
+            return path.StartsWith("$");
+        }
+
+        public static bool IsXPath(string path)
+        {
+            return path.StartsWith("/");
+        }
+
         public NameSlotValue ReadValue(string path)
         {          
             if(path.StartsWith("$") && _valueKind == NameSlotValueKind.Json)
@@ -74,6 +84,20 @@ namespace PolarShadow.Core
                 return this;
             }
             return default;
+        }
+
+        public string GetParameterName()
+        {
+            if (_valueKind == NameSlotValueKind.String)
+            {
+                return _stringValue.Key;
+            }
+            else if (_valueKind == NameSlotValueKind.Number)
+            {
+                return _numberValue.Key;
+            }
+
+            throw new InvalidOperationException("Can not get parameter name form json value or html value");
         }
 
         public string GetValue()
@@ -123,7 +147,7 @@ namespace PolarShadow.Core
         {
             if (_htmlValue.ValueKind == HtmlValueKind.Nodes)
             {
-                throw new InvalidOperationException("Can not get a valur from html nodes");
+                throw new InvalidOperationException("Can not get a value from html nodes");
             }
 
             if (_htmlValue.ValueKind == HtmlValueKind.Node)
