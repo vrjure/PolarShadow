@@ -24,7 +24,7 @@
         </GridRow>
     </Header>
     <Content>
-        <AntList TItem="SiteOption" DataSource="_source">
+        <AntList TItem="PolarShadowSiteOption" DataSource="_source">
             <ListItem Class="list-item">
                 <span>@(context.Name)</span>
                 <Icon Type="right" Theme="outline" Class="menu-icon" />
@@ -44,7 +44,7 @@
 </style>
 
 @code {
-    private ICollection<SiteOption> _source;
+    private ICollection<PolarShadowSiteOption> _source;
 
     protected override void OnInitialized()
     {

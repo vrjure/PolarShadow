@@ -63,6 +63,19 @@ namespace PolarShadow.Core
             return default;
         }
 
+        public IEnumerable<HtmlElement> EnumerateNodes()
+        {
+            if (_valueKind != HtmlValueKind.Nodes)
+            {
+                throw new InvalidOperationException("The value kind must be ValueKind.Nodes");
+            }
+
+            while (_nodes.MoveNext())
+            {
+                yield return new HtmlElement(_nodes.Current);
+            }
+        }
+
         public string GetValue()
         {
             if (_valueKind == HtmlValueKind.Node)

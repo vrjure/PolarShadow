@@ -10,6 +10,7 @@ namespace PolarShadow.Core
         Number,
         String,
         Json,
-        Html
+        Html,
+        Boolean
     }
 }

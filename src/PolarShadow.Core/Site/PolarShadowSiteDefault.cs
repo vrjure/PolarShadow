@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,45 +10,107 @@ namespace PolarShadow.Core
 {
     internal class PolarShadowSiteDefault : IPolarShadowSite
     {
-        private readonly SiteOption _siteOption;
-        internal PolarShadowSiteDefault(SiteOption option)
+        private readonly PolarShadowSiteOption _siteOption;
+        private readonly NameSlotValueCollection _paramaters;
+        internal PolarShadowSiteDefault(PolarShadowSiteOption option, NameSlotValueCollection paramaters)
         {
             _siteOption = option;
+            _paramaters = paramaters;
+            _paramaters = new NameSlotValueCollection(new Dictionary<string, NameSlotValue>(paramaters.Parameters));
+            if (option.Parameters.HasValue)
+            {
+                _paramaters.AddNameValue(option.Parameters.Value);
+            }
         }
 
         public string Name => _siteOption.Name;
 
         public string Domain => _siteOption.Domain;
 
-        public async Task<TOutput> ExecuteAsync<TInput, TOutput>(IAnalysisAbility<TInput,TOutput> ability, TInput input, CancellationToken cancellation = default) where TInput : new() where TOutput : new()
+        public async Task<TOutput> ExecuteAsync<TInput, TOutput>(AnalysisAbility ability, TInput input, CancellationToken cancellation = default)
         {
-            if (_siteOption.Abilities != null && _siteOption.Abilities.TryGetValue(ability.Name, out AnalysisAbility analysis))
+            var p = new NameSlotValueCollection(new Dictionary<string, NameSlotValue>(_paramaters.Parameters));
+            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(input, JsonOption.DefaultSerializer));
+            p.Add(doc.RootElement.Clone());
+            return await ability.ExecuteAsync<TOutput>(p, cancellation);
+        }
+
+        public async Task<string> ExecuteAsync(AnalysisAbility ability , string input, CancellationToken cancellation = default)
+        {
+            var p = new NameSlotValueCollection(new Dictionary<string, NameSlotValue>(_paramaters.Parameters));
+            using var doc = JsonDocument.Parse(input);
+            p.Add(doc.RootElement.Clone());
+            return await ability.ExecuteAsync(p, cancellation);
+        }
+
+        public async Task<string> ExecuteAsync(string name, string input, CancellationToken cancellation = default)
+        {
+            if (_siteOption.Abilities != null && _siteOption.Abilities.TryGetValue(name, out AnalysisAbility ability))
             {
-                return await ability.ExecuteAsync(analysis, input, cancellation);
+                return await ExecuteAsync(ability, input, cancellation);
             }
             return default;
         }
 
-        public async Task<string> ExecuteAsync(IAnalysisAbility ability, string input, CancellationToken cancellation = default)
+        public async Task<TOutput> ExecuteAsync<TInput, TOutput>(string name, TInput input, CancellationToken cancellation = default)
         {
-            if (_siteOption.Abilities != null && _siteOption.Abilities.TryGetValue(ability.Name, out AnalysisAbility analysis))
+            if (_siteOption.Abilities != null && _siteOption.Abilities.TryGetValue(name, out AnalysisAbility ability))
             {
-                return await ability.ExecuteAsync(analysis, input, cancellation);
+                return await ExecuteAsync<TInput, TOutput>(ability, input, cancellation);
             }
             return default;
         }
 
         public bool HasAbility(string name)
         {
-            return _siteOption.Abilities != null && _siteOption.Abilities.ContainsKey(name);
+            return _siteOption.Abilities.ContainsKey(name);
         }
 
         public bool TryGetParameter<TValue>(string name, out TValue value)
         {
-            if (_siteOption.Parameters != null && _siteOption.Parameters.TryGetValue(name, out object v) && v is TValue val)
+            if (_paramaters.Parameters.TryGetValue(name, out NameSlotValue val))
             {
-                value = val;
-                return true;
+                switch (val.ValueKind)
+                {
+                    case NameSlotValueKind.Number:
+                        if (val.GetDecimal() is TValue vd) { value = vd; return true; }
+                        else if (val.GetInt16() is TValue v16) { value = v16; return true; }
+                        else if (val.GetInt32() is TValue v32) { value = v32; return true; }
+                        else if (val.GetInt64() is TValue v64) { value = v64; return true; }
+                        else if (val.GetFloat() is TValue vfloat) { value = vfloat; return true; }
+                        else if (val.GetDouble() is TValue vdouble) { value = vdouble; return true; }
+                        break;
+                    case NameSlotValueKind.String:
+                        if(val.GetString() is TValue v)
+                        {
+                            value = v;
+                            return true;
+                        }
+                        break;
+                    case NameSlotValueKind.Boolean:
+                        if (val.GetBoolean() is TValue vb)
+                        {
+                            value = vb;
+                            return true;
+                        }
+                        break;
+                    case NameSlotValueKind.Json:
+                        if (val.GetJson() is TValue vj)
+                        {
+                            value = vj;
+                            return true;
+                        }
+                        break;
+                    case NameSlotValueKind.Html:
+                        if (val.GetHtml() is TValue vh)
+                        {
+                            value = vh;
+                            return true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
             value = default;

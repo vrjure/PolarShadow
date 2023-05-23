@@ -13,7 +13,7 @@ namespace PolarShadowTests
     {
         private static SampleClass sample = new SampleClass()
         {
-            Expensive = 11.2,
+            Expensive = 11,
             Store = new Store
             {
                 Book = new Book[]
@@ -71,8 +71,8 @@ namespace PolarShadowTests
             var values = new NameSlotValueCollection();
             using var doc = JsonDocument.Parse(JsonSerializer.Serialize(sample, JsonOption.DefaultSerializer));
             values.Add(doc.RootElement.Clone());
-            values.Add(new KeyValuePair<string, decimal>("page", 1));
-            values.Add(new KeyValuePair<string, string>("title", "good"));
+            values.AddNameValue("page", 1);
+            values.AddNameValue("title", "good");
 
             var xpathDoc = new XPathDocument("./Books.Xml");
             values.Add(new HtmlElement(xpathDoc));
@@ -94,6 +94,20 @@ namespace PolarShadowTests
                 Console.WriteLine($">>> {item}");
                 Console.WriteLine(item.Format(values));
                 Console.WriteLine("-----------------------------------");
+            }
+        }
+
+        [Test]
+        public void JsonTextNameSlotTest()
+        {
+            using var fs = new FileStream("./source.json", FileMode.Open, FileAccess.Read);
+            using var sr = new StreamReader(fs);
+            var reader = new NameSlotReader(sr.ReadToEnd());
+            while (reader.Read())
+            {
+                Console.Write(reader.TokenType);
+                Console.Write(":");
+                Console.WriteLine(reader.GetString());
             }
         }
     }

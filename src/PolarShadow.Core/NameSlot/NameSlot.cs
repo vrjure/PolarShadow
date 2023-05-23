@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace PolarShadow.Core
 {
@@ -64,7 +67,7 @@ namespace PolarShadow.Core
 
                 if (reader.TokenType == NameSlotTokenType.Format)
                 {
-                    var format = reader.GetString();
+                    var format = reader.GetSegment();
                     result = FormatValue(result, format);
                 }
                 else if (reader.TokenType == NameSlotTokenType.Match)
@@ -81,18 +84,28 @@ namespace PolarShadow.Core
             sb.Append(result);
         }
 
-        private static string FormatValue(string value, string format)
+        private static string FormatValue(string value, ReadOnlySpan<byte> format)
         {
-            if (NameSlotConstants.NumberFormatCommonChars.IndexOf((byte)format[0]) > 0)
+            if (NameSlotConstants.UrlEncode.SequenceEqual(format))
             {
-                return string.Format($"{{0:{format}}}", Convert.ToDecimal(value));
-            }
-            else if (NameSlotConstants.NumberFormatR.IndexOf((byte)format[0]) > 0)
-            {
-                return string.Format($"{{0:{format}}}", Convert.ToInt64(value));
+               return HttpUtility.UrlEncode(value);
             }
 
-            return string.Format($"{{0:{format}}}", value);
+            var formatStr = Encoding.UTF8.GetString(format);
+            if (NameSlotConstants.NumberFormatCommonChars.IndexOf(format[0]) >= 0)
+            {
+                return string.Format($"{{0:{formatStr}}}", Convert.ToDecimal(value));
+            }
+            else if (NameSlotConstants.NumberFormatIntegralChars.IndexOf(format[0]) >= 0)
+            {
+                return string.Format($"{{0:{formatStr}}}", Convert.ToInt64(value));
+            }
+            else if (NameSlotConstants.NumberFormatR.IndexOf(format[0]) >= 0)
+            {
+                return string.Format($"{{0:{formatStr}}}", BigInteger.Parse(value));
+            }
+
+            return string.Format($"{{0:{formatStr}}}", value);
         }
 
         private static string MatchValue(string value, string regex)

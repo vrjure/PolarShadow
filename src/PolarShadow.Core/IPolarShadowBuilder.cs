@@ -11,7 +11,6 @@ namespace PolarShadow.Core
         IPolarShadowSiteBuilder SiteBuilder { get; set; }
         PolarShadowOption Option { get; }
         void AddSearcHandlerFactory(Func<SearchVideoFilter, ISearcHandler> factory);
-        void AddAbility(IAnalysisAbility ability);
         IPolarShadow Build();
     }
 }

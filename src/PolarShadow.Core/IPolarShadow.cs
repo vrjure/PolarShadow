@@ -12,7 +12,5 @@ namespace PolarShadow.Core
         bool TryGetSite(string name, out IPolarShadowSite site);
         IEnumerable<IPolarShadowSite> GetSites();
         ISearcHandler BuildSearchHandler(SearchVideoFilter filter);
-        IEnumerable<IAnalysisAbility> GetAbilities();
-        bool TryGetAbility(string name, out IAnalysisAbility ability);
     }
 }

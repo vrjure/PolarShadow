@@ -26,29 +26,62 @@ namespace PolarShadow.Core
 
         public void Add(NameSlotValue value)
         {
-            switch (value.ValueKind)
-            {
-                case NameSlotValueKind.Number:
-                case NameSlotValueKind.String:
-                    _parameters[value.GetParameterName()] = value;
-                    return;
-                case NameSlotValueKind.Json:
-                case NameSlotValueKind.Html:
-                    _objectParameters.Add(value);
-                    return;
-                default:
-                    throw new InvalidOperationException("Invalid value");
-            }
+            _objectParameters.Add(value);
         }
 
-        public void Add(KeyValuePair<string, decimal> value) => Add(new NameSlotValue(value));
+        public void Add(decimal value) => Add(new NameSlotValue(value));
 
-        public void Add(KeyValuePair<string, string> value) => Add(new NameSlotValue(value));
+        public void Add(string value) => Add(new NameSlotValue(value));
+
+        public void Add(bool value) => Add(new NameSlotValue(value));
 
         public void Add(JsonElement value) => Add(new NameSlotValue(value));
 
         public void Add(HtmlElement value) => Add(new NameSlotValue(value));
 
+        public void AddNameValue(JsonElement value)
+        {
+            if (value.ValueKind == JsonValueKind.Array)
+            {
+                return;
+            }
+
+            if (value.ValueKind == JsonValueKind.Object)
+            {
+                foreach (var item in value.EnumerateObject())
+                {
+                    switch (item.Value.ValueKind)
+                    {
+                        case JsonValueKind.Object:
+                        case JsonValueKind.Array:
+                            AddNameValue(item.Name, item.Value);
+                            break;
+                        case JsonValueKind.String:
+                            AddNameValue(item.Name, item.Value.GetString());
+                            break;
+                        case JsonValueKind.Number:
+                            AddNameValue(item.Name, item.Value.GetDecimal());
+                            break;
+                        case JsonValueKind.True:
+                        case JsonValueKind.False:
+                            AddNameValue(item.Name, item.Value.GetBoolean());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+        public void AddNameValue(string name, NameSlotValue value)
+        {
+            _parameters[name] = value;
+        }
+
+        public void AddNameValue(string name, decimal value) => AddNameValue(name, new NameSlotValue(value));
+        public void AddNameValue(string name, string value) => AddNameValue(name, new NameSlotValue(value));
+        public void AddNameValue(string name, bool value) => AddNameValue(name, new NameSlotValue(value));
+        public void AddNameValue(string name, JsonElement value) => AddNameValue(name, new NameSlotValue(value));
+        public void AddNameValue(string name, HtmlElement value) => AddNameValue(name, new NameSlotValue(value));
         public void Clear()
         {
             _parameters.Clear();
@@ -79,13 +112,19 @@ namespace PolarShadow.Core
             {
                 foreach (var item in _objectParameters)
                 {
-                    value = item.ReadValue(path);
-                    if (value.ValueKind == NameSlotValueKind.Undefined)
+                    if (NameSlotValue.IsJsonPath(path) && item.ValueKind == NameSlotValueKind.Json)
                     {
-                        continue;
+                        value = new NameSlotValue(JsonPath.Read(item.GetJson(), path));
+                    }
+                    else if (NameSlotValue.IsXPath(path) && item.ValueKind == NameSlotValueKind.Html)
+                    {
+                        value = new NameSlotValue(item.GetHtml().Select(path[1..]));
                     }
 
-                    return true;
+                    if (value.ValueKind != NameSlotValueKind.Undefined)
+                    {
+                        return true;
+                    }
                 }
                 return false;
             }

@@ -1,85 +1,87 @@
-﻿using HtmlAgilityPack;
+﻿using PuppeteerSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Web;
+using System.Xml.XPath;
 
 namespace PolarShadowTests
 {
     public class AnalysisTest
     {
         [Test]
-        public async Task AnalysisAbilityHtmlTest()
+        public void TestAnalysisText()
         {
-            var ability = new AnalysisAbility()
+            using var fs = new FileStream("./source.json", FileMode.Open, FileAccess.Read);
+            var doc = JsonDocument.Parse(fs);
+            var input = new NameSlotValueCollection();
+            if (doc.RootElement.TryGetProperty("parameters", out JsonElement parameters))
             {
-                Url = $"https://www.yhdmp.cc/s_all?kw={HttpUtility.UrlEncode("死神")}&pagesize=10&pageindex=0",
-                AnalysisType = AnalysisType.Html,
-                ResponseAnalysis = new Dictionary<string, AnalysisAction>
-                {
-                    {
-                        "data",
-                        new AnalysisAction
-                        {
-                            Path = "//body//div[@class='lpic']/ul/li",
-                            PathValueType = PathValueType.Array,
-                            AnalysisItem = new Dictionary<string, AnalysisAction>
-                            {
-                                {
-                                    "name",
-                                    new AnalysisAction
-                                    {
-                                        Path = "h2/a",
-                                        PathValueType = PathValueType.InnerText
-                                    }
-                                },
-                                {
-                                    "description",
-                                    new AnalysisAction
-                                    {
-                                        Path = "p",
-                                        PathValueType = PathValueType.InnerText
-                                    }
-                                },
-                                {
-                                    "siteName",
-                                    new AnalysisAction
-                                    {
-                                        Path = "YHDM",
-                                        PathValueType = PathValueType.None
-                                    }
-                                },
-                                {
-                                    "imageSrc",
-                                    new AnalysisAction
-                                    {
-                                        Path = "a/img",
-                                        PathValueType = PathValueType.Attribute,
-                                        AttributeName = "href"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    {
-                        "total",
-                        new AnalysisAction
-                        {
-                            Path = "//div[@class='gohome']/h1",
-                            PathValueType = PathValueType.InnerText,
-                            Regex = "\\d+"
-                        }
-                    }
-                }
-            };
+                input.AddNameValue(parameters);
+            }
 
-            var web = new HtmlWeb();
-            var doc = await web.LoadFromWebAsync(ability.Url);
-            var page = doc.DocumentNode.Analysis<PageResult<VideoSummary>>(default ,ability.ResponseAnalysis);
-            Console.WriteLine(JsonSerializer.Serialize(page, JsonOption.DefaultSerializer));
+            var resuest = doc.RootElement.GetProperty("request");
+            if (resuest.TryGetProperty("parameters", out JsonElement requestPara))
+            {
+                foreach (var item in requestPara.EnumerateArray())
+                {
+                    input.Add(item);
+                }
+            }
+
+            Console.WriteLine("request:");
+            Console.WriteLine(resuest.GetRawText().Format(input));
+
+            using var fsxml = new FileStream("./Books.xml", FileMode.Open, FileAccess.Read);
+            var xmldoc = new XPathDocument(fsxml);
+            input.Add(new HtmlElement(xmldoc));
+
+            var response = doc.RootElement.GetProperty("response");
+            Console.WriteLine("response:");
+            Console.WriteLine(response.GetRawText().Format(input));
+        }
+
+        [Test]
+        public void TestAnalysis()
+        {
+            using var fs = new FileStream("./source.json", FileMode.Open, FileAccess.Read);
+            var doc = JsonDocument.Parse(fs);
+            var input = new NameSlotValueCollection();
+            if (doc.RootElement.TryGetProperty("parameters", out JsonElement parameters))
+            {
+                input.AddNameValue(parameters);
+            }
+
+            var request = doc.RootElement.GetProperty("request");
+            if (request.TryGetProperty("parameters", out JsonElement requestPara))
+            {
+                foreach (var item in requestPara.EnumerateArray())
+                {
+                    input.Add(item);
+                }
+            }
+
+            var body = request.GetProperty("body");
+
+            Console.WriteLine("body:");
+            using var ms = new MemoryStream();
+            body.BuildContent(ms, input);
+            using var sr = new StreamReader(ms);
+            Console.WriteLine(sr.ReadToEnd());
+
+            using var fsxml = new FileStream("./Books.xml", FileMode.Open, FileAccess.Read);
+            var xmldoc = new XPathDocument(fsxml);
+            input.Add(new HtmlElement(xmldoc));
+
+            var response = doc.RootElement.GetProperty("response2");
+            var responseContent = response.GetProperty("content");
+            using var ms2 = new MemoryStream();
+            responseContent.BuildContent(ms2, input);
+            using var sr2 = new StreamReader(ms2);
+            Console.WriteLine("response2:");
+            Console.WriteLine(sr2.ReadToEnd());
         }
     }
 }

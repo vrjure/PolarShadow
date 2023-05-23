@@ -8,9 +8,9 @@ namespace PolarShadow.Core
 {
     internal sealed class PolarShadowSiteBuilder : IPolarShadowSiteBuilder
     {
-        public IPolarShadowSite Build(SiteOption option)
+        public IPolarShadowSite Build(PolarShadowSiteOption option)
         {
-            return new PolarShadowSiteDefault(option);
+            return default;
         }
     }
 }

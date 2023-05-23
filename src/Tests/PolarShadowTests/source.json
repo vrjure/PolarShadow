@@ -1,102 +1,55 @@
 {
-  "analysisSources": [
-    {
-      "name": "夜幕",
-      "src": "https://www.yemu.xyz?url={src}"
+  "parameters": {
+    "page": 1,
+    "pageSize": 10,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62"
+  },
+  "request": {
+    "url": "https://www.example.com/s_all?kw={$.searchKey:urlEncode}&pagesize={$.pageSize}&pageindex={$.page}",
+    "method": "get",
+    "parameters": [
+      {
+        "pageSize": 10,
+        "page": 1,
+        "searchKey": "测试字符"
+      }
+    ],
+    "headers": {
+      "user-agent": "{userAgent}"
+    },
+    "body": {
+      "searchKey": "{$.searchKey}",
+      "page": "{$.page}",
+      "pageSize": "{$.pageSize}"
     }
-  ],
-  "sites": [
-    {
-      "name": "YHDM",
-      "domain": "www.yhdmp.cc",
-      "abilities": {
-        "searchAble": {
-          "url": "https://www.yhdmp.cc/s_all?kw={searchKey}&pagesize={pageSize}&pageindex={page - 1}",
-          "analysisType": "html",
-          "responseAnalysis": {
-            "data": {
-              "path": "//body//div[@class='lpic']/ul/li",
-              "pathValueType": "array",
-              "analysisItem": {
-                "name": {
-                  "path": "h2/a",
-                  "pathValueType": "innerText"
-                },
-                "description": {
-                  "path": "p",
-                  "pathValueType": "innerText"
-                },
-                "imageSrc": {
-                  "path": "a/img",
-                  "pathValueType": "attribute",
-                  "attributeName": "src"
-                },
-                "siteName": {
-                  "path": "YHDM"
-                },
-                "detailSrc": {
-                  "path": "a",
-                  "pathValueType": "attribute",
-                  "attributeName": "href"
-                }
-              }
-            }
-          }
-        },
-        "getDetailAble": {
-          "url": "https://www.yhdmp.cc/{detailSrc}",
-          "analysisType": "html",
-          "responseAnalysis": {
-            "defIndex": {
-              "path": "//body//div[@class='tabs']/script[@id='DEF_PLAYINDEX']",
-              "pathValueType": "innerText"
-            },
-            "playList": {
-              "path": "//body//div[@class='tabs']/div[@id='main0']/div",
-              "pathValueType": "array",
-              "analysisItem": {
-                "name": {
-                  "path": "div"
-                },
-                "episodes": {
-                  "path": "ul/li",
-                  "pathValueType": "array",
-                  "analysisItem": {
-                    "name": {
-                      "path": "a",
-                      "pathValueType": "attribute",
-                      "attributeName": "title"
-                    },
-                    "sources": {
-                      "path": "a",
-                      "pathValueType": "array",
-                      "analysisItem": {
-                        "src": {
-                          "path": ".",
-                          "pathValueType": "attribute",
-                          "attributeName": "href"
-                        },
-                        "srcType": {
-                          "path": "html"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "next": {
-            "analysisType": "json",
-            "responseAnalysis": {
-              "episodes": {
-                "path": "$.playList[{$.defIndex$}].episodes",
-                "pathValueType": "raw"
-              }
-            }
+  },
+  "response": {
+    "content": {
+      "page": "{$.page}",
+      "pageSize": "{$.pageSize}",
+      "data": [
+        {
+          "title": "{///book[1]/title}",
+          "author": "{///book[1]/author/first-name}:{///book[1]/author/last-name}",
+          "price": "{///book[1]/price}"
+        }
+      ]
+    }
+  },
+  "response2": {
+    "content": {
+      "page": "{$.page}",
+      "pageSize": "{$.pageSize}",
+      "data": [
+        {
+          "path": "///book",
+          "template": {
+            "title": "{/title}",
+            "author": "{/author/first-name}:{///book[1]/author/last-name}",
+            "price": "{/price}"
           }
         }
-      }
+      ]
     }
-  ]
+  }
 }

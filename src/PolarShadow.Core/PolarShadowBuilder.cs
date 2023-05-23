@@ -14,8 +14,6 @@ namespace PolarShadow.Core
         private Func<SearchVideoFilter, ISearcHandler> _searcHandlerFactory;
         private IPolarShadow _cache;
 
-        private readonly ICollection<IAnalysisAbility> _abilities = new List<IAnalysisAbility>();
-
         public PolarShadowOption Option { get; }
         public IPolarShadowSiteBuilder SiteBuilder { get; set; }
 
@@ -37,15 +35,6 @@ namespace PolarShadow.Core
             _searcHandlerFactory = factory;
         }
 
-        public void AddAbility(IAnalysisAbility ability)
-        {
-            if (string.IsNullOrEmpty(ability.Name))
-            {
-                throw new ArgumentException(nameof(ability.Name));
-            }
-            _abilities.Add(ability);
-        }
-
         public IPolarShadow Build()
         {
             lock(_lock )
@@ -57,9 +46,9 @@ namespace PolarShadow.Core
 
                 if (Option.IsChanged || _cache == null)
                 {
-                    var ps = new PolarShadowDefault(Option, SiteBuilder, _abilities, _searcHandlerFactory);
+                    //var ps = new PolarShadowDefault(Option, SiteBuilder, _searcHandlerFactory);
                     Option.IsChanged = false;
-                    _cache = ps;
+                    //_cache = ps;
                 }
 
                 return _cache;
