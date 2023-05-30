@@ -104,7 +104,7 @@ namespace PolarShadow.Core
                 var jsonPathValue = pathValue.GetJson();
                 foreach (var child in jsonPathValue.EnumerateArray())
                 {
-                    var childInput = new NameSlotValueCollection(new Dictionary<string, NameSlotValue>(input.Parameters));
+                    var childInput = input.Clone();
                     childInput.Add(child);
                     BuildContent(jsonWriter, template, childInput);
                 }
@@ -114,7 +114,7 @@ namespace PolarShadow.Core
                 var htmlPathValue = pathValue.GetHtml();
                 foreach (var child in htmlPathValue.EnumerateNodes())
                 {
-                    var childInput = new NameSlotValueCollection(new Dictionary<string, NameSlotValue>(input.Parameters));
+                    var childInput = input.Clone();
                     childInput.Add(child);
                     BuildContent(jsonWriter, template, childInput);
                 }

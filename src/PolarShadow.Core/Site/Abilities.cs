@@ -6,8 +6,8 @@ namespace PolarShadow.Core
 {
     public static class Abilities
     {
-        public const string SearchAble = "searchAble";
-        public const string GetDetailAble = "getDetailAble";
-        public const string WebAnalysisAble = "webAnalysisAble";
+        public const string Search = "search";
+        public const string Detail = "detail";
+        public const string WebAnalysis = "webAnalysis";
     }
 }

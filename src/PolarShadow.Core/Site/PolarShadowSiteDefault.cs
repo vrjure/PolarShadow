@@ -12,14 +12,15 @@ namespace PolarShadow.Core
     {
         private readonly PolarShadowSiteOption _siteOption;
         private readonly NameSlotValueCollection _paramaters;
-        internal PolarShadowSiteDefault(PolarShadowSiteOption option, NameSlotValueCollection paramaters)
+        private readonly IRequestHandler _requestHandler;
+        internal PolarShadowSiteDefault(PolarShadowSiteOption option, NameSlotValueCollection paramaters, IRequestHandler requestHandler)
         {
             _siteOption = option;
-            _paramaters = paramaters;
-            _paramaters = new NameSlotValueCollection(new Dictionary<string, NameSlotValue>(paramaters.Parameters));
-            if (option.Parameters.HasValue)
+            _paramaters = paramaters ?? new NameSlotValueCollection();
+            _requestHandler = requestHandler;
+            if (option.Parameters != null)
             {
-                _paramaters.AddNameValue(option.Parameters.Value);
+                _paramaters.AddNameValue(option.Parameters);
             }
         }
 
@@ -29,18 +30,19 @@ namespace PolarShadow.Core
 
         public async Task<TOutput> ExecuteAsync<TInput, TOutput>(AnalysisAbility ability, TInput input, CancellationToken cancellation = default)
         {
-            var p = new NameSlotValueCollection(new Dictionary<string, NameSlotValue>(_paramaters.Parameters));
+            var p = _paramaters.Clone();
             using var doc = JsonDocument.Parse(JsonSerializer.Serialize(input, JsonOption.DefaultSerializer));
             p.Add(doc.RootElement.Clone());
-            return await ability.ExecuteAsync<TOutput>(p, cancellation);
+
+            return await _requestHandler.ExecuteAsync<TOutput>(ability, p, cancellation);
         }
 
         public async Task<string> ExecuteAsync(AnalysisAbility ability , string input, CancellationToken cancellation = default)
         {
-            var p = new NameSlotValueCollection(new Dictionary<string, NameSlotValue>(_paramaters.Parameters));
+            var p = _paramaters.Clone();
             using var doc = JsonDocument.Parse(input);
             p.Add(doc.RootElement.Clone());
-            return await ability.ExecuteAsync(p, cancellation);
+            return await _requestHandler.ExecuteAsync(ability, p, cancellation);
         }
 
         public async Task<string> ExecuteAsync(string name, string input, CancellationToken cancellation = default)
@@ -68,7 +70,7 @@ namespace PolarShadow.Core
 
         public bool TryGetParameter<TValue>(string name, out TValue value)
         {
-            if (_paramaters.Parameters.TryGetValue(name, out NameSlotValue val))
+            if (_paramaters.TryReadValue(name, out NameSlotValue val))
             {
                 switch (val.ValueKind)
                 {

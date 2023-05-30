@@ -2,14 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PolarShadow.Core
 {
     public class PolarShadowSiteOption : IKeyName
     {
+        public PolarShadowSiteOption() { }
+        public PolarShadowSiteOption(string name) 
+        {
+            this.Name = name;
+        }
+
+        [JsonRequired]
         public string Name { get; set; }
         public string Domain { get; set; }
-        public JsonElement? Parameters { get; set; }
+        public bool UseWebView { get; set; }
+        public Dictionary<string, object> Parameters { get; set; }
         public Dictionary<string, AnalysisAbility> Abilities { get; set; }
     }
 }

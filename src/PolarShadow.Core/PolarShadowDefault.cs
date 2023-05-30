@@ -9,35 +9,26 @@ namespace PolarShadow.Core
     internal class PolarShadowDefault : IPolarShadow
     {
         private readonly Dictionary<string, IPolarShadowSite> _sites = new Dictionary<string, IPolarShadowSite>();
-        private readonly Func<SearchVideoFilter, ISearcHandler> _searchHandlerFactory;
-
-        private readonly PolarShadowOption _option;
-        private IPolarShadowSiteBuilder _siteBuilder;
-
-        internal PolarShadowDefault(PolarShadowOption option, IPolarShadowSiteBuilder siteBuilder, Func<SearchVideoFilter, ISearcHandler> searcHandlerFactory)
+        private readonly IPolarShadowBuilder _builder;
+        internal PolarShadowDefault(IPolarShadowBuilder builder, IEnumerable<IPolarShadowSite> sites)
         {
-            _option = option;
-            _siteBuilder = siteBuilder;
-            _searchHandlerFactory = searcHandlerFactory;
-
-            foreach (var item in _option.Sites)
+            _builder = builder;
+            foreach (var item in sites)
             {
-                _sites[item.Name] = _siteBuilder.Build(item);
+                _sites.Add(item.Name, item);
             }
+        }
 
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+        public IPolarShadowBuilder Builder => _builder;
+
+        public bool ContainsSite(string name)
+        {
+            return _sites.ContainsKey(name);
         }
 
         public IEnumerable<IPolarShadowSite> GetSites()
         {
             return _sites.Values.AsEnumerable();
-        }
-
-        public ISearcHandler BuildSearchHandler(SearchVideoFilter filter)
-        {
-            
-
-            return _searchHandlerFactory(filter);
         }
 
         public bool TryGetSite(string name, out IPolarShadowSite site)

@@ -9,7 +9,7 @@ namespace PolarShadow.Core
     {
         public AnalysisRequest Request { get; set; }
         public AnalysisResponse Response { get; set; }
-        public JsonElement? Parameters { get; set; }
+        public Dictionary<string, object> Parameters { get; set; }
         public AnalysisAbility Next { get; set; }
     }
 }

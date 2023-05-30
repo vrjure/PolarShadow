@@ -10,9 +10,7 @@ namespace PolarShadow.Core
     public class NameSlotValueCollection : IEnumerable<NameSlotValue>
     {
         private readonly IDictionary<string, NameSlotValue> _parameters;
-        private readonly ICollection<NameSlotValue> _objectParameters;
-
-        public IReadOnlyDictionary<string, NameSlotValue> Parameters => new ReadOnlyDictionary<string, NameSlotValue>(_parameters);
+        private readonly ICollection<NameSlotValue> _objectParameters;      
 
         public NameSlotValueCollection() : this(default)
         {
@@ -20,7 +18,14 @@ namespace PolarShadow.Core
 
         public NameSlotValueCollection(IDictionary<string, NameSlotValue> parameters)
         {
-            _parameters = parameters ?? new Dictionary<string, NameSlotValue>();
+            if (parameters != null)
+            {
+                _parameters = new Dictionary<string, NameSlotValue>(parameters);
+            }
+            else
+            {
+                _parameters = new Dictionary<string, NameSlotValue>();
+            }
             _objectParameters = new List<NameSlotValue>();
         }
 
@@ -38,6 +43,12 @@ namespace PolarShadow.Core
         public void Add(JsonElement value) => Add(new NameSlotValue(value));
 
         public void Add(HtmlElement value) => Add(new NameSlotValue(value));
+
+        public void Add(object value)
+        {
+            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(value));
+            Add(new NameSlotValue(doc.RootElement.Clone()));
+        }
 
         public void AddNameValue(JsonElement value)
         {
@@ -72,6 +83,12 @@ namespace PolarShadow.Core
                 }
             }
         }
+        public void AddNameValue(object value)
+        {
+            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(value));
+            AddNameValue(new NameSlotValue(doc.RootElement.Clone()));
+        }
+
         public void AddNameValue(string name, NameSlotValue value)
         {
             _parameters[name] = value;
@@ -105,6 +122,11 @@ namespace PolarShadow.Core
             return this.GetEnumerator();
         }
 
+        public bool ContainsName(string name)
+        {
+            return _parameters.ContainsKey(name);
+        }
+
         public bool TryReadValue(string path, out NameSlotValue value)
         {
             value = default;
@@ -130,6 +152,11 @@ namespace PolarShadow.Core
             }
 
             return _parameters.TryGetValue(path, out value);
+        }
+
+        public NameSlotValueCollection Clone()
+        {
+            return new NameSlotValueCollection(_parameters);
         }
     }
 }

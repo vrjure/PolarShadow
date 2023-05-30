@@ -59,7 +59,7 @@ namespace PolarShadow.Core
 
             try
             {
-                _resultCache = await site.ExecuteAsync<SearchVideoFilter, PageResult<VideoSummary>>(Abilities.SearchAble, new SearchVideoFilter(_page, _searchKey), cancellation);
+                _resultCache = await site.ExecuteAsync<SearchVideoFilter, PageResult<VideoSummary>>(Abilities.Search, new SearchVideoFilter(_page, _searchKey), cancellation);
             }
             catch
             {

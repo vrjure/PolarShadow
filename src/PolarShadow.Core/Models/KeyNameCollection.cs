@@ -19,6 +19,15 @@ namespace PolarShadow.Core
 
         public IEnumerable<T> Values => _keyValues.Values;
 
+        public KeyNameCollection() { }
+        public KeyNameCollection(IEnumerable<T> values) 
+        {
+            foreach (var item in values)
+            {
+                _keyValues.Add(item.Name, item);
+            }
+        }
+
         public void Add(T item)
         {
             _keyValues[item.Name] = item;
@@ -52,6 +61,11 @@ namespace PolarShadow.Core
         public bool Remove(T item)
         {
             return _keyValues.Remove(item.Name);
+        }
+
+        public bool RemoveKey(string key)
+        {
+            return _keyValues.Remove(key);
         }
 
         public bool TryGetValue(string key, out T value)

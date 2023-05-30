@@ -1,57 +1,68 @@
 ﻿using PolarShadow.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
     public class PolarShadowBuilder : IPolarShadowBuilder
     {
-        private static object _lock = new object();
-        private Func<SearchVideoFilter, ISearcHandler> _searcHandlerFactory;
-        private IPolarShadow _cache;
-
-        public PolarShadowOption Option { get; }
-        public IPolarShadowSiteBuilder SiteBuilder { get; set; }
-
-        public PolarShadowBuilder() : this(default)
+        private IRequestHandler _webViewHandler;
+        private IPolarShadowSiteBuilder _siteBuilder;
+        private IPolarShadowOptionBuilder _optionBuilder;
+        public IPolarShadowBuilder UseWebViewHandler(IRequestHandler requestHandler)
         {
+            _webViewHandler = requestHandler;
+            return this;
         }
 
-        public PolarShadowBuilder(PolarShadowOption option)
+        public IPolarShadowBuilder UseSiteBuilder(IPolarShadowSiteBuilder siteBuilder)
         {
-            this.Option = option;
-            if (this.Option == null)
+            _siteBuilder = siteBuilder;
+            return this;
+        }
+
+        public IPolarShadowBuilder UseOptionBuilder(IPolarShadowOptionBuilder optionBuilder)
+        {
+            _optionBuilder = optionBuilder;
+            return this;
+        }
+
+        public IPolarShadowBuilder Configure(Action<IPolarShadowOptionBuilder> optionBuilder)
+        {
+            if (_optionBuilder == null)
             {
-                this.Option = new PolarShadowOption();
+                _optionBuilder = new PolarShadowOptionBuilder();
             }
-        }
-
-        public void AddSearcHandlerFactory(Func<SearchVideoFilter, ISearcHandler> factory)
-        {
-            _searcHandlerFactory = factory;
+            optionBuilder(_optionBuilder);
+            return this;
         }
 
         public IPolarShadow Build()
         {
-            lock(_lock )
+            return new PolarShadowDefault(this, BuildSites());
+        }
+
+        private IEnumerable<IPolarShadowSite> BuildSites()
+        {
+            _siteBuilder ??= new PolarShadowSiteBuilder(_webViewHandler);
+            _optionBuilder ??= new PolarShadowOptionBuilder();
+            var option = _optionBuilder.Build();
+
+            var parameter = new NameSlotValueCollection();
+            if (option.Parameters != null)
             {
-                if (SiteBuilder == null)
-                {
-                    SiteBuilder = new PolarShadowSiteBuilder();
-                }
+                parameter.AddNameValue(option.Parameters);
+            }
 
-                if (Option.IsChanged || _cache == null)
-                {
-                    //var ps = new PolarShadowDefault(Option, SiteBuilder, _searcHandlerFactory);
-                    Option.IsChanged = false;
-                    //_cache = ps;
-                }
-
-                return _cache;
+            foreach (var item in option.Sites)
+            {
+                yield return _siteBuilder.Build(item, parameter);
             }
         }
     }
