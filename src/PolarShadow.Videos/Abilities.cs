@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PolarShadow.Core
+namespace PolarShadow.Videos
 {
     public static class Abilities
     {

@@ -1,0 +1,30 @@
+{
+  "parameters": {
+    "startPage": 1,
+    "pageSize": 10
+  },
+  "analysisSources": [
+    {
+      "name": "ym"
+    }
+  ],
+  "sites": [
+    {
+      "name": "test",
+      "domain": "www.example.com",
+      "useWebView": false,
+      "abilities": {
+        "search": {
+          "request": {
+            "url": "http://www.example.com"
+          },
+          "response": {
+            "content": {
+              "data": "asdf"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -28,11 +28,6 @@ namespace PolarShadow.Core
                 return;
             }
 
-            if (ability.Parameters != null)
-            {
-                input.AddNameValue(ability.Parameters);
-            }
-
             await HandleValueAsync(input, stream, ability, cancellation);
             stream.Seek(0, SeekOrigin.Begin);
         }
@@ -40,7 +35,7 @@ namespace PolarShadow.Core
         private async Task HandleValueAsync(NameSlotValueCollection input, Stream stream, AnalysisAbility ability, CancellationToken cancellation)
         {
             if (ability.Request == null || ability.Response == null 
-                || string.IsNullOrEmpty(ability.Request.Url) || string.IsNullOrEmpty(ability.Request.Method))
+                || string.IsNullOrEmpty(ability.Request.Url))
             {
                 return;
             }
@@ -55,7 +50,16 @@ namespace PolarShadow.Core
                 }
             }
 
+            if (!client.DefaultRequestHeaders.Contains("User-Agent"))
+            {
+                client.DefaultRequestHeaders.Add("User-Agent", _userAgent);
+            }
+
             var method = ability.Request.Method;
+            if (string.IsNullOrEmpty(method))
+            {
+                method = "get";
+            }
 
             using var request = new HttpRequestMessage(new HttpMethod(method), url);
             using var ms = new MemoryStream();
@@ -83,7 +87,7 @@ namespace PolarShadow.Core
             }
             else
             {
-                throw new HttpRequestException($"Not supported content-type:{contentType}");
+                throw new InvalidOperationException($"Not supported content-type:{contentType}");
             }
 
             ability.Response.Content.BuildContent(stream, newInput);

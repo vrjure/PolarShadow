@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PolarShadow.Core
+namespace PolarShadow.Videos
 {
     [Flags]
-    public enum SrcType
+    public enum VideoSrcType
     {
         None = 0,
-        Http  = 1,
+        Http = 1,
         Magnet = 2,
         BaiDu = 4,
         ALiYunDrive = 8,
