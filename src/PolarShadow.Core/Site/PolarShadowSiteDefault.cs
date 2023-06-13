@@ -38,21 +38,6 @@ namespace PolarShadow.Core
             return new SiteRequestHandler(_requestHandler, ability, _paramaters.Clone());
         }
 
-        public async Task ExecuteAsync(string name, string input, Stream stream, CancellationToken cancellation = default)
-        {
-
-            var p = _paramaters.Clone();
-            if (ability.Parameters != null)
-            {
-                p.AddNameValue(ability.Parameters);
-            }
-
-            input.Format(p);
-            using var doc = JsonDocument.Parse(input);
-            p.AddNameValue(doc.RootElement);
-            await _requestHandler.ExecuteAsync(ability, stream, p, cancellation);
-        }
-
         public bool HasAbility(string name)
         {
             return _siteOption.Abilities.ContainsKey(name);

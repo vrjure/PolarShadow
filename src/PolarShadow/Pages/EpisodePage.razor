@@ -70,10 +70,10 @@
         {
             switch (source.SrcType)
             {
-                case SrcType.HTML:
+                case LinkType.HTML:
                     _nav.NavigateTo(source.Src, false, true);
                     break;
-                case SrcType.Magnet:
+                case LinkType.Magnet:
                     if (string.IsNullOrEmpty(PreferenceSettings.Rpc) || string.IsNullOrEmpty(PreferenceSettings.DownloadPath))
                     {
                         _nav.NavigateTo("/mine", default, new Dictionary<string, object>
@@ -105,7 +105,7 @@
                         }
                     }
                     break;
-                case SrcType.HTMLAnalysis:
+                case LinkType.HTMLAnalysis:
                     if (_polarShadow.TryGetSiteWithAbility(_siteName, out IPolarShadowSite site, out IWebAnalysisAble webAnalysis))
                     {
                         var url = await site.ExecuteAsync(webAnalysis, source.Src);

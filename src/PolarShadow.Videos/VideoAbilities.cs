@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Videos
 {
-    public static class Abilities
+    public static class VideoAbilities
     {
         public const string Search = "search";
         public const string Detail = "detail";

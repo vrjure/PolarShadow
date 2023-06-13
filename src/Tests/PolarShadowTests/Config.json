@@ -15,6 +15,9 @@
       "useWebView": false,
       "abilities": {
         "search": {
+          "parameters": {
+            "startpage": 0
+          },
           "request": {
             "url": "http://www.example.com"
           },

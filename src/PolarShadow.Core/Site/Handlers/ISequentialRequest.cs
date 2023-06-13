@@ -9,6 +9,7 @@ namespace PolarShadow.Core
 {
     public interface ISequentialRequest
     {
+        IPolarShadowSite Current { get; }
         void Reset();
         Task SearchNextAsync(Stream stream, CancellationToken cancellation = default);
     }

@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public abstract class SequentialRequestBase<TInput,TOutput> : ISequentialRequest<TOutput> where TInput : class
+    public abstract class SequentialRequestBase<TInput, TOutput> : ISequentialRequest<TOutput> where TInput : class
     {
         private List<IPolarShadowSite> _sites;
         private Queue<IPolarShadowSite> _siteFailedQueue;
         private int _index = 0;
-        private int _lastIndex = 0;
+        private int _lastIndex = -1;
         private string _abilityName;
 
         protected TInput Input;
@@ -38,10 +38,12 @@ namespace PolarShadow.Core
         /// </summary>
         public bool AutoSort { get; set; }
 
+        public IPolarShadowSite Current => _index >= 0 && _index < _sites.Count ? _sites[_index] : null;
+
         public void Reset()
         {
-            _index = _lastIndex = 0;
-            ResetRequest(Input);
+            _index = 0;
+            _lastIndex = -1;
             if (AutoSort)
             {
                 while (_siteFailedQueue != null && _siteFailedQueue.Count > 0)
@@ -72,15 +74,16 @@ namespace PolarShadow.Core
                 if (_lastIndex < _index)
                 {
                     _lastIndex = _index;
-                    ResetRequest(Input, site);
                     var request = site.CreateRequestHandler(_abilityName);
+                    ResetRequest(Input, request);
                     
-                    await site.ExecuteAsync(_abilityName, JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation);
+                    await request.ExecuteAsync(JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation).ConfigureAwait(false);
                 }
                 else
                 {
-                    NextRequest(Input, site);
-                    await site.ExecuteAsync(_abilityName, JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation);
+                    var request = site.CreateRequestHandler(_abilityName);
+                    NextRequest(Input, request);
+                    await request.ExecuteAsync(JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)

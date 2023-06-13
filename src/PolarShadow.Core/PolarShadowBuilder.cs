@@ -45,24 +45,23 @@ namespace PolarShadow.Core
 
         public IPolarShadow Build()
         {
-            return new PolarShadowDefault(this, BuildSites());
-        }
-
-        private IEnumerable<IPolarShadowSite> BuildSites()
-        {
-            _siteBuilder ??= new PolarShadowSiteBuilder(_webViewHandler);
             _optionBuilder ??= new PolarShadowOptionBuilder();
             var option = _optionBuilder.Build();
-
             var parameter = new NameSlotValueCollection();
             if (option.Parameters != null)
             {
                 parameter.AddNameValue(option.Parameters);
             }
+            return new PolarShadowDefault(this, BuildSites(parameter, option.Sites), parameter);
+        }
 
-            foreach (var item in option.Sites)
+        private IEnumerable<IPolarShadowSite> BuildSites(NameSlotValueCollection parameter, IEnumerable<PolarShadowSiteOption> sites)
+        {
+            _siteBuilder ??= new PolarShadowSiteBuilder(_webViewHandler);
+
+            foreach (var item in sites)
             {
-                yield return _siteBuilder.Build(item, parameter);
+                yield return _siteBuilder.Build(item, parameter.Clone());
             }
         }
     }

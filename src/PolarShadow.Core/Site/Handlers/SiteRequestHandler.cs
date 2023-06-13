@@ -27,9 +27,8 @@ namespace PolarShadow.Core
         public async Task ExecuteAsync(string input, Stream stream, CancellationToken cancellation = default)
         {
             var p = _parameter.Clone();
-            input.Format(p);
             using var doc = JsonDocument.Parse(input);
-            p.AddNameValue(doc.RootElement);
+            p.Add(doc.RootElement);
             await _handler.ExecuteAsync(_ability, p, cancellation);
         }
 

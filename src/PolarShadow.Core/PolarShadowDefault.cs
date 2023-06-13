@@ -10,9 +10,11 @@ namespace PolarShadow.Core
     {
         private readonly Dictionary<string, IPolarShadowSite> _sites = new Dictionary<string, IPolarShadowSite>();
         private readonly IPolarShadowBuilder _builder;
-        internal PolarShadowDefault(IPolarShadowBuilder builder, IEnumerable<IPolarShadowSite> sites)
+        private readonly NameSlotValueCollection _parameter;
+        internal PolarShadowDefault(IPolarShadowBuilder builder, IEnumerable<IPolarShadowSite> sites, NameSlotValueCollection parameter)
         {
             _builder = builder;
+            _parameter = parameter;
             foreach (var item in sites)
             {
                 _sites.Add(item.Name, item);
@@ -20,6 +22,8 @@ namespace PolarShadow.Core
         }
 
         public IPolarShadowBuilder Builder => _builder;
+
+        public NameSlotValueCollection Parameters => _parameter.Clone();
 
         public bool ContainsSite(string name)
         {
