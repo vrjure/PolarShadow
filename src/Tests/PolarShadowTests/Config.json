@@ -10,20 +10,26 @@
   ],
   "sites": [
     {
-      "name": "test",
-      "domain": "www.example.com",
+      "name": "dy2018",
+      "domain": "www.dy2018.com",
       "useWebView": false,
       "abilities": {
-        "search": {
-          "parameters": {
-            "startpage": 0
-          },
+        "newest": {
           "request": {
-            "url": "http://www.example.com"
+            "url": "https://www.dy2018.com/html/gndy/dyzz/index.html"
           },
           "response": {
+            "encoding": "gb2312",
             "content": {
-              "data": "asdf"
+              "data": [
+                {
+                  "path": "///body//div[@class='co_content8']/ul//table",
+                  "template": {
+                    "name": "{/.//a/@title}",
+                    "link": "https://www.dy2018.com{/.//a/@href}"
+                  }
+                }
+              ]
             }
           }
         }

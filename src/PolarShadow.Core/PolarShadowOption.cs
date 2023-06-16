@@ -17,9 +17,9 @@ namespace PolarShadow.Core
 
         public void Apply(PolarShadowOption other)
         {
-            Parameters = new Dictionary<string, object>(other.Parameters);
-            AnalysisSources = new KeyNameCollection<WebAnalysisSource>(other.AnalysisSources);
-            Sites = new KeyNameCollection<PolarShadowSiteOption>(other.Sites);
+            Parameters = other.Parameters == null ? new Dictionary<string, object>() : new Dictionary<string, object>(other.Parameters);
+            AnalysisSources = other.AnalysisSources == null ? new KeyNameCollection<WebAnalysisSource>() : new KeyNameCollection<WebAnalysisSource>(other.AnalysisSources);
+            Sites = other.Sites == null ? new KeyNameCollection<PolarShadowSiteOption>() : new KeyNameCollection<PolarShadowSiteOption>(other.Sites);
         }
     }
 }

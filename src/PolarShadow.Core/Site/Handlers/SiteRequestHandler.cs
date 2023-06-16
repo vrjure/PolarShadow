@@ -22,14 +22,20 @@ namespace PolarShadow.Core
             {
                 _parameter.AddNameValue(ability.Parameters);
             }
-
         }
+
+        public async Task ExecuteAsync(Stream stream, CancellationToken cancellation = default)
+        {
+            var p = _parameter.Clone();
+            await _handler.ExecuteAsync(_ability, stream, p, cancellation);
+        }
+
         public async Task ExecuteAsync(string input, Stream stream, CancellationToken cancellation = default)
         {
             var p = _parameter.Clone();
             using var doc = JsonDocument.Parse(input);
             p.Add(doc.RootElement);
-            await _handler.ExecuteAsync(_ability, p, cancellation);
+            await _handler.ExecuteAsync(_ability, stream, p, cancellation);
         }
 
         public bool TryGetParameter<T>(string name, out T value)

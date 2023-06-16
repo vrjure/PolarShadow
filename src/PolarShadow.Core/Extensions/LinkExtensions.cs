@@ -7,7 +7,7 @@ namespace PolarShadow.Core
 {
     public static class LinkExtensions
     {
-        public static LinkType GetVideoSourceType(this string link)
+        public static LinkType GetLinkType(this string link)
         {
             if (link == null)
             {

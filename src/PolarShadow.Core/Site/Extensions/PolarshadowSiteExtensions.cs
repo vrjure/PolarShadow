@@ -27,5 +27,14 @@ namespace PolarShadow.Core
             using var sr = new StreamReader(ms);
             return sr.ReadToEnd();
         }
+
+        public static async Task<string> ExecuteAsync(this IPolarShadowSite site, string name, CancellationToken cancellation = default)
+        {
+            var handler = site.CreateRequestHandler(name);
+            using var ms = new MemoryStream();
+            await handler.ExecuteAsync(ms, cancellation).ConfigureAwait(false);
+            using var sr = new StreamReader(ms);
+            return sr.ReadToEnd();
+        }
     }
 }

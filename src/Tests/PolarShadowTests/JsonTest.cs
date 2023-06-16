@@ -50,19 +50,6 @@ namespace PolarShadowTests
             };
             Console.WriteLine(JsonSerializer.Serialize(status, JsonOption.DefaultSerializer));
         }
-
-        [Test]
-        public void JsonAppendTest()
-        {
-            using var a = JsonDocument.Parse(JsonSerializer.Serialize(new A { AA = "a" }, JsonOption.DefaultSerializer));
-            using var b = JsonDocument.Parse(JsonSerializer.Serialize(new B { BB = "b" }, JsonOption.DefaultSerializer));
-
-            using var ms = new MemoryStream();
-            a.RootElement.Append(b.RootElement, ms);
-            
-            using var sr = new StreamReader(ms);
-            Console.WriteLine(sr.ReadToEnd());
-        }
     }
 
     class DashClass

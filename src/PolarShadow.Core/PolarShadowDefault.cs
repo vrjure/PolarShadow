@@ -19,6 +19,7 @@ namespace PolarShadow.Core
             {
                 _sites.Add(item.Name, item);
             }
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }
 
         public IPolarShadowBuilder Builder => _builder;

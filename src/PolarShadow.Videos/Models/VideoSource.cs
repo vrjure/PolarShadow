@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using PolarShadow.Core;
 
 namespace PolarShadow.Videos
 {
     public class VideoSource
     {
         public string Src { get; set; }
-        private VideoSrcType _srcType;
-        public VideoSrcType SrcType
+        private LinkType _srcType;
+        public LinkType SrcType
         {
             get
             {
-                if (_srcType == VideoSrcType.None && !string.IsNullOrEmpty(Src))
+                if (_srcType == LinkType.None && !string.IsNullOrEmpty(Src))
                 {
-                    _srcType = Src.GetVideoSourceType();
+                    _srcType = Src.GetLinkType();
                 }
 
                 return _srcType;

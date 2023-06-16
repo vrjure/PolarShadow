@@ -58,7 +58,7 @@ namespace PolarShadow.Core
 
         public IPolarShadowOptionBuilder ConfigureFromStream(Stream stream)
         {
-             _option.Apply(JsonSerializer.Deserialize<PolarShadowOption>(stream));
+             _option.Apply(JsonSerializer.Deserialize<PolarShadowOption>(stream, JsonOption.DefaultSerializer));
             return this;
         }
 

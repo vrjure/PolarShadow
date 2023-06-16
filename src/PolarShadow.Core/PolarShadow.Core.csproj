@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
     <PackageReference Include="System.IO.Pipelines" Version="7.0.0" />
     <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />

@@ -1,22 +1,19 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.XPath;
 
 namespace PolarShadow.Core
 {
     internal class HttpClientRequestHandler : IRequestHandler
     {
-        private static readonly string _formUrlEncoded = "application/x-www-form-urlencoded";
         private static readonly string _applicationjson = "application/json";
         private static readonly string _textHtml = "text/html";
         private static readonly string _userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62";
@@ -27,7 +24,6 @@ namespace PolarShadow.Core
             {
                 return;
             }
-
             await HandleValueAsync(input, stream, ability, cancellation);
             stream.Seek(0, SeekOrigin.Begin);
         }
@@ -42,13 +38,6 @@ namespace PolarShadow.Core
 
             var url = ability.Request.Url.Format(input);
             using var client = new HttpClient();
-            if (ability.Request.Headers != null && ability.Request.Headers.Count > 0)
-            {
-                foreach (var item in ability.Request.Headers)
-                {
-                    client.DefaultRequestHeaders.Add(item.Key, item.Value.Format(input));
-                }
-            }
 
             if (!client.DefaultRequestHeaders.Contains("User-Agent"))
             {
@@ -62,6 +51,14 @@ namespace PolarShadow.Core
             }
 
             using var request = new HttpRequestMessage(new HttpMethod(method), url);
+
+            if (ability.Request.Headers != null && ability.Request.Headers.Count > 0)
+            {
+                foreach (var item in ability.Request.Headers)
+                {
+                    request.Headers.Add(item.Key, item.Value);
+                }
+            }
             using var ms = new MemoryStream();
             if (ability.Request.Body.HasValue)
             {
@@ -82,8 +79,18 @@ namespace PolarShadow.Core
             }
             else if (contentType.MediaType.Equals(_textHtml, StringComparison.OrdinalIgnoreCase))
             {
-                var doc = new XPathDocument(content);
-                newInput.Add(new HtmlElement(doc));
+                if (string.IsNullOrEmpty(ability.Response.Encoding))
+                {
+                    var doc = new HtmlDocument();
+                    doc.Load(content);
+                    newInput.Add(new HtmlElement(doc.CreateNavigator()));
+                }
+                else
+                {
+                    var doc = new HtmlDocument();
+                    doc.Load(content, Encoding.GetEncoding(ability.Response.Encoding));
+                    newInput.Add(new HtmlElement(doc.CreateNavigator()));
+                }
             }
             else
             {
