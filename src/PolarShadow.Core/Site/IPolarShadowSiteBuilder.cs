@@ -6,6 +6,6 @@ namespace PolarShadow.Core
 {
     public interface IPolarShadowSiteBuilder
     {
-        IPolarShadowSite Build(PolarShadowSiteOption option, NameSlotValueCollection parameters);
+        IPolarShadowSite Build();
     }
 }

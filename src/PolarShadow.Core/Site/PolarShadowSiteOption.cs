@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace PolarShadow.Core
 {
-    public class PolarShadowSiteOption : IKeyName
+    internal class PolarShadowSiteOption : IKeyName
     {
         public PolarShadowSiteOption() { }
         public PolarShadowSiteOption(string name) 

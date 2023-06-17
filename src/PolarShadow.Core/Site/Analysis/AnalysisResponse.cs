@@ -8,6 +8,6 @@ namespace PolarShadow.Core
     public class AnalysisResponse
     {
         public string Encoding { get; set; }
-        public JsonElement Content { get; set; }
+        public JsonElement? Content { get; set; }
     }
 }

@@ -10,18 +10,22 @@ namespace PolarShadow.Core
     {
         private readonly static IRequestHandler _defaultHandler = new HttpClientRequestHandler();
         private readonly IRequestHandler _webViewHandler;
-        public PolarShadowSiteBuilder(IRequestHandler webViewHandler)
+        private readonly PolarShadowSiteOption _option;
+        private readonly NameSlotValueCollection _parameters;
+        public PolarShadowSiteBuilder(IRequestHandler webViewHandler, PolarShadowSiteOption option, NameSlotValueCollection parameters)
         {
             _webViewHandler = webViewHandler;
+            _option = option;
+            _parameters = parameters;
         }
 
-        public IPolarShadowSite Build(PolarShadowSiteOption option, NameSlotValueCollection parameters)
+        public IPolarShadowSite Build()
         {
-            if (option.UseWebView)
+            if (_option.UseWebView)
             {
-                return new PolarShadowSiteDefault(option, parameters?.Clone(), _webViewHandler);
+                return new PolarShadowSiteDefault(_option, _parameters?.Clone(), _webViewHandler);
             }
-            return new PolarShadowSiteDefault(option, parameters?.Clone(), _defaultHandler);
+            return new PolarShadowSiteDefault(_option, _parameters?.Clone(), _defaultHandler);
         }
     }
 }

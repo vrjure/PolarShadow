@@ -97,7 +97,7 @@ namespace PolarShadow.Core
                 throw new InvalidOperationException($"Not supported content-type:{contentType}");
             }
 
-            ability.Response.Content.BuildContent(stream, newInput);
+            ability.Response.Content?.BuildContent(stream, newInput);
         }
     }
 }

@@ -7,13 +7,13 @@ using System.Text.Json.Serialization;
 
 namespace PolarShadow.Core
 {
-    public class PolarShadowOption
+    internal class PolarShadowOption
     {
         public Dictionary<string, object> Parameters { get; set; }
         [JsonInclude]
-        public ICollection<WebAnalysisSource> AnalysisSources { get; set; } = new KeyNameCollection<WebAnalysisSource>();
+        public ICollection<WebAnalysisSource> AnalysisSources { get; set; }
         [JsonInclude]
-        public ICollection<PolarShadowSiteOption> Sites { get; private set; } = new KeyNameCollection<PolarShadowSiteOption>();
+        public ICollection<PolarShadowSiteOption> Sites { get; set; }
 
         public void Apply(PolarShadowOption other)
         {

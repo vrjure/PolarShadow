@@ -8,6 +8,7 @@ namespace PolarShadow.Core
     public interface IPolarShadowOptionBuilder
     {
         bool IsChanged { get; }
+        void ChangeNodify();
         IPolarShadowSiteOptionBuilder AddSite(string name);
         IPolarShadowOptionBuilder RemoveSite(string name);
         IPolarShadowOptionBuilder ClearSite();
@@ -17,8 +18,7 @@ namespace PolarShadow.Core
         IPolarShadowOptionBuilder AddParameter<T>(string name, T value);
         IPolarShadowOptionBuilder RemoveParameter(string name);
         IPolarShadowOptionBuilder ClearParameter();
-        IPolarShadowOptionBuilder ConfigureFromStream(Stream stream);
+        IPolarShadowOptionBuilder Load(Stream stream);
         void WriteTo(Stream stream);
-        PolarShadowOption Build();
     }
 }
