@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PolarShadow.Storage.Abstractions\PolarShadow.Storage.Abstractions.csproj" />
+    <ProjectReference Include="..\PolarShadow.Videos\PolarShadow.Videos.csproj" />
   </ItemGroup>
 
 </Project>

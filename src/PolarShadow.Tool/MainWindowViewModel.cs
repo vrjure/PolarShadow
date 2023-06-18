@@ -43,9 +43,11 @@ namespace PolarShadow.Tool
             try
             {
                 _importPath = fileDialog.FileName;
-                using var fs = new FileStream(fileDialog.FileName, FileMode.Open, FileAccess.Read);
-                _builder.ImportFrom(fs);
-                _builder.Option.IsChanged = true;
+                _builder.Configure(opBuilder =>
+                {
+                    using var fs = new FileStream(fileDialog.FileName, FileMode.Open, FileAccess.Read);
+                    opBuilder.Load(fs);
+                });
 
                 UI.Navigate<MainPage>("content");
 
@@ -64,9 +66,11 @@ namespace PolarShadow.Tool
         {
             try
             {
-                using var fs = new FileStream(_importPath, FileMode.Open, FileAccess.Read);
-                _builder.ImportFrom(fs);
-                _builder.Option.IsChanged = true;
+                _builder.Configure(op =>
+                {
+                    using var fs = new FileStream(_importPath, FileMode.Open, FileAccess.Read);
+                    op.Load(fs);
+                });
                 UI.Refresh("content");
             }
             catch (Exception ex)

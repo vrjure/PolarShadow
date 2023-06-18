@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Xml.Linq;
@@ -13,11 +14,16 @@ namespace PolarShadow.Core
         private readonly IDictionary<string, NameSlotValue> _parameters;
         private readonly ICollection<NameSlotValue> _objectParameters;      
 
-        public NameSlotValueCollection() : this(default)
+        public NameSlotValueCollection() : this(default, default)
         {
         }
 
-        public NameSlotValueCollection(IDictionary<string, NameSlotValue> parameters)
+        public NameSlotValueCollection(IDictionary<string, NameSlotValue> parameters) :this(parameters, default)
+        {
+
+        }
+
+        public NameSlotValueCollection(IDictionary<string, NameSlotValue> parameters, ICollection<NameSlotValue> objectParameters)
         {
             if (parameters != null)
             {
@@ -27,7 +33,14 @@ namespace PolarShadow.Core
             {
                 _parameters = new Dictionary<string, NameSlotValue>();
             }
-            _objectParameters = new List<NameSlotValue>();
+            if (objectParameters != null)
+            {
+                _objectParameters = new List<NameSlotValue>(objectParameters);
+            }
+            else
+            {
+                _objectParameters = new List<NameSlotValue>();
+            }
         }
 
         public void Add(NameSlotValue value)
@@ -137,11 +150,19 @@ namespace PolarShadow.Core
                 {
                     if (NameSlotValue.IsJsonPath(path) && item.ValueKind == NameSlotValueKind.Json)
                     {
-                        value = new NameSlotValue(JsonPath.Read(item.GetJson(), path));
+                        var result = JsonPath.Read(item.GetJson(), path);
+                        if (result.ValueKind != JsonValueKind.Undefined)
+                        {
+                            value = new NameSlotValue(result);
+                        }
                     }
                     else if (NameSlotValue.IsXPath(path) && item.ValueKind == NameSlotValueKind.Html)
                     {
-                        value = new NameSlotValue(item.GetHtml().Select(path[1..]));
+                        var result = item.GetHtml().Select(path[1..]);
+                        if (result.ValueKind != HtmlValueKind.Undefined)
+                        {
+                            value = new NameSlotValue(result);
+                        }
                     }
 
                     if (value.ValueKind != NameSlotValueKind.Undefined)
@@ -157,7 +178,7 @@ namespace PolarShadow.Core
 
         public NameSlotValueCollection Clone()
         {
-            return new NameSlotValueCollection(_parameters);
+            return new NameSlotValueCollection(_parameters, _objectParameters);
         }
 
         public bool TryReadValue<TValue>(string path, out TValue value)

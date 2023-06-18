@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Videos
 {
-    internal class VideoSearcHandler : SequentialRequestBase<SearchVideoFilter, VideoSummary>, IVideoSearcHandler
+    internal class VideoSearcHandler : SequentialRequestBase<SearchVideoFilter, PageResult<VideoSummary>>, IVideoSearcHandler
     {
         public VideoSearcHandler(string abilityName, SearchVideoFilter input, IEnumerable<IPolarShadowSite> sites, NameSlotValueCollection parameters) : base(abilityName, input, sites, parameters)
         {

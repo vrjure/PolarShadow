@@ -33,7 +33,7 @@ namespace PolarShadow.Core
 
         public IEnumerable<IPolarShadowSite> GetSites()
         {
-            return _sites.Values.AsEnumerable();
+            return new List<IPolarShadowSite>(_sites.Values);
         }
 
         public bool TryGetSite(string name, out IPolarShadowSite site)

@@ -41,7 +41,7 @@ namespace PolarShadowTests
             }
             else if (select.ValueKind == HtmlValueKind.Nodes)
             {
-                foreach (var item in select.EnumerateElements())
+                foreach (var item in select.EnumerateNodes())
                 {
                     Console.WriteLine(item.GetValue());
                 }

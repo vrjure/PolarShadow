@@ -13,6 +13,7 @@ namespace PolarShadow.Core
         string Name { get; }
         string Domain { get; }
         bool HasAbility(string name);
+        IEnumerable<string> Abilities { get; }
         bool TryGetParameter<TValue>(string name, out TValue value);
         ISiteRequestHandler CreateRequestHandler(string name);
     }

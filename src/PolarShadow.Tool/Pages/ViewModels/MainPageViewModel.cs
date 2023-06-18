@@ -38,7 +38,7 @@ namespace PolarShadow.Tool.Pages.ViewModels
         private string output;
 
         private IPolarShadowSite _selectSite;
-        private IAnalysisAbility _selectAbility;
+        private string _selectAbility;
         [RelayCommand]
         public void SiteSelectionChanged(SelectionChangedEventArgs e)
         {
@@ -48,12 +48,9 @@ namespace PolarShadow.Tool.Pages.ViewModels
 
                 Abilities.Clear();
                 _selectSite = item.Value as IPolarShadowSite;
-                foreach (var ability in _polarShadow.GetAbilities())
+                foreach (var ability in _selectSite.Abilities)
                 {
-                    if (_selectSite.HasAbility(ability.Name))
-                    {
-                        Abilities.Add(new ListItem(ability.Name, ability));
-                    }
+                    Abilities.Add(new ListItem(ability, ability));
                 }
             }
         }
@@ -64,14 +61,7 @@ namespace PolarShadow.Tool.Pages.ViewModels
             if (e.AddedItems.Count > 0)
             {
                 var item = e.AddedItems[0] as ListItem;
-                _selectAbility = item.Value as IAnalysisAbility;
-                var type = item.Value.GetType().GetInterface(typeof(IAnalysisAbility<,>).Name);
-                if (type != default)
-                {
-                    var args = type.GenericTypeArguments;
-                    var input = Activator.CreateInstance(args[0]);
-                    Input = JsonSerializer.Serialize(input, JsonOption.FormatSerializer);
-                }
+                _selectAbility = item.Value.ToString();
             }
         }
 
@@ -80,6 +70,7 @@ namespace PolarShadow.Tool.Pages.ViewModels
         {
             try
             {
+
                 var result = await _selectSite.ExecuteAsync(_selectAbility, Input);
                 using var doc = JsonDocument.Parse(result);
 

@@ -83,19 +83,6 @@ namespace PolarShadow.Core
                 return _node.Value;
             }
             throw new InvalidOperationException("The value must be a node");
-        }
-
-        public IEnumerable<HtmlElement> EnumerateElements()
-        {
-            if (_valueKind != HtmlValueKind.Nodes)
-            {
-                throw new InvalidOperationException("The value must be a collection of nodes");
-            }
-            while (_nodes.MoveNext())
-            {
-                yield return new HtmlElement(_nodes.Current);
-            }
-        }
-        
+        }       
     }
 }

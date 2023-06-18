@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -28,6 +29,8 @@ namespace PolarShadow.Core
         public string Name => _siteOption.Name;
 
         public string Domain => _siteOption.Domain;
+
+        public IEnumerable<string> Abilities => new List<string>(_siteOption.Abilities.Keys);
 
         public ISiteRequestHandler CreateRequestHandler(string name)
         {

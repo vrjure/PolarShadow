@@ -57,7 +57,7 @@
 
     private ICollection<VideoSummary> _source;
     private string _searchText;
-    private ISequentialRequest _searcHandler;
+    private IVideoSearcHandler _searcHandler;
     private bool _hasMore = true;
     private ListGridType grid = new ListGridType
     {
@@ -119,7 +119,7 @@
         }
 
 
-        _searcHandler = _polarShadow.BuildSearchHandler(new SearchVideoFilter
+        _searcHandler = _polarShadow.CreateVideoSearcHandler(new SearchVideoFilter
         {
             Page = 1,
             PageSize = 10,
@@ -132,14 +132,14 @@
         {
             CheckCancellationToken();
             var result = await _searcHandler.SearchNextAsync(_cts.Token);
-            if (result == null)
+            if (result == null || result.Data == null || result.Data.Count == 0)
             {
                 _hasMore = false;
                 _source?.Clear();
                 return;
             }
             _hasMore = true;
-            _source = new List<VideoSummary>(result);
+            _source = new List<VideoSummary>(result.Data);
         }
         finally
         {
@@ -160,12 +160,12 @@
         {
             CheckCancellationToken();
             var result = await _searcHandler.SearchNextAsync(_cts.Token);
-            if (result == null || result.Count == 0)
+            if (result == null || result.Data == null || result.Data.Count == 0)
             {
                 _hasMore = false;
                 return;
             }
-            (_source as List<VideoSummary>).AddRange(result);
+            (_source as List<VideoSummary>).AddRange(result.Data);
         }
         finally
         {

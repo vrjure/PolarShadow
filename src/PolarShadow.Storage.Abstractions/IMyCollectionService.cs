@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using PolarShadow.Core;
+using PolarShadow.Videos;
 
 namespace PolarShadow.Storage
 {

@@ -105,13 +105,6 @@
                         }
                     }
                     break;
-                case LinkType.HTMLAnalysis:
-                    if (_polarShadow.TryGetSiteWithAbility(_siteName, out IPolarShadowSite site, out IWebAnalysisAble webAnalysis))
-                    {
-                        var url = await site.ExecuteAsync(webAnalysis, source.Src);
-                        _nav.NavigateTo(url, false, true);
-                    }
-                    break;
                 default:
                     break;
             }

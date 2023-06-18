@@ -14,6 +14,10 @@ namespace PolarShadow.Core
     {
         private IRequestHandler _webViewHandler;
         private IPolarShadowOptionBuilder _optionBuilder;
+        private IPolarShadow _polarShadow;
+
+        public bool IsOptionChanged => _optionBuilder == null ? false : _optionBuilder.IsChanged;
+
         public IPolarShadowBuilder UseWebViewHandler(IRequestHandler requestHandler)
         {
             _webViewHandler = requestHandler;
@@ -39,13 +43,24 @@ namespace PolarShadow.Core
         public IPolarShadow Build()
         {
             _optionBuilder ??= new PolarShadowOptionBuilder();
-            var option = (_optionBuilder as PolarShadowOptionBuilder).Build();
-            var parameter = new NameSlotValueCollection();
-            if (option.Parameters != null)
+            if (_optionBuilder.IsChanged || _polarShadow == null)
             {
-                parameter.AddNameValue(option.Parameters);
+                var option = (_optionBuilder as PolarShadowOptionBuilder).Build();
+                var parameter = new NameSlotValueCollection();
+                if (option.Parameters != null)
+                {
+                    parameter.AddNameValue(option.Parameters);
+                }
+                if (option.Sites == null)
+                {
+                    return new PolarShadowDefault(this, Enumerable.Empty<IPolarShadowSite>(), parameter);
+                }
+                return new PolarShadowDefault(this, BuildSites(parameter, option.Sites), parameter);
             }
-            return new PolarShadowDefault(this, BuildSites(parameter, option.Sites), parameter);
+            else
+            {
+                return _polarShadow;
+            }
         }
 
         private IEnumerable<IPolarShadowSite> BuildSites(NameSlotValueCollection parameter, IEnumerable<PolarShadowSiteOption> sites)

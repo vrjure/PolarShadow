@@ -1,4 +1,5 @@
-﻿@inject IImageCache _imageCache
+﻿@inject IHttpFileResource _imageCache
+@inject IHttpResource _httpRes;
 
 <Card Bordered BodyStyle="padding:5px" Style="cursor:pointer;max-width:220px">
     <Cover>
@@ -24,7 +25,7 @@
     }
 
 </style>
-    @code {
+@code {
     private string _imageSrc;
 
     [Parameter]
@@ -38,11 +39,19 @@
         {
             if (UseCache)
             {
-                _imageSrc = await _imageCache.GetCacheUrlAsync(Summary.ImageSrc);
+                _imageSrc = await _imageCache.CreateObjectUrlAsync(Summary.ImageSrc);
             }
             else
             {
-                _imageSrc = Summary.ImageSrc;
+                var uri = new Uri(Summary.ImageSrc);
+                if (uri.Scheme.Equals(Uri.UriSchemeHttp))
+                {
+                    _imageSrc = await _httpRes.CreateObjectUrlAsync(Summary.ImageSrc);
+                }
+                else
+                {
+                    _imageSrc = Summary.ImageSrc;
+                }
             }
         }
     }
@@ -51,7 +60,15 @@
     {
         if (UseCache)
         {
-            await _imageCache.RevokeUrlAsync(_imageSrc);
+            await _imageCache.RevokeObjectUrlAsync(_imageSrc);
+        }
+        else
+        {
+            var uri = new Uri(Summary.ImageSrc);
+            if (uri.Scheme.Equals(Uri.UriSchemeHttp))
+            {
+                await _httpRes.RevokeObjectUrlAsync(_imageSrc);
+            }
         }
     }
 }

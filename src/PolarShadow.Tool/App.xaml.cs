@@ -21,7 +21,7 @@ namespace PolarShadow.Tool
     {
         public IServiceProvider Services { get; private set; }
         public new static App Current => (App)Application.Current;
-
+        private IPolarShadow _cache;
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -67,12 +67,18 @@ namespace PolarShadow.Tool
         private void ConfigurePolarShadow(IServiceCollection service)
         {
             var builder = new PolarShadowBuilder();
-            builder.AddDefaultAbilities();
             service.AddSingleton<IPolarShadowBuilder>(builder);
             service.AddTransient(sp =>
             {
                 var builder = sp.GetRequiredService<IPolarShadowBuilder>();
-                return builder.Build();
+                if (builder.IsOptionChanged)
+                {
+                    return _cache = builder.Build();
+                }
+                else
+                {
+                    return _cache;
+                }
             });
         }
     }

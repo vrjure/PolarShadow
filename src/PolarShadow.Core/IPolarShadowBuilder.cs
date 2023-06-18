@@ -9,6 +9,7 @@ namespace PolarShadow.Core
 {
     public interface IPolarShadowBuilder
     {
+        bool IsOptionChanged { get; }
         IPolarShadowBuilder UseWebViewHandler(IRequestHandler requestHandler);
         IPolarShadowBuilder Configure(Action<IPolarShadowOptionBuilder> optionBuilder);
         IPolarShadow Build();

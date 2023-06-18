@@ -73,6 +73,8 @@ namespace PolarShadow.Core
             {
                 return;
             }
+            jsonWriter.WriteStartArray();
+
             JsonElement templateObj = default;
             foreach (var obj in item.EnumerateArray())
             {
@@ -89,15 +91,22 @@ namespace PolarShadow.Core
                 || path.ValueKind != JsonValueKind.String
                 || template.ValueKind != JsonValueKind.Object)
             {
-                return;
+                BuildArray(item, jsonWriter, input);
+            }
+            else
+            {
+                BuildTemplate(path, template, jsonWriter, input);
             }
 
+            jsonWriter.WriteEndArray();
+        }
+
+        private static void BuildTemplate(JsonElement path, JsonElement template, Utf8JsonWriter jsonWriter, NameSlotValueCollection input)
+        {
             if (!input.TryReadValue(path.GetString(), out NameSlotValue pathValue))
             {
                 return;
             }
-
-            jsonWriter.WriteStartArray();
 
             if (pathValue.ValueKind == NameSlotValueKind.Json)
             {
@@ -112,15 +121,31 @@ namespace PolarShadow.Core
             else if (pathValue.ValueKind == NameSlotValueKind.Html)
             {
                 var htmlPathValue = pathValue.GetHtml();
-                foreach (var child in htmlPathValue.EnumerateNodes())
+                if (htmlPathValue.ValueKind == HtmlValueKind.Nodes)
+                {
+                    foreach (var child in htmlPathValue.EnumerateNodes())
+                    {
+                        var childInput = input.Clone();
+                        childInput.Add(child);
+                        BuildContent(jsonWriter, template, childInput);
+                    }
+                }
+                else if(htmlPathValue.ValueKind == HtmlValueKind.Node)
                 {
                     var childInput = input.Clone();
-                    childInput.Add(child);
+                    childInput.Add(htmlPathValue);
                     BuildContent(jsonWriter, template, childInput);
                 }
-            }
 
-            jsonWriter.WriteEndArray();
+            }
+        }
+
+        private static void BuildArray(JsonElement item, Utf8JsonWriter jsonWriter, NameSlotValueCollection input)
+        {
+            foreach (var obj in item.EnumerateArray())
+            {
+                BuildContent(jsonWriter, obj, input);
+            }
         }
     }
 }

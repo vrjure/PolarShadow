@@ -5,7 +5,7 @@ using PolarShadow.Core;
 
 namespace PolarShadow.Videos
 {
-    public interface IVideoSearcHandler : ISequentialRequest<VideoSummary>
+    public interface IVideoSearcHandler : ISequentialRequest<PageResult<VideoSummary>>
     {
 
     }

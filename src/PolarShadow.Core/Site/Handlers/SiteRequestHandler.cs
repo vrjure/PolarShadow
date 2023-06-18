@@ -26,15 +26,17 @@ namespace PolarShadow.Core
 
         public async Task ExecuteAsync(Stream stream, CancellationToken cancellation = default)
         {
-            var p = _parameter.Clone();
-            await _handler.ExecuteAsync(_ability, stream, p, cancellation);
+            await ExecuteAsync(default, stream, cancellation);
         }
 
         public async Task ExecuteAsync(string input, Stream stream, CancellationToken cancellation = default)
         {
             var p = _parameter.Clone();
-            using var doc = JsonDocument.Parse(input);
-            p.Add(doc.RootElement);
+            if (!string.IsNullOrEmpty(input))
+            {
+                using var doc = JsonDocument.Parse(input);
+                p.Add(doc.RootElement.Clone());
+            }
             await _handler.ExecuteAsync(_ability, stream, p, cancellation);
         }
 

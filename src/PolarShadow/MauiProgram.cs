@@ -6,6 +6,7 @@ using PolarShadow.Storage;
 using System.Text.Json;
 using PolarShadow.Core.Aria2;
 using PolarShadow.Cache;
+using Microsoft.Maui.Hosting;
 
 namespace PolarShadow
 {
@@ -32,10 +33,14 @@ namespace PolarShadow
             builder.Logging.AddDebug();
 #endif
             builder.Services.AddAntDesign();
-            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient("default", client =>
+            {
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62");
+            });
             builder.Services.AddScoped<IStateContext, StateContext>();
             builder.Services.AddScoped<INavigationService, NavigationService>();
-            builder.Services.AddScoped<IImageCache, FileImageCache>();
+            builder.Services.AddScoped<IHttpFileResource, HttpFileResource>();
+            builder.Services.AddScoped<IHttpResource, HttpResource>();
 
             builder.Services.AddSingleton(CreatePolarShadowBuilder());
             builder.Services.AddTransient(sp =>
@@ -58,8 +63,11 @@ namespace PolarShadow
         private static IPolarShadowBuilder CreatePolarShadowBuilder()
         {
             var builder = new PolarShadowBuilder();
-            return builder.ReadFromFile().AddDefaultAbilities();
-
+            builder.Configure(optionBuilder =>
+            {
+                optionBuilder.ReadFromFile();
+            });
+            return builder;
         }
 
         private static MauiApp InitializeApp(this MauiApp app)

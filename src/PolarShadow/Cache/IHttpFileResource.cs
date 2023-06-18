@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Cache
 {
-    internal interface IImageCache
+    internal interface IHttpFileResource : IHttpResource
     {
-        Task<string> GetCacheUrlAsync(string imageSrc);
-        Task RevokeUrlAsync(string url);
         void RemoveCache(string imageSrc);
     }
 }

@@ -8,16 +8,12 @@ using PolarShadow;
 
 namespace PolarShadow.Cache
 {
-    internal class FileImageCache : IImageCache
+    internal class HttpFileResource : HttpResource, IHttpFileResource
     {
-        private readonly IJSRuntime _js;
-        private HttpClient _http;
-        public FileImageCache(IJSRuntime js, HttpClient http) 
+        public HttpFileResource(IHttpClientFactory factory, IJSRuntime js) :base(factory, js)
         {
-            _js = js;
-            _http = http;
         }
-        public async Task<string> GetCacheUrlAsync(string imageSrc)
+        public override async Task<string> CreateObjectUrlAsync(string imageSrc)
         {
             if (string.IsNullOrEmpty(imageSrc))
             {
@@ -26,13 +22,12 @@ namespace PolarShadow.Cache
             var hash = imageSrc.Hash();
             if (!hash.IsImageCached())
             {
-                var stream = await _http.GetStreamAsync(imageSrc);
+                var stream = await _client.GetStreamAsync(imageSrc);
                 await hash.CacheImageAsync(stream);
             }
 
             using var fs = hash.ReadStream();
-            var dotnetStream = new DotNetStreamReference(fs);
-            return await _js.InvokeAsync<string>("createObjectUrl", dotnetStream);
+            return await _js.CreateObjectUrl(fs);
         }
 
         public void RemoveCache(string imageSrc)
@@ -44,11 +39,6 @@ namespace PolarShadow.Cache
 
             var hash = imageSrc.Hash();
             hash.RemoveImageCache();
-        }
-
-        public async Task RevokeUrlAsync(string url)
-        {
-            await _js.InvokeVoidAsync("revokeObjectUrl", url);
         }
     }
 }

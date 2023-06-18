@@ -92,9 +92,10 @@ namespace PolarShadow.Core
                 {
                     if (_siteFailedQueue == null)
                     {
-                        _siteFailedQueue.Enqueue(site);
-                        _sites.RemoveAt(_index);
+                        _siteFailedQueue = new Queue<IPolarShadowSite>();
                     }
+                    _siteFailedQueue.Enqueue(site);
+                    _sites.RemoveAt(_index);
                 }
 
                 if (!IgnoreError)
@@ -113,6 +114,8 @@ namespace PolarShadow.Core
                 _index++;
                 await SearchNextAsync(stream, cancellation);
             }
+
+            stream.Seek(0, SeekOrigin.Begin);
         }
 
         /// <summary>
