@@ -11,7 +11,7 @@ namespace PolarShadow.Core
 {
     public static class NameSlot
     {
-        public static string Format(this string text, NameSlotValueCollection values)
+        public static string Format(this string text, params NameSlotValueCollection[] values)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -19,7 +19,7 @@ namespace PolarShadow.Core
             }
             return Format(Encoding.UTF8.GetBytes(text), values);
         }
-        public static string Format(this ReadOnlySpan<byte> text, NameSlotValueCollection values)
+        public static string Format(this ReadOnlySpan<byte> text, params NameSlotValueCollection[] values)
         {
             if (text.IsEmpty)
             {
@@ -31,7 +31,7 @@ namespace PolarShadow.Core
             return sb.ToString();
         }
 
-        private static void Format(StringBuilder sb, ref NameSlotReader reader, NameSlotValueCollection values)
+        private static void Format(StringBuilder sb, ref NameSlotReader reader, params NameSlotValueCollection[] values)
         {
             while (reader.Read())
             {
@@ -52,7 +52,7 @@ namespace PolarShadow.Core
 
         }
 
-        private static void ReadValue(StringBuilder sb, ref NameSlotReader reader, NameSlotValueCollection values)
+        private static void ReadValue(StringBuilder sb, ref NameSlotReader reader, params NameSlotValueCollection[] values)
         {
             var result = string.Empty;
             if (reader.TokenType == NameSlotTokenType.Parameter)
@@ -61,24 +61,25 @@ namespace PolarShadow.Core
             }
 
             reader.Read();
-            if (values.TryReadValue(result, out NameSlotValue newResult))
+            foreach (var item in values)
             {
-                result = newResult.GetValue();
+                if (item.TryReadValue(result, out NameSlotValue newResult))
+                {
+                    result = newResult.GetValue();
 
-                if (reader.TokenType == NameSlotTokenType.Format)
-                {
-                    var format = reader.GetSegment();
-                    result = FormatValue(result, format);
+                    if (reader.TokenType == NameSlotTokenType.Format)
+                    {
+                        var format = reader.GetSegment();
+                        result = FormatValue(result, format);
+                    }
+                    else if (reader.TokenType == NameSlotTokenType.Match)
+                    {
+                        var regex = reader.GetString();
+                        result = MatchValue(result, regex);
+                    }
+
+                    break;
                 }
-                else if (reader.TokenType == NameSlotTokenType.Match)
-                {
-                    var regex = reader.GetString();
-                    result = MatchValue(result, regex);
-                }
-            }
-            else
-            {
-                result = string.Empty;
             }
             
             sb.Append(result);

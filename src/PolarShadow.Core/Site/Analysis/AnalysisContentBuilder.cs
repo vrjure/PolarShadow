@@ -8,51 +8,54 @@ namespace PolarShadow.Core
 {
     public static class AnalysisContentBuilder
     {
-        public static void BuildContent(this JsonElement template, Stream stream, NameSlotValueCollection input)
+        /// <summary>
+        /// 构建模板内容
+        /// </summary>
+        /// <param name="template">要构建的模板</param>
+        /// <param name="stream">输出流</param>
+        /// <param name="content">执行结果输入</param>
+        /// <param name="input">外部输入</param>
+        public static void BuildContent(this JsonElement template, Stream stream, NameSlotValueCollection content, NameSlotValueCollection input)
         {
             using var jsonWriter = new Utf8JsonWriter(stream, JsonOption.DefaultWriteOption);
-            BuildContent(jsonWriter, template, input);
+            BuildContent(jsonWriter, template, content, input);
             jsonWriter.Flush();
             stream.Seek(0, SeekOrigin.Begin);
         }
 
-        private static void BuildContent(Utf8JsonWriter jsonWriter, JsonElement body, NameSlotValueCollection input)
+        private static void BuildContent(Utf8JsonWriter jsonWriter, JsonElement template, NameSlotValueCollection content, NameSlotValueCollection input)
         {
-            if (body.ValueKind == JsonValueKind.Array)
+            if (template.ValueKind == JsonValueKind.Array)
             {
-                if (body.GetArrayLength() < 0)
+                if (template.GetArrayLength() < 0)
                 {
                     return;
                 }
-                BuildArrayContent(jsonWriter, body, input);
+                BuildArrayContent(jsonWriter, template, content, input);
             }
-            else if (body.ValueKind == JsonValueKind.Object)
+            else if (template.ValueKind == JsonValueKind.Object)
             {
                 jsonWriter.WriteStartObject();
-                foreach (var item in body.EnumerateObject())
+                foreach (var item in template.EnumerateObject())
                 {
                     jsonWriter.WritePropertyName(item.Name);
-                    if (item.Value.ValueKind == JsonValueKind.Array || item.Value.ValueKind == JsonValueKind.Object)
+                    if (item.Value.ValueKind == JsonValueKind.Array)
                     {
-                        BuildArrayContent(jsonWriter, item.Value, input);
+                        BuildArrayContent(jsonWriter, item.Value, content, input);
                     }
                     else
                     {
-                        BuildContent(jsonWriter, item.Value, input);
+                        BuildContent(jsonWriter, item.Value, content, input);
                     }
                 }
                 jsonWriter.WriteEndObject();
             }
-            else if (body.ValueKind == JsonValueKind.String)
+            else if (template.ValueKind == JsonValueKind.String)
             {
-                var str = body.GetString();
-                str = str.Format(input);
+                var str = template.GetString();
+                str = str.Format(content);
 
-                if (decimal.TryParse(str, out decimal num))
-                {
-                    jsonWriter.WriteNumberValue(num);
-                }
-                else if (bool.TryParse(str, out bool boolean))
+                if (bool.TryParse(str, out bool boolean))
                 {
                     jsonWriter.WriteBooleanValue(boolean);
                 }
@@ -63,11 +66,11 @@ namespace PolarShadow.Core
             }
             else
             {
-                body.WriteTo(jsonWriter);
+                template.WriteTo(jsonWriter);
             }
         }
 
-        private static void BuildArrayContent(Utf8JsonWriter jsonWriter, JsonElement item, NameSlotValueCollection input)
+        private static void BuildArrayContent(Utf8JsonWriter jsonWriter, JsonElement item, NameSlotValueCollection content, NameSlotValueCollection input)
         {
             if (item.ValueKind != JsonValueKind.Array)
             {
@@ -91,19 +94,19 @@ namespace PolarShadow.Core
                 || path.ValueKind != JsonValueKind.String
                 || template.ValueKind != JsonValueKind.Object)
             {
-                BuildArray(item, jsonWriter, input);
+                BuildArray(item, jsonWriter, content, input);
             }
             else
             {
-                BuildTemplate(path, template, jsonWriter, input);
+                BuildTemplate(path, template, jsonWriter, content, input);
             }
 
             jsonWriter.WriteEndArray();
         }
 
-        private static void BuildTemplate(JsonElement path, JsonElement template, Utf8JsonWriter jsonWriter, NameSlotValueCollection input)
+        private static void BuildTemplate(JsonElement path, JsonElement template, Utf8JsonWriter jsonWriter, NameSlotValueCollection content, NameSlotValueCollection input)
         {
-            if (!input.TryReadValue(path.GetString(), out NameSlotValue pathValue))
+            if (!content.TryReadValue(path.GetString(), out NameSlotValue pathValue))
             {
                 return;
             }
@@ -115,7 +118,7 @@ namespace PolarShadow.Core
                 {
                     var childInput = input.Clone();
                     childInput.Add(child);
-                    BuildContent(jsonWriter, template, childInput);
+                    BuildContent(jsonWriter, template, childInput, input);
                 }
             }
             else if (pathValue.ValueKind == NameSlotValueKind.Html)
@@ -127,24 +130,24 @@ namespace PolarShadow.Core
                     {
                         var childInput = input.Clone();
                         childInput.Add(child);
-                        BuildContent(jsonWriter, template, childInput);
+                        BuildContent(jsonWriter, template, childInput, input);
                     }
                 }
                 else if(htmlPathValue.ValueKind == HtmlValueKind.Node)
                 {
                     var childInput = input.Clone();
                     childInput.Add(htmlPathValue);
-                    BuildContent(jsonWriter, template, childInput);
+                    BuildContent(jsonWriter, template, childInput, input);
                 }
 
             }
         }
 
-        private static void BuildArray(JsonElement item, Utf8JsonWriter jsonWriter, NameSlotValueCollection input)
+        private static void BuildArray(JsonElement item, Utf8JsonWriter jsonWriter, NameSlotValueCollection content, NameSlotValueCollection input)
         {
             foreach (var obj in item.EnumerateArray())
             {
-                BuildContent(jsonWriter, obj, input);
+                BuildContent(jsonWriter, obj, content, input);
             }
         }
     }

@@ -67,7 +67,7 @@ namespace PolarShadow.Core
         {
             if (_valueKind != HtmlValueKind.Nodes)
             {
-                throw new InvalidOperationException("The value kind must be ValueKind.Nodes");
+                throw new InvalidOperationException($"The value kind must be ValueKind.Nodes: {_node?.Name}");
             }
 
             while (_nodes.MoveNext())
@@ -83,6 +83,28 @@ namespace PolarShadow.Core
                 return _node.Value;
             }
             throw new InvalidOperationException("The value must be a node");
-        }       
+        }
+
+        public override string ToString()
+        {
+            switch (_valueKind)
+            {
+                case HtmlValueKind.Undefined:
+                    return HtmlValueKind.Undefined.ToString();
+                case HtmlValueKind.Node:
+                    return _node.Name;
+                case HtmlValueKind.Nodes:
+                    var sb = new StringBuilder();
+                    var clone = _nodes.Clone();
+                    while (clone.MoveNext())
+                    {
+                        sb.AppendLine(clone.Current.Name);
+                    }
+                    return sb.ToString();
+                default:
+                    break;
+            }
+            return "";
+        }
     }
 }

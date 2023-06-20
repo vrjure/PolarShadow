@@ -102,6 +102,17 @@ namespace PolarShadow.Core
             return null;
         }
 
+        public NameSlotValue GetValue(string path)
+        {
+            return _valueKind switch
+            {
+                 NameSlotValueKind.Json => new NameSlotValue(GetJson().Read(path)),
+                 NameSlotValueKind.Html => new NameSlotValue(GetHtml().Select(path)),
+                 _ => default
+            };
+        }
+
+
         public decimal GetDecimal()
         {
             if (_valueKind == NameSlotValueKind.Number)
@@ -166,12 +177,6 @@ namespace PolarShadow.Core
 
         private string GetJsonValue()
         {
-            if (_jsonValue.ValueKind == JsonValueKind.Object 
-                || _jsonValue.ValueKind == JsonValueKind.Array)
-            {
-                throw new InvalidOperationException("Can not get a value form json object or json array");
-            }
-
             switch (_jsonValue.ValueKind)
             {
                 case JsonValueKind.String:
@@ -181,20 +186,16 @@ namespace PolarShadow.Core
                 case JsonValueKind.True:
                 case JsonValueKind.False:
                     return _jsonValue.GetBoolean().ToString();
-                case JsonValueKind.Object:
-                case JsonValueKind.Array:
-                    return _jsonValue.GetRawText();
                 default:
-                    break;
+                    return _jsonValue.GetRawText();
             }
-            return null;
         }
 
         private string GetHtmlValue()
         {
             if (_htmlValue.ValueKind == HtmlValueKind.Nodes)
             {
-                throw new InvalidOperationException("Can not get a value from html nodes");
+                throw new InvalidOperationException($"Can not get a value from html nodes: {_htmlValue}");
             }
 
             if (_htmlValue.ValueKind == HtmlValueKind.Node)

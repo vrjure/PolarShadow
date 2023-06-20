@@ -62,7 +62,7 @@ namespace PolarShadow.Core
             using var ms = new MemoryStream();
             if (ability.Request.Body.HasValue)
             {
-                ability.Request.Body.Value.BuildContent(ms, input);
+                ability.Request.Body.Value.BuildContent(ms, default, input);
                 request.Content = new StreamContent(ms);
             }
 
@@ -97,7 +97,7 @@ namespace PolarShadow.Core
                 throw new InvalidOperationException($"Not supported content-type:{contentType}");
             }
 
-            ability.Response.Content?.BuildContent(stream, newInput);
+            ability.Response.Content?.BuildContent(stream, newInput, input);
         }
     }
 }
