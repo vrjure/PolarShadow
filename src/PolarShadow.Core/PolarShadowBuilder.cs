@@ -67,6 +67,10 @@ namespace PolarShadow.Core
         {
             foreach (var item in sites)
             {
+                if (!item.Enable)
+                {
+                    continue;
+                }
                 var siteBuilder = new PolarShadowSiteBuilder(_webViewHandler, item, parameter.Clone());
                 yield return siteBuilder.Build();
             }

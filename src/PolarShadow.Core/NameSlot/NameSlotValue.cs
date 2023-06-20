@@ -102,17 +102,6 @@ namespace PolarShadow.Core
             return null;
         }
 
-        public NameSlotValue GetValue(string path)
-        {
-            return _valueKind switch
-            {
-                 NameSlotValueKind.Json => new NameSlotValue(GetJson().Read(path)),
-                 NameSlotValueKind.Html => new NameSlotValue(GetHtml().Select(path)),
-                 _ => default
-            };
-        }
-
-
         public decimal GetDecimal()
         {
             if (_valueKind == NameSlotValueKind.Number)
