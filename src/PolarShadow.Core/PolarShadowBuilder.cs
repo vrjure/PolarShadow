@@ -53,9 +53,9 @@ namespace PolarShadow.Core
                 }
                 if (option.Sites == null)
                 {
-                    return new PolarShadowDefault(this, Enumerable.Empty<IPolarShadowSite>(), parameter);
+                    return new PolarShadowDefault(this, Enumerable.Empty<IPolarShadowSite>(), parameter, option.AnalysisSources);
                 }
-                return new PolarShadowDefault(this, BuildSites(parameter, option.Sites), parameter);
+                return new PolarShadowDefault(this, BuildSites(parameter, option.Sites), parameter, option.AnalysisSources);
             }
             else
             {

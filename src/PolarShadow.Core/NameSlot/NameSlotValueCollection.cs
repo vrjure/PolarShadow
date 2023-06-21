@@ -60,7 +60,7 @@ namespace PolarShadow.Core
 
         public void Add(object value)
         {
-            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(value));
+            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(value, JsonOption.DefaultSerializer));
             Add(new NameSlotValue(doc.RootElement.Clone()));
         }
 
@@ -99,7 +99,7 @@ namespace PolarShadow.Core
         }
         public void AddNameValue(object value)
         {
-            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(value));
+            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(value, JsonOption.DefaultSerializer));
             AddNameValue(doc.RootElement.Clone());
         }
 

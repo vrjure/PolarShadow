@@ -32,9 +32,21 @@
             }
         </Space>
 
-        <Modal>
-
-        </Modal>
+        <Drawer Visible="_drawerVisiable" OnClose="()=> _drawerVisiable = false">
+            <Space Size="@("16")" Direction="DirectionVHType.Vertical" Style="width:100%">
+                @if (_webAnalysisSource != null && _webAnalysisSource.Count > 0)
+                {
+                     foreach (var item in _webAnalysisSource)
+                    {
+                        <SpaceItem>
+                            <Button Type="@ButtonType.Default" Shape="@ButtonShape.Round" OnClick="()=>WebAnalysisClick(item)">
+                                @item.Title
+                            </Button>
+                        </SpaceItem>
+                    }
+                }
+            </Space>
+        </Drawer>
     </Content>
 </Layout>
 
@@ -45,6 +57,9 @@
     private VideoEpisode _episode;
     private string _videoName;
     private string _siteName;
+    private bool _drawerVisiable = false;
+    private List<WebAnalysisSource> _webAnalysisSource;
+    private VideoSource _selectVideoSource;
 
     protected override void OnInitialized()
     {
@@ -68,10 +83,23 @@
     {
         try
         {
+            _selectVideoSource = source;
             switch (source.SrcType)
             {
                 case LinkType.HTML:
-                    _nav.NavigateTo(source.Src, false, true);
+                    if (_webAnalysisSource == null)
+                    {
+                        _webAnalysisSource = new List<WebAnalysisSource>();
+                        _webAnalysisSource.Add(new WebAnalysisSource
+                        {
+                            Name = "origin",
+                            Title = "原地址",
+                            Src = "{$.src}"
+                        });
+                        _webAnalysisSource.AddRange(_polarShadow.GetAnalysisSources());
+                    }
+
+                    _drawerVisiable = true;
                     break;
                 case LinkType.Magnet:
                     if (string.IsNullOrEmpty(PreferenceSettings.Rpc) || string.IsNullOrEmpty(PreferenceSettings.DownloadPath))
@@ -113,6 +141,14 @@
         {
             await _message.Error(ex.Message);
         }
-        
+
+    }
+
+    private void WebAnalysisClick(WebAnalysisSource source)
+    {
+        var p = new NameSlotValueCollection();
+        p.Add(_selectVideoSource);
+        var url = source.Src.Format(p);
+        _nav.NavigateTo(url, false, true);
     }
 }

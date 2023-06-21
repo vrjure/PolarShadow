@@ -47,7 +47,7 @@ namespace PolarShadow.Core
             var method = ability.Request.Method;
             if (string.IsNullOrEmpty(method))
             {
-                method = "get";
+                method = HttpMethod.Get.Method;
             }
 
             using var request = new HttpRequestMessage(new HttpMethod(method), url);
@@ -62,7 +62,7 @@ namespace PolarShadow.Core
             using var ms = new MemoryStream();
             if (ability.Request.Body.HasValue)
             {
-                ability.Request.Body.Value.BuildContent(ms, default, input);
+                ability.Request.Body.Value.BuildContent(ms, input, input);
                 request.Content = new StreamContent(ms);
             }
 
