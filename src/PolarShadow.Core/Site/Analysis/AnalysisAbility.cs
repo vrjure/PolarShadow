@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public class AnalysisAbility
+    internal class AnalysisAbility
     {
         public AnalysisRequest Request { get; set; }
         public AnalysisResponse Response { get; set; }

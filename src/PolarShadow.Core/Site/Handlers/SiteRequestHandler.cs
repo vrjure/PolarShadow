@@ -37,7 +37,7 @@ namespace PolarShadow.Core
                 using var doc = JsonDocument.Parse(input);
                 p.Add(doc.RootElement.Clone());
             }
-            await _handler.ExecuteAsync(_ability, stream, p, cancellation);
+            await _handler.ExecuteAsync(stream, _ability.Request, _ability.Response, p, cancellation);
         }
 
         public bool TryGetParameter<T>(string name, out T value)

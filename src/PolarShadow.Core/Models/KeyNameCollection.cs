@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    internal class KeyNameCollection<T> : IKeyNameCollection<T> where T : IKeyName
+    public class KeyNameCollection<T> : IKeyNameCollection<T> where T : IKeyName
     {
         private readonly Dictionary<string, T> _keyValues = new Dictionary<string, T>();
         public T this[string key] => _keyValues[key];

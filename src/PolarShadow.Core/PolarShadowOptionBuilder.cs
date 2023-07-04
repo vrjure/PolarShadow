@@ -1,103 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace PolarShadow.Core
 {
     internal class PolarShadowOptionBuilder : IPolarShadowOptionBuilder
     {
-        private readonly PolarShadowOption _option = new PolarShadowOption();
+        private JsonObject _option = new JsonObject();
+        private IParametersBuilder _parameterBuilder;
+        public PolarShadowOptionBuilder()
+        {
+            _parameterBuilder = new ParametersBuilder(this);
+        }
 
         public bool IsChanged { get; internal set; }
 
-        public IPolarShadowOptionBuilder AddParameter<T>(string name, T value)
-        {
-            _option.Parameters ??= new Dictionary<string, object>();
-            _option.Parameters.Add(name, value);
-            ChangeNodify();
-            return this;
-        }
-
-        public IPolarShadowSiteOptionBuilder AddSite(string name)
-        {
-            var sites = _option.Sites as KeyNameCollection<PolarShadowSiteOption>;
-            if (sites != null && sites.TryGetValue(name, out PolarShadowSiteOption op))
-            {
-                return new PolarShadowSiteOptionBuilder(op, this);
-            }
-            _option.Sites ??= new KeyNameCollection<PolarShadowSiteOption>();
-            var siteOption = new PolarShadowSiteOption(name);
-            _option.Sites.Add(siteOption);
-            ChangeNodify();
-            return new PolarShadowSiteOptionBuilder(siteOption, this);
-        }
-
-        public IPolarShadowOptionBuilder AddWebAnalysisSite(WebAnalysisSource source)
-        {
-            _option.AnalysisSources ??= new KeyNameCollection<WebAnalysisSource>();
-            _option.AnalysisSources.Add(source);
-            ChangeNodify();
-            return this;
-        }
-
-        public PolarShadowOption Build()
-        {
-            IsChanged = false;
-            return _option;
-        }
+        public IParametersBuilder Parameters => _parameterBuilder;
 
         public void ChangeNodify()
         {
             IsChanged = true;
-        }
-
-        public IPolarShadowOptionBuilder ClearParameter()
-        {
-            _option.Parameters?.Clear();
-            ChangeNodify();
-            return this;
-        }
-
-        public IPolarShadowOptionBuilder ClearSite()
-        {
-            _option.Sites?.Clear();
-            ChangeNodify();
-            return this;
-        }
-
-        public IPolarShadowOptionBuilder ClearWebAnalysisSite()
-        {
-            _option.AnalysisSources?.Clear();
-            ChangeNodify();
-            return this;
-        }
+        }   
 
         public IPolarShadowOptionBuilder Load(Stream stream)
         {
-             _option.Apply(JsonSerializer.Deserialize<PolarShadowOption>(stream, JsonOption.DefaultSerializer));
-            ChangeNodify();
-            return this;
-        }
-
-        public IPolarShadowOptionBuilder RemoveParameter(string name)
-        {
-            _option.Parameters?.Remove(name);
-            ChangeNodify();
-            return this;
-        }
-
-        public IPolarShadowOptionBuilder RemoveSite(string name)
-        {
-            (_option.Sites as KeyNameCollection<PolarShadowSiteOption>)?.RemoveKey(name);
-            ChangeNodify();
-            return this;
-        }
-
-        public IPolarShadowOptionBuilder RemoveWebAnalysisSite(string name)
-        {
-            (_option.AnalysisSources as KeyNameCollection<PolarShadowSiteOption>)?.RemoveKey(name);
+            var node = JsonNode.Parse(stream, JsonOption.DefaultNodeOption);
+            _option = node.AsObject();
             ChangeNodify();
             return this;
         }
@@ -105,6 +37,76 @@ namespace PolarShadow.Core
         public void WriteTo(Stream stream)
         {
             JsonSerializer.Serialize(stream, _option, JsonOption.DefaultSerializer);
+        }
+
+        public IPolarShadowOptionBuilder AddOptions<T>(string name, IEnumerable<T> options)
+        {
+            if (!_option.TryGetPropertyValue(name, out JsonNode node))
+            {
+                node = new JsonArray(JsonOption.DefaultNodeOption);
+                _option.Add(name, node);
+            }
+
+            if(!(node is JsonArray array))
+            {
+                throw new InvalidOperationException($"{name} value must be a JsonArray");
+            }
+
+            foreach (var option in options)
+            {
+                array.Add(option);
+            }
+
+            ChangeNodify();
+            return this;
+        }
+
+        public IPolarShadowOptionBuilder AddOption<T>(string name, T option)
+        {
+            if (_option.TryGetPropertyValue(name, out JsonNode node))
+            {
+                if (node is JsonArray array)
+                {
+                    array.Add(option);
+                    ChangeNodify();
+                    return this;
+                }
+            }
+
+            _option[name] = JsonNode.Parse(JsonSerializer.Serialize(option, JsonOption.DefaultSerializer));
+            ChangeNodify();
+            return this;
+        }
+
+        public IPolarShadowOptionBuilder RemoveOption(string name)
+        {
+            _option.Remove(name);
+            return this;
+        }
+
+        public T GetOption<T>(string name)
+        {
+            if(_option.TryGetPropertyValue(name, out JsonNode node))
+            {
+                return JsonSerializer.Deserialize<T>(node, JsonOption.DefaultSerializer);
+            }
+            return default;
+        }
+
+        public bool ContainKey(string name)
+        {
+            return _option.ContainsKey(name);
+        }
+
+        public bool TryGetOption<T>(string name, out T option)
+        {
+            option = default;
+            if (_option.TryGetPropertyValue(name, out JsonNode node))
+            {
+                option = JsonSerializer.Deserialize<T>(node, JsonOption.DefaultSerializer);
+                return true;
+            }
+            return false;
         }
     }
 }

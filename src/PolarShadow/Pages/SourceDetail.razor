@@ -1,0 +1,35 @@
+﻿@page "/source/detail"
+@layout TopLevelLayout
+@inject INavigationService _nav
+
+<Layout>
+    <Header>
+        @if (_nav.CanBack())
+        {
+            <Icon Type="left" Theme="outline" OnClick="()=>_nav.Back()" Class="cursor-point-style menu-icon" />
+        }
+    </Header>
+    <Content>
+        <Space Size="@("16")" Direction="DirectionVHType.Vertical" Align="left">
+            <SpaceItem>
+                <Title Level="4">名称</Title>
+                <Input @bind-Value="_name"/>
+            </SpaceItem>
+            <SpaceItem>
+                <Title Level="4">域名</Title>
+                <Input @bind-Value="_domin"/>
+            </SpaceItem>
+            <SpaceItem>
+                <Title Level="4">能力</Title>
+                <Tabs>
+
+                </Tabs>
+            </SpaceItem>
+        </Space>
+    </Content>
+</Layout>
+
+@code {
+    private string _name;
+    private string _domin;
+}

@@ -1,4 +1,6 @@
-﻿using PolarShadow.Core;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+using PolarShadow.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,25 +44,27 @@ namespace PolarShadow.Core
 
         public IPolarShadow Build()
         {
-            _optionBuilder ??= new PolarShadowOptionBuilder();
-            if (_optionBuilder.IsChanged || _polarShadow == null)
-            {
-                var option = (_optionBuilder as PolarShadowOptionBuilder).Build();
-                var parameter = new NameSlotValueCollection();
-                if (option.Parameters != null)
-                {
-                    parameter.AddNameValue(option.Parameters);
-                }
-                if (option.Sites == null)
-                {
-                    return new PolarShadowDefault(this, Enumerable.Empty<IPolarShadowSite>(), parameter, option.AnalysisSources);
-                }
-                return new PolarShadowDefault(this, BuildSites(parameter, option.Sites), parameter, option.AnalysisSources);
-            }
-            else
-            {
-                return _polarShadow;
-            }
+            throw new NotImplementedException();
+
+            //_optionBuilder ??= new PolarShadowOptionBuilder();
+            //if (_optionBuilder.IsChanged || _polarShadow == null)
+            //{
+            //    var option = _optionBuilder.GetSites();
+            //    var parameter = new NameSlotValueCollection();
+            //    if (option.Parameters != null)
+            //    {
+            //        parameter.AddNameValue(option.Parameters);
+            //    }
+            //    if (option.Sites == null)
+            //    {
+            //        return new PolarShadowDefault(this, Enumerable.Empty<IPolarShadowSite>(), parameter, option.AnalysisSources);
+            //    }
+            //    return new PolarShadowDefault(this, BuildSites(parameter, option.Sites), parameter, option.AnalysisSources);
+            //}
+            //else
+            //{
+            //    return _polarShadow;
+            //}
         }
 
         private IEnumerable<IPolarShadowSite> BuildSites(NameSlotValueCollection parameter, IEnumerable<PolarShadowSiteOption> sites)

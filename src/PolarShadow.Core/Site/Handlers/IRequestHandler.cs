@@ -9,6 +9,6 @@ namespace PolarShadow.Core
 {
     public interface IRequestHandler
     {
-        Task ExecuteAsync(AnalysisAbility ability, Stream stream, NameSlotValueCollection input, CancellationToken cancellation = default);
+        Task ExecuteAsync(Stream output, AnalysisRequest request, AnalysisResponse response, NameSlotValueCollection input, CancellationToken cancellation = default);
     }
 }

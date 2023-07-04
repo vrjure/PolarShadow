@@ -14,6 +14,5 @@ namespace PolarShadow.Core
         bool ContainsSite(string name);
         bool TryGetSite(string name, out IPolarShadowSite site);
         IEnumerable<IPolarShadowSite> GetSites();
-        IEnumerable<WebAnalysisSource> GetAnalysisSources();
     }
 }

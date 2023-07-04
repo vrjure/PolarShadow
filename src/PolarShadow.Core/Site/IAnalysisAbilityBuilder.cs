@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
 using System.Text;
 
 namespace PolarShadow.Core
@@ -8,9 +10,10 @@ namespace PolarShadow.Core
     {
         IAnalysisAbilityBuilder SetRequest(AnalysisRequest request);
         IAnalysisAbilityBuilder SetResponse(AnalysisResponse response);
-        IAnalysisAbilityBuilder AddParameter<T>(string name, T value);
-        IAnalysisAbilityBuilder RemoveParameter(string name);
         IAnalysisAbilityBuilder Next();
+        IParametersBuilder Parameters { get; }
+        void WriteTo(Stream output);
+        void Load(string config);
     }
 
 }

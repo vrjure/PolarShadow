@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Text.Json;
 
 namespace PolarShadow.Core
 {
@@ -8,26 +10,39 @@ namespace PolarShadow.Core
     {
         private readonly PolarShadowSiteOption _option;
         private readonly IPolarShadowOptionBuilder _optionBuilder;
+        private IParametersBuilder _parameterBuilder;
         public PolarShadowSiteOptionBuilder(PolarShadowSiteOption siteOption, IPolarShadowOptionBuilder optionBuilder)
         {
             _option = siteOption;
             _optionBuilder = optionBuilder;
-        }
-        public IAnalysisAbilityBuilder AddAbility(string name)
-        {
-            _option.Abilities ??= new Dictionary<string, AnalysisAbility>();
-            var ability = new AnalysisAbility();
-            _option.Abilities.Add(name, ability);
-            _optionBuilder.ChangeNodify();
-            return new AnalysisAbilityBuilder(ability, _optionBuilder);
+            _parameterBuilder = new ParametersBuilder(_option.Parameters ??= new Dictionary<string, object>(), optionBuilder);
         }
 
-        public IPolarShadowSiteOptionBuilder AddParameter<T>(string name, T value)
+        public IParametersBuilder Parameters => _parameterBuilder;
+
+        public string Domain { get => _option.Domain; set => _option.Domain = value; }
+        public bool Enable { get => _option.Enable; set =>_option.Enable = value; }
+        public bool UseWebView { get => _option.UseWebView; set => _option.UseWebView = value; }
+
+        public IPolarShadowSiteOptionBuilder BuildAbility(string name, Action<IAnalysisAbilityBuilder> abilityBuilder)
         {
-            _option.Parameters ??= new Dictionary<string, object>();
-            _option.Parameters.Add(name, value);
+            _option.Abilities ??= new Dictionary<string, AnalysisAbility>();
+            if(!_option.Abilities.TryGetValue(name, out AnalysisAbility ability))
+            {
+                ability = new AnalysisAbility();
+                _option.Abilities.Add(name, ability);
+            }
+
+            abilityBuilder(new AnalysisAbilityBuilder(ability, _optionBuilder));
             _optionBuilder.ChangeNodify();
             return this;
+        }
+
+        public void Load(string config)
+        {
+            var siteOption = JsonSerializer.Deserialize<PolarShadowSiteOption>(config, JsonOption.DefaultSerializer);
+            _option.Apply(siteOption);
+            _optionBuilder.ChangeNodify();
         }
 
         public IPolarShadowSiteOptionBuilder RemoveAbility(string name)
@@ -37,11 +52,12 @@ namespace PolarShadow.Core
             return this;
         }
 
-        public IPolarShadowSiteOptionBuilder RemoveParameter(string name)
+        public void WriteTo(Stream output)
         {
-            _option.Parameters?.Remove(name);
-            _optionBuilder.ChangeNodify();
-            return this;
+            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(_option, JsonOption.DefaultSerializer));
+            using var jsonWriter = new Utf8JsonWriter(output, JsonOption.DefaultWriteOption);
+            doc.WriteTo(jsonWriter);
+            jsonWriter.Flush();
         }
     }
 }

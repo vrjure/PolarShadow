@@ -10,6 +10,7 @@ namespace PolarShadow.Videos
 {
     public static class PolarshadowExtensions
     {
+        private const string _webAnalysisName = "webAnalysisSource";
         public static IVideoSearcHandler CreateVideoSearcHandler(this IPolarShadow polar, SearchVideoFilter videoFilter, CancellationToken cancellation = default)
         {
             var sites = polar.GetSites().Where(f => f.HasAbility(VideoAbilities.Search));
@@ -44,6 +45,32 @@ namespace PolarShadow.Videos
                 result.DetailSrc = summary.DetailSrc;
             }
             return result;
+        }
+
+        public static bool TryGetWebAnalysisSource(this IPolarShadowOptionBuilder builder, string name, out WebAnalysisSource source)
+        {
+            source = default;
+            if(!builder.TryGetOption(_webAnalysisName, out KeyNameCollection<WebAnalysisSource> sources))
+            {
+                return false;
+            }
+
+            return sources.ContainsKey(name);
+        }
+
+        public static ICollection<WebAnalysisSource> GetWebAnalysisSources(this IPolarShadowOptionBuilder builder)
+        {
+            return builder.GetOption<KeyNameCollection<WebAnalysisSource>>(_webAnalysisName);
+        }
+
+        public static IPolarShadowOptionBuilder AddWebAnalysisSources(this IPolarShadowOptionBuilder builder, IEnumerable<WebAnalysisSource> sources)
+        {
+            return builder.AddOptions(_webAnalysisName, sources);
+        }
+
+        public static IPolarShadowOptionBuilder ClearWebAnalysisSources(this IPolarShadowOptionBuilder builder)
+        {
+            return builder.RemoveOption(_webAnalysisName);
         }
     }
 }

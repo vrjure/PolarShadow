@@ -1,9 +1,10 @@
-﻿using System;
+﻿using PolarShadow.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace PolarShadow.Core
+namespace PolarShadow.Videos
 {
     public sealed class WebAnalysisSource : IKeyName
     {

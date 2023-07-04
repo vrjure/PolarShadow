@@ -21,5 +21,14 @@ namespace PolarShadow.Core
         public bool Enable { get; set; } = true;
         public Dictionary<string, object> Parameters { get; set; }
         public Dictionary<string, AnalysisAbility> Abilities { get; set; }
+
+        public void Apply(PolarShadowSiteOption other)
+        {
+            this.Parameters = other.Parameters;
+            this.Domain = other.Domain;
+            this.Enable = other.Enable;
+            this.Abilities = other.Abilities;
+            this.UseWebView = other.UseWebView;
+        }
     }
 }

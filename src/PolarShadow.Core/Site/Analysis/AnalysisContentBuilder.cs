@@ -11,10 +11,6 @@ namespace PolarShadow.Core
         /// <summary>
         /// 构建模板内容
         /// </summary>
-        /// <param name="template">要构建的模板</param>
-        /// <param name="stream">输出流</param>
-        /// <param name="content">执行结果输入</param>
-        /// <param name="input">外部输入</param>
         public static void BuildContent(this JsonElement template, Stream stream, NameSlotValueCollection content, NameSlotValueCollection input)
         {
             using var jsonWriter = new Utf8JsonWriter(stream, JsonOption.DefaultWriteOption);

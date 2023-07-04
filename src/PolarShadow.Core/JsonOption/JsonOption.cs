@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace PolarShadow.Core
 {
@@ -54,6 +55,8 @@ namespace PolarShadow.Core
         public static JsonWriterOptions DefaultWriteOption { get; }
 
         public static JsonWriterOptions FormatWriteOption { get; }
+
+        public static JsonNodeOptions DefaultNodeOption => new JsonNodeOptions { PropertyNameCaseInsensitive = true };
 
         public static void Default(JsonSerializerOptions option)
         {

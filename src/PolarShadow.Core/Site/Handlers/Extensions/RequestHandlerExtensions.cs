@@ -10,28 +10,28 @@ namespace PolarShadow.Core
 {
     public static class RequestHandlerExtensions
     {
-        public static async Task<string> ExecuteAsync(this IRequestHandler hander, AnalysisAbility ability, NameSlotValueCollection input, CancellationToken cancellation = default)
-        {
-            if (ability == null || ability.Request == null || ability.Response == null)
-            {
-                return default;
-            }
-            using var ms = new MemoryStream();
-            await hander.ExecuteAsync(ability, ms, input, cancellation);
-            using var sr = new StreamReader(ms);
-            return sr.ReadToEnd();
-        }
+        //public static async Task<string> ExecuteAsync(this IRequestHandler hander, AnalysisAbility ability, NameSlotValueCollection input, CancellationToken cancellation = default)
+        //{
+        //    if (ability == null || ability.Request == null || ability.Response == null)
+        //    {
+        //        return default;
+        //    }
+        //    using var ms = new MemoryStream();
+        //    await hander.ExecuteAsync(ability, ms, input, cancellation);
+        //    using var sr = new StreamReader(ms);
+        //    return sr.ReadToEnd();
+        //}
 
-        public static async Task<TOutput> ExecuteAsync<TOutput>(this IRequestHandler handler, AnalysisAbility ability, NameSlotValueCollection input, CancellationToken cancellation = default)
-        {
-            if (ability == null || ability.Request == null || ability.Response == null)
-            {
-                return default;
-            }
+        //public static async Task<TOutput> ExecuteAsync<TOutput>(this IRequestHandler handler, AnalysisAbility ability, NameSlotValueCollection input, CancellationToken cancellation = default)
+        //{
+        //    if (ability == null || ability.Request == null || ability.Response == null)
+        //    {
+        //        return default;
+        //    }
 
-            using var ms = new MemoryStream();
-            await handler.ExecuteAsync(ability, ms, input, cancellation);
-            return JsonSerializer.Deserialize<TOutput>(ms, JsonOption.DefaultSerializer);
-        }
+        //    using var ms = new MemoryStream();
+        //    await handler.ExecuteAsync(ability, ms, input, cancellation);
+        //    return JsonSerializer.Deserialize<TOutput>(ms, JsonOption.DefaultSerializer);
+        //}
     }
 }
