@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public interface IPolarShadowSite
+    public interface ISite
     {
         string Name { get; }
         string Domain { get; }
-        bool HasAbility(string name);
-        IEnumerable<string> Abilities { get; }
-        bool TryGetParameter<TValue>(string name, out TValue value);
-        ISiteRequestHandler CreateRequestHandler(string name);
+        IParameter Parameters { get; }
+        ISiteRequest this[string requestName] { get; }
+        IEnumerable<ISiteRequest> Requests { get; }
+        ISiteRequestHandler CreateRequestHandler(string requestName);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.Serialization;
 using System.Text;
@@ -11,15 +12,16 @@ namespace PolarShadow.Core
 {
     public static class NameSlot
     {
-        public static string Format(this string text, NameSlotValueCollection values)
+        public static string Format(this string text, IParameter value)
         {
             if (string.IsNullOrEmpty(text))
             {
                 return string.Empty;
             }
-            return Format(Encoding.UTF8.GetBytes(text), values);
+            return Format(Encoding.UTF8.GetBytes(text), value);
         }
-        public static string Format(this ReadOnlySpan<byte> text, NameSlotValueCollection values)
+
+        public static string Format(this ReadOnlySpan<byte> text, IParameter value)
         {
             if (text.IsEmpty)
             {
@@ -27,11 +29,11 @@ namespace PolarShadow.Core
             }
             var sb = new StringBuilder(text.Length);
             var reader = new NameSlotReader(text);
-            Format(sb, ref reader, values);
+            Format(sb, ref reader, value);
             return sb.ToString();
         }
 
-        private static void Format(StringBuilder sb, ref NameSlotReader reader, NameSlotValueCollection values)
+        private static void Format(StringBuilder sb, ref NameSlotReader reader, IParameter value)
         {
             while (reader.Read())
             {
@@ -45,14 +47,14 @@ namespace PolarShadow.Core
                         sb.Append(reader.GetString());
                         break;
                     default:
-                        ReadValue(sb, ref reader, values);
+                        ReadValue(sb, ref reader, value);
                         break;
                 }
             }
 
         }
 
-        private static void ReadValue(StringBuilder sb, ref NameSlotReader reader, NameSlotValueCollection values)
+        private static void ReadValue(StringBuilder sb, ref NameSlotReader reader, IParameter value)
         {
             var result = string.Empty;
             if (reader.TokenType == NameSlotTokenType.Parameter)
@@ -61,7 +63,8 @@ namespace PolarShadow.Core
             }
 
             reader.Read();
-            if (values.TryReadValue(result, out NameSlotValue newResult))
+
+            if (value.TryGetValue(result, out ParameterValue newResult))
             {
                 result = newResult.GetValue();
 
@@ -77,7 +80,7 @@ namespace PolarShadow.Core
                 }
 
             }
-            
+                   
             sb.Append(result);
         }
 

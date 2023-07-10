@@ -11,20 +11,18 @@ namespace PolarShadow.Core
 {
     public abstract class SequentialRequestBase<TInput, TOutput> : ISequentialRequest<TOutput> where TInput : class
     {
-        private List<IPolarShadowSite> _sites;
-        private Queue<IPolarShadowSite> _siteFailedQueue;
+        private List<ISite> _sites;
+        private Queue<ISite> _siteFailedQueue;
         private int _index = 0;
         private int _lastIndex = -1;
-        private string _abilityName;
+        private string _requestName;
 
         protected TInput Input;
-        protected NameSlotValueCollection Parameters;
-        public SequentialRequestBase(string abilityName, TInput input, IEnumerable<IPolarShadowSite> sites, NameSlotValueCollection parameters)
+        public SequentialRequestBase(string requestName, TInput input, IEnumerable<ISite> sites)
         {
-            _sites = new List<IPolarShadowSite>(sites);
-            _abilityName = abilityName;
+            _sites = new List<ISite>(sites);
+            _requestName = requestName;
             Input = input;
-            Parameters = parameters;
             Reset();
         }
 
@@ -38,7 +36,7 @@ namespace PolarShadow.Core
         /// </summary>
         public bool AutoSort { get; set; }
 
-        public IPolarShadowSite Current => _index >= 0 && _index < _sites.Count ? _sites[_index] : null;
+        public ISite Current => _index >= 0 && _index < _sites.Count ? _sites[_index] : null;
 
         public void Reset()
         {
@@ -78,14 +76,14 @@ namespace PolarShadow.Core
                 if (_lastIndex < _index)
                 {
                     _lastIndex = _index;
-                    var request = site.CreateRequestHandler(_abilityName);
+                    var request = site.CreateRequestHandler(_requestName);
                     ResetRequest(Input, request);
                     
                     await request.ExecuteAsync(JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation).ConfigureAwait(false);
                 }
                 else
                 {
-                    var request = site.CreateRequestHandler(_abilityName);
+                    var request = site.CreateRequestHandler(_requestName);
                     if (!request.TryGetParameter("canPage", out bool canPage) || canPage)
                     {
                         NextRequest(Input, request);
@@ -104,7 +102,7 @@ namespace PolarShadow.Core
                 {
                     if (_siteFailedQueue == null)
                     {
-                        _siteFailedQueue = new Queue<IPolarShadowSite>();
+                        _siteFailedQueue = new Queue<ISite>();
                     }
                     _siteFailedQueue.Enqueue(site);
                     _sites.RemoveAt(_index);

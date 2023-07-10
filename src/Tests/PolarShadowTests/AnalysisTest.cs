@@ -16,10 +16,10 @@ namespace PolarShadowTests
         {
             using var fs = new FileStream("./source.json", FileMode.Open, FileAccess.Read);
             var doc = JsonDocument.Parse(fs);
-            var input = new NameSlotValueCollection();
+            var input = new ObjectParameter();
             if (doc.RootElement.TryGetProperty("parameters", out JsonElement parameters))
             {
-                input.AddNameValue(parameters);
+                input.Add(parameters);
             }
 
             var resuest = doc.RootElement.GetProperty("request");
@@ -48,10 +48,10 @@ namespace PolarShadowTests
         {
             using var fs = new FileStream("./source.json", FileMode.Open, FileAccess.Read);
             var doc = JsonDocument.Parse(fs);
-            var input = new NameSlotValueCollection();
+            var input = new ObjectParameter();
             if (doc.RootElement.TryGetProperty("parameters", out JsonElement parameters))
             {
-                input.AddNameValue(parameters);
+                input.Add(parameters);
             }
 
             var request = doc.RootElement.GetProperty("request");
@@ -73,7 +73,7 @@ namespace PolarShadowTests
 
             using var fsxml = new FileStream("./Books.xml", FileMode.Open, FileAccess.Read);
             var xmldoc = new XPathDocument(fsxml);
-            var content = new NameSlotValueCollection();
+            var content = new ObjectParameter();
             content.Add(new HtmlElement(xmldoc));
 
             var response = doc.RootElement.GetProperty("response2");

@@ -82,7 +82,18 @@ namespace PolarShadow.Core
             {
                 return _node.Value;
             }
-            throw new InvalidOperationException("The value must be a node");
+            else if (_valueKind == HtmlValueKind.Nodes)
+            {
+                var sb = new StringBuilder();
+                var clone = _nodes.Clone();
+                while (clone.MoveNext())
+                {
+                    sb.AppendLine(clone.Current.Value);
+                }
+                return sb.ToString();
+            }
+
+            return default;
         }
 
         public override string ToString()

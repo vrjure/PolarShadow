@@ -13,11 +13,11 @@ namespace PolarShadow.Videos
         private const string _webAnalysisName = "webAnalysisSource";
         public static IVideoSearcHandler CreateVideoSearcHandler(this IPolarShadow polar, SearchVideoFilter videoFilter, CancellationToken cancellation = default)
         {
-            var sites = polar.GetSites().Where(f => f.HasAbility(VideoAbilities.Search));
-            return new VideoSearcHandler(VideoAbilities.Search, videoFilter, sites, polar.Parameters);
+            var sites = polar.GetSites(f => f.HasRequest(VideoAbilities.Search));
+            return new VideoSearcHandler(VideoAbilities.Search, videoFilter, sites);
         }
 
-        public static async Task<VideoDetail> GetDetailAsync(this IPolarShadowSite site, VideoSummary summary, CancellationToken cancellation = default)
+        public static async Task<VideoDetail> GetDetailAsync(this ISite site, VideoSummary summary, CancellationToken cancellation = default)
         {
             var result = await site.ExecuteAsync<VideoSummary, VideoDetail>(VideoAbilities.Detail, summary, cancellation);
             if (result == null)
@@ -45,32 +45,6 @@ namespace PolarShadow.Videos
                 result.DetailSrc = summary.DetailSrc;
             }
             return result;
-        }
-
-        public static bool TryGetWebAnalysisSource(this IPolarShadowOptionBuilder builder, string name, out WebAnalysisSource source)
-        {
-            source = default;
-            if(!builder.TryGetOption(_webAnalysisName, out KeyNameCollection<WebAnalysisSource> sources))
-            {
-                return false;
-            }
-
-            return sources.ContainsKey(name);
-        }
-
-        public static ICollection<WebAnalysisSource> GetWebAnalysisSources(this IPolarShadowOptionBuilder builder)
-        {
-            return builder.GetOption<KeyNameCollection<WebAnalysisSource>>(_webAnalysisName);
-        }
-
-        public static IPolarShadowOptionBuilder AddWebAnalysisSources(this IPolarShadowOptionBuilder builder, IEnumerable<WebAnalysisSource> sources)
-        {
-            return builder.AddOptions(_webAnalysisName, sources);
-        }
-
-        public static IPolarShadowOptionBuilder ClearWebAnalysisSources(this IPolarShadowOptionBuilder builder)
-        {
-            return builder.RemoveOption(_webAnalysisName);
-        }
+        }       
     }
 }

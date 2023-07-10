@@ -4,8 +4,8 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    public interface IPolarShadowSiteBuilder
+    public interface IPolarShadowItemBuilder
     {
-        IPolarShadowSite Build();
+        IPolarShadowItem Build(IPolarShadowBuilder builder);
     }
 }

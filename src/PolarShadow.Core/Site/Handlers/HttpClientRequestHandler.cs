@@ -18,7 +18,7 @@ namespace PolarShadow.Core
         private static readonly string _textHtml = "text/html";
         private static readonly string _userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62";
 
-        public async Task ExecuteAsync(Stream stream, AnalysisRequest request, AnalysisResponse response, NameSlotValueCollection input, CancellationToken cancellation = default)
+        public async Task ExecuteAsync(Stream stream, AnalysisRequest request, AnalysisResponse response, IParameter input, CancellationToken cancellation = default)
         {
             if (request == null || response == null)
             {
@@ -28,7 +28,7 @@ namespace PolarShadow.Core
             stream.Seek(0, SeekOrigin.Begin);
         }
 
-        private async Task HandleValueAsync(NameSlotValueCollection input, Stream stream, AnalysisRequest request, AnalysisResponse response, CancellationToken cancellation)
+        private async Task HandleValueAsync(IParameter input, Stream stream, AnalysisRequest request, AnalysisResponse response, CancellationToken cancellation)
         {
             if (request == null || response == null 
                 || string.IsNullOrEmpty(request.Url))
@@ -71,11 +71,11 @@ namespace PolarShadow.Core
 
             var contentType = responseMsg.Content.Headers.ContentType;
             var content = await responseMsg.Content.ReadAsStreamAsync();
-            var newInput = input.Clone();
+            var newInput = new Parameters(input);
             if (contentType.MediaType.Equals(_applicationjson, StringComparison.OrdinalIgnoreCase))
             {
                 using var doc = JsonDocument.Parse(content);
-                newInput.Add(doc.RootElement.Clone());
+                newInput.Add(new ObjectParameter(new ParameterValue(doc.RootElement.Clone())));
             }
             else if (contentType.MediaType.Equals(_textHtml, StringComparison.OrdinalIgnoreCase))
             {
@@ -83,13 +83,13 @@ namespace PolarShadow.Core
                 {
                     var doc = new HtmlDocument();
                     doc.Load(content);
-                    newInput.Add(new HtmlElement(doc.CreateNavigator()));
+                    newInput.Add(new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator()))));
                 }
                 else
                 {
                     var doc = new HtmlDocument();
                     doc.Load(content, Encoding.GetEncoding(response.Encoding));
-                    newInput.Add(new HtmlElement(doc.CreateNavigator()));
+                    newInput.Add(new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator()))));
                 }
             }
             else

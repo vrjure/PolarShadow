@@ -8,38 +8,23 @@ namespace PolarShadow.Core
 {
     internal class PolarShadowDefault : IPolarShadow
     {
-        private readonly Dictionary<string, IPolarShadowSite> _sites = new Dictionary<string, IPolarShadowSite>();
-        private readonly IPolarShadowBuilder _builder;
-        private readonly NameSlotValueCollection _parameter;
+        private readonly Dictionary<string, IPolarShadowItem> _items = new Dictionary<string, IPolarShadowItem>();
 
-        internal PolarShadowDefault(IPolarShadowBuilder builder, IEnumerable<IPolarShadowSite> sites, NameSlotValueCollection parameter)
+        internal PolarShadowDefault(IEnumerable<IPolarShadowItem> items)
         {
-            _builder = builder;
-            _parameter = parameter;
-            foreach (var item in sites)
-            {
-                _sites.Add(item.Name, item);
-            }
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            foreach (var item in items)
+            {
+                if (string.IsNullOrEmpty(item.Name))
+                {
+                    continue;
+                }
+                _items.Add(item.Name, item);
+            }
         }
 
-        public IPolarShadowBuilder Builder => _builder;
+        public IPolarShadowItem this[string name] => _items.ContainsKey(name) ? _items[name] : null;
 
-        public NameSlotValueCollection Parameters => _parameter.Clone();
-
-        public bool ContainsSite(string name)
-        {
-            return _sites.ContainsKey(name);
-        }
-
-        public IEnumerable<IPolarShadowSite> GetSites()
-        {
-            return new List<IPolarShadowSite>(_sites.Values);
-        }
-
-        public bool TryGetSite(string name, out IPolarShadowSite site)
-        {
-            return _sites.TryGetValue(name, out site);
-        }
+        public IEnumerable<IPolarShadowItem> Items => _items.Values;
     }
 }

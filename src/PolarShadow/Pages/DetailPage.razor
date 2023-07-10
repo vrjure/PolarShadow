@@ -133,7 +133,7 @@
                 isFromCache = true;
             }
             else if (_context.TryGet(_summaryKey, out VideoSummary summary) 
-            && _polarShadow.TryGetSite(summary.SiteName, out IPolarShadowSite site))
+            && _polarShadow.TryGetSite(summary.SiteName, out ISite site))
             {
                 isFromCache = false;
                 _detail = await site.GetDetailAsync(summary);
@@ -206,7 +206,7 @@
         try
         {
             _isLoading = true;
-            if (_polarShadow.TryGetSite(_detail.SiteName, out IPolarShadowSite site))
+            if (_polarShadow.TryGetSite(_detail.SiteName, out ISite site))
             {
                 _detail = await site.GetDetailAsync(_detail);
             }

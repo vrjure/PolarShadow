@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Core
 {
-    public enum NameSlotValueKind
+    public enum ParameterValueKind
     {
         Undefined,
         Number,

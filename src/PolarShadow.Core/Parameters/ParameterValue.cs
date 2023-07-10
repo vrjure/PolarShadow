@@ -6,20 +6,20 @@ using System.Xml.XPath;
 
 namespace PolarShadow.Core
 {
-    public struct NameSlotValue
+    public struct ParameterValue
     {
-        private decimal _numberValue;
-        private JsonElement _jsonValue;
+        private decimal? _numberValue;
+        private JsonElement? _jsonValue;
         private string _stringValue;
-        private HtmlElement _htmlValue;
-        private bool _booleanValue;
+        private HtmlElement? _htmlValue;
+        private bool? _booleanValue;
 
-        private NameSlotValueKind _valueKind;
+        private ParameterValueKind _valueKind;
 
-        public NameSlotValue(decimal value)
+        public ParameterValue(decimal value)
         {
             _numberValue = value;
-            _valueKind = NameSlotValueKind.Number;
+            _valueKind = ParameterValueKind.Number;
 
             _jsonValue = default;
             _stringValue = default;
@@ -27,10 +27,10 @@ namespace PolarShadow.Core
             _booleanValue = default;
         }
 
-        public NameSlotValue(string value)
+        public ParameterValue(string value)
         {
             _stringValue= value;
-            _valueKind = NameSlotValueKind.String;
+            _valueKind = ParameterValueKind.String;
            
             _jsonValue = default;
             _numberValue = default;
@@ -38,10 +38,10 @@ namespace PolarShadow.Core
             _booleanValue = default;
         }
 
-        public NameSlotValue(bool value)
+        public ParameterValue(bool value)
         {
             _booleanValue = value;
-            _valueKind = NameSlotValueKind.Boolean;
+            _valueKind = ParameterValueKind.Boolean;
 
             _jsonValue = default;
             _stringValue = default;
@@ -49,10 +49,10 @@ namespace PolarShadow.Core
             _numberValue = default;
         }
 
-        public NameSlotValue(JsonElement value)
+        public ParameterValue(JsonElement value)
         {
             _jsonValue = value;
-            _valueKind = NameSlotValueKind.Json;
+            _valueKind = ParameterValueKind.Json;
 
             _numberValue = default;
             _stringValue = default;
@@ -60,10 +60,10 @@ namespace PolarShadow.Core
             _booleanValue = default;
         }
 
-        public NameSlotValue(HtmlElement value)
+        public ParameterValue(HtmlElement value)
         {
             _htmlValue = value;
-            _valueKind = NameSlotValueKind.Html;
+            _valueKind = ParameterValueKind.Html;
            
             _stringValue = default;
             _numberValue = default;
@@ -71,7 +71,7 @@ namespace PolarShadow.Core
             _booleanValue = default;
         }
 
-        public NameSlotValueKind ValueKind => _valueKind;
+        public ParameterValueKind ValueKind => _valueKind;
 
         public static bool IsJsonPath(string path)
         {
@@ -87,13 +87,13 @@ namespace PolarShadow.Core
         {
             switch (_valueKind)
             {
-                case NameSlotValueKind.Number:
+                case ParameterValueKind.Number:
                     return _numberValue.ToString();
-                case NameSlotValueKind.String:
+                case ParameterValueKind.String:
                     return _stringValue;
-                case NameSlotValueKind.Json:
+                case ParameterValueKind.Json:
                     return GetJsonValue();
-                case NameSlotValueKind.Html:
+                case ParameterValueKind.Html:
                     return GetHtmlValue();
                 default:
                     break;
@@ -104,8 +104,8 @@ namespace PolarShadow.Core
 
         public decimal GetDecimal()
         {
-            if (_valueKind == NameSlotValueKind.Number)
-                return _numberValue;
+            if (_valueKind == ParameterValueKind.Number)
+                return _numberValue.Value;
 
             throw new InvalidOperationException();
         }
@@ -137,7 +137,7 @@ namespace PolarShadow.Core
 
         public string GetString()
         {
-            if (_valueKind == NameSlotValueKind.String)
+            if (_valueKind == ParameterValueKind.String)
                 return _stringValue;
 
             throw new InvalidOperationException();
@@ -145,58 +145,49 @@ namespace PolarShadow.Core
 
         public bool GetBoolean()
         {
-            if (_valueKind == NameSlotValueKind.Boolean)
-                return _booleanValue;
+            if (_valueKind == ParameterValueKind.Boolean)
+                return _booleanValue.Value;
             throw new InvalidOperationException();
         }
 
         public JsonElement GetJson()
         {
-            if (_valueKind == NameSlotValueKind.Json) return _jsonValue;
+            if (_valueKind == ParameterValueKind.Json) return _jsonValue.Value;
 
             throw new InvalidOperationException();
         }
 
         public HtmlElement GetHtml()
         {
-            if (_valueKind == NameSlotValueKind.Html) return _htmlValue;
+            if (_valueKind == ParameterValueKind.Html) return _htmlValue.Value;
 
             throw new InvalidOperationException();
         }
 
         private string GetJsonValue()
         {
-            switch (_jsonValue.ValueKind)
+            switch (_jsonValue.Value.ValueKind)
             {
                 case JsonValueKind.String:
-                    return _jsonValue.GetString();
+                    return _jsonValue.Value.GetString();
                 case JsonValueKind.Number:
-                    return _jsonValue.GetDecimal().ToString();
+                    return _jsonValue.Value.GetDecimal().ToString();
                 case JsonValueKind.True:
                 case JsonValueKind.False:
-                    return _jsonValue.GetBoolean().ToString();
+                    return _jsonValue.Value.GetBoolean().ToString();
                 default:
-                    return _jsonValue.GetRawText();
+                    return _jsonValue.Value.GetRawText();
             }
         }
 
         private string GetHtmlValue()
         {
-            if (_htmlValue.ValueKind == HtmlValueKind.Nodes)
-            {
-                throw new InvalidOperationException($"Can not get a value from html nodes: {_htmlValue}");
-            }
-
-            if (_htmlValue.ValueKind == HtmlValueKind.Node)
-            {
-                return _htmlValue.GetValue();
-            }
-            return null;
+            return _htmlValue.Value.GetValue();
         }
 
         public override bool Equals(object obj)
         {
-            var other = (NameSlotValue)obj;
+            var other = (ParameterValue)obj;
             if (this.ValueKind != other._valueKind)
             {
                 return false;

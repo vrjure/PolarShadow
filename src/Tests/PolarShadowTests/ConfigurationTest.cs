@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
-using PolarShadow.Core.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Linq;

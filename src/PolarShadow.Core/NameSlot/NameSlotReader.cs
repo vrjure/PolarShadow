@@ -33,6 +33,25 @@ namespace PolarShadow.Core
 
         public NameSlotTokenType TokenType => _tokenType;
 
+        public string GetString()
+        {
+            return Encoding.UTF8.GetString(Slice());
+        }
+
+        public ReadOnlySpan<byte> GetSegment()
+        {
+            if (_tokenType == NameSlotTokenType.None)
+            {
+                return ReadOnlySpan<byte>.Empty;
+            }
+            return Slice();
+        }
+
+        private ReadOnlySpan<byte> Slice()
+        {
+            return _buffer.Slice(_segmentStart, _segmentEnd - _segmentStart + 1);
+        }
+
         public bool Read()
         {
             if (_his.TryPop(out NameSlotReaderState state))

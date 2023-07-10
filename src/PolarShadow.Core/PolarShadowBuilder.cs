@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
-using PolarShadow.Core;
+﻿using PolarShadow.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,70 +12,35 @@ namespace PolarShadow.Core
 {
     public class PolarShadowBuilder : IPolarShadowBuilder
     {
-        private IRequestHandler _webViewHandler;
-        private IPolarShadowOptionBuilder _optionBuilder;
-        private IPolarShadow _polarShadow;
+        private readonly ICollection<IPolarShadowItemBuilder> _itemBuilders;
 
-        public bool IsOptionChanged => _optionBuilder == null ? false : _optionBuilder.IsChanged;
-
-        public IPolarShadowBuilder UseWebViewHandler(IRequestHandler requestHandler)
+        public PolarShadowBuilder()
         {
-            _webViewHandler = requestHandler;
-            return this;
+            _itemBuilders = new List<IPolarShadowItemBuilder>();
         }
 
-        public IPolarShadowBuilder UseOptionBuilder(IPolarShadowOptionBuilder optionBuilder)
-        {
-            _optionBuilder = optionBuilder;
-            return this;
-        }
+        public IRequestHandler WebViewHandler { get; set; }
 
-        public IPolarShadowBuilder Configure(Action<IPolarShadowOptionBuilder> optionBuilder)
+        public IRequestHandler HttpHandler { get; set; }
+
+        public IEnumerable<IPolarShadowItemBuilder> ItemBuilders => _itemBuilders;
+
+        public IPolarShadowBuilder Add(IPolarShadowItemBuilder builder)
         {
-            if (_optionBuilder == null)
-            {
-                _optionBuilder = new PolarShadowOptionBuilder();
-            }
-            optionBuilder(_optionBuilder);
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            _itemBuilders.Add(builder);
             return this;
         }
 
         public IPolarShadow Build()
         {
-            throw new NotImplementedException();
-
-            //_optionBuilder ??= new PolarShadowOptionBuilder();
-            //if (_optionBuilder.IsChanged || _polarShadow == null)
-            //{
-            //    var option = _optionBuilder.GetSites();
-            //    var parameter = new NameSlotValueCollection();
-            //    if (option.Parameters != null)
-            //    {
-            //        parameter.AddNameValue(option.Parameters);
-            //    }
-            //    if (option.Sites == null)
-            //    {
-            //        return new PolarShadowDefault(this, Enumerable.Empty<IPolarShadowSite>(), parameter, option.AnalysisSources);
-            //    }
-            //    return new PolarShadowDefault(this, BuildSites(parameter, option.Sites), parameter, option.AnalysisSources);
-            //}
-            //else
-            //{
-            //    return _polarShadow;
-            //}
-        }
-
-        private IEnumerable<IPolarShadowSite> BuildSites(NameSlotValueCollection parameter, IEnumerable<PolarShadowSiteOption> sites)
-        {
-            foreach (var item in sites)
+            var list = new List<IPolarShadowItem>();
+            foreach (var builder in _itemBuilders)
             {
-                if (!item.Enable)
-                {
-                    continue;
-                }
-                var siteBuilder = new PolarShadowSiteBuilder(_webViewHandler, item, parameter.Clone());
-                yield return siteBuilder.Build();
+                list.Add(builder.Build(this));
             }
+
+            return new PolarShadowDefault(list);
         }
     }
 }

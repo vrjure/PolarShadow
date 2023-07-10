@@ -37,7 +37,7 @@ namespace PolarShadow.Tool.Pages.ViewModels
         [ObservableProperty]
         private string output;
 
-        private IPolarShadowSite _selectSite;
+        private ISite _selectSite;
         private string _selectAbility;
         [RelayCommand]
         public void SiteSelectionChanged(SelectionChangedEventArgs e)
@@ -47,7 +47,7 @@ namespace PolarShadow.Tool.Pages.ViewModels
                 var item = e.AddedItems[0] as ListItem;
 
                 Abilities.Clear();
-                _selectSite = item.Value as IPolarShadowSite;
+                _selectSite = item.Value as ISite;
                 foreach (var ability in _selectSite.Abilities)
                 {
                     Abilities.Add(new ListItem(ability, ability));

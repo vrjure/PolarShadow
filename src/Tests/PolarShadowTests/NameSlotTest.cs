@@ -68,11 +68,11 @@ namespace PolarShadowTests
         [Test]
         public void TestFormatNameSlot()
         {
-            var values = new NameSlotValueCollection();
+            var values = new ObjectParameter();
             using var doc = JsonDocument.Parse(JsonSerializer.Serialize(sample, JsonOption.DefaultSerializer));
             values.Add(doc.RootElement.Clone());
-            values.AddNameValue("page", 1);
-            values.AddNameValue("title", "good");
+            values.Add("page", 1);
+            values.Add("title", "good");
 
             var xpathDoc = new XPathDocument("./Books.Xml");
             values.Add(new HtmlElement(xpathDoc));
