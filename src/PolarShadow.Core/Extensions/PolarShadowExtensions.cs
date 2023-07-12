@@ -9,12 +9,24 @@ namespace PolarShadow.Core
     {
         public static T GetItem<T>(this IPolarShadow polarShadow) where T : IPolarShadowItem
         {
-            return polarShadow.Items.Where(f => f is T).Cast<T>().FirstOrDefault();
+            return GetItems<T>(polarShadow).FirstOrDefault();
+        }
+
+        public static IEnumerable<T> GetItems<T>(this IPolarShadow polarShadow) where T: IPolarShadowItem
+        {
+            return polarShadow.Items.Where(f => f is T).Cast<T>();
         }
 
         public static IEnumerable<ISite> GetSites(this IPolarShadow polarShadow, Func<ISite, bool> predicate)
         {
-            return GetItem<ISiteItem>(polarShadow)?.Sites?.Where(f => predicate(f));
+            var items = GetItems<ISiteItem>(polarShadow);
+            foreach (var item in items)
+            {
+                foreach (var site in item.Sites.Where(f=> predicate(f)))
+                {
+                    yield return site;
+                }
+            }
         }
     }
 }

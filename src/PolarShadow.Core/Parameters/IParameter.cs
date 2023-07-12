@@ -5,9 +5,8 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public interface IParameter : IPolarShadowItem
+    public interface IParameter
     {
         bool TryGetValue(string key, out ParameterValue value);
-        void WriteTo(Utf8JsonWriter writer);
     }
 }

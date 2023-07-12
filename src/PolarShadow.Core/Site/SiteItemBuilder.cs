@@ -1,52 +1,65 @@
-﻿using PolarShadow.Core.Site;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    internal sealed class SiteItemBuilder : ISiteItemBuilder
+    internal sealed class SiteItemBuilder : IPolarShadowItemBuilder
     {
-        private readonly static string _sitesSection = "sites";
-        private readonly JsonElement _sitesConfig;
-        public SiteItemBuilder(JsonDocument doc)
-        {
-            if(!doc.RootElement.TryGetProperty(_sitesSection, out JsonElement siteProperty))
-            {
-                return;
-            }
-            _sitesConfig = siteProperty.Clone();
-        }
-
-        public ISiteBuilder SiteBuilder { get; set; }
-
-        public IParameter Parameter { get; set; }
-
-        public IPolarShadowItem Build(IPolarShadowBuilder builder)
+        public IPolarShadowItem Build(IPolarShadowBuilder builder, IPolarShadowProvider provider)
         {
             var sites = new List<ISite>();
-            var parameterItem = builder.ItemBuilders.Where(f => f is IParameterItemBuilder).FirstOrDefault();
-            if (parameterItem != null)
+
+            if (!provider.TryGet("sites", out JsonElement sitesValue))
             {
-                Parameter = (IParameter)parameterItem.Build(builder);
-            }
-            var siteBuilder = SiteBuilder ?? new SiteBuilder();
-            if(_sitesConfig.ValueKind != JsonValueKind.Array)
-            {
-                return new SiteItem(sites);
+                return default;
             }
 
-            foreach (var item in _sitesConfig.EnumerateArray())
+            if (sitesValue.ValueKind != JsonValueKind.Array)
             {
-                var site = siteBuilder.Build(builder, this, item);
+                return default;
+            }
+
+            foreach (var item in sitesValue.EnumerateArray())
+            {
+                var site = BuildSite(builder, builder.Parameters, item);
                 sites.Add(site);
             }
 
             return new SiteItem(sites);
         }
 
+
+        private ISite BuildSite(IPolarShadowBuilder builder, IParameter parameter, JsonElement siteConfig)
+        {
+            var site = JsonSerializer.Deserialize<SiteDefault>(siteConfig, JsonOption.DefaultSerializer);
+            var p = new Parameters();
+            if (parameter != null)
+            {
+                p.Add(parameter);
+            }
+
+            if (site.Parameters != null)
+            {
+                p.Add(site.Parameters);
+            }
+            site.Parameters = p;
+
+            if (siteConfig.TryGetProperty("useWebView", out JsonElement value)
+                && (value.ValueKind == JsonValueKind.True))
+            {
+                site.RequestHandler = builder.WebViewHandler;
+            }
+            else
+            {
+                site.RequestHandler = builder.HttpHandler;
+            }
+            return site;
+        }
     }
 }

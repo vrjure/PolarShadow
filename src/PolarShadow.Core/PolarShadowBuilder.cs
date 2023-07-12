@@ -13,10 +13,12 @@ namespace PolarShadow.Core
     public class PolarShadowBuilder : IPolarShadowBuilder
     {
         private readonly ICollection<IPolarShadowItemBuilder> _itemBuilders;
-
+        private readonly ICollection<IPolarShadowSource> _sources;
+        private IParameterCollection _parameters;
         public PolarShadowBuilder()
         {
             _itemBuilders = new List<IPolarShadowItemBuilder>();
+            _parameters = new Parameters();
         }
 
         public IRequestHandler WebViewHandler { get; set; }
@@ -25,6 +27,10 @@ namespace PolarShadow.Core
 
         public IEnumerable<IPolarShadowItemBuilder> ItemBuilders => _itemBuilders;
 
+        public IEnumerable<IPolarShadowSource> Sources => _sources;
+
+        public IParameterCollection Parameters => _parameters;
+
         public IPolarShadowBuilder Add(IPolarShadowItemBuilder builder)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
@@ -32,15 +38,17 @@ namespace PolarShadow.Core
             return this;
         }
 
-        public IPolarShadow Build()
+        public IPolarShadowBuilder Add(IPolarShadowSource source)
         {
-            var list = new List<IPolarShadowItem>();
-            foreach (var builder in _itemBuilders)
-            {
-                list.Add(builder.Build(this));
-            }
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            _sources.Add(source);
+            return this;
+        }
 
-            return new PolarShadowDefault(list);
+        public IPolarShadow Build()
+        {         
+            HttpHandler ??= new HttpClientRequestHandler();
+            return new PolarShadowDefault(this);
         }
     }
 }

@@ -11,15 +11,15 @@ namespace PolarShadow.Core
         /// <summary>
         /// 构建模板内容
         /// </summary>
-        public static void BuildContent(this JsonElement template, Stream stream, IParameter content, IParameter input)
+        public static void BuildContent(this JsonElement template, Stream stream, IParameter content, IParameter parameter)
         {
             using var jsonWriter = new Utf8JsonWriter(stream, JsonOption.DefaultWriteOption);
-            BuildContent(jsonWriter, template, content, input);
+            BuildContent(jsonWriter, template, content, parameter);
             jsonWriter.Flush();
             stream.Seek(0, SeekOrigin.Begin);
         }
 
-        private static void BuildContent(Utf8JsonWriter jsonWriter, JsonElement template, IParameter content, IParameter input)
+        private static void BuildContent(Utf8JsonWriter jsonWriter, JsonElement template, IParameter content, IParameter parameter)
         {
             if (template.ValueKind == JsonValueKind.Array)
             {
@@ -27,7 +27,7 @@ namespace PolarShadow.Core
                 {
                     return;
                 }
-                BuildArrayContent(jsonWriter, template, content, input);
+                BuildArrayContent(jsonWriter, template, content, parameter);
             }
             else if (template.ValueKind == JsonValueKind.Object)
             {
@@ -37,11 +37,11 @@ namespace PolarShadow.Core
                     jsonWriter.WritePropertyName(item.Name);
                     if (item.Value.ValueKind == JsonValueKind.Array)
                     {
-                        BuildArrayContent(jsonWriter, item.Value, content, input);
+                        BuildArrayContent(jsonWriter, item.Value, content, parameter);
                     }
                     else
                     {
-                        BuildContent(jsonWriter, item.Value, content, input);
+                        BuildContent(jsonWriter, item.Value, content, parameter);
                     }
                 }
                 jsonWriter.WriteEndObject();
@@ -66,7 +66,7 @@ namespace PolarShadow.Core
             }
         }
 
-        private static void BuildArrayContent(Utf8JsonWriter jsonWriter, JsonElement item, IParameter content, IParameter input)
+        private static void BuildArrayContent(Utf8JsonWriter jsonWriter, JsonElement item, IParameter content, IParameter parameter)
         {
             if (item.ValueKind != JsonValueKind.Array)
             {
@@ -90,31 +90,34 @@ namespace PolarShadow.Core
                 || path.ValueKind != JsonValueKind.String
                 || template.ValueKind != JsonValueKind.Object)
             {
-                BuildArray(item, jsonWriter, content, input);
+                BuildArray(item, jsonWriter, content, parameter);
             }
             else
             {
-                BuildTemplate(path, template, jsonWriter, content, input);
+                BuildTemplate(path, template, jsonWriter, content, parameter);
             }
 
             jsonWriter.WriteEndArray();
         }
 
-        private static void BuildTemplate(JsonElement path, JsonElement template, Utf8JsonWriter jsonWriter, IParameter content, IParameter input)
+        private static void BuildTemplate(JsonElement path, JsonElement template, Utf8JsonWriter jsonWriter, IParameter content, IParameter parameter)
         {
             if (!content.TryReadValue(path.GetString(), out ParameterValue pathValue))
             {
                 return;
             }
 
+            var childContent = new Parameters(parameter);
+            var last = childContent.Count;
+
             if (pathValue.ValueKind == ParameterValueKind.Json)
             {
                 var jsonPathValue = pathValue.GetJson();
+
                 foreach (var child in jsonPathValue.EnumerateArray())
                 {
-                    var childInput = new Parameters(input);
-                    childInput.Add(new ObjectParameter(new ParameterValue(child)));
-                    BuildContent(jsonWriter, template, childInput, input);
+                    childContent[last] = new ObjectParameter(new ParameterValue(child));
+                    BuildContent(jsonWriter, template, childContent, parameter);
                 }
             }
             else if (pathValue.ValueKind == ParameterValueKind.Html)
@@ -124,16 +127,14 @@ namespace PolarShadow.Core
                 {
                     foreach (var child in htmlPathValue.EnumerateNodes())
                     {
-                        var childInput = new Parameters(input);
-                        childInput.Add(new ObjectParameter(new ParameterValue(child)));
-                        BuildContent(jsonWriter, template, childInput, input);
+                        childContent[last] = new ObjectParameter(new ParameterValue(child));
+                        BuildContent(jsonWriter, template, childContent, parameter);
                     }
                 }
                 else if(htmlPathValue.ValueKind == HtmlValueKind.Node)
                 {
-                    var childInput = new Parameters(input);
-                    childInput.Add(new ObjectParameter(new ParameterValue(htmlPathValue)));
-                    BuildContent(jsonWriter, template, childInput, input);
+                    childContent[last] = new ObjectParameter(new ParameterValue(htmlPathValue));
+                    BuildContent(jsonWriter, template, childContent, parameter);
                 }
 
             }

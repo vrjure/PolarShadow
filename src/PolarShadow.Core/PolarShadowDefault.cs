@@ -1,30 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
     internal class PolarShadowDefault : IPolarShadow
     {
-        private readonly Dictionary<string, IPolarShadowItem> _items = new Dictionary<string, IPolarShadowItem>();
+        private readonly ICollection<IPolarShadowItem> _items;
+        private readonly IPolarShadowBuilder _builder;
+        private IParameterCollection _parameters;
 
         internal PolarShadowDefault(IEnumerable<IPolarShadowItem> items)
         {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            foreach (var item in items)
+            _items = new List<IPolarShadowItem>(items);
+        }
+
+        public PolarShadowDefault(IPolarShadowBuilder builder)
+        {
+            _builder = builder;
+            _items = new List<IPolarShadowItem>();
+            _parameters = new Parameters();
+        }
+
+        public IEnumerable<IPolarShadowItem> Items => _items;
+
+        public void Load()
+        {
+            _parameters.Clear();
+            _items.Clear();
+
+            _parameters.Add(_builder.Parameters);
+            var providers = new List<IPolarShadowProvider>();
+            foreach (var item in _builder.Sources)
             {
-                if (string.IsNullOrEmpty(item.Name))
+                var provider = item.Build(_builder);
+                if (provider != null)
                 {
-                    continue;
+                    BuildParameters(provider);
+                    providers.Add(provider);
                 }
-                _items.Add(item.Name, item);
+            }
+
+            foreach (var provider in providers)
+            {
+                foreach (var builder in _builder.ItemBuilders)
+                {
+                    var item = builder.Build(_builder, provider);
+                    if (item != null)
+                    {
+                        _items.Add(item);
+                    }
+                }
             }
         }
 
-        public IPolarShadowItem this[string name] => _items.ContainsKey(name) ? _items[name] : null;
-
-        public IEnumerable<IPolarShadowItem> Items => _items.Values;
+        private void BuildParameters(IPolarShadowProvider provider)
+        {
+            if (provider.TryGet("parameters", out JsonElement value))
+            {
+                _parameters.Add(ParametersBuilder.Build(value));
+            }
+        }
     }
 }
