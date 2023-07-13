@@ -1,0 +1,86 @@
+{
+  "parameters": {
+    "startPage": 1,
+    "pageSize": 10
+  },
+  "analysisSources": [
+    {
+      "name": "ym"
+    },
+    {
+      "name": "dd"
+    }
+  ],
+  "sites": [
+    {
+      "name": "dy2018_copy",
+      "domain": "www.dy2018.com",
+      "useWebView": false,
+      "parameters": {
+        "startPage": 1,
+        "pageSize": 10,
+        "default": {
+          "page": 1,
+          "pageSize": 10
+        }
+      },
+      "requests": {
+        "newest": {
+          "request": {
+            "url": "https://www.dy2018.com/html/gndy/dyzz/index.html"
+          },
+          "response": {
+            "encoding": "gb2312",
+            "template": {
+              "dec": "this is a copyfile",
+              "data": [
+                {
+                  "path": "///body//div[@class='co_content8']/ul//table",
+                  "template": {
+                    "name": "{/.//a/@title}",
+                    "link": "https://www.dy2018.com{/.//a/@href}"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "dy2018",
+      "domain": "www.dy2018.com",
+      "useWebView": false,
+      "parameters": {
+        "startPage": 1,
+        "pageSize": 10,
+        "default": {
+          "page": 1,
+          "pageSize": 10
+        }
+      },
+      "requests": {
+        "newest": {
+          "request": {
+            "url": "https://www.dy2018.com/html/gndy/dyzz/index.html"
+          },
+          "response": {
+            "encoding": "gb2312",
+            "template": {
+              "dec": "this is a copyfile",
+              "data": [
+                {
+                  "path": "///body//div[@class='co_content8']/ul//table",
+                  "template": {
+                    "name": "{/.//a/@title}",
+                    "link": "https://www.dy2018.com{/.//a/@href}"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
+}

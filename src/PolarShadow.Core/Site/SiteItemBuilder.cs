@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
@@ -11,26 +10,29 @@ namespace PolarShadow.Core
 {
     internal sealed class SiteItemBuilder : IPolarShadowItemBuilder
     {
-        public IPolarShadowItem Build(IPolarShadowBuilder builder, IPolarShadowProvider provider)
+        public IPolarShadowItem Build(IPolarShadowBuilder builder, ICollection<IPolarShadowProvider> providers)
         {
             var sites = new List<ISite>();
 
-            if (!provider.TryGet("sites", out JsonElement sitesValue))
+            foreach (var provider in providers)
             {
-                return default;
-            }
+                if (!provider.TryGet(SiteItem.SitesName, out JsonElement sitesValue))
+                {
+                    return default;
+                }
 
-            if (sitesValue.ValueKind != JsonValueKind.Array)
-            {
-                return default;
-            }
+                if (sitesValue.ValueKind != JsonValueKind.Array)
+                {
+                    return default;
+                }
 
-            foreach (var item in sitesValue.EnumerateArray())
-            {
-                var site = BuildSite(builder, builder.Parameters, item);
-                sites.Add(site);
+                foreach (var item in sitesValue.EnumerateArray())
+                {
+                    var site = BuildSite(builder, builder.Parameters, item);
+                    sites.Add(site);
+                }
             }
-
+            
             return new SiteItem(sites);
         }
 
@@ -48,16 +50,16 @@ namespace PolarShadow.Core
             {
                 p.Add(site.Parameters);
             }
-            site.Parameters = p;
+            site.ParametersInternal = p;
 
             if (siteConfig.TryGetProperty("useWebView", out JsonElement value)
                 && (value.ValueKind == JsonValueKind.True))
             {
-                site.RequestHandler = builder.WebViewHandler;
+                site.RequestHandlerInternal = builder.WebViewHandler;
             }
             else
             {
-                site.RequestHandler = builder.HttpHandler;
+                site.RequestHandlerInternal = builder.HttpHandler;
             }
             return site;
         }

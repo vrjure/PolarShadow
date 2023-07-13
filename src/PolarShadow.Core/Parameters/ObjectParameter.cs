@@ -14,13 +14,15 @@ namespace PolarShadow.Core
         {
         }
 
-        public ObjectParameter(params ParameterValue[] values) : this(new List<ParameterValue>(values))
+        public ObjectParameter(params ParameterValue[] values) : this(values.AsEnumerable())
         {
 
         }
 
         public ObjectParameter(IEnumerable<ParameterValue> objectParameters)
         {
+            _objectParameters = new List<ParameterValue>();
+
             if (objectParameters != null)
             {
                 foreach (ParameterValue value in objectParameters)
@@ -28,13 +30,7 @@ namespace PolarShadow.Core
                     Add(value);
                 }
             }
-            else
-            {
-                _objectParameters = new List<ParameterValue>();
-            }
         }
-
-        public string Name => "parameters";
 
         public void Add(ParameterValue value)
         {
@@ -79,7 +75,7 @@ namespace PolarShadow.Core
             return false;
         }
 
-        public void WriteTo(Utf8JsonWriter writer)
+        public void Write(Utf8JsonWriter writer)
         {
             foreach (var item in _objectParameters)
             {

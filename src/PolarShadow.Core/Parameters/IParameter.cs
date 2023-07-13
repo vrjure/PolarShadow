@@ -8,5 +8,6 @@ namespace PolarShadow.Core
     public interface IParameter
     {
         bool TryGetValue(string key, out ParameterValue value);
+        void Write(Utf8JsonWriter writer);
     }
 }

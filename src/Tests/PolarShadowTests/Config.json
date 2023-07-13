@@ -16,14 +16,14 @@
       "name": "dy2018",
       "domain": "www.dy2018.com",
       "useWebView": false,
-      "abilities": {
+      "requests": {
         "newest": {
           "request": {
             "url": "https://www.dy2018.com/html/gndy/dyzz/index.html"
           },
           "response": {
             "encoding": "gb2312",
-            "content": {
+            "template": {
               "data": [
                 {
                   "path": "///body//div[@class='co_content8']/ul//table",

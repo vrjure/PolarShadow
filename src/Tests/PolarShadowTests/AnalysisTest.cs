@@ -15,71 +15,74 @@ namespace PolarShadowTests
         public void TestAnalysisText()
         {
             using var fs = new FileStream("./source.json", FileMode.Open, FileAccess.Read);
-            var doc = JsonDocument.Parse(fs);
-            var input = new ObjectParameter();
+            using var doc = JsonDocument.Parse(fs);
+            var kvp = new KeyValueParameter();
             if (doc.RootElement.TryGetProperty("parameters", out JsonElement parameters))
             {
-                input.Add(parameters);
+                kvp.Add(parameters);
             }
 
             var resuest = doc.RootElement.GetProperty("request");
             if (resuest.TryGetProperty("parameters", out JsonElement requestPara))
             {
-                foreach (var item in requestPara.EnumerateArray())
-                {
-                    input.Add(item);
-                }
+                kvp.Add(requestPara);
             }
 
             Console.WriteLine("request:");
-            Console.WriteLine(resuest.GetRawText().Format(input));
+            Console.WriteLine(resuest.GetRawText().Format(kvp));
 
+            var p = new Parameters();
+            p.Add(kvp);
             using var fsxml = new FileStream("./Books.xml", FileMode.Open, FileAccess.Read);
             var xmldoc = new XPathDocument(fsxml);
-            input.Add(new HtmlElement(xmldoc));
+            var op = new ObjectParameter();
+            op.Add(xmldoc);
+            p.Add(op);
 
             var response = doc.RootElement.GetProperty("response");
             Console.WriteLine("response:");
-            Console.WriteLine(response.GetRawText().Format(input));
+            Console.WriteLine(response.GetRawText().Format(p));
         }
 
         [Test]
         public void TestAnalysis()
         {
             using var fs = new FileStream("./source.json", FileMode.Open, FileAccess.Read);
-            var doc = JsonDocument.Parse(fs);
-            var input = new ObjectParameter();
+            using var doc = JsonDocument.Parse(fs);
+
+            var kvp = new KeyValueParameter();
             if (doc.RootElement.TryGetProperty("parameters", out JsonElement parameters))
             {
-                input.Add(parameters);
+                kvp.Add(parameters);
             }
 
             var request = doc.RootElement.GetProperty("request");
             if (request.TryGetProperty("parameters", out JsonElement requestPara))
             {
-                foreach (var item in requestPara.EnumerateArray())
-                {
-                    input.Add(item);
-                }
+                kvp.Add(requestPara);
             }
 
             var body = request.GetProperty("body");
 
             Console.WriteLine("body:");
             using var ms = new MemoryStream();
-            body.BuildContent(ms, default, input);
+            body.BuildContent(ms, kvp, kvp);
             using var sr = new StreamReader(ms);
             Console.WriteLine(sr.ReadToEnd());
 
             using var fsxml = new FileStream("./Books.xml", FileMode.Open, FileAccess.Read);
             var xmldoc = new XPathDocument(fsxml);
+
             var content = new ObjectParameter();
             content.Add(new HtmlElement(xmldoc));
 
+            var ps = new Parameters();
+            ps.Add(kvp);
+            ps.Add(content);
             var response = doc.RootElement.GetProperty("response2");
             var responseContent = response.GetProperty("content");
             using var ms2 = new MemoryStream();
-            responseContent.BuildContent(ms2, content, input);
+            responseContent.BuildContent(ms2, ps, kvp);
             using var sr2 = new StreamReader(ms2);
             Console.WriteLine("response2:");
             Console.WriteLine(sr2.ReadToEnd());

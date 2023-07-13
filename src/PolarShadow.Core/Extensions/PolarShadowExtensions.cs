@@ -16,11 +16,21 @@ namespace PolarShadow.Core
         {
             return polarShadow.Items.Where(f => f is T).Cast<T>();
         }
+        
+        public static IEnumerable<ISite> GetSites(this IPolarShadow polarShadow)
+        {
+            foreach (var item in GetItems<ISiteItem>(polarShadow))
+            {
+                foreach (var site in item.Sites)
+                {
+                    yield return site;
+                }
+            }
+        }
 
         public static IEnumerable<ISite> GetSites(this IPolarShadow polarShadow, Func<ISite, bool> predicate)
         {
-            var items = GetItems<ISiteItem>(polarShadow);
-            foreach (var item in items)
+            foreach (var item in GetItems<ISiteItem>(polarShadow))
             {
                 foreach (var site in item.Sites.Where(f=> predicate(f)))
                 {

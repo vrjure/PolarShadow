@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PolarShadow.Core
@@ -12,5 +13,6 @@ namespace PolarShadow.Core
     {
         IEnumerable<IPolarShadowItem> Items { get; }
         void Load();
+        void Write(Utf8JsonWriter writer);
     }
 }

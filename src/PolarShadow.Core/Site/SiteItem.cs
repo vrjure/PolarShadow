@@ -27,14 +27,9 @@ namespace PolarShadow.Core
             writer.WriteStartArray(Name);
             foreach (var site in Sites)
             {
-
+                site.Write(writer);
             }
             writer.WriteEndArray();
-        }
-
-        public void Load()
-        {
-            throw new NotImplementedException();
         }
     }
 }

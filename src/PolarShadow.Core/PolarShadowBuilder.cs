@@ -19,6 +19,7 @@ namespace PolarShadow.Core
         {
             _itemBuilders = new List<IPolarShadowItemBuilder>();
             _parameters = new Parameters();
+            _sources = new List<IPolarShadowSource>();
         }
 
         public IRequestHandler WebViewHandler { get; set; }

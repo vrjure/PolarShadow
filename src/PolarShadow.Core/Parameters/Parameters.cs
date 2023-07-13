@@ -115,12 +115,14 @@ namespace PolarShadow.Core
             return false;
         }
 
-        public void WriteTo(Utf8JsonWriter writer)
+        public void Write(Utf8JsonWriter writer)
         {
+            writer.WriteStartArray();
             foreach (var item in _parameters)
             {
-                
+                item.Write(writer);
             }
+            writer.WriteEndArray();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

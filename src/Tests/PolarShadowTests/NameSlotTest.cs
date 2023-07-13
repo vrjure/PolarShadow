@@ -68,15 +68,17 @@ namespace PolarShadowTests
         [Test]
         public void TestFormatNameSlot()
         {
-            var values = new ObjectParameter();
+
+            var keyValues = new KeyValueParameter();
+            keyValues.Add("page", 1);
+            keyValues.Add("title", "good");
+
             using var doc = JsonDocument.Parse(JsonSerializer.Serialize(sample, JsonOption.DefaultSerializer));
-            values.Add(doc.RootElement.Clone());
-            values.Add("page", 1);
-            values.Add("title", "good");
-
+            var objectValues = new ObjectParameter();
             var xpathDoc = new XPathDocument("./Books.Xml");
-            values.Add(new HtmlElement(xpathDoc));
-
+            objectValues.Add(new HtmlElement(xpathDoc));
+            objectValues.Add(doc.RootElement.Clone());
+            var values = new Parameters(keyValues, objectValues);
             var list = new string[]
             {
                 "get page: {page}",

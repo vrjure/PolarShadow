@@ -102,7 +102,7 @@ namespace PolarShadow.Core
 
         private static void BuildTemplate(JsonElement path, JsonElement template, Utf8JsonWriter jsonWriter, IParameter content, IParameter parameter)
         {
-            if (!content.TryReadValue(path.GetString(), out ParameterValue pathValue))
+            if (!content.TryGetValue(path.GetString(), out ParameterValue pathValue))
             {
                 return;
             }

@@ -5,28 +5,26 @@
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62"
   },
   "request": {
-    "url": "https://www.example.com/s_all?kw={$.searchKey:urlEncode}&pagesize={$.pageSize}&pageindex={$.page}",
+    "url": "https://www.example.com/s_all?kw={searchKey:urlEncode}&pagesize={pageSize}&pageindex={page}",
     "method": "get",
-    "parameters": [
-      {
+    "parameters":{
         "pageSize": 10,
         "page": 1,
         "searchKey": "测试字符"
-      }
-    ],
+     },
     "headers": {
       "user-agent": "{userAgent}"
     },
     "body": {
-      "searchKey": "{$.searchKey}",
-      "page": "{$.page}",
-      "pageSize": "{$.pageSize}"
+      "searchKey": "{searchKey}",
+      "page": "{page}",
+      "pageSize": "{pageSize}"
     }
   },
   "response": {
     "content": {
-      "page": "{$.page}",
-      "pageSize": "{$.pageSize}",
+      "page": "{page}",
+      "pageSize": "{pageSize}",
       "data": [
         {
           "title": "{///book[1]/title}",
@@ -38,8 +36,8 @@
   },
   "response2": {
     "content": {
-      "page": "{$.page}",
-      "pageSize": "{$.pageSize}",
+      "page": "{page}",
+      "pageSize": "{pageSize}",
       "data": [
         {
           "path": "///book",

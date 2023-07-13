@@ -6,14 +6,14 @@ using System.Text.Json.Serialization;
 
 namespace PolarShadow.Core
 {
-    public class KeyValueParameterConverter : JsonConverter<IParameter>
+    public class KeyValueParameterConverter : JsonConverter<IKeyValueParameter>
     {
         public override bool CanConvert(Type typeToConvert)
         {
-            return typeToConvert.GetInterface(nameof(IParameter)) != null
-                || typeToConvert == typeof(IParameter);
+            return typeToConvert.GetInterface(nameof(IKeyValueParameter)) != null
+                || typeToConvert == typeof(IKeyValueParameter);
         }
-        public override IParameter Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override IKeyValueParameter Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
             {
@@ -62,9 +62,9 @@ namespace PolarShadow.Core
             return keyValueParameter;
         }
 
-        public override void Write(Utf8JsonWriter writer, IParameter value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, IKeyValueParameter value, JsonSerializerOptions options)
         {
-            
+            value.Write(writer);
         }
     }
 }

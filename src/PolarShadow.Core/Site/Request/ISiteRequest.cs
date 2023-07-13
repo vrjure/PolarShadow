@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace PolarShadow.Core
 {
@@ -8,7 +9,8 @@ namespace PolarShadow.Core
     {
         public AnalysisRequest Request { get;}
         public AnalysisResponse Response { get;}
-        public IParameter Parameter { get; }
+        public IKeyValueParameter Parameter { get; }
         public ISiteRequest Next { get; }
+        void Write(Utf8JsonWriter writer);
     }
 }
