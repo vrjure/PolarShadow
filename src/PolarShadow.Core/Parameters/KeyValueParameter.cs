@@ -83,7 +83,7 @@ namespace PolarShadow.Core
             return _parameters.TryGetValue(key, out value);
         }
 
-        public void Write(Utf8JsonWriter writer)
+        public void WriteTo(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
             foreach (var item in _parameters)

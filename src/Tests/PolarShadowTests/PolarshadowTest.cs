@@ -15,32 +15,20 @@ namespace PolarShadowTests
         public void BuildTest()
         {
             var builder = new PolarShadowBuilder();
-            builder.ConfigureDefault()
-                .AddJsonFileSource(Path.Combine(Directory.GetCurrentDirectory(), "Config.json"))
-                .AddJsonFileSource(Path.Combine(Directory.GetCurrentDirectory(), "Config2.json"));
-
+            builder.ConfigureDefault();
             var polarShadow = builder.Build();
+
+            polarShadow.LoadJsonFileSource("./config.json");
+            polarShadow.LoadJsonFileSource("./config2.json");
 
             Print(polarShadow);
-        }
-
-        [Test]
-        public void BuildAndChangeTest()
-        {
-            var builder = new PolarShadowBuilder();
-            builder.ConfigureDefault()
-                .AddJsonFileSource(Path.Combine(Directory.GetCurrentDirectory(), "Config.json"))
-                .AddJsonFileSource(Path.Combine(Directory.GetCurrentDirectory(), "Config2.json"));
-
-            var polarShadow = builder.Build();
-            polarShadow.
         }
 
         private void Print(IPolarShadow ps)
         {
             using var ms = new MemoryStream();
-            using var jsonWriter = new Utf8JsonWriter(ms, new JsonWriterOptions { Indented = true });
-            ps.Write(jsonWriter);
+            using var jsonWriter = new Utf8JsonWriter(ms, new JsonWriterOptions { Indented = true, Encoder = JsonOption.DefaultSerializer.Encoder });
+            ps.WriteTo(jsonWriter);
             jsonWriter.Flush();
             ms.Seek(0, SeekOrigin.Begin);
 

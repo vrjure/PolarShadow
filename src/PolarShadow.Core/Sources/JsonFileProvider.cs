@@ -25,6 +25,16 @@ namespace PolarShadow.Core
             _root = doc.RootElement.Clone();
         }
 
+        public void Save(Stream content)
+        {
+            if (string.IsNullOrEmpty(_fileSource.Path)) return;
+            if (!File.Exists(_fileSource.Path)) return;
+            using var fs = new FileStream(_fileSource.Path, FileMode.Truncate, FileAccess.Write, FileShare.Read);
+            fs.SetLength(0);
+            content.CopyTo(fs);
+            fs.Flush();
+        }
+
         public bool TryGet(string name, out JsonElement value)
         {
             if (_root.ValueKind == JsonValueKind.Undefined)

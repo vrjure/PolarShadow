@@ -14,10 +14,11 @@ namespace PolarShadow.Core
         string Name { get; set; }
         string Domain { get; set; }
         bool UseWebView { get; set; }
-        IKeyValueParameter Parameters { get; }
+        IKeyValueParameter Parameters { get; set; }
         ISiteRequest this[string requestName] { get; set; }
         IEnumerable<ISiteRequest> Requests { get; }
+        void Remove(string requestName);
         ISiteRequestHandler CreateRequestHandler(string requestName);
-        void Write(Utf8JsonWriter writer);
+        void WriteTo(Utf8JsonWriter writer);
     }
 }

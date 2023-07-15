@@ -6,8 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
@@ -18,45 +16,56 @@ namespace PolarShadow.Core
         {
             get
             {
-                if (string.IsNullOrEmpty(requestName) 
-                    || RequestsInternal == null 
-                    || !RequestsInternal.ContainsKey(requestName)) 
+                if (string.IsNullOrEmpty(requestName)
+                    || _requests == null
+                    || !_requests.ContainsKey(requestName))
                     return null;
 
-                return RequestsInternal[requestName];
+                return _requests[requestName];
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(requestName)) return;
+                _requests ??= new Dictionary<string, ISiteRequest>();
+                _requests[requestName] = value;
             }
         }
 
+        [JsonRequired]
         public string Name { get; set; }
 
         public string Domain { get; set; }
         public bool UseWebView { get; set; }
-
-        [JsonConverter(typeof(KeyValueParameterConverter))]
         public IKeyValueParameter Parameters { get; set; }
-        [JsonIgnore]
-        public IEnumerable<ISiteRequest> Requests => RequestsInternal?.Values;
 
         [JsonPropertyName("requests")]
-        public Dictionary<string, SiteRequest> RequestsInternal { get; set; }
+        public Dictionary<string, ISiteRequest> _requests { get; set; }
 
+        [JsonIgnore]
+        public IEnumerable<ISiteRequest> Requests => _requests?.Values;
 
         [JsonIgnore]
         internal IRequestHandler RequestHandlerInternal { get; set; }
         [JsonIgnore]
         internal IParameterCollection ParametersInternal { get; set; }
+
         public ISiteRequestHandler CreateRequestHandler(string requestName)
         {
-            if (RequestsInternal == null) return null;
+            if (_requests == null) return null;
             if (RequestHandlerInternal == null) throw new InvalidOperationException("RequestHandler not be set");
-            if (RequestsInternal.TryGetValue(requestName, out SiteRequest request))
+            if (_requests.TryGetValue(requestName, out ISiteRequest request))
             {
                 return new SiteRequestHandler(RequestHandlerInternal, request, ParametersInternal);
             }
             return null;
         }
 
-        public void Write(Utf8JsonWriter writer)
+        public void Remove(string requestName)
+        {
+            _requests?.Remove(requestName);
+        }
+
+        public void WriteTo(Utf8JsonWriter writer)
         {
             JsonSerializer.Serialize(writer, this, JsonOption.DefaultSerializer);
         }

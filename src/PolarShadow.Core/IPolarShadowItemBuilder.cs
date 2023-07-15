@@ -6,6 +6,6 @@ namespace PolarShadow.Core
 {
     public interface IPolarShadowItemBuilder
     {
-        IPolarShadowItem Build(IPolarShadowBuilder builder, ICollection<IPolarShadowProvider> provider);
+        IPolarShadowItem Build(IPolarShadowBuilder builder);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,72 +11,58 @@ namespace PolarShadow.Core
 {
     internal class PolarShadowDefault : IPolarShadow
     {
-        private readonly ICollection<IPolarShadowItem> _items;
         private readonly IPolarShadowBuilder _builder;
-        private IParameterCollection _parameters;
-        private IKeyValueParameter _configParameters;
+        private readonly ICollection<IPolarShadowItem> _items;
+        private readonly IKeyValueParameter _globalePrameter;
+
         public PolarShadowDefault(IPolarShadowBuilder builder)
         {
             _builder = builder;
-            _items = new List<IPolarShadowItem>();
-            _parameters = new Parameters();
-            _configParameters = new KeyValueParameter();
+            _globalePrameter = builder.Parameters;
 
-            Load();
+            _items = new List<IPolarShadowItem>();
+            foreach (var b in builder.ItemBuilders)
+            {
+                _items.Add(b.Build(builder));
+            }
         }
 
         public IEnumerable<IPolarShadowItem> Items => _items;
 
-        public void Load()
+        public void Load(IPolarShadowSource source)
         {
-            _parameters.Clear();
-            _items.Clear();
+            if (source == null) throw new ArgumentNullException(nameof(source));
 
-            if (_builder.Parameters.Count > 0)
+            var provider = source.Build(_builder);
+            if (provider == null)
             {
-                _parameters.Add(_builder.Parameters);
+                return;
             }
 
-            var providers = new List<IPolarShadowProvider>();
-            foreach (var item in _builder.Sources)
-            {
-                var provider = item.Build(_builder);
-                if (provider != null)
-                {
-                    provider.Load();
-                    BuildParameters(provider);
-                    providers.Add(provider);
-                }
-            }
+            provider.Load();
+            BuildParameters(provider);
 
-            if (_configParameters.Count > 0)
+            foreach (var item in _items)
             {
-                _parameters.Add(_configParameters);
-            }
-
-            foreach (var builder in _builder.ItemBuilders)
-            {
-                var item = builder.Build(_builder, providers);
-                if (item != null)
-                {
-                    _items.Add(item);
-                }
+                item.Load(provider);
             }
         }
 
-        public void Write(Utf8JsonWriter writer)
+        public void WriteTo(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
-            if (_configParameters.Count > 0)
+
+            if (_globalePrameter.Count > 0)
             {
                 writer.WritePropertyName("parameters");
-                _configParameters.Write(writer);
+                _globalePrameter.WriteTo(writer);
             }
 
             foreach (var item in _items)
             {
-                item.Write(writer);
+                item.WriteTo(writer);
             }
+
             writer.WriteEndObject();
         }
 
@@ -83,7 +70,7 @@ namespace PolarShadow.Core
         {
             if (provider.TryGet("parameters", out JsonElement value))
             {
-                _configParameters.Add(value);
+                _globalePrameter.Add(value);
             }
         }
     }

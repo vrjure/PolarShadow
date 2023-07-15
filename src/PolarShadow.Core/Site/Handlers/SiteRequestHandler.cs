@@ -11,9 +11,9 @@ namespace PolarShadow.Core
     internal class SiteRequestHandler : ISiteRequestHandler
     {
         private readonly IRequestHandler _handler;
-        private readonly SiteRequest _request;
+        private readonly ISiteRequest _request;
         private readonly Parameters _parameters;
-        public SiteRequestHandler(IRequestHandler requesthandler, SiteRequest request, IParameter parameter)
+        public SiteRequestHandler(IRequestHandler requesthandler, ISiteRequest request, IParameter parameter)
         {
             _handler = requesthandler;
             _request = request;

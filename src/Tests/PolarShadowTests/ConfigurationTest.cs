@@ -21,7 +21,6 @@ namespace PolarShadowTests
             var config = builder.Build();
             var provider = config.Providers.First();
             var keys = provider.GetChildKeys(Enumerable.Empty<string>(), default).Distinct(StringComparer.OrdinalIgnoreCase);
-
             foreach (var key in keys)
             {
                 Console.WriteLine(key);

@@ -21,6 +21,24 @@ namespace PolarShadow.Core
             return site != null;
         }
 
+        public static ISiteItem AddSite(this ISiteItem item, string siteName, Action<ISite> siteBuilder)
+        {
+            if (string.IsNullOrEmpty(siteName) || string.IsNullOrWhiteSpace(siteName))
+            {
+                throw new ArgumentException("site name must be set", nameof(siteName));
+            }
+            if (HasSite(item, siteName))
+            {
+                throw new ArgumentException($"{siteName} exist");
+            }
+
+            var site = new SiteDefault();
+            siteBuilder(site);
+            item[siteName] = site;
+
+            return item;
+        }
+
         public static bool HasRequest(this ISite site, string requestName)
         {
             return site[requestName] != null;
@@ -30,6 +48,25 @@ namespace PolarShadow.Core
         {
             request = site[requestName];
             return request != null;
+        }
+
+        public static ISite AddRequest(this ISite site, string requestName, Action<ISiteRequest> requestBuilder)
+        {
+            if (string.IsNullOrEmpty(requestName) || string.IsNullOrWhiteSpace(requestName))
+            {
+                throw new ArgumentException("request name must be set", nameof(requestName));
+            }
+
+            if (HasRequest(site, requestName))
+            {
+                throw new ArgumentException($"{requestName} exist in site [{site.Name}]");
+            }
+
+            var request = new SiteRequest();
+            requestBuilder(request);
+
+            site[requestName] = request;
+            return site;
         }
 
         public static async Task<TResponse> ExecuteAsync<TRequest, TResponse>(this ISite site, string name, TRequest request, CancellationToken cancellation = default)

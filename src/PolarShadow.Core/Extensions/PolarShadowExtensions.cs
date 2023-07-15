@@ -7,36 +7,43 @@ namespace PolarShadow.Core
 {
     public static class PolarShadowExtensions
     {
-        public static T GetItem<T>(this IPolarShadow polarShadow) where T : IPolarShadowItem
+        public static IPolarShadow LoadJsonFileSource(this IPolarShadow polarShadow, string path)
         {
-            return GetItems<T>(polarShadow).FirstOrDefault();
+            polarShadow.Load(new JsonFileSource { Path = path});
+            return polarShadow;
         }
 
-        public static IEnumerable<T> GetItems<T>(this IPolarShadow polarShadow) where T: IPolarShadowItem
+        public static T GetItem<T>(this IPolarShadow polarShadow) where T : IPolarShadowItem
         {
-            return polarShadow.Items.Where(f => f is T).Cast<T>();
+            return polarShadow.Items.Where(f =>  f is T).Cast<T>().FirstOrDefault();
         }
         
         public static IEnumerable<ISite> GetSites(this IPolarShadow polarShadow)
         {
-            foreach (var item in GetItems<ISiteItem>(polarShadow))
+            var item = GetItem<ISiteItem>(polarShadow);
+            if (item == null)
             {
-                foreach (var site in item.Sites)
-                {
-                    yield return site;
-                }
+                return Enumerable.Empty<ISite>();
             }
+
+            return item.Sites;
         }
 
         public static IEnumerable<ISite> GetSites(this IPolarShadow polarShadow, Func<ISite, bool> predicate)
         {
-            foreach (var item in GetItems<ISiteItem>(polarShadow))
+            return GetSites(polarShadow).Where(f=> predicate(f));
+        }
+
+        public static IPolarShadow AddSite(this IPolarShadow polarShadow, string siteName, Action<ISite> siteBuilder)
+        {
+            var siteItem = polarShadow.GetItem<ISiteItem>();
+            if (siteItem == null)
             {
-                foreach (var site in item.Sites.Where(f=> predicate(f)))
-                {
-                    yield return site;
-                }
+                throw new ArgumentException("ISiteItem not exist");
             }
+            siteItem.AddSite(siteName, siteBuilder);
+
+            return polarShadow;
         }
     }
 }

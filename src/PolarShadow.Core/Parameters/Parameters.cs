@@ -11,12 +11,13 @@ namespace PolarShadow.Core
     {
         private IList<IParameter> _parameters;
 
-        public Parameters() : this(null)
-        {
+        public Parameters() => Initialize(null);
 
-        }
+        public Parameters(params IParameter[] parameters) => Initialize(parameters);
 
-        public Parameters(params IParameter[] parameters)
+        public Parameters(IParameterCollection parameters) => Initialize(parameters);
+
+        private void Initialize(IEnumerable<IParameter> parameters)
         {
             _parameters = new List<IParameter>();
 
@@ -115,12 +116,12 @@ namespace PolarShadow.Core
             return false;
         }
 
-        public void Write(Utf8JsonWriter writer)
+        public void WriteTo(Utf8JsonWriter writer)
         {
             writer.WriteStartArray();
             foreach (var item in _parameters)
             {
-                item.Write(writer);
+                item.WriteTo(writer);
             }
             writer.WriteEndArray();
         }

@@ -75,7 +75,7 @@ namespace PolarShadow.Core
             return false;
         }
 
-        public void Write(Utf8JsonWriter writer)
+        public void WriteTo(Utf8JsonWriter writer)
         {
             foreach (var item in _objectParameters)
             {

@@ -10,7 +10,6 @@ namespace PolarShadow.Core
         public AnalysisRequest Request { get;}
         public AnalysisResponse Response { get;}
         public IKeyValueParameter Parameter { get; }
-        public ISiteRequest Next { get; }
         void Write(Utf8JsonWriter writer);
     }
 }
