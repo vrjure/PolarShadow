@@ -1,21 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace PolarShadow.Core
 {
     public static class PolarShadowExtensions
     {
-        public static IPolarShadow LoadJsonFileSource(this IPolarShadow polarShadow, string path)
+        public static IPolarShadow SaveTo(this IPolarShadow polarShadow, IPolarShadowSource source)
         {
-            polarShadow.Load(new JsonFileSource { Path = path});
+            using var ms = new MemoryStream();
+            using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.DefaultWriteOption);
+            polarShadow.WriteTo(jsonWriter);
+            jsonWriter.Flush();
+            ms.Seek(0, SeekOrigin.Begin);
+            source.Save(ms);
+            return polarShadow;
+        }
+
+        public static IPolarShadow LoadJsonFileSource(this IPolarShadow polarShadow, string path, bool reLoad = false)
+        {
+            polarShadow.Load(new JsonFileSource { Path = path}, reLoad);
             return polarShadow;
         }
 
         public static T GetItem<T>(this IPolarShadow polarShadow) where T : IPolarShadowItem
         {
-            return polarShadow.Items.Where(f =>  f is T).Cast<T>().FirstOrDefault();
+            return polarShadow.Items.Where(f => f is T).Cast<T>().FirstOrDefault();
         }
         
         public static IEnumerable<ISite> GetSites(this IPolarShadow polarShadow)
@@ -32,6 +46,15 @@ namespace PolarShadow.Core
         public static IEnumerable<ISite> GetSites(this IPolarShadow polarShadow, Func<ISite, bool> predicate)
         {
             return GetSites(polarShadow).Where(f=> predicate(f));
+        }
+
+        public static bool TryGetSite(this IPolarShadow polarShadow, string siteName, out ISite site)
+        {
+            site = null;
+            var item = GetItem<ISiteItem>(polarShadow);
+            if (item == null) return false;
+
+            return item.TryGetSite(siteName, out site);
         }
 
         public static IPolarShadow AddSite(this IPolarShadow polarShadow, string siteName, Action<ISite> siteBuilder)

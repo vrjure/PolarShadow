@@ -10,16 +10,15 @@ namespace PolarShadow.Videos
 {
     public static class PolarshadowExtensions
     {
-        private const string _webAnalysisName = "webAnalysisSource";
         public static IVideoSearcHandler CreateVideoSearcHandler(this IPolarShadow polar, SearchVideoFilter videoFilter, CancellationToken cancellation = default)
         {
-            var sites = polar.GetSites(f => f.HasRequest(VideoAbilities.Search));
-            return new VideoSearcHandler(VideoAbilities.Search, videoFilter, sites);
+            var sites = polar.GetSites(f => f.HasRequest(VideoRequests.Search));
+            return new VideoSearcHandler(VideoRequests.Search, videoFilter, sites);
         }
 
         public static async Task<VideoDetail> GetDetailAsync(this ISite site, VideoSummary summary, CancellationToken cancellation = default)
         {
-            var result = await site.ExecuteAsync<VideoSummary, VideoDetail>(VideoAbilities.Detail, summary, cancellation);
+            var result = await site.ExecuteAsync<VideoSummary, VideoDetail>(VideoRequests.Detail, summary, cancellation);
             if (result == null)
             {
                 return result;
@@ -45,6 +44,11 @@ namespace PolarShadow.Videos
                 result.DetailSrc = summary.DetailSrc;
             }
             return result;
-        }       
+        } 
+
+        public static IEnumerable<WebAnalysisSource> GetAnalysisSources(this IPolarShadow polarShadow)
+        {
+            return polarShadow.GetItem<IWebAnalysisItem>()?.Sources;
+        }
     }
 }

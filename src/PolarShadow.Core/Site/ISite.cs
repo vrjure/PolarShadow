@@ -16,7 +16,7 @@ namespace PolarShadow.Core
         bool UseWebView { get; set; }
         IKeyValueParameter Parameters { get; set; }
         ISiteRequest this[string requestName] { get; set; }
-        IEnumerable<ISiteRequest> Requests { get; }
+        IEnumerable<KeyValuePair<string, ISiteRequest>> Requests { get; }
         void Remove(string requestName);
         ISiteRequestHandler CreateRequestHandler(string requestName);
         void WriteTo(Utf8JsonWriter writer);

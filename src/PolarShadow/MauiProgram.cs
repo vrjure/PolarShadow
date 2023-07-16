@@ -7,6 +7,7 @@ using System.Text.Json;
 using PolarShadow.Core.Aria2;
 using PolarShadow.Cache;
 using Microsoft.Maui.Hosting;
+using PolarShadow.Videos;
 
 namespace PolarShadow
 {
@@ -42,12 +43,9 @@ namespace PolarShadow
             builder.Services.AddScoped<IHttpFileResource, HttpFileResource>();
             builder.Services.AddScoped<IHttpResource, HttpResource>();
 
-            builder.Services.AddSingleton(CreatePolarShadowBuilder());
-            builder.Services.AddTransient(sp =>
-            {
-                var b = sp.GetRequiredService<IPolarShadowBuilder>();
-                return b.Build();
-            });
+            var polarShadow = CreatePolarShadowBuilder().Build();
+            polarShadow.ReadFromFile();
+            builder.Services.AddSingleton(polarShadow);
 
             builder.Services.AddDbContextFactory<PolarShadowDbContext>(options =>
             {
@@ -63,10 +61,7 @@ namespace PolarShadow
         private static IPolarShadowBuilder CreatePolarShadowBuilder()
         {
             var builder = new PolarShadowBuilder();
-            builder.Configure(optionBuilder =>
-            {
-                optionBuilder.ReadFromFile();
-            });
+            builder.ConfigureDefault().AddWebAnalysisItem();
             return builder;
         }
 

@@ -3,7 +3,7 @@
     "startPage": 1,
     "pageSize": 10
   },
-  "analysisSources": [
+  "webAnalysisSource": [
     {
       "name": "ym"
     },

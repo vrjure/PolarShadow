@@ -12,7 +12,7 @@ namespace PolarShadow.Core
     public interface IPolarShadow
     {
         IEnumerable<IPolarShadowItem> Items { get; }
-        void Load(IPolarShadowSource source);
+        void Load(IPolarShadowSource source, bool reLoad = false);
         void WriteTo(Utf8JsonWriter writer);
     }
 }

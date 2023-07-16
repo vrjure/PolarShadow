@@ -55,6 +55,7 @@ namespace PolarShadow.Core
         {
             using var stream = new MemoryStream();
             await SearchNextAsync(stream, cancellation);
+            stream.Seek(0, SeekOrigin.Begin);
             if (stream.Length == 0)
             {
                 return default;
@@ -84,7 +85,7 @@ namespace PolarShadow.Core
                 else
                 {
                     var request = site.CreateRequestHandler(_requestName);
-                    if (!request.TryGetParameter("canPage", out bool canPage) || canPage)
+                    if (request.TryGetParameter("canPage", out bool canPage) && canPage)
                     {
                         NextRequest(Input, request);
                         await request.ExecuteAsync(JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation).ConfigureAwait(false);
@@ -119,6 +120,7 @@ namespace PolarShadow.Core
                 return;
             }
 
+            stream.Seek(0, SeekOrigin.Begin);
             if (!HasResult(stream))
             {
                 _index++;

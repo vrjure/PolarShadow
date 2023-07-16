@@ -2,11 +2,13 @@
 using PolarShadow.Core;
 using PolarShadow.Tool.Pages;
 using PolarShadow.Tool.Pages.ViewModels;
+using PolarShadow.Videos;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +23,6 @@ namespace PolarShadow.Tool
     {
         public IServiceProvider Services { get; private set; }
         public new static App Current => (App)Application.Current;
-        private IPolarShadow _cache;
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -66,20 +67,11 @@ namespace PolarShadow.Tool
 
         private void ConfigurePolarShadow(IServiceCollection service)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var builder = new PolarShadowBuilder();
-            service.AddSingleton<IPolarShadowBuilder>(builder);
-            service.AddTransient(sp =>
-            {
-                var builder = sp.GetRequiredService<IPolarShadowBuilder>();
-                if (builder.IsOptionChanged)
-                {
-                    return _cache = builder.Build();
-                }
-                else
-                {
-                    return _cache;
-                }
-            });
+            builder.ConfigureDefault()
+                .AddWebAnalysisItem();
+            service.AddSingleton(builder.Build());
         }
     }
 }

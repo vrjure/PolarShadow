@@ -16,7 +16,6 @@ namespace PolarShadow.Core
             using var jsonWriter = new Utf8JsonWriter(stream, JsonOption.DefaultWriteOption);
             BuildContent(jsonWriter, template, content, parameter);
             jsonWriter.Flush();
-            stream.Seek(0, SeekOrigin.Begin);
         }
 
         private static void BuildContent(Utf8JsonWriter jsonWriter, JsonElement template, IParameter content, IParameter parameter)

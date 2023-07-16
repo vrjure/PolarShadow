@@ -6,43 +6,22 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public class JsonFileProvider : IPolarShadowProvider
+    public class JsonFileProvider : JsonProvider
     {
         private FileSource _fileSource;
-        private JsonElement _root;
         public JsonFileProvider(FileSource source)
         {
             _fileSource = source;
             if (_fileSource == null) { throw new ArgumentNullException(nameof(source)); }
         }
 
-        public void Load()
+        protected override JsonElement Parse()
         {
-            if (string.IsNullOrEmpty(_fileSource.Path)) return;
-            if (!File.Exists(_fileSource.Path)) return;
+            if (string.IsNullOrEmpty(_fileSource.Path)) return default;
+            if (!File.Exists(_fileSource.Path)) return default;
             using var fs = new FileStream(_fileSource.Path, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var doc = JsonDocument.Parse(fs);
-            _root = doc.RootElement.Clone();
-        }
-
-        public void Save(Stream content)
-        {
-            if (string.IsNullOrEmpty(_fileSource.Path)) return;
-            if (!File.Exists(_fileSource.Path)) return;
-            using var fs = new FileStream(_fileSource.Path, FileMode.Truncate, FileAccess.Write, FileShare.Read);
-            fs.SetLength(0);
-            content.CopyTo(fs);
-            fs.Flush();
-        }
-
-        public bool TryGet(string name, out JsonElement value)
-        {
-            if (_root.ValueKind == JsonValueKind.Undefined)
-            {
-                value = default;
-                return false;
-            }
-            return _root.TryGetProperty(name, out value);
+            return doc.RootElement.Clone();
         }
     }
 }

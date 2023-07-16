@@ -25,7 +25,6 @@ namespace PolarShadow.Core
                 return;
             }
             await HandleValueAsync(input, stream, request, response, cancellation);
-            stream.Seek(0, SeekOrigin.Begin);
         }
 
         private async Task HandleValueAsync(IParameter input, Stream stream, AnalysisRequest request, AnalysisResponse response, CancellationToken cancellation)

@@ -75,6 +75,7 @@ namespace PolarShadow.Core
             var input = JsonSerializer.Serialize(request, JsonOption.DefaultSerializer);
             using var ms = new MemoryStream();
             await handler.ExecuteAsync(input, ms, cancellation).ConfigureAwait(false);
+            ms.Seek(0, SeekOrigin.Begin);
             return JsonSerializer.Deserialize<TResponse>(ms, JsonOption.DefaultSerializer);
         }
 
@@ -84,6 +85,7 @@ namespace PolarShadow.Core
             using var ms = new MemoryStream();
             await handler.ExecuteAsync(input, ms, cancellation).ConfigureAwait(false);
             using var sr = new StreamReader(ms);
+            ms.Seek(0, SeekOrigin.Begin);
             return sr.ReadToEnd();
         }
 
@@ -93,6 +95,7 @@ namespace PolarShadow.Core
             using var ms = new MemoryStream();
             await handler.ExecuteAsync(ms, cancellation).ConfigureAwait(false);
             using var sr = new StreamReader(ms);
+            ms.Seek(0, SeekOrigin.Begin);
             return sr.ReadToEnd();
         }
     }

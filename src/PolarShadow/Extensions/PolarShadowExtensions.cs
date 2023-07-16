@@ -11,23 +11,16 @@ namespace PolarShadow
     internal static class PolarShadowExtensions
     {
         private static string _optionFileName = "source.json";
-        public static void SaveToFile(this IPolarShadowOptionBuilder builder)
+        public static void SaveToFile(this IPolarShadow polaShadow)
         {
             var sourcePath = Path.Combine(FileSystem.AppDataDirectory, _optionFileName);
-            using var fs = new FileStream(sourcePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            fs.SetLength(0);
-            builder.WriteTo(fs);
+            polaShadow.SaveTo(new JsonFileSource() { Path = sourcePath });
         }
 
-        public static void ReadFromFile(this IPolarShadowOptionBuilder builder)
+        public static void ReadFromFile(this IPolarShadow polarShadow)
         {
             var sourcePath = Path.Combine(FileSystem.AppDataDirectory, _optionFileName);
-            using var fs = new FileStream(sourcePath, FileMode.OpenOrCreate, FileAccess.Read);
-            if (fs.Length == 0)
-            {
-                return;
-            }
-            builder.Load(fs);
+            polarShadow.Load(new JsonFileSource { Path = sourcePath}, true);
         }
     }
 }

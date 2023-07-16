@@ -10,6 +10,5 @@ namespace PolarShadow.Core
     {
         bool TryGet(string name, out JsonElement value);
         void Load();
-        void Save(Stream content);
     }
 }

@@ -18,11 +18,11 @@ namespace PolarShadow.Tool
 {
     public partial class MainWindowViewModel : ObservableObject, IReferenceUI
     {
-        private readonly IPolarShadowBuilder _builder;
+        private readonly IPolarShadow _polarShadow;
         private string _importPath;
-        public MainWindowViewModel(IPolarShadowBuilder builder)
+        public MainWindowViewModel(IPolarShadow polarShadow)
         {
-            _builder = builder;
+            _polarShadow = polarShadow;
             RefreshEnable = false;
         }
 
@@ -43,11 +43,7 @@ namespace PolarShadow.Tool
             try
             {
                 _importPath = fileDialog.FileName;
-                _builder.Configure(opBuilder =>
-                {
-                    using var fs = new FileStream(fileDialog.FileName, FileMode.Open, FileAccess.Read);
-                    opBuilder.Load(fs);
-                });
+                _polarShadow.LoadJsonFileSource(_importPath, true);
 
                 UI.Navigate<MainPage>("content");
 
@@ -66,11 +62,7 @@ namespace PolarShadow.Tool
         {
             try
             {
-                _builder.Configure(op =>
-                {
-                    using var fs = new FileStream(_importPath, FileMode.Open, FileAccess.Read);
-                    op.Load(fs);
-                });
+                _polarShadow.LoadJsonFileSource(_importPath);
                 UI.Refresh("content");
             }
             catch (Exception ex)

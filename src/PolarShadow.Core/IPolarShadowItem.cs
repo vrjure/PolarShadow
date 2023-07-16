@@ -9,7 +9,7 @@ namespace PolarShadow.Core
     public interface IPolarShadowItem
     {
         string Name { get; }
-        void Load(IPolarShadowProvider provider);
+        void Load(IPolarShadowProvider provider, bool reload = false);
         void WriteTo(Utf8JsonWriter writer);
     }
 }

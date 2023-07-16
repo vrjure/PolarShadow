@@ -41,8 +41,13 @@ namespace PolarShadow.Core
             writer.WriteEndArray();
         }
 
-        public void Load(IPolarShadowProvider provider)
+        public void Load(IPolarShadowProvider provider, bool reLoad = false)
         {
+            if (reLoad)
+            {
+                _sites.Clear();
+            }
+
             if (!provider.TryGet(SitesName, out JsonElement sitesValue))
             {
                 return;

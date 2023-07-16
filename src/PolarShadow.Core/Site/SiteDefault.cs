@@ -42,7 +42,7 @@ namespace PolarShadow.Core
         public Dictionary<string, ISiteRequest> _requests { get; set; }
 
         [JsonIgnore]
-        public IEnumerable<ISiteRequest> Requests => _requests?.Values;
+        public IEnumerable<KeyValuePair<string, ISiteRequest>> Requests => _requests.AsEnumerable();
 
         [JsonIgnore]
         internal IRequestHandler RequestHandlerInternal { get; set; }

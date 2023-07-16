@@ -1,6 +1,5 @@
 ﻿@page "/source"
 @layout MainLayout
-@inject IPolarShadowBuilder _builder
 @inject IPolarShadow _polarShadow;
 @inject IMessageService _msg
 @inject INavigationService _nav
@@ -87,13 +86,9 @@
             });
 
             using var stream = await result.OpenReadAsync();
-            _builder.Configure(optionBuilder =>
-            {
-                optionBuilder.Load(stream);
-                optionBuilder.SaveToFile();
-            });
-
-            _source = _builder.Build().GetSites().ToList();
+            _polarShadow.Load(new JsonStreamSource(stream));
+            _polarShadow.SaveToFile();
+            _source = _polarShadow.GetSites().ToList();
         }
         catch (Exception ex)
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 using PolarShadow.Core;
@@ -15,19 +16,22 @@ namespace PolarShadowTests
         public void BuildTest()
         {
             var builder = new PolarShadowBuilder();
-            builder.ConfigureDefault();
+            builder.ConfigureDefault().AddWebAnalysisItem();
+            builder.Parameters.Add("test", "test");
             var polarShadow = builder.Build();
 
             polarShadow.LoadJsonFileSource("./config.json");
             polarShadow.LoadJsonFileSource("./config2.json");
 
             Print(polarShadow);
+
+            polarShadow.SaveTo(new JsonFileSource { Path = @"C:\Users\vrjure\Desktop\polarShadowSiteExample2.json" });
         }
 
         private void Print(IPolarShadow ps)
         {
             using var ms = new MemoryStream();
-            using var jsonWriter = new Utf8JsonWriter(ms, new JsonWriterOptions { Indented = true, Encoder = JsonOption.DefaultSerializer.Encoder });
+            using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.DefaultWriteOption);
             ps.WriteTo(jsonWriter);
             jsonWriter.Flush();
             ms.Seek(0, SeekOrigin.Begin);
