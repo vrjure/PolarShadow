@@ -8,6 +8,7 @@ using PolarShadow.Core.Aria2;
 using PolarShadow.Cache;
 using Microsoft.Maui.Hosting;
 using PolarShadow.Videos;
+using System.Text;
 
 namespace PolarShadow
 {
@@ -60,6 +61,7 @@ namespace PolarShadow
 
         private static IPolarShadowBuilder CreatePolarShadowBuilder()
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var builder = new PolarShadowBuilder();
             builder.ConfigureDefault().AddWebAnalysisItem();
             return builder;

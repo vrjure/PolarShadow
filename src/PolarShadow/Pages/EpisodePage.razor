@@ -146,7 +146,7 @@
 
     private void WebAnalysisClick(WebAnalysisSource source)
     {
-        var p = new ObjectParameter();
+        var p = new KeyValueParameter();
         p.Add(_selectVideoSource);
         var url = source.Src.Format(p);
         _nav.NavigateTo(url, false, true);

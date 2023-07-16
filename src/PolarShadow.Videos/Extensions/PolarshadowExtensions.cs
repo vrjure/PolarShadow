@@ -10,10 +10,16 @@ namespace PolarShadow.Videos
 {
     public static class PolarshadowExtensions
     {
-        public static IVideoSearcHandler CreateVideoSearcHandler(this IPolarShadow polar, SearchVideoFilter videoFilter, CancellationToken cancellation = default)
+        public static IVideoSearcHandler CreateVideoSearcHandler(this IPolarShadow polarShadow, SearchVideoFilter videoFilter, CancellationToken cancellation = default)
         {
-            var sites = polar.GetSites(f => f.HasRequest(VideoRequests.Search));
+            var sites = polarShadow.GetSites(f => f.HasRequest(VideoRequests.Search));
             return new VideoSearcHandler(VideoRequests.Search, videoFilter, sites);
+        }
+
+        public static ISequentialRequest<ICollection<VideoSummary>> CreateVideoDiscoverHandler(this IPolarShadow polarShadow, CancellationToken cancellation= default)
+        {
+            var sites = polarShadow.GetSites(f => f.HasRequest(VideoRequests.Newest));
+            return new VideoDiscoverHandler(VideoRequests.Newest, sites);
         }
 
         public static async Task<VideoDetail> GetDetailAsync(this ISite site, VideoSummary summary, CancellationToken cancellation = default)

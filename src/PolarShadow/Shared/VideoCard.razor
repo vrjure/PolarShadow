@@ -35,7 +35,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (Summary != null)
+        if (Summary != null && !string.IsNullOrEmpty(Summary.ImageSrc))
         {
             if (UseCache)
             {

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -9,20 +11,18 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public abstract class SequentialRequestBase<TInput, TOutput> : ISequentialRequest<TOutput> where TInput : class
+    public abstract class SequentialRequestBase<TOutput> : ISequentialRequest<TOutput>
     {
         private List<ISite> _sites;
         private Queue<ISite> _siteFailedQueue;
-        private int _index = 0;
-        private int _lastIndex = -1;
-        private string _requestName;
+        protected string RequestName;
 
-        protected TInput Input;
-        public SequentialRequestBase(string requestName, TInput input, IEnumerable<ISite> sites)
+        protected int Index = -1;
+
+        public SequentialRequestBase(string requestName, IEnumerable<ISite> sites)
         {
             _sites = new List<ISite>(sites);
-            _requestName = requestName;
-            Input = input;
+            RequestName = requestName;
             Reset();
         }
 
@@ -36,12 +36,11 @@ namespace PolarShadow.Core
         /// </summary>
         public bool AutoSort { get; set; }
 
-        public ISite Current => _index >= 0 && _index < _sites.Count ? _sites[_index] : null;
+        public ISite Current => Index >= 0 && Index < _sites.Count ? _sites[Index] : null;
 
-        public void Reset()
+        public virtual void Reset()
         {
-            _index = 0;
-            _lastIndex = -1;
+            Index = -1;
             if (AutoSort)
             {
                 while (_siteFailedQueue != null && _siteFailedQueue.Count > 0)
@@ -65,37 +64,23 @@ namespace PolarShadow.Core
 
         public async Task SearchNextAsync(Stream stream, CancellationToken cancellation = default)
         {
-            if (_index >= _sites.Count)
+            if (Index >= _sites.Count || cancellation.IsCancellationRequested)
             {
                 return;
             }
 
-            var site = _sites[_index];
-
             try
             {
-                if (_lastIndex < _index)
+                var request = BeforeRequest(stream, cancellation);
+
+                if (request == null)
                 {
-                    _lastIndex = _index;
-                    var request = site.CreateRequestHandler(_requestName);
-                    ResetRequest(Input, request);
-                    
-                    await request.ExecuteAsync(JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation).ConfigureAwait(false);
+                    return;
                 }
-                else
-                {
-                    var request = site.CreateRequestHandler(_requestName);
-                    if (request.TryGetParameter("canPage", out bool canPage) && canPage)
-                    {
-                        NextRequest(Input, request);
-                        await request.ExecuteAsync(JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        _index++;
-                        await SearchNextAsync(stream, cancellation).ConfigureAwait(false);
-                    }
-                }
+
+                await ExecuteAsync(request, stream, cancellation).ConfigureAwait(false);
+
+                await AfterRequest(stream, cancellation);
             }
             catch (Exception ex)
             {
@@ -105,8 +90,8 @@ namespace PolarShadow.Core
                     {
                         _siteFailedQueue = new Queue<ISite>();
                     }
-                    _siteFailedQueue.Enqueue(site);
-                    _sites.RemoveAt(_index);
+                    _siteFailedQueue.Enqueue(Current);
+                    _sites.RemoveAt(Index);
                 }
 
                 if (!IgnoreError)
@@ -114,24 +99,108 @@ namespace PolarShadow.Core
                     throw ex;
                 }
             }
-
-            if (cancellation.IsCancellationRequested)
+            finally
             {
-                return;
+                stream.Seek(0, SeekOrigin.Begin);
             }
 
+        }
+
+        protected virtual Task ExecuteAsync(ISiteRequestHandler request, Stream stream, CancellationToken cancellation)
+        {
+            return request.ExecuteAsync(stream, cancellation);
+        }
+
+        protected virtual ISiteRequestHandler BeforeRequest(Stream stream, CancellationToken cancellation)
+        {
+            Index++;
+            if (Current == null)
+            {
+                return null;
+            }
+            return Current.CreateRequestHandler(RequestName);
+        }
+
+        protected virtual async Task AfterRequest(Stream stream, CancellationToken cancellation)
+        {
             stream.Seek(0, SeekOrigin.Begin);
             if (!HasResult(stream))
             {
-                _index++;
+                Index++;
                 stream.SetLength(0);
                 stream.Seek(0, SeekOrigin.Begin);
                 await SearchNextAsync(stream, cancellation);
+                return;
             }
-
             stream.Seek(0, SeekOrigin.Begin);
         }
 
+        /// <summary>
+        /// 判断本次请求结果是否有效
+        /// false 则马上请求下一个站点
+        /// true 不处理正常返回结果
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        protected abstract bool HasResult(Stream stream);
+    }
+
+    public abstract class SequentialRequestBase<TInput, TOutput> : SequentialRequestBase<TOutput> where TInput : class
+    {
+        private int _lastIndex = -2;
+
+        protected TInput Input;
+        public SequentialRequestBase(string requestName, TInput input, IEnumerable<ISite> sites) : base(requestName, sites)
+        {
+            Input = input;
+            Reset();
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            _lastIndex = -2;
+        }
+
+        protected override ISiteRequestHandler BeforeRequest(Stream stream, CancellationToken cancellation)
+        {
+            if (_lastIndex < Index)
+            {
+                Index++;
+                _lastIndex = Index;
+                var request = Current.CreateRequestHandler(RequestName);
+                ResetRequest(Input, request);
+                return request;
+            }
+            else
+            {
+                var request = Current.CreateRequestHandler(RequestName);
+                if (request.TryGetParameter("canPage", out bool canPage) && canPage)
+                {
+                    NextRequest(Input, request);
+                    return request;
+                }
+                else
+                {
+                    Index++;
+                    _lastIndex = Index;
+                    if (Current == null)
+                    {
+                        return default;
+                    }
+                    var nextRequest = Current.CreateRequestHandler(RequestName);
+                    ResetRequest(Input, nextRequest);
+                    return nextRequest;
+                }
+            }
+        }
+
+        protected override Task ExecuteAsync(ISiteRequestHandler request, Stream stream, CancellationToken cancellation)
+        {
+            return request.ExecuteAsync(JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation);
+        }
+
+       
         /// <summary>
         /// 重置请求参数
         /// Reset或首次请求站点时调用
@@ -143,13 +212,5 @@ namespace PolarShadow.Core
         /// </summary>
         /// <param name="input"></param>
         protected abstract void NextRequest(TInput input, ISiteRequestHandler site);
-        /// <summary>
-        /// 判断本次请求结果是否有效
-        /// false 则马上请求下一个站点
-        /// true 不处理正常返回结果
-        /// </summary>
-        /// <param name="stream"></param>
-        /// <returns></returns>
-        protected abstract bool HasResult(Stream stream);
     }
 }

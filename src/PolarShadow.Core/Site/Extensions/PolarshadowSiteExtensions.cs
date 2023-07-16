@@ -72,6 +72,7 @@ namespace PolarShadow.Core
         public static async Task<TResponse> ExecuteAsync<TRequest, TResponse>(this ISite site, string name, TRequest request, CancellationToken cancellation = default)
         {
             var handler = site.CreateRequestHandler(name);
+            if (handler == null) return default;
             var input = JsonSerializer.Serialize(request, JsonOption.DefaultSerializer);
             using var ms = new MemoryStream();
             await handler.ExecuteAsync(input, ms, cancellation).ConfigureAwait(false);
@@ -82,6 +83,7 @@ namespace PolarShadow.Core
         public static async Task<string> ExecuteAsync(this ISite site, string name, string input, CancellationToken cancellation = default)
         {
             var handler = site.CreateRequestHandler(name);
+            if (handler == null) return default;
             using var ms = new MemoryStream();
             await handler.ExecuteAsync(input, ms, cancellation).ConfigureAwait(false);
             using var sr = new StreamReader(ms);
@@ -92,6 +94,7 @@ namespace PolarShadow.Core
         public static async Task<string> ExecuteAsync(this ISite site, string name, CancellationToken cancellation = default)
         {
             var handler = site.CreateRequestHandler(name);
+            if (handler == null) return default;
             using var ms = new MemoryStream();
             await handler.ExecuteAsync(ms, cancellation).ConfigureAwait(false);
             using var sr = new StreamReader(ms);
