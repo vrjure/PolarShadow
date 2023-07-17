@@ -44,9 +44,7 @@ namespace PolarShadow
             builder.Services.AddScoped<IHttpFileResource, HttpFileResource>();
             builder.Services.AddScoped<IHttpResource, HttpResource>();
 
-            var polarShadow = CreatePolarShadowBuilder().Build();
-            polarShadow.ReadFromFile();
-            builder.Services.AddSingleton(polarShadow);
+            builder.Services.AddSingleton(CreatePolarShadowBuilder().Build());
 
             builder.Services.AddDbContextFactory<PolarShadowDbContext>(options =>
             {
@@ -74,6 +72,9 @@ namespace PolarShadow
             {
                 context.Database.Migrate();
             }
+
+            var polarShadow = app.Services.GetRequiredService<IPolarShadow>();
+            polarShadow.ReadFromFile();
             return app;
         }
     }

@@ -1,5 +1,5 @@
 ﻿@page "/discover"
-@layout TopLevelLayout
+@layout MainLayout
 @inject INavigationService _nav
 @inject IPolarShadow _polarShadow
 @inject IStateContext _stateContext;
@@ -90,6 +90,7 @@
             }
             _hasMore = true;
             _source = new List<VideoSummary>(result);
+            _stateContext.Set(_lastResultKey, _source);
         }
         finally
         {
@@ -144,9 +145,6 @@
         _nav.NavigateTo("/detail", new Dictionary<string, object>
         {
             { DetailPage._summaryKey, summary}
-        }, new Dictionary<string, object>
-        {
-            { _lastResultKey, _source }
         }, true);
     }
 

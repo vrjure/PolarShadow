@@ -126,7 +126,6 @@ namespace PolarShadow.Core
             stream.Seek(0, SeekOrigin.Begin);
             if (!HasResult(stream))
             {
-                Index++;
                 stream.SetLength(0);
                 stream.Seek(0, SeekOrigin.Begin);
                 await SearchNextAsync(stream, cancellation);
@@ -168,6 +167,10 @@ namespace PolarShadow.Core
             {
                 Index++;
                 _lastIndex = Index;
+                if (Current == null)
+                {
+                    return null;
+                }
                 var request = Current.CreateRequestHandler(RequestName);
                 ResetRequest(Input, request);
                 return request;
