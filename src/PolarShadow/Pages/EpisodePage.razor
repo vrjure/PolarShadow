@@ -121,7 +121,7 @@
                         var result = await _aria2.PostAsync(request);
                         if (result.IsOk())
                         {
-                            await _message.Info("发送成功");
+                            await _message.Info($"{_videoName} Start");
                         }
                         else if (result.IsError())
                         {

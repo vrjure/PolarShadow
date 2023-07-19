@@ -29,6 +29,7 @@ namespace PolarShadow
 
         private static MauiAppBuilder ConfigureServices(this MauiAppBuilder builder)
         {
+            builder.Services.AddSingleton<MainPage>();
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
@@ -44,7 +45,7 @@ namespace PolarShadow
             builder.Services.AddScoped<IHttpFileResource, HttpFileResource>();
             builder.Services.AddScoped<IHttpResource, HttpResource>();
 
-            builder.Services.AddSingleton(CreatePolarShadowBuilder().Build());
+            AddPolarShadow(builder.Services);
 
             builder.Services.AddDbContextFactory<PolarShadowDbContext>(options =>
             {
@@ -57,12 +58,18 @@ namespace PolarShadow
             return builder;
         }
 
-        private static IPolarShadowBuilder CreatePolarShadowBuilder()
+        private static void AddPolarShadow(IServiceCollection services)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var builder = new PolarShadowBuilder();
             builder.ConfigureDefault().AddWebAnalysisItem();
-            return builder;
+            var webViewHandler = new WebViewHandler();
+            builder.WebViewHandler = webViewHandler;
+
+            var polarShadow = builder.Build();
+
+            services.AddSingleton<IWebViewRequestHandler>(webViewHandler);
+            services.AddSingleton(polarShadow);
         }
 
         private static MauiApp InitializeApp(this MauiApp app)

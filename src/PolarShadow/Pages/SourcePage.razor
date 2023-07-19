@@ -66,10 +66,19 @@
 
     private async Task ItemClick(MenuItem item)
     {
-        if (item.Id == "import")
+        try
         {
-            await Import();
+            if (item.Id == "import")
+            {
+                await Import();
+                await _msg.Info("Success");
+            }
         }
+        catch (Exception ex)
+        {
+            await _msg.Error(ex.Message);
+        }
+
     }
 
     private async Task Import()

@@ -45,17 +45,22 @@ namespace PolarShadow.Core
         public IEnumerable<KeyValuePair<string, ISiteRequest>> Requests => _requests.AsEnumerable();
 
         [JsonIgnore]
-        internal IRequestHandler RequestHandlerInternal { get; set; }
+        internal IRequestHandler HttpRequestHandlerInternal { get; set; }
+        [JsonIgnore]
+        internal IRequestHandler WebViewRequestHandlerInteral { get; set; }
         [JsonIgnore]
         internal IParameterCollection ParametersInternal { get; set; }
 
         public ISiteRequestHandler CreateRequestHandler(string requestName)
         {
             if (_requests == null) return null;
-            if (RequestHandlerInternal == null) throw new InvalidOperationException("RequestHandler not be set");
+            var requestHandler = HttpRequestHandlerInternal;
+            if(UseWebView) requestHandler = WebViewRequestHandlerInteral;
+
+            if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
             if (_requests.TryGetValue(requestName, out ISiteRequest request))
             {
-                return new SiteRequestHandler(RequestHandlerInternal, request, ParametersInternal);
+                return new SiteRequestHandler(requestHandler, request, ParametersInternal);
             }
             return null;
         }

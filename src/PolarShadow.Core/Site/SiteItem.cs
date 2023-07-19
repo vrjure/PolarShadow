@@ -80,14 +80,9 @@ namespace PolarShadow.Core
             }
             site.ParametersInternal = p;
 
-            if (site.UseWebView)
-            {
-                site.RequestHandlerInternal = _webViewHandler;
-            }
-            else
-            {
-                site.RequestHandlerInternal = _httpHandler;
-            }
+            site.HttpRequestHandlerInternal = _httpHandler;
+            site.WebViewRequestHandlerInteral = _webViewHandler;
+
             return site;
         }
 
