@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.Json;
@@ -15,8 +16,8 @@ namespace PolarShadow.Core
     {
         private List<ISite> _sites;
         private Queue<ISite> _siteFailedQueue;
-        protected string RequestName;
 
+        protected string RequestName;
         protected int Index = -1;
 
         public SequentialRequestBase(string requestName, IEnumerable<ISite> sites)
@@ -69,15 +70,10 @@ namespace PolarShadow.Core
                 return;
             }
 
+            var request = BeforeRequest(stream, cancellation);
+            if (request == null) return;
             try
             {
-                var request = BeforeRequest(stream, cancellation);
-
-                if (request == null)
-                {
-                    return;
-                }
-
                 await ExecuteAsync(request, stream, cancellation).ConfigureAwait(false);
 
                 await AfterRequest(stream, cancellation);
@@ -86,12 +82,15 @@ namespace PolarShadow.Core
             {
                 if (AutoSort)
                 {
-                    if (_siteFailedQueue == null)
+                    if (Current != null)
                     {
-                        _siteFailedQueue = new Queue<ISite>();
-                    }
-                    _siteFailedQueue.Enqueue(Current);
-                    _sites.RemoveAt(Index);
+                        if (_siteFailedQueue == null)
+                        {
+                            _siteFailedQueue = new Queue<ISite>();
+                        }
+                        _siteFailedQueue.Enqueue(Current);
+                        _sites.RemoveAt(Index);
+                    }          
                 }
 
                 if (!IgnoreError)
@@ -129,9 +128,7 @@ namespace PolarShadow.Core
                 stream.SetLength(0);
                 stream.Seek(0, SeekOrigin.Begin);
                 await SearchNextAsync(stream, cancellation);
-                return;
             }
-            stream.Seek(0, SeekOrigin.Begin);
         }
 
         /// <summary>

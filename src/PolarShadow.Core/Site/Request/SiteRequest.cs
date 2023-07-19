@@ -12,6 +12,8 @@ namespace PolarShadow.Core
         public AnalysisResponse Response { get; set; }
         public IKeyValueParameter Parameter { get; set; }
 
+        public bool? UseWebView { get; set; }
+
         public void Write(Utf8JsonWriter writer)
         {
             JsonSerializer.Serialize(writer, this, JsonOption.DefaultSerializer);

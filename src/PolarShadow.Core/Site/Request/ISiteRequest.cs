@@ -7,6 +7,7 @@ namespace PolarShadow.Core
 {
     public interface ISiteRequest
     {
+        public bool? UseWebView { get; }
         public AnalysisRequest Request { get;}
         public AnalysisResponse Response { get;}
         public IKeyValueParameter Parameter { get; }

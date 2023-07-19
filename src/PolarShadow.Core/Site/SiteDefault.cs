@@ -54,12 +54,20 @@ namespace PolarShadow.Core
         public ISiteRequestHandler CreateRequestHandler(string requestName)
         {
             if (_requests == null) return null;
-            var requestHandler = HttpRequestHandlerInternal;
-            if(UseWebView) requestHandler = WebViewRequestHandlerInteral;
 
-            if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
+            var requestHandler = HttpRequestHandlerInternal;
             if (_requests.TryGetValue(requestName, out ISiteRequest request))
             {
+                if (request.UseWebView.HasValue)
+                {
+                    requestHandler = request.UseWebView.Value ? WebViewRequestHandlerInteral : requestHandler;
+                }
+                else if (UseWebView)
+                {
+                    requestHandler = WebViewRequestHandlerInteral;
+                }
+
+                if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
                 return new SiteRequestHandler(requestHandler, request, ParametersInternal);
             }
             return null;

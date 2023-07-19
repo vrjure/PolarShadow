@@ -23,16 +23,12 @@
         {
             <Space Style="width:100%" Direction="DirectionVHType.Vertical" Align="center">
                 <SpaceItem>
-                    <Card Bordered="false" BodyStyle="padding:0px">
-                        <Cover>
-                            <img src="@_imageUrl" alt="img" style="width:200px" @onload="ImageOnLoad" />
-                        </Cover>
-                        <ChildContent>
-                            <div style="height:45px">
-                                <Text Strong Class="text-auto-hidden">@_detail.Name</Text>
-                            </div>
-                        </ChildContent>
-                        </Card>
+                    <img src="@_imageUrl" alt="img" style="width:200px" @onload="ImageOnLoad" />
+                </SpaceItem>
+                <SpaceItem>
+                    <div style="height:45px">
+                        <Text Strong Class="text-auto-hidden">@_detail.Name</Text>
+                    </div>
                 </SpaceItem>
             </Space>
             <Space Direction="DirectionVHType.Vertical" Align="left">
