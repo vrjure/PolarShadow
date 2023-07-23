@@ -61,6 +61,25 @@ namespace PolarShadow.Core
             }
         }
 
+        public void ReadFrom(string json)
+        {
+            var source = new JsonStringSource { Json = json };
+            Load(source, true);
+        }
+
+        private void BuildParameters(IPolarShadowProvider provider)
+        {
+            if (provider.Root.TryGetProperty("parameters", out JsonElement value))
+            {
+                _configPrameter.Add(value);
+            }
+        }
+
+        public void LoadFrom(IPolarShadowSource source)
+        {
+            Load(source, true);
+        }
+
         public void WriteTo(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
@@ -81,18 +100,11 @@ namespace PolarShadow.Core
 
             foreach (var item in _items)
             {
+                writer.WritePropertyName(item.Name);
                 item.WriteTo(writer);
             }
 
             writer.WriteEndObject();
-        }
-
-        private void BuildParameters(IPolarShadowProvider provider)
-        {
-            if (provider.TryGet("parameters", out JsonElement value))
-            {
-                _configPrameter.Add(value);
-            }
         }
     }
 }

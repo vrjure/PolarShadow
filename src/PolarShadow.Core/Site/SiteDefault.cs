@@ -11,38 +11,12 @@ namespace PolarShadow.Core
 {
     internal class SiteDefault : ISite
     {
-        [JsonIgnore]
-        public ISiteRequest this[string requestName]
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(requestName)
-                    || _requests == null
-                    || !_requests.ContainsKey(requestName))
-                    return null;
-
-                return _requests[requestName];
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(requestName)) return;
-                _requests ??= new Dictionary<string, ISiteRequest>();
-                _requests[requestName] = value;
-            }
-        }
-
         [JsonRequired]
         public string Name { get; set; }
-
         public string Domain { get; set; }
         public bool UseWebView { get; set; }
         public IKeyValueParameter Parameters { get; set; }
-
-        [JsonPropertyName("requests")]
-        public Dictionary<string, ISiteRequest> _requests { get; set; }
-
-        [JsonIgnore]
-        public IEnumerable<KeyValuePair<string, ISiteRequest>> Requests => _requests.AsEnumerable();
+        public IDictionary<string, ISiteRequest> Requests { get; set; }
 
         [JsonIgnore]
         internal IRequestHandler HttpRequestHandlerInternal { get; set; }
@@ -53,10 +27,10 @@ namespace PolarShadow.Core
 
         public ISiteRequestHandler CreateRequestHandler(string requestName)
         {
-            if (_requests == null) return null;
+            if (Requests == null) return null;
 
             var requestHandler = HttpRequestHandlerInternal;
-            if (_requests.TryGetValue(requestName, out ISiteRequest request))
+            if (Requests.TryGetValue(requestName, out ISiteRequest request))
             {
                 if (request.UseWebView.HasValue)
                 {
@@ -73,9 +47,23 @@ namespace PolarShadow.Core
             return null;
         }
 
-        public void Remove(string requestName)
+        public void LoadFrom(IPolarShadowSource source)
         {
-            _requests?.Remove(requestName);
+            var provider = source.Build(null);
+            if (provider != null || provider.Root.ValueKind == JsonValueKind.Undefined) return;
+
+            var site = JsonSerializer.Deserialize<SiteDefault>(provider.Root, JsonOption.DefaultSerializer);
+            Apply(site);
+
+        }
+
+        private void Apply(SiteDefault site)
+        {
+            this.Name = site.Name;
+            this.Domain = site.Domain;
+            this.UseWebView = site.UseWebView;
+            this.Parameters = site.Parameters;
+            this.Requests = site.Requests;
         }
 
         public void WriteTo(Utf8JsonWriter writer)

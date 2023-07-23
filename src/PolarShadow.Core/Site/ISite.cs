@@ -9,16 +9,13 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public interface ISite
+    public interface ISite : IWriterJson
     {
         string Name { get; set; }
         string Domain { get; set; }
         bool UseWebView { get; set; }
         IKeyValueParameter Parameters { get; set; }
-        ISiteRequest this[string requestName] { get; set; }
-        IEnumerable<KeyValuePair<string, ISiteRequest>> Requests { get; }
-        void Remove(string requestName);
+        IDictionary<string, ISiteRequest> Requests { get; }
         ISiteRequestHandler CreateRequestHandler(string requestName);
-        void WriteTo(Utf8JsonWriter writer);
     }
 }

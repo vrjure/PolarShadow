@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -31,16 +32,6 @@ namespace PolarShadow.Core
 
         public IEnumerable<ISite> Sites => _sites.Values;
 
-        public void WriteTo(Utf8JsonWriter writer)
-        {
-            writer.WriteStartArray(SitesName);
-            foreach (var site in Sites)
-            {
-                site.WriteTo(writer);
-            }
-            writer.WriteEndArray();
-        }
-
         public void Load(IPolarShadowProvider provider, bool reLoad = false)
         {
             if (reLoad)
@@ -48,11 +39,15 @@ namespace PolarShadow.Core
                 _sites.Clear();
             }
 
-            if (!provider.TryGet(SitesName, out JsonElement sitesValue))
+            if (!provider.Root.TryGetProperty(SitesName, out JsonElement sitesValue))
             {
                 return;
             }
+            BuildSites(sitesValue);
+        }
 
+        private void BuildSites(JsonElement sitesValue)
+        {
             if (sitesValue.ValueKind != JsonValueKind.Array)
             {
                 return;
@@ -89,6 +84,29 @@ namespace PolarShadow.Core
         public void Remove(string name)
         {
             _sites.Remove(name);
+        }
+
+        public void WriteTo(Utf8JsonWriter writer)
+        {
+            writer.WriteStartArray();
+            foreach (var site in Sites)
+            {
+                site.WriteTo(writer);
+            }
+            writer.WriteEndArray();
+        }
+
+        public void LoadFrom(IPolarShadowSource source)
+        {
+            var provider = source.Build(null);
+            provider.Load();
+            _sites.Clear();
+            if (provider.Root.ValueKind != JsonValueKind.Array)
+            {
+                return;
+            }
+
+            BuildSites(provider.Root);
         }
     }
 }

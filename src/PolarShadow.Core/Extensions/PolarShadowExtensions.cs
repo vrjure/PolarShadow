@@ -57,14 +57,14 @@ namespace PolarShadow.Core
             return item.TryGetSite(siteName, out site);
         }
 
-        public static IPolarShadow AddSite(this IPolarShadow polarShadow, string siteName, Action<ISite> siteBuilder)
+        public static IPolarShadow AddOrUpdateSite(this IPolarShadow polarShadow, string siteName, Action<ISite> siteBuilder)
         {
             var siteItem = polarShadow.GetItem<ISiteItem>();
             if (siteItem == null)
             {
                 throw new ArgumentException("ISiteItem not exist");
             }
-            siteItem.AddSite(siteName, siteBuilder);
+            siteItem.AddOrUpdateSite(siteName, siteBuilder);
 
             return polarShadow;
         }

@@ -21,36 +21,34 @@ namespace PolarShadow.Core
             return site != null;
         }
 
-        public static ISiteItem AddSite(this ISiteItem item, string siteName, Action<ISite> siteBuilder)
+        public static ISiteItem AddOrUpdateSite(this ISiteItem item, string siteName, Action<ISite> siteBuilder)
         {
             if (string.IsNullOrEmpty(siteName) || string.IsNullOrWhiteSpace(siteName))
             {
                 throw new ArgumentException("site name must be set", nameof(siteName));
             }
-            if (HasSite(item, siteName))
-            {
-                throw new ArgumentException($"{siteName} exist");
-            }
 
-            var site = new SiteDefault();
+            if (!item.TryGetSite(siteName, out ISite site))
+            {
+                site = new SiteDefault();
+            }
             siteBuilder(site);
             item[siteName] = site;
-
             return item;
         }
 
         public static bool HasRequest(this ISite site, string requestName)
         {
-            return site[requestName] != null;
+            return site.Requests[requestName] != null;
         }
 
         public static bool TryGetRequest(this ISite site, string requestName, out ISiteRequest request)
         {
-            request = site[requestName];
+            request = site.Requests[requestName];
             return request != null;
         }
 
-        public static ISite AddRequest(this ISite site, string requestName, Action<ISiteRequest> requestBuilder)
+        public static ISite AddOrUpdateRequest(this ISite site, string requestName, Action<ISiteRequest> requestBuilder)
         {
             if (string.IsNullOrEmpty(requestName) || string.IsNullOrWhiteSpace(requestName))
             {
@@ -65,8 +63,20 @@ namespace PolarShadow.Core
             var request = new SiteRequest();
             requestBuilder(request);
 
-            site[requestName] = request;
+            site.Requests[requestName] = request;
             return site;
+        }
+
+        public static string GetRequestJson(this ISiteRequest request, JsonWriterOptions options = default)
+        {
+            using var ms = new MemoryStream();
+            using var jsonWriter = new Utf8JsonWriter(ms, options);
+            request.WriteTo(jsonWriter);
+            jsonWriter.Flush();
+            ms.Seek(0, SeekOrigin.Begin);
+
+            using var sr = new StreamReader(ms);
+            return sr.ReadToEnd();
         }
 
         public static async Task<TResponse> ExecuteAsync<TRequest, TResponse>(this ISite site, string name, TRequest request, CancellationToken cancellation = default)

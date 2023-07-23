@@ -1,6 +1,8 @@
 ﻿@page "/source/detail"
 @layout TopLevelLayout
 @inject INavigationService _nav
+@inject IStateContext _context
+@inject IPolarShadow _polarShadow
 
 <Layout>
     <Header>
@@ -9,27 +11,48 @@
             <Icon Type="left" Theme="outline" OnClick="()=>_nav.Back()" Class="cursor-point-style menu-icon" />
         }
     </Header>
-    <Content>
-        <Space Size="@("16")" Direction="DirectionVHType.Vertical" Align="left">
-            <SpaceItem>
-                <Title Level="4">名称</Title>
-                <Input @bind-Value="_name"/>
-            </SpaceItem>
-            <SpaceItem>
-                <Title Level="4">域名</Title>
-                <Input @bind-Value="_domin"/>
-            </SpaceItem>
-            <SpaceItem>
-                <Title Level="4">能力</Title>
-                <Tabs>
+    <Content Class="scroll-content">
+        @if (_site != null)
+        {
+            <Space Size="@("16")" Direction="DirectionVHType.Vertical" Align="left" Style="width:100%">
+                <SpaceItem>
+                    <Title Level="4">名称</Title>
+                    <Input @bind-Value="_site.Name"/>
+                </SpaceItem>
+                <SpaceItem>
+                    <Title Level="4">域名</Title>
+                    <Input @bind-Value="_site.Domain"/>
+                </SpaceItem>
+                <SpaceItem>
+                    <Title Level="4">请求</Title>
+                    <Tabs>
+                        @if (_site.Requests != null && _site.Requests.Count > 0)
+                        {
+                            @foreach (var item in _site.Requests)
+                            {
+                                <TabPane Tab="@item.Key" Key="@item.Key">
+                                    <TextArea Value="@item.Value.GetRequestJson(JsonOption.FormatWriteOption)" AutoSize="true" />
+                                </TabPane>
+                            }
+                        }
 
-                </Tabs>
-            </SpaceItem>
-        </Space>
+                    </Tabs>
+                </SpaceItem>
+            </Space>
+        } 
     </Content>
 </Layout>
 
 @code {
-    private string _name;
-    private string _domin;
+    private ISite _site;
+
+    public static string Site = "source_detail_site_name";
+
+    protected override void OnInitialized()
+    {
+        if (_context.TryGet(Site, out object s) && s is ISite site)
+        {
+            _site = site;
+        }
+    }
 }

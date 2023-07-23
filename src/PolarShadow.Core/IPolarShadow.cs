@@ -9,10 +9,9 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public interface IPolarShadow
+    public interface IPolarShadow : IWriterJson
     {
         IEnumerable<IPolarShadowItem> Items { get; }
         void Load(IPolarShadowSource source, bool reLoad = false);
-        void WriteTo(Utf8JsonWriter writer);
     }
 }

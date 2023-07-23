@@ -27,11 +27,18 @@ namespace PolarShadow.Videos
                 _source.Clear();
             }
 
-            if (!provider.TryGet(Name, out JsonElement value)
+            if (!provider.Root.TryGetProperty(Name, out JsonElement value)
                 || value.ValueKind != JsonValueKind.Array)
             {
                 return;
             }
+
+            BuildItem(value);
+        }
+
+        private void BuildItem(JsonElement value)
+        {
+            if (value.ValueKind != JsonValueKind.Array) return;
 
             var list = JsonSerializer.Deserialize<ICollection<WebAnalysisSource>>(value, JsonOption.DefaultSerializer);
             if (list == null) return;
@@ -41,6 +48,14 @@ namespace PolarShadow.Videos
             }
         }
 
+        public void LoadFrom(IPolarShadowSource source)
+        {
+            var provider = source.Build(default);
+            _source.Clear();
+            if(provider == null) return;
+            BuildItem(provider.Root);
+        }
+
         public void Remove(string name)
         {
             _source.Remove(name);
@@ -48,7 +63,6 @@ namespace PolarShadow.Videos
 
         public void WriteTo(Utf8JsonWriter writer)
         {
-            writer.WritePropertyName(Name);
             JsonSerializer.Serialize(writer, Sources, JsonOption.DefaultSerializer);
         }
     }

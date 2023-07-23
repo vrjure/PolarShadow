@@ -15,7 +15,7 @@ namespace PolarShadow.Core
 
         public override void Write(Utf8JsonWriter writer, ISiteRequest value, JsonSerializerOptions options)
         {
-            value.Write(writer);
+            value.WriteTo(writer);
         }
     }
 }

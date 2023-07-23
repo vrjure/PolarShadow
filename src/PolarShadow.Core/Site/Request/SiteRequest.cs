@@ -14,7 +14,15 @@ namespace PolarShadow.Core
 
         public bool? UseWebView { get; set; }
 
-        public void Write(Utf8JsonWriter writer)
+        public void LoadFrom(IPolarShadowSource source)
+        {
+            var provider = source.Build(null);
+            if (provider != null || provider.Root.ValueKind != JsonValueKind.Object) return;
+
+
+        }
+
+        public void WriteTo(Utf8JsonWriter writer)
         {
             JsonSerializer.Serialize(writer, this, JsonOption.DefaultSerializer);
         }

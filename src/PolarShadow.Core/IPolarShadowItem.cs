@@ -6,10 +6,9 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public interface IPolarShadowItem
+    public interface IPolarShadowItem : IWriterJson
     {
         string Name { get; }
         void Load(IPolarShadowProvider provider, bool reload = false);
-        void WriteTo(Utf8JsonWriter writer);
     }
 }

@@ -26,7 +26,7 @@
     </Header>
     <Content>
         <AntList TItem="ISite" DataSource="_source">
-            <ListItem Class="list-item">
+            <ListItem Class="list-item" OnClick="()=>SourceItemClick(context)">
                 <span>@(context.Name)</span>
                 <Icon Type="right" Theme="outline" Class="menu-icon" />
 
@@ -103,5 +103,14 @@
         {
             await _msg.Error(ex.Message);
         }
+    }
+
+    private void SourceItemClick(ISite site)
+    {
+        _nav.NavigateTo("/source/detail", new Dictionary<string, object>
+        {
+            { SourceDetail.Site, site }
+        }
+        , true);
     }
 }

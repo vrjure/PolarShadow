@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public interface IPolarShadowProvider
+    public interface IWriterJson
     {
-        JsonElement Root { get; }
-        void Load();
+        void WriteTo(Utf8JsonWriter writer);
+        void LoadFrom(IPolarShadowSource source);
     }
 }

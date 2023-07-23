@@ -9,21 +9,13 @@ namespace PolarShadow.Core
     {
         private JsonElement _root;
 
+        public JsonElement Root => _root;
+
         public void Load()
         {
             _root = Parse();
         }
 
         protected abstract JsonElement Parse();
-
-        public bool TryGet(string name, out JsonElement value)
-        {
-            if (_root.ValueKind == JsonValueKind.Undefined)
-            {
-                value = default;
-                return false;
-            }
-            return _root.TryGetProperty(name, out value);
-        }
     }
 }
