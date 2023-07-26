@@ -10,11 +10,15 @@ namespace PolarShadow.Core
 {
     internal class SiteRequestHandler : ISiteRequestHandler
     {
+        private readonly ISite _site;
         private readonly IRequestHandler _handler;
         private readonly ISiteRequest _request;
-        private readonly Parameters _parameters;
-        public SiteRequestHandler(IRequestHandler requesthandler, ISiteRequest request, IParameter parameter)
+        private readonly IParameterCollection _parameters;
+        private readonly IContentBuilder _requestBuilder;
+        private readonly IContentBuilder _responseBuilder;
+        public SiteRequestHandler(ISite site, IRequestHandler requesthandler, ISiteRequest request, IParameter parameter, IContentBuilder requestBuilder, IContentBuilder responseBuilder)
         {
+            _site = site;
             _handler = requesthandler;
             _request = request;
             _parameters = new Parameters(parameter);
@@ -22,11 +26,9 @@ namespace PolarShadow.Core
             {
                 _parameters.Add(request.Parameter);
             }
-        }
 
-        public async Task ExecuteAsync(Stream stream, CancellationToken cancellation = default)
-        {
-            await ExecuteAsync(default, stream, cancellation);
+            _requestBuilder = requestBuilder;
+            _responseBuilder = responseBuilder;
         }
 
         public async Task ExecuteAsync(string input, Stream stream, CancellationToken cancellation = default)
@@ -38,7 +40,7 @@ namespace PolarShadow.Core
                 var objectParameter = new ObjectParameter(new ParameterValue(doc.RootElement.Clone()));
                 p.Add(objectParameter);
             }
-            await _handler.ExecuteAsync(stream, _request.Request, _request.Response, p, cancellation);
+            await _handler.ExecuteAsync(stream, _request.Request, _request.Response, _requestBuilder, _responseBuilder, p, cancellation);
         }
 
         public bool TryGetParameter<T>(string name, out T value)

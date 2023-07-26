@@ -31,7 +31,7 @@
                             @foreach (var item in _site.Requests)
                             {
                                 <TabPane Tab="@item.Key" Key="@item.Key">
-                                    <TextArea Value="@item.Value.GetRequestJson(JsonOption.FormatWriteOption)" AutoSize="true" />
+                                    <TextArea Value="@item.Value.GetRequestJson(JsonOption.FormatWriteOption)" AutoSize="true" spellcheck="false" />
                                 </TabPane>
                             }
                         }

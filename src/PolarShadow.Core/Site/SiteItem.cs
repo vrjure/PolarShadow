@@ -11,15 +11,24 @@ namespace PolarShadow.Core
     internal class SiteItem : ISiteItem
     {
         public static readonly string SitesName = "sites";
-        private readonly IRequestHandler _httpHandler;
-        private readonly IRequestHandler _webViewHandler;
-        private readonly IParameter _globalParameter;
+
+        internal static IContentBuilder _requestBuilder = new ContentBuilder();
+        internal static IContentBuilder _responseBulder = new ContentBuilder();
+
+        internal readonly IRequestHandler _httpHandler;
+        internal readonly IRequestHandler _webViewHandler;
+        internal readonly IParameter _globalParameter;
+        internal readonly IDictionary<string, IContentBuilder> _requestsBuilders;
+        internal readonly IDictionary<string, IContentBuilder> _responseBuilders;
+
         private readonly Dictionary<string, ISite> _sites = new Dictionary<string, ISite>(StringComparer.OrdinalIgnoreCase);
-        public SiteItem(IRequestHandler httpHandler, IRequestHandler webViewHandler, IParameter globalParameters)
+        public SiteItem(IRequestHandler httpHandler, IRequestHandler webViewHandler, IParameter globalParameters, IDictionary<string, IContentBuilder> requestBuilders, IDictionary<string, IContentBuilder> responseBuilders)
         {
             _httpHandler = httpHandler;
             _webViewHandler = webViewHandler;
             _globalParameter = globalParameters;
+            _requestsBuilders = requestBuilders ?? new Dictionary<string, IContentBuilder>();
+            _responseBuilders = responseBuilders ?? new Dictionary<string, IContentBuilder>();
         }
 
         public string Name => SitesName;
@@ -74,10 +83,7 @@ namespace PolarShadow.Core
                 p.Add(site.Parameters);
             }
             site.ParametersInternal = p;
-
-            site.HttpRequestHandlerInternal = _httpHandler;
-            site.WebViewRequestHandlerInteral = _webViewHandler;
-
+            site.Item = this;
             return site;
         }
 

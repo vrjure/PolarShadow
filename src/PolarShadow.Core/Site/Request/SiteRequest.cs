@@ -18,8 +18,12 @@ namespace PolarShadow.Core
         {
             var provider = source.Build(null);
             if (provider != null || provider.Root.ValueKind != JsonValueKind.Object) return;
+            var request = JsonSerializer.Deserialize<SiteRequest>(provider.Root, JsonOption.DefaultSerializer);
 
-
+            this.Request = request.Request;
+            this.Response = request.Response;
+            this.Parameter = request.Parameter;
+            this.UseWebView = request.UseWebView;
         }
 
         public void WriteTo(Utf8JsonWriter writer)

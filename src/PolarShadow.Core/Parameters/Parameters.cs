@@ -33,18 +33,7 @@ namespace PolarShadow.Core
         public IParameter this[int index]
         {
             get => _parameters[index];
-            set 
-            {
-                if (index > Count)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index));
-                }
-                else if (index == Count)
-                {
-                    _parameters.Add(value);
-                }
-                _parameters[index] = value;
-            }
+            set => _parameters[index] = value;
         }
 
         public int Count => _parameters.Count;

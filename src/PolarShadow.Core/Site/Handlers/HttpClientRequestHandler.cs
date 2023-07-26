@@ -18,16 +18,16 @@ namespace PolarShadow.Core
         private static readonly string _textHtml = "text/html";
         private static readonly string _userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62";
 
-        public async Task ExecuteAsync(Stream stream, AnalysisRequest request, AnalysisResponse response, IParameter input, CancellationToken cancellation = default)
+        public async Task ExecuteAsync(Stream output, AnalysisRequest request, AnalysisResponse response, IContentBuilder requestBuilder, IContentBuilder responseBuilder, IParameter parameter, CancellationToken cancellation = default)
         {
             if (request == null || response == null)
             {
                 return;
             }
-            await HandleValueAsync(input, stream, request, response, cancellation);
+            await HandleValueAsync(output, request, response, requestBuilder, responseBuilder, parameter, cancellation);
         }
 
-        private async Task HandleValueAsync(IParameter input, Stream stream, AnalysisRequest request, AnalysisResponse response, CancellationToken cancellation)
+        private async Task HandleValueAsync(Stream output, AnalysisRequest request, AnalysisResponse response, IContentBuilder requestBuilder, IContentBuilder responseBuilder, IParameter parameter, CancellationToken cancellation)
         {
             if (request == null || response == null 
                 || string.IsNullOrEmpty(request.Url))
@@ -35,7 +35,7 @@ namespace PolarShadow.Core
                 return;
             }
 
-            var url = request.Url.Format(input);
+            var url = request.Url.Format(parameter);
             using var client = new HttpClient();
 
             if (!client.DefaultRequestHeaders.Contains("User-Agent"))
@@ -61,7 +61,8 @@ namespace PolarShadow.Core
             using var ms = new MemoryStream();
             if (request.Body.HasValue)
             {
-                request.Body.Value.BuildContent(ms, input, input);
+                requestBuilder?.BuildContent(ms, request.Body.Value, parameter);
+                ms.Seek(0, SeekOrigin.Begin);
                 requestMsg.Content = new StreamContent(ms);
             }
 
@@ -70,11 +71,11 @@ namespace PolarShadow.Core
 
             var contentType = responseMsg.Content.Headers.ContentType;
             var content = await responseMsg.Content.ReadAsStreamAsync();
-            var newInput = new Parameters(input);
+            var inputContent = new Parameters(parameter);
             if (contentType.MediaType.Equals(_applicationjson, StringComparison.OrdinalIgnoreCase))
             {
                 using var doc = JsonDocument.Parse(content);
-                newInput.Add(new ObjectParameter(new ParameterValue(doc.RootElement.Clone())));
+                inputContent.Add(new ObjectParameter(new ParameterValue(doc.RootElement.Clone())));
             }
             else if (contentType.MediaType.Equals(_textHtml, StringComparison.OrdinalIgnoreCase))
             {
@@ -82,13 +83,13 @@ namespace PolarShadow.Core
                 {
                     var doc = new HtmlDocument();
                     doc.Load(content);
-                    newInput.Add(new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator()))));
+                    inputContent.Add(new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator()))));
                 }
                 else
                 {
                     var doc = new HtmlDocument();
                     doc.Load(content, Encoding.GetEncoding(response.Encoding));
-                    newInput.Add(new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator()))));
+                    inputContent.Add(new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator()))));
                 }
             }
             else
@@ -96,7 +97,10 @@ namespace PolarShadow.Core
                 throw new InvalidOperationException($"Not supported content-type:{contentType}");
             }
 
-            response.Template?.BuildContent(stream, newInput, input);
+            if (response.Template.HasValue)
+            {
+                responseBuilder?.BuildContent(output, response.Template.Value, inputContent);
+            }
         }
     }
 }

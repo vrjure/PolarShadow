@@ -19,30 +19,32 @@ namespace PolarShadow.Core
         public IDictionary<string, ISiteRequest> Requests { get; set; }
 
         [JsonIgnore]
-        internal IRequestHandler HttpRequestHandlerInternal { get; set; }
+        internal SiteItem Item { get; set; }
         [JsonIgnore]
-        internal IRequestHandler WebViewRequestHandlerInteral { get; set; }
-        [JsonIgnore]
-        internal IParameterCollection ParametersInternal { get; set; }
+        internal IParameter ParametersInternal { get; set; }
 
         public ISiteRequestHandler CreateRequestHandler(string requestName)
         {
             if (Requests == null) return null;
 
-            var requestHandler = HttpRequestHandlerInternal;
+            var requestHandler = Item._httpHandler;
             if (Requests.TryGetValue(requestName, out ISiteRequest request))
             {
                 if (request.UseWebView.HasValue)
                 {
-                    requestHandler = request.UseWebView.Value ? WebViewRequestHandlerInteral : requestHandler;
+                    requestHandler = request.UseWebView.Value ? Item._webViewHandler : requestHandler;
                 }
                 else if (UseWebView)
                 {
-                    requestHandler = WebViewRequestHandlerInteral;
+                    requestHandler = Item._webViewHandler;
                 }
 
                 if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
-                return new SiteRequestHandler(requestHandler, request, ParametersInternal);
+
+                Item._requestsBuilders.TryGetValue(requestName, out IContentBuilder requestBuilder);
+                Item._responseBuilders.TryGetValue(requestName, out IContentBuilder responseBuilder);
+
+                return new SiteRequestHandler(this, requestHandler, request, Parameters, requestBuilder ?? SiteItem._requestBuilder, responseBuilder ?? SiteItem._responseBulder);
             }
             return null;
         }

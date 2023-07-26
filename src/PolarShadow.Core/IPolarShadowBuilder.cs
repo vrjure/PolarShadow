@@ -9,8 +9,6 @@ namespace PolarShadow.Core
 {
     public interface IPolarShadowBuilder
     {
-        IRequestHandler WebViewHandler { get; set; }
-        IRequestHandler HttpHandler { get; set; }
         IKeyValueParameter Parameters { get; }
         IPolarShadowBuilder Add(IPolarShadowItemBuilder builder);
         IEnumerable<IPolarShadowItemBuilder> ItemBuilders { get; }
