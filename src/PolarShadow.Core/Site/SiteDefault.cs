@@ -44,7 +44,7 @@ namespace PolarShadow.Core
                 Item._requestsBuilders.TryGetValue(requestName, out IContentBuilder requestBuilder);
                 Item._responseBuilders.TryGetValue(requestName, out IContentBuilder responseBuilder);
 
-                return new SiteRequestHandler(this, requestHandler, request, Parameters, requestBuilder ?? SiteItem._requestBuilder, responseBuilder ?? SiteItem._responseBulder);
+                return new SiteRequestHandler(this, requestHandler, request, ParametersInternal, requestBuilder ?? SiteItem._requestBuilder, responseBuilder ?? SiteItem._responseBulder);
             }
             return null;
         }

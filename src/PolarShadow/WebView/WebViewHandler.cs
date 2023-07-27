@@ -18,7 +18,7 @@ namespace PolarShadow
             _container = container;
         }
 
-        public async Task ExecuteAsync(Stream output, AnalysisRequest request, AnalysisResponse response, IParameter input, CancellationToken cancellation = default)
+        public async Task ExecuteAsync(Stream output, AnalysisRequest request, AnalysisResponse response, IContentBuilder requestBuilder, IContentBuilder responseBuilder, IParameter parameter, CancellationToken cancellation = default)
         {
             if (request == null || response == null
                 || string.IsNullOrEmpty(request.Url))
@@ -29,15 +29,18 @@ namespace PolarShadow
             var webView = GetIdleWebView();
             try
             {
-                var url = request.Url.Format(input);
+                var url = request.Url.Format(parameter);
                 var html = await webView.LoadAsync(url, cancellation);
                 html = Regex.Unescape(Regex.Unescape(html).Trim('"'));
-                var newInput = new Parameters(input);
+                var newInput = new Parameters(parameter);
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
                 newInput.Add(new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator()))));
 
-                response.Template?.BuildContent(output, newInput, input);
+                if (response.Template.HasValue)
+                {
+                    responseBuilder?.BuildContent(output, response.Template.Value, newInput);
+                }
             }
             finally
             {

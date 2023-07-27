@@ -93,6 +93,10 @@
             _source = new List<VideoSummary>(result);
             _stateContext.Set(_lastResultKey, _source);
         }
+        catch(Exception ex)
+        {
+            await _msgService.Error(ex.Message);
+        }
         finally
         {
             _isLoading = false;
@@ -118,6 +122,10 @@
                 return;
             }
             _source.AddRange(result);
+        }
+        catch(Exception ex)
+        {
+            await _msgService.Error(ex.Message);
         }
         finally
         {

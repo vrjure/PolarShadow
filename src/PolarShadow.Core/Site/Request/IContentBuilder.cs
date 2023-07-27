@@ -7,6 +7,7 @@ namespace PolarShadow.Core
 {
     public interface IContentBuilder
     {
+        string[] RequestFilter { get; }
         void BuildContent(Utf8JsonWriter writer, JsonElement template, IParameter parameter);
     }
 }

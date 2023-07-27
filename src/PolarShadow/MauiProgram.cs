@@ -62,13 +62,14 @@ namespace PolarShadow
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var builder = new PolarShadowBuilder();
-            builder.ConfigureDefault().AddWebAnalysisItem();
             var webViewHandler = new WebViewHandler();
-            builder.WebViewHandler = webViewHandler;
+            services.AddSingleton<IWebViewRequestHandler>(webViewHandler);
+            builder.ConfigureDefault().ConfigureSiteItem(itemBuilder =>
+            {
+                itemBuilder.WebViewHandler = webViewHandler;
+            }).ConfigreVideo();
 
             var polarShadow = builder.Build();
-
-            services.AddSingleton<IWebViewRequestHandler>(webViewHandler);
             services.AddSingleton(polarShadow);
         }
 

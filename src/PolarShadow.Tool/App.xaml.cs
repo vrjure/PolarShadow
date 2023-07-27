@@ -69,8 +69,7 @@ namespace PolarShadow.Tool
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             var builder = new PolarShadowBuilder();
-            builder.ConfigureDefault()
-                .AddWebAnalysisItem();
+            builder.ConfigureDefault().ConfigreVideo();
             service.AddSingleton(builder.Build());
         }
     }

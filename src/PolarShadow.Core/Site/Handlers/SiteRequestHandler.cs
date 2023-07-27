@@ -27,6 +27,13 @@ namespace PolarShadow.Core
                 _parameters.Add(request.Parameter);
             }
 
+            var siteInfo = new KeyValueParameter
+            {
+                { $"site:name", _site.Name },
+                { $"site:domain", _site.Domain }
+            };
+            _parameters.Add(siteInfo);
+
             _requestBuilder = requestBuilder;
             _responseBuilder = responseBuilder;
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -7,10 +8,14 @@ namespace PolarShadow.Core
 {
     public class ContentBuilder : IContentBuilder
     {
-        protected virtual void AfterWriteStartObject(Utf8JsonWriter writer, string propertyName) { }
-        protected virtual void BeforeWriteEndObject(Utf8JsonWriter writer, string propertyName) { }
-        protected virtual void AfterWriteStartArray(Utf8JsonWriter writer, string propertyName) { }
-        protected virtual void BeforeWriteEndArray(Utf8JsonWriter writer, string propertyName) { }
+        public virtual string[] RequestFilter => default;
+
+        protected virtual void AfterWriteStartObject(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+        protected virtual void BeforeWriteEndObject(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+        protected virtual void AfterWriteStartArray(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+        protected virtual void BeforeWriteEndArray(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+        protected virtual bool BeforeWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter) => false;
+        protected virtual void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter) { }
 
         public virtual void BuildContent(Utf8JsonWriter writer, JsonElement template, IParameter parameter)
         {
@@ -44,7 +49,7 @@ namespace PolarShadow.Core
                 writer.WriteStartObject(propertyName);
             }
 
-            AfterWriteStartObject(writer, propertyName);
+            AfterWriteStartObject(writer, propertyName, parameter);
 
             foreach (var property in template.EnumerateObject())
             {
@@ -67,7 +72,7 @@ namespace PolarShadow.Core
                 }
             }
 
-            BeforeWriteEndObject(writer, propertyName);
+            BeforeWriteEndObject(writer, propertyName, parameter);
 
             writer.WriteEndObject();
         }
@@ -83,7 +88,7 @@ namespace PolarShadow.Core
                 writer.WriteStartArray(propertyName);
             }
 
-            AfterWriteStartArray(writer, propertyName);
+            AfterWriteStartArray(writer, propertyName, parameter);
 
             JsonElement templateObj = default;
             foreach (var obj in tempalte.EnumerateArray())
@@ -111,15 +116,19 @@ namespace PolarShadow.Core
                 BuildArrayTemplate(writer, path, template, parameter);
             }
 
-            BeforeWriteEndArray(writer, propertyName);
+            BeforeWriteEndArray(writer, propertyName, parameter);
 
             writer.WriteEndArray();
         }
 
         private void BuildValue(Utf8JsonWriter writer, JsonProperty property, IParameter parameter)
         {
+            if (BeforeWriteProperty(writer, property, parameter)) return;
+
             writer.WritePropertyName(property.Name);
             BuildValue(writer, property.Value, parameter);
+
+            AfterWriteProperty(writer, property, parameter);
         }
 
         private void BuildValue(Utf8JsonWriter writer, JsonElement value, IParameter parameter)
@@ -155,8 +164,21 @@ namespace PolarShadow.Core
                 return;
             }
 
-            var childContent = new Parameters(parameter);
-            var last = childContent.Count;
+            IParameterCollection childContent = null;
+            if (parameter is IParameterCollection parameters)
+            {
+                childContent = new Parameters(parameters);
+            }
+            else
+            {
+                childContent = new Parameters(parameter);
+            }
+
+            var lastIndex = childContent.Count - 1;
+            if (childContent[lastIndex] is IObjectParameter)
+            {
+                childContent.RemoveAt(lastIndex);
+            }
 
             if (pathValue.ValueKind == ParameterValueKind.Json)
             {
@@ -164,8 +186,9 @@ namespace PolarShadow.Core
 
                 foreach (var child in jsonPathValue.EnumerateArray())
                 {
-                    childContent[last - 1] = new ObjectParameter(new ParameterValue(child));
-                    BuildContent(jsonWriter, template, parameter);
+                    childContent.Add(new ObjectParameter(new ParameterValue(child)));
+                    BuildContent(jsonWriter, template, childContent);
+                    childContent.RemoveAt(lastIndex);
                 }
             }
             else if (pathValue.ValueKind == ParameterValueKind.Html)
@@ -175,14 +198,16 @@ namespace PolarShadow.Core
                 {
                     foreach (var child in htmlPathValue.EnumerateNodes())
                     {
-                        childContent[last - 1] = new ObjectParameter(new ParameterValue(child));
-                        BuildContent(jsonWriter, template, parameter);
+                        childContent.Add(new ObjectParameter(new ParameterValue(child)));
+                        BuildContent(jsonWriter, template, childContent);
+                        childContent.RemoveAt(lastIndex);
                     }
                 }
                 else if (htmlPathValue.ValueKind == HtmlValueKind.Node)
                 {
-                    childContent[last - 1] = new ObjectParameter(new ParameterValue(htmlPathValue));
-                    BuildContent(jsonWriter, template, parameter);
+                    childContent.Add(new ObjectParameter(new ParameterValue(htmlPathValue)));
+                    BuildContent(jsonWriter, template, childContent);
+                    childContent.RemoveAt(lastIndex);
                 }
 
             }

@@ -12,12 +12,41 @@ namespace PolarShadow.Core
     {   
         public IRequestHandler WebViewHandler { get; set; }
         public IRequestHandler HttpHandler { get; set; }
-        public IDictionary<string, IContentBuilder> RequestBuilders { get; set; }
-        public IDictionary<string, IContentBuilder> ResponseBuilders { get; set; }
+
+        public ICollection<IContentBuilder> RequestBuilders { get; } = new List<IContentBuilder>();
+
+        public ICollection<IContentBuilder> ResponseBuilders { get; } = new List<IContentBuilder>();
 
         public IPolarShadowItem Build(IPolarShadowBuilder builder)
         {
-            return new SiteItem(HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, builder.Parameters, RequestBuilders, ResponseBuilders);
+            var requestsDict = new Dictionary<string, IContentBuilder>();
+            foreach (var b in RequestBuilders)
+            {
+                if (b.RequestFilter == null)
+                {
+                    continue;
+                }
+
+                foreach (var item in b.RequestFilter)
+                {
+                    requestsDict.Add(item, b);
+                }
+            }
+
+            var responseDict = new Dictionary<string, IContentBuilder>();
+            foreach (var b in ResponseBuilders)
+            {
+                if (b.RequestFilter == null)
+                {
+                    continue;
+                }
+
+                foreach (var item in b.RequestFilter)
+                {
+                    responseDict.Add(item, b);
+                }
+            }
+            return new SiteItem(HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, builder.Parameters, requestsDict, responseDict);
         }
     }
 }
