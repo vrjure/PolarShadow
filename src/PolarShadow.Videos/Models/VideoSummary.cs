@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PolarShadow.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Videos
 {
-    public class VideoSummary
+    public class VideoSummary : Link
     {
         public string Name { get; set; }
         /// <summary>

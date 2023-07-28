@@ -8,7 +8,6 @@ namespace PolarShadow.Core
     {
         IRequestHandler WebViewHandler { get; set; }
         IRequestHandler HttpHandler { get; set; }
-        ICollection<IContentBuilder> RequestBuilders { get; }
-        ICollection<IContentBuilder> ResponseBuilders { get; }
+        ICollection<IContentWriting> Writings { get; }
     }
 }

@@ -9,5 +9,6 @@ namespace PolarShadow.Videos
         public const string Search = "search";
         public const string Detail = "detail";
         public const string Newest = "newest";
+        public const string Category = "category";
     }
 }

@@ -13,14 +13,12 @@ namespace PolarShadow.Core
         public IRequestHandler WebViewHandler { get; set; }
         public IRequestHandler HttpHandler { get; set; }
 
-        public ICollection<IContentBuilder> RequestBuilders { get; } = new List<IContentBuilder>();
-
-        public ICollection<IContentBuilder> ResponseBuilders { get; } = new List<IContentBuilder>();
+        public ICollection<IContentWriting> Writings { get; } = new List<IContentWriting>();
 
         public IPolarShadowItem Build(IPolarShadowBuilder builder)
         {
-            var requestsDict = new Dictionary<string, IContentBuilder>();
-            foreach (var b in RequestBuilders)
+            var writingDict = new Dictionary<string, ICollection<IContentWriting>>();
+            foreach (var b in Writings)
             {
                 if (b.RequestFilter == null)
                 {
@@ -29,24 +27,16 @@ namespace PolarShadow.Core
 
                 foreach (var item in b.RequestFilter)
                 {
-                    requestsDict.Add(item, b);
+                    if (!writingDict.TryGetValue(item, out ICollection<IContentWriting> writings))
+                    {
+                        writings = new List<IContentWriting>();
+                        writingDict[item] = writings;
+                    }
+
+                    writings.Add(b);
                 }
             }
-
-            var responseDict = new Dictionary<string, IContentBuilder>();
-            foreach (var b in ResponseBuilders)
-            {
-                if (b.RequestFilter == null)
-                {
-                    continue;
-                }
-
-                foreach (var item in b.RequestFilter)
-                {
-                    responseDict.Add(item, b);
-                }
-            }
-            return new SiteItem(HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, builder.Parameters, requestsDict, responseDict);
+            return new SiteItem(HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, builder.Parameters, writingDict);
         }
     }
 }

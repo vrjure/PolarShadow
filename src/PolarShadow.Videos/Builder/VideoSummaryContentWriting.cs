@@ -6,10 +6,10 @@ using System.Text.Json;
 
 namespace PolarShadow.Videos
 {
-    internal class VideoSummaryContentBuilder : ContentBuilder, IContentBuilder
+    internal class VideoSummaryContentWriting : ContentWriting
     {
         public override string[] RequestFilter => new string[] { VideoRequests.Search, VideoRequests.Newest };
-        protected override void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter)
+        public override void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter)
         {
             if (property.Name.Equals(nameof(VideoSummary.DetailSrc), StringComparison.OrdinalIgnoreCase))
             {

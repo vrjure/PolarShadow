@@ -8,7 +8,7 @@ namespace PolarShadow.Core
 {
     public class ObjectParameter : IObjectParameter
     {
-        private readonly ICollection<ParameterValue> _objectParameters;      
+        private readonly IList<ParameterValue> _objectParameters;      
 
         public ObjectParameter() : this(Enumerable.Empty<ParameterValue>())
         {
@@ -46,8 +46,9 @@ namespace PolarShadow.Core
             value = default;
             if (ParameterValue.IsXPath(path) || ParameterValue.IsJsonPath(path))
             {
-                foreach (var item in _objectParameters)
+                for (int i = _objectParameters.Count - 1; i >= 0; i--)
                 {
+                    var item = _objectParameters[i];
                     if (ParameterValue.IsJsonPath(path) && item.ValueKind == ParameterValueKind.Json)
                     {
                         var result = JsonPath.Read(item.GetJson(), path);

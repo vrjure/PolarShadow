@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow
 {
-    public class WebViewHandler : IWebViewRequestHandler
+    public class WebViewHandler : RequestHandlerBase, IWebViewRequestHandler
     {
         private IContainer _container;
         private IList<WebViewTab> _tabs = new List<WebViewTab>();
@@ -18,29 +18,17 @@ namespace PolarShadow
             _container = container;
         }
 
-        public async Task ExecuteAsync(Stream output, AnalysisRequest request, AnalysisResponse response, IContentBuilder requestBuilder, IContentBuilder responseBuilder, IParameter parameter, CancellationToken cancellation = default)
+        protected override async Task<IObjectParameter> OnRequestAsync(IRequest request, IParameter parameter, CancellationToken cancellation)
         {
-            if (request == null || response == null
-                || string.IsNullOrEmpty(request.Url))
-            {
-                return;
-            }
-
             var webView = GetIdleWebView();
             try
             {
-                var url = request.Url.Format(parameter);
+                var url = request.Request.Url.Format(parameter);
                 var html = await webView.LoadAsync(url, cancellation);
                 html = Regex.Unescape(Regex.Unescape(html).Trim('"'));
-                var newInput = new Parameters(parameter);
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
-                newInput.Add(new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator()))));
-
-                if (response.Template.HasValue)
-                {
-                    responseBuilder?.BuildContent(output, response.Template.Value, newInput);
-                }
+                return new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator())));
             }
             finally
             {
@@ -52,7 +40,6 @@ namespace PolarShadow
                     }
                 }
             }
-            
         }
 
         private WebViewTab GetIdleWebView()

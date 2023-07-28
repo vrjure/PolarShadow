@@ -6,10 +6,8 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public class ContentBuilder : IContentBuilder
+    public class ContentWriter : IContentWriter
     {
-        public virtual string[] RequestFilter => default;
-
         protected virtual void AfterWriteStartObject(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
         protected virtual void BeforeWriteEndObject(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
         protected virtual void AfterWriteStartArray(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
@@ -17,7 +15,7 @@ namespace PolarShadow.Core
         protected virtual bool BeforeWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter) => false;
         protected virtual void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter) { }
 
-        public virtual void BuildContent(Utf8JsonWriter writer, JsonElement template, IParameter parameter)
+        public virtual void Write(Utf8JsonWriter writer, JsonElement template, IParameter parameter)
         {
             switch (template.ValueKind)
             {
@@ -108,7 +106,7 @@ namespace PolarShadow.Core
             {
                 foreach (var obj in tempalte.EnumerateArray())
                 {
-                    BuildContent(writer, obj, parameter);
+                    Write(writer, obj, parameter);
                 }
             }
             else
@@ -187,7 +185,7 @@ namespace PolarShadow.Core
                 foreach (var child in jsonPathValue.EnumerateArray())
                 {
                     childContent.Add(new ObjectParameter(new ParameterValue(child)));
-                    BuildContent(jsonWriter, template, childContent);
+                    Write(jsonWriter, template, childContent);
                     childContent.RemoveAt(lastIndex);
                 }
             }
@@ -199,14 +197,14 @@ namespace PolarShadow.Core
                     foreach (var child in htmlPathValue.EnumerateNodes())
                     {
                         childContent.Add(new ObjectParameter(new ParameterValue(child)));
-                        BuildContent(jsonWriter, template, childContent);
+                        Write(jsonWriter, template, childContent);
                         childContent.RemoveAt(lastIndex);
                     }
                 }
                 else if (htmlPathValue.ValueKind == HtmlValueKind.Node)
                 {
                     childContent.Add(new ObjectParameter(new ParameterValue(htmlPathValue)));
-                    BuildContent(jsonWriter, template, childContent);
+                    Write(jsonWriter, template, childContent);
                     childContent.RemoveAt(lastIndex);
                 }
 

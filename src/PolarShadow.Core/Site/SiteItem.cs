@@ -12,23 +12,21 @@ namespace PolarShadow.Core
     {
         public static readonly string SitesName = "sites";
 
-        internal static IContentBuilder _requestBuilder = new ContentBuilder();
-        internal static IContentBuilder _responseBulder = new ContentBuilder();
+        internal static IContentWriter _requestWriter = new ContentWriter();
+        internal static IContentWriter _responseWriter = new ContentWriter();
 
         internal readonly IRequestHandler _httpHandler;
         internal readonly IRequestHandler _webViewHandler;
         internal readonly IParameter _globalParameter;
-        internal readonly IDictionary<string, IContentBuilder> _requestsBuilders;
-        internal readonly IDictionary<string, IContentBuilder> _responseBuilders;
+        internal readonly IDictionary<string, ICollection<IContentWriting>> _writings;
 
         private readonly Dictionary<string, ISite> _sites = new Dictionary<string, ISite>(StringComparer.OrdinalIgnoreCase);
-        public SiteItem(IRequestHandler httpHandler, IRequestHandler webViewHandler, IParameter globalParameters, IDictionary<string, IContentBuilder> requestBuilders, IDictionary<string, IContentBuilder> responseBuilders)
+        public SiteItem(IRequestHandler httpHandler, IRequestHandler webViewHandler, IParameter globalParameters, IDictionary<string, ICollection<IContentWriting>> writings)
         {
             _httpHandler = httpHandler;
             _webViewHandler = webViewHandler;
             _globalParameter = globalParameters;
-            _requestsBuilders = requestBuilders ?? new Dictionary<string, IContentBuilder>();
-            _responseBuilders = responseBuilders ?? new Dictionary<string, IContentBuilder>();
+            _writings = writings;
         }
 
         public string Name => SitesName;

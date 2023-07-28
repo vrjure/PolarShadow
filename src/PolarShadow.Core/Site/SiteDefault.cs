@@ -41,10 +41,9 @@ namespace PolarShadow.Core
 
                 if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
 
-                Item._requestsBuilders.TryGetValue(requestName, out IContentBuilder requestBuilder);
-                Item._responseBuilders.TryGetValue(requestName, out IContentBuilder responseBuilder);
+                Item._writings.TryGetValue(requestName, out ICollection<IContentWriting> writings);
 
-                return new SiteRequestHandler(this, requestHandler, request, ParametersInternal, requestBuilder ?? SiteItem._requestBuilder, responseBuilder ?? SiteItem._responseBulder);
+                return new SiteRequestHandler(this, requestHandler, request, ParametersInternal, writings);
             }
             return null;
         }
