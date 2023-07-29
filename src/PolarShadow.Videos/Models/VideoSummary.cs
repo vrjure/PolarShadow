@@ -18,13 +18,5 @@ namespace PolarShadow.Videos
         /// 封面地址
         /// </summary>
         public string ImageSrc { get; set; }
-        /// <summary>
-        /// 详情地址
-        /// </summary>
-        public string DetailSrc { get; set; }
-        /// <summary>
-        /// 视频来源
-        /// </summary>
-        public string SiteName { get; set; }
     }
 }

@@ -16,10 +16,10 @@ namespace PolarShadow.Storage
             return new VideoDetailEntity
             {
                 Description = detail.Description,
-                DetailSrc = detail.DetailSrc,
+                Src = detail.Src,
                 ImageSrc = detail.ImageSrc,
                 Name = detail.Name,
-                SiteName = detail.SiteName,
+                Site = detail.Site,
                 Seasons = JsonSerializer.Serialize(detail.Seasons, JsonOption.DefaultSerializer)
             };
         }
@@ -29,10 +29,10 @@ namespace PolarShadow.Storage
             return new VideoDetail
             {
                 Description = entity.Description,
-                DetailSrc = entity.DetailSrc,
+                Src = entity.Src,
                 ImageSrc = entity.ImageSrc,
                 Name = entity.Name,
-                SiteName = entity.SiteName,
+                Site = entity.Site,
                 Seasons = string.IsNullOrEmpty(entity.Seasons) ? new List<VideoSeason>() : JsonSerializer.Deserialize<ICollection<VideoSeason>>(entity.Seasons, JsonOption.DefaultSerializer)
             };
         }

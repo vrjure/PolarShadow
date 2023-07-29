@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PolarShadow.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,6 @@ namespace PolarShadow.Videos
         public string Name { get; set; }
         public string Description { get; set; }
         public int Number { get; set; }
-        public ICollection<VideoSource> Sources { get; set; }
+        public ICollection<Link> Sources { get; set; }
     }
 }

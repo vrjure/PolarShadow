@@ -59,7 +59,7 @@
     private string _siteName;
     private bool _drawerVisiable = false;
     private List<WebAnalysisSource> _webAnalysisSource;
-    private VideoSource _selectVideoSource;
+    private ILink _selectVideoSource;
 
     protected override void OnInitialized()
     {
@@ -79,7 +79,7 @@
         }
     }
 
-    private async Task EpisodeLinkClick(VideoSource source)
+    private async Task EpisodeLinkClick(ILink source)
     {
         try
         {

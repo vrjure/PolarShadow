@@ -38,7 +38,7 @@
                 </SpaceItem>
                 <SpaceItem>
                     <Title Level="4">来源</Title>
-                    <Text>@_detail.SiteName</Text>
+                    <Text>@_detail.Site</Text>
                 </SpaceItem>
                 <SpaceItem>
                     <Title Level="4">资源</Title>
@@ -129,7 +129,7 @@
                 isFromCache = true;
             }
             else if (_context.TryGet(_summaryKey, out VideoSummary summary) 
-            && _polarShadow.TryGetSite(summary.SiteName, out ISite site))
+            && _polarShadow.TryGetSite(summary.Site, out ISite site))
             {
                 isFromCache = false;
                 _detail = await site.GetDetailAsync(summary);
@@ -202,7 +202,7 @@
         try
         {
             _isLoading = true;
-            if (_polarShadow.TryGetSite(_detail.SiteName, out ISite site))
+            if (_polarShadow.TryGetSite(_detail.Site, out ISite site))
             {
                 _detail = await site.GetDetailAsync(_detail);
             }

@@ -41,13 +41,13 @@ namespace PolarShadow.Videos
             {
                 result.ImageSrc = summary.ImageSrc;
             }
-            if (string.IsNullOrEmpty(result.SiteName))
+            if (string.IsNullOrEmpty(result.Site))
             {
-                result.SiteName = summary.SiteName;
+                result.Site = summary.Site;
             }
-            if (string.IsNullOrEmpty(result.DetailSrc))
+            if (string.IsNullOrEmpty(result.Src))
             {
-                result.DetailSrc = summary.DetailSrc;
+                result.Src = summary.Src;
             }
             return result;
         } 

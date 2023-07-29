@@ -41,6 +41,10 @@ html, body {
     background: #f9f9f9 !important;
     padding: 0px !important;
 }
+
+.ant-layout-header .ant-col{
+    line-height:normal;
+}
 .scroll-content {
     overflow-y: auto;
     overflow-x: hidden;
@@ -71,6 +75,7 @@ html, body {
 
 .header-content {
     padding: 0px 20px;
+    height: inherit;
 }
 
 .horizonal-cneter {

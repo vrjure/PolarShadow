@@ -11,11 +11,11 @@ namespace PolarShadow.Videos
         public override string[] RequestFilter => new string[] { VideoRequests.Search, VideoRequests.Newest };
         public override void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter)
         {
-            if (property.Name.Equals(nameof(VideoSummary.DetailSrc), StringComparison.OrdinalIgnoreCase))
+            if (property.Name.Equals(nameof(VideoSummary.Src), StringComparison.OrdinalIgnoreCase))
             {
                 if (parameter.TryReadValue("site:name", out string siteName))
                 {
-                    writer.WriteString("siteName", siteName);
+                    writer.WriteString("site", siteName);
                 }
             }
         }
