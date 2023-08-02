@@ -6,15 +6,15 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    public static class ContentBuilderExtensions
+    public static class ContentWriterExtensions
     {
         /// <summary>
         /// 构建模板内容
         /// </summary>
-        public static void Write(this IContentWriter builder, Stream output, JsonElement tempate, IParameter parameter)
+        public static void Write(this IContentWriter writer, Stream output, JsonElement tempate, IParameter parameter)
         {
             using var jsonWriter = new Utf8JsonWriter(output, JsonOption.DefaultWriteOption);
-            builder.Write(jsonWriter, tempate, parameter);
+            writer.Write(jsonWriter, tempate, parameter);
             jsonWriter.Flush();
         }
     }

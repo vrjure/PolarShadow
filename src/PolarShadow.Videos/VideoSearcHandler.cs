@@ -11,36 +11,49 @@ namespace PolarShadow.Videos
 {
     internal class VideoSearcHandler : SequentialRequestBase<SearchVideoFilter, PageResult<VideoSummary>>, IVideoSearcHandler
     {
-        public VideoSearcHandler(string abilityName, SearchVideoFilter input, IEnumerable<ISite> sites) : base(abilityName, input, sites)
+        bool _isSiteFirstRequest = true;
+        public VideoSearcHandler(string requestName, SearchVideoFilter input, IEnumerable<ISite> sites) : base(requestName, input, sites)
         {
         }
 
-        protected override bool HasResult(Stream stream)
+        public async Task<PageResult<VideoSummary>> SearchNextAsync(CancellationToken cancellation = default)
         {
-            if (stream.Length == 0)
+            PageResult<VideoSummary> result = null;
+            if (Current != null)
             {
-                return false;
+                result = await ExecuteAsync(cancellation).ConfigureAwait(false);
+                if (result != null && result.Data != null && result.Data.Count > 0) return result;
             }
 
-            var result = JsonSerializer.Deserialize<PageResult<VideoSummary>>(stream, JsonOption.DefaultSerializer);
-            return result != null && result.Data != null && result.Data.Count > 0;
+            if (!MoveNext()) return default;
+
+            _isSiteFirstRequest = true;
+
+            return await SearchNextAsync(cancellation);
         }
 
-        protected override void NextRequest(SearchVideoFilter input, ISiteRequestHandler request)
+        protected override void BeforeRequest(ISiteRequestHandler request)
         {
-            input.Page++;
-        }
-
-        protected override void ResetRequest(SearchVideoFilter input, ISiteRequestHandler request)
-        {
-            if(request.TryGetParameter("startPage", out int startPage))
+            if (_isSiteFirstRequest)
             {
-                input.Page = startPage;
+                if (request.TryGetParameter("startPage", out int startPage))
+                {
+                    Input.Page = startPage;
+                }
+                else
+                {
+                    Input.Page = 1;
+                }
             }
             else
             {
-                input.Page = 1;
+                Input.Page++;
             }
+        }
+
+        protected override void AfterRequest(ISiteRequestHandler request)
+        {
+            _isSiteFirstRequest = false;
         }
     }
 }

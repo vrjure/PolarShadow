@@ -47,6 +47,7 @@ namespace PolarShadowTests
                 "Test10:{/div/a/@href:/.*/i} middle {right:F1} end",
                 "Test11:{///div/a/@href:/.*/i} middle {right:F1} end",
                 "Test12:erro format {/div/a/@href:/.*/i middle {right:F1} end",
+                "Test12:erro format {/div/a/@href:/.*/i middle {right:F1}} end",
             };
 
             foreach (var item in readTestList)

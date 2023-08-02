@@ -3,14 +3,11 @@
 
 <Card Bordered BodyStyle="padding:5px" Style="cursor:pointer;max-width:220px">
     <Cover>
-        @if (!string.IsNullOrEmpty(_imageSrc))
-        {
-            <img src="@_imageSrc" alt="img" style="max-height:290px" @onload="ImgLoad" />
-        }
-        else
-        {
-            <Icon Type="play-circle" Theme="outline" Style="font-size:50px;color:#1890ff" />
-        }
+        <ImageCompatible Src="@_imageSrc" UseCache="@UseCache" Style="max-height:290px">
+            <Placeholder>
+                <Icon Type="play-circle" Theme="outline" Style="font-size:50px;color:#1890ff" />
+            </Placeholder>
+        </ImageCompatible>
     </Cover>
     <ChildContent>
         <div style="height:45px">
@@ -22,16 +19,6 @@
     </ChildContent>
 </Card>
 
-<style>
-    .text-auto-hidden{
-        display: -webkit-box;
-        text-overflow: ellipsis;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-</style>
 @code {
     private string _imageSrc;
 
@@ -40,46 +27,9 @@
     [Parameter]
     public bool UseCache { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (Summary != null && !string.IsNullOrEmpty(Summary.ImageSrc))
-        {
-            if (UseCache)
-            {
-                _imageSrc = await _imageCache.CreateObjectUrlAsync(Summary.ImageSrc);
-            }
-            else
-            {
-                var uri = new Uri(Summary.ImageSrc);
-                if (uri.Scheme.Equals(Uri.UriSchemeHttp))
-                {
-                    _imageSrc = await _httpRes.CreateObjectUrlAsync(Summary.ImageSrc);
-                }
-                else
-                {
-                    _imageSrc = Summary.ImageSrc;
-                }
-            }
-        }
-        else
-        {
-            
-        }
-    }
 
-    private async Task ImgLoad(ProgressEventArgs arg)
+    protected override void OnInitialized()
     {
-        if (UseCache)
-        {
-            await _imageCache.RevokeObjectUrlAsync(_imageSrc);
-        }
-        else
-        {
-            var uri = new Uri(Summary.ImageSrc);
-            if (uri.Scheme.Equals(Uri.UriSchemeHttp))
-            {
-                await _httpRes.RevokeObjectUrlAsync(_imageSrc);
-            }
-        }
+        _imageSrc = Summary?.ImageSrc;
     }
 }

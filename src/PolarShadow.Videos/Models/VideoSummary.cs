@@ -9,7 +9,6 @@ namespace PolarShadow.Videos
 {
     public class VideoSummary : Link
     {
-        public string Name { get; set; }
         /// <summary>
         /// 摘要
         /// </summary>

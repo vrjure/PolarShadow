@@ -23,5 +23,6 @@ namespace PolarShadow.Core
         }
 
         public string Site { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -8,7 +8,7 @@
     <Header>
         <GridRow Gutter="16" Align="middle" Class="header-content">
             <GridCol Flex=@("auto")>
-                <SearchInput Placeholder="搜索" SearchHandler="Search"/>
+                <SearchInput Placeholder="搜索" SearchHandler="Search" @bind-SearchText="_searchText" ClearHandler="SeachClear"/>
             </GridCol>
             <GridCol Flex=@("none")>
                 <Dropdown Trigger="@(new Trigger[]{ Trigger.Click} )">
@@ -36,16 +36,12 @@
 </Layout>
 
 <style>
-    .list-item {
-        padding:5px 20px !important;
-        margin:10px 20px;
-        border-radius:15px;
-        border: 1px solid #f0f0f0 !important
-    }
+
 </style>
 
 @code {
     private ICollection<ISite> _source;
+    private string _searchText;
 
     protected override void OnInitialized()
     {
@@ -62,6 +58,11 @@
         {
             _source = _polarShadow.GetSites().Where(f => f.Name.Contains(searchText) || f.Domain.Contains(searchText)).ToList();
         }
+    }
+
+    private void SeachClear()
+    {
+        _source = _polarShadow.GetSites().ToList();
     }
 
     private async Task ItemClick(MenuItem item)

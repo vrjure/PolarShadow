@@ -75,8 +75,13 @@ namespace PolarShadow.Core
             writer.WriteEndObject();
         }
 
-        private void BuildArray(Utf8JsonWriter writer, JsonElement tempalte, IParameter parameter, string propertyName = default)
+        private void BuildArray(Utf8JsonWriter writer, JsonElement template, IParameter parameter, string propertyName = default)
         {
+            if (template.ValueKind != JsonValueKind.Array)
+            {
+                return;
+            }
+
             if (string.IsNullOrEmpty(propertyName))
             {
                 writer.WriteStartArray();
@@ -88,35 +93,54 @@ namespace PolarShadow.Core
 
             AfterWriteStartArray(writer, propertyName, parameter);
 
-            JsonElement templateObj = default;
-            foreach (var obj in tempalte.EnumerateArray())
-            {
-                if (obj.ValueKind == JsonValueKind.Object)
-                {
-                    templateObj = obj;
-                    break;
-                }
-            }
-
-            if (templateObj.ValueKind != JsonValueKind.Object
-                || !templateObj.TryGetProperty("path", out JsonElement path)
-                || !templateObj.TryGetProperty("template", out JsonElement template)
-                || path.ValueKind != JsonValueKind.String
-                || template.ValueKind != JsonValueKind.Object)
-            {
-                foreach (var obj in tempalte.EnumerateArray())
-                {
-                    Write(writer, obj, parameter);
-                }
-            }
-            else
-            {
-                BuildArrayTemplate(writer, path, template, parameter);
-            }
+            BuildInArrayTemplate(writer, template, parameter);
 
             BeforeWriteEndArray(writer, propertyName, parameter);
 
             writer.WriteEndArray();
+        }
+
+        private void BuildInArrayTemplate(Utf8JsonWriter writer, JsonElement template, IParameter parameter)
+        {
+            if (template.ValueKind != JsonValueKind.Array)
+            {
+                return;
+            }
+
+            foreach (var obj in template.EnumerateArray())
+            {
+                if (obj.ValueKind == JsonValueKind.Object)
+                {
+                    if (IsArrayTemplateObject(obj, out JsonElement path, out JsonElement pathTemplate))
+                    {
+                        if (pathTemplate.ValueKind == JsonValueKind.Object)
+                        {
+                            BuildArrayTemplate(writer, path, pathTemplate, parameter);
+                        }
+                        else if (pathTemplate.ValueKind == JsonValueKind.Array)
+                        {
+                            BuildInArrayTemplate(writer, pathTemplate, parameter);
+                        }
+                    }
+                    else
+                    {
+                        Write(writer, obj, parameter);
+                    }
+                }
+                else if (obj.ValueKind != JsonValueKind.Array)
+                {
+                    BuildValue(writer, obj, parameter);
+                }
+            }
+        }
+        
+        private bool IsArrayTemplateObject(JsonElement obj, out JsonElement path, out JsonElement template)
+        {
+            path = default;
+            template = default;
+            return obj.ValueKind == JsonValueKind.Object
+                && obj.TryGetProperty("path", out path)
+                && obj.TryGetProperty("template", out template);
         }
 
         private void BuildValue(Utf8JsonWriter writer, JsonProperty property, IParameter parameter)
@@ -157,6 +181,26 @@ namespace PolarShadow.Core
 
         private void BuildArrayTemplate(Utf8JsonWriter jsonWriter, JsonElement path, JsonElement template, IParameter parameter)
         {
+            if (path.ValueKind == JsonValueKind.String)
+            {
+                BuildArrayTemplateStringPath(jsonWriter, path, template, parameter);
+            }
+            else if (path.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var obj in path.EnumerateArray())
+                {
+                    BuildArrayTemplateStringPath(jsonWriter, obj, template, parameter);
+                }
+            }
+        }
+
+        private void BuildArrayTemplateStringPath(Utf8JsonWriter jsonWriter, JsonElement path, JsonElement template, IParameter parameter)
+        {
+            if (path.ValueKind != JsonValueKind.String)
+            {
+                return;
+            }
+
             if (!parameter.TryGetValue(path.GetString(), out ParameterValue pathValue))
             {
                 return;

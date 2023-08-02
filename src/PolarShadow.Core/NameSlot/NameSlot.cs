@@ -78,10 +78,9 @@ namespace PolarShadow.Core
                     var regex = reader.GetString();
                     result = MatchValue(result, regex);
                 }
-
+                sb.Append(result);
             }
                    
-            sb.Append(result);
         }
 
         private static string FormatValue(string value, ReadOnlySpan<byte> format)

@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Videos", "Polar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Configuration", "PolarShadow.Configuration\PolarShadow.Configuration.csproj", "{2C9F4DC0-1C7E-492D-AA72-4748B59EFD6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolarShadow.Services.Abstractions", "PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj", "{15DFB1D9-7E86-464A-A327-DED420B78AC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Services.Abstractions", "PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj", "{15DFB1D9-7E86-464A-A327-DED420B78AC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

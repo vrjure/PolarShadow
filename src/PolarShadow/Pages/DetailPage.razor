@@ -89,17 +89,8 @@
     </Footer>
 </Layout>
 
-<style>
-    .text-auto-hidden {
-        display: -webkit-box;
-        text-overflow: ellipsis;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-</style>
 @code {
-    public static string _summaryKey = "summary";
+    public static string _detail_parameter_Key = "detail_link";
     public static string _stateDetailKey = "state_detail";
     private VideoDetail _detail;
     private string _imageUrl;
@@ -128,11 +119,11 @@
                 _detail = detail;
                 isFromCache = true;
             }
-            else if (_context.TryGet(_summaryKey, out VideoSummary summary) 
-            && _polarShadow.TryGetSite(summary.Site, out ISite site))
+            else if (_context.TryGet(_detail_parameter_Key, out ILink link) 
+            && _polarShadow.TryGetSite(link.Site, out ISite site))
             {
                 isFromCache = false;
-                _detail = await site.GetDetailAsync(summary);
+                _detail = await site.GetDetailAsync(link);
             }
 
             if (_detail != null)

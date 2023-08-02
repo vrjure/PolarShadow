@@ -7,46 +7,36 @@
 
 <Layout>
     <Content Class="scroll-content">
-        @if (_isLoading)
+        @if (_source != null && _source.Count != 0)
         {
-            <Spin Class="horizonal-cneter" />
-        }
-        else if (_source != null && _source.Count != 0)
-        {
-            <AntList TItem="VideoSummary" DataSource="_source" Grid="grid">
-                <ChildContent>
-                    <ListItem OnClick="()=>ItemClick(context)">
-                        <VideoCard Summary="@(context)" />
-                    </ListItem>
-                </ChildContent>
-                <LoadMore>
-                    @if (_isMoreLoading)
-                    {
-                        <Spin Class="horizonal-cneter" />
-                    }
-                    else if (_source != null && _source.Count != 0 && _hasMore)
-                    {
-                        <Button Class="horizonal-cneter" Type="@ButtonType.Text" OnClick="LoadMoreAsync">加载更多</Button>
-                    }
-                </LoadMore>
+            <AntList TItem="ISite" DataSource="_source" Grid="grid">
+                <ListItem OnClick="()=>ItemClick(context)">
+                    <Space Style="width:100%;cursor:pointer" Direction="DirectionVHType.Vertical" Align="center">
+                        <SpaceItem>
+                            <Icon Type="book" Theme="outline" Style="font-size:50px;color:#1890ff" />
+                        </SpaceItem>
+                        <SpaceItem>
+                            <div style="height:45px">
+                                <Text Strong Class="text-auto-hidden">@context.Name</Text>
+                            </div>
+                        </SpaceItem>
+                    </Space>
+                </ListItem>
             </AntList>
         }
         else
         {
             <Empty />
         }
-        <div Class="fixed-widgets">
-            <Button Icon="@IconType.Outline.Sync" Type="@ButtonType.Primary" Shape="@ButtonShape.Circle" OnClick="Refresh"></Button>
-        </div>
     </Content>
 </Layout>
 
 @code {
-    private List<VideoSummary> _source;
+    private List<ISite> _source;
     private bool _isLoading = false;
     private bool _isMoreLoading = false;
     private bool _hasMore = true;
-    private ListGridType grid = new ListGridType
+    private static ListGridType grid = new ListGridType
     {
         Gutter = 16,
         Xs = 2,
@@ -57,117 +47,19 @@
         Xxl = 8
     };
     private CancellationTokenSource _cts;
-    public static string _lastResultKey = "last_discover_result";
 
     private ISequentialRequest<ICollection<VideoSummary>> _discoverHandler;
 
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        if (_stateContext.TryGet(_lastResultKey, out List<VideoSummary> val))
-        {
-            _source = val;
-            _hasMore = false;
-        }
-        else
-        {
-            await LoadAsync();
-        }
+        _source = _polarShadow.GetSites().Where(f=>f.HasRequest(VideoRequests.Newest)).ToList();
     }
 
-    private async Task LoadAsync()
+   
+
+    private void ItemClick(ISite site)
     {
-        _discoverHandler = _polarShadow.CreateVideoDiscoverHandler();
-        try
-        {
-            CheckCancellationToken();
-            _isLoading = true;
-            var result = await _discoverHandler.SearchNextAsync(_cts.Token);
-            if (result == null || result.Count == 0)
-            {
-                _source = null;
-                _hasMore = false;
-                return;
-            }
-            _hasMore = true;
-            _source = new List<VideoSummary>(result);
-            _stateContext.Set(_lastResultKey, _source);
-        }
-        catch(Exception ex)
-        {
-            await _msgService.Error(ex.Message);
-        }
-        finally
-        {
-            _isLoading = false;
-        }
-
-    }
-
-    private async Task LoadMoreAsync()
-    {
-        if (_discoverHandler == null)
-        {
-            return;
-        }
-
-        _isMoreLoading = true;
-        try
-        {
-            CheckCancellationToken();
-            var result = await _discoverHandler.SearchNextAsync(_cts.Token);
-            if (result == null || result.Count == 0)
-            {
-                _hasMore = false;
-                return;
-            }
-            _source.AddRange(result);
-        }
-        catch(Exception ex)
-        {
-            await _msgService.Error(ex.Message);
-        }
-        finally
-        {
-            _isMoreLoading = false;
-        }
-
-    }
-
-    private async Task Refresh()
-    {
-        try
-        {
-            _isLoading = true;
-            _source = null;
-            await LoadAsync();
-        }
-        finally
-        {
-            _isLoading = false;
-        }
-
-    }
-
-    private void ItemClick(VideoSummary summary)
-    {
-        _nav.NavigateTo("/detail", new Dictionary<string, object>
-        {
-            { DetailPage._summaryKey, summary}
-        }, true);
-    }
-
-    private void CheckCancellationToken()
-    {
-        if (_cts == null)
-        {
-            _cts = new CancellationTokenSource();
-        }
-        else if (_cts.IsCancellationRequested)
-        {
-            _cts.Dispose();
-            _cts = null;
-            _cts = new CancellationTokenSource();
-        }
+        
     }
 }

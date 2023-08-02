@@ -29,8 +29,8 @@ namespace PolarShadow.Core
 
             var siteInfo = new KeyValueParameter
             {
-                { $"site:name", _site.Name },
-                { $"site:domain", _site.Domain }
+                { "site:name", _site.Name },
+                { "site:domain", _site.Domain }
             };
             _parameters.Add(siteInfo);
             _writingCollection = writingCollection;

@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
-    public interface ISequentialRequest
+    public interface ISequentialRequest : IEnumerator<ISite>
     {
-        ISite Current { get; }
-        void Reset();
-        Task SearchNextAsync(Stream stream, CancellationToken cancellation = default);
+        Task ExecuteAsync(Stream stream, CancellationToken cancellation = default);
     }
 
     public interface ISequentialRequest<TOutput> : ISequentialRequest
     {
-        Task<TOutput> SearchNextAsync(CancellationToken cancellation = default);
+        Task<TOutput> ExecuteAsync(CancellationToken cancellation = default);
     }
 }
