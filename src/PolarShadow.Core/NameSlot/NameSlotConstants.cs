@@ -24,9 +24,21 @@ namespace PolarShadow.Core
         public const byte Colon = (byte)':';
         public const byte At = (byte)'@';
         public const byte Tilde = (byte)'~';
+        public const byte Apostrophe = (byte)'\'';
+
+        public const byte Equal = (byte)'=';
+        public const byte Not = (byte)'!';
+        public const byte LessThan = (byte)'<';
+        public const byte GreaterThan = (byte)'>';
+        public const byte Question = (byte)'?';
 
         public static ReadOnlySpan<byte> XPathEndChars => new byte[]
-        { (byte)' ', (byte)'}', (byte)':'};
+        { (byte)' ', (byte)'}', (byte)':', (byte)'>', (byte)'<', (byte)'=', (byte)'!'};
+
+        public static ReadOnlySpan<byte> ConditionExpressionStartChars => new byte[]
+        {
+           Equal, Not, LessThan, GreaterThan, Question
+        };
 
         public static ReadOnlySpan<byte> RegexModifyChars => new byte[] { (byte)'g', (byte)'i', (byte)'m', (byte)'s' };
         public static ReadOnlySpan<byte> NumberFormatCommonChars => new byte[] 

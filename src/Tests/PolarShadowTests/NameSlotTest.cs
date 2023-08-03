@@ -47,7 +47,9 @@ namespace PolarShadowTests
                 "Test10:{/div/a/@href:/.*/i} middle {right:F1} end",
                 "Test11:{///div/a/@href:/.*/i} middle {right:F1} end",
                 "Test12:erro format {/div/a/@href:/.*/i middle {right:F1} end",
-                "Test12:erro format {/div/a/@href:/.*/i middle {right:F1}} end",
+                "Test12:condition expression: {/div/a/@href:/.*/i ? 'a': 'b'} end",
+                "Test12:condition expression: {/div/a/@href:/.*/i == 'abc' ? 'a': 'b'} end",
+                "Test12:error condition expression: {/div/a/@href:/.*/i == 'abc' : 'a': 'b'} end"
             };
 
             foreach (var item in readTestList)
@@ -87,6 +89,7 @@ namespace PolarShadowTests
                 "get json value:{$.expensive}",
                 "get json value:{$.expensive:N5}",
                 "get json value:{$.expensive:R}",
+                "compare json value:{$.expensive:R == '11' ? 'true' : 'false'}",
                 "get html value:{///book[@genre='novel']/title}",
                 "get html value:{///book[@genre='novel']/title:/.*fid/}",
                 "get html value:{///book[@genre='novel']/title:/.*fid/i}"

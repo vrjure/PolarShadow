@@ -30,6 +30,23 @@ namespace PolarShadow.Core
         /// <summary>
         /// 文本
         /// </summary>
-        Text
+        Text,
+        /// <summary>
+        /// 条件 ?
+        /// </summary>
+        Condition,
+        /// <summary>
+        /// ?: 中的:
+        /// </summary>
+        ConditionElse,
+        /// <summary>
+        /// 条件操作符 > < = >= <= == !=
+        /// </summary>
+        ConditionOperator,
+        /// <summary>
+        /// ''字符串
+        /// </summary>
+        String
+
     }
 }

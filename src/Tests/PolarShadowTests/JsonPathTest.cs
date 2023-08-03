@@ -27,7 +27,8 @@ namespace PolarShadowTests
             "$..book[?(@.isbn)]",
             "$.store.book[?(@.price < 10)]",
             "$..book[?(@.price <= $['expensive'])]",
-            "$..*"
+            "$..*",
+            "$..*?"
         };
 
         [Test]

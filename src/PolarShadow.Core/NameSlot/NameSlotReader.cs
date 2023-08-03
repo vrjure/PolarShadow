@@ -16,6 +16,7 @@ namespace PolarShadow.Core
         private NameSlotTokenType _tokenType;
         private int _segmentStart;
         private int _segmentEnd;
+        private bool _isConditionOperatorString;
 
         public NameSlotReader(string text) : this(Encoding.UTF8.GetBytes(text))
         {
@@ -28,6 +29,7 @@ namespace PolarShadow.Core
             _index = -1;
             _tokenType = NameSlotTokenType.None;
             _segmentStart = _segmentEnd = -1;
+            _isConditionOperatorString = false;
             _his = new Stack<NameSlotReaderState>();
         }
 
@@ -59,7 +61,7 @@ namespace PolarShadow.Core
                 return SetState(state);
             }
 
-            if (!CanRead()) return false;
+            if (!CanAdvance()) return false;
 
             var stack = new Stack<NameSlotReaderState>();
             while (Advance())
@@ -67,6 +69,10 @@ namespace PolarShadow.Core
                 if (ReadNext())
                 {
                     stack.Push(new NameSlotReaderState(_segmentStart, _segmentEnd, _tokenType));
+                    if (_tokenType == NameSlotTokenType.End)
+                    {
+                        break;
+                    }
                 }
                 else
                 {
@@ -127,6 +133,12 @@ namespace PolarShadow.Core
                     return ReadParameterNext();
                 case NameSlotTokenType.Text:
                     return ReadTextNext();
+                case NameSlotTokenType.Condition:
+                case NameSlotTokenType.ConditionOperator:
+                case NameSlotTokenType.ConditionElse:
+                    return ReadConditionNext();
+                case NameSlotTokenType.String:
+                    return ReadStringNext();
             }
 
             return false;
@@ -135,7 +147,7 @@ namespace PolarShadow.Core
         private bool ReadNoneNext()
         {
             _segmentStart = _segmentEnd = _index;
-            if (ReadtoChar(NameSlotConstants.SlotStart) && !NextCharIs(NameSlotConstants.SlotStart))
+            if (ReadToChar(NameSlotConstants.SlotStart) && !NextCharIs(NameSlotConstants.SlotStart))
             {
                 if(_segmentStart == _index)
                 {
@@ -148,7 +160,6 @@ namespace PolarShadow.Core
             _tokenType = NameSlotTokenType.Text;
             return true;
         }
-
 
         private bool ReadParameterNext()
         {
@@ -165,6 +176,10 @@ namespace PolarShadow.Core
             else if (ch == NameSlotConstants.SlotEnd)
             {
                 return ReadEnd();
+            }
+            else if (NameSlotConstants.ConditionExpressionStartChars.IndexOf(ch) > -1)
+            {
+                return ReadConditionEnd();
             }
             return false;
         }
@@ -216,6 +231,10 @@ namespace PolarShadow.Core
             {
                 return ReadEnd();
             }
+            else if (NameSlotConstants.ConditionExpressionStartChars.IndexOf(ch) > -1)
+            {
+                return ReadConditionEnd();
+            }
 
             return false;
         }
@@ -226,6 +245,10 @@ namespace PolarShadow.Core
             if (ch == NameSlotConstants.SlotEnd)
             {
                 return ReadEnd();
+            }
+            else if (NameSlotConstants.ConditionExpressionStartChars.IndexOf(ch) > -1)
+            {
+                return ReadConditionEnd();
             }
             return false;
         }
@@ -271,6 +294,93 @@ namespace PolarShadow.Core
             return false;
         }
 
+        private bool ReadConditionEnd()
+        {
+            _segmentStart = _segmentEnd = _index;
+            var ch = _buffer[_index];
+            if (ch == NameSlotConstants.Equal && NextCharIs(NameSlotConstants.Equal)
+                || ch == NameSlotConstants.Not && NextCharIs(NameSlotConstants.Equal)
+                || ch == NameSlotConstants.LessThan && NextCharIs(NameSlotConstants.Equal)
+                || ch == NameSlotConstants.GreaterThan && NextCharIs(NameSlotConstants.Equal))
+            {
+                _tokenType = NameSlotTokenType.ConditionOperator;
+                _segmentEnd = ++_index;
+                return true;
+            }
+            else if (ch == NameSlotConstants.Not && !NextCharIs(NameSlotConstants.Equal))
+            {
+                return false;
+            }
+            else if (ch == NameSlotConstants.Equal
+                || ch == NameSlotConstants.LessThan
+                || ch == NameSlotConstants.GreaterThan)
+            {
+                _tokenType = NameSlotTokenType.ConditionOperator;
+                return true;
+            }
+            else if (ch == NameSlotConstants.Question)
+            {
+                _tokenType = NameSlotTokenType.Condition;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadConditionNext()
+        {
+            var ch = _buffer[_index];
+
+            if (ch == NameSlotConstants.Apostrophe)
+            {
+                if (_tokenType == NameSlotTokenType.ConditionOperator) 
+                    _isConditionOperatorString = true;
+                else
+                    _isConditionOperatorString = false;
+
+                _tokenType = NameSlotTokenType.String;
+                return ReadApostopheTextEnd();
+            }
+
+            return false;
+        }
+
+        private bool ReadApostopheTextEnd()
+        {
+            _index++;
+            _segmentStart = _index;
+            if (ReadToChar(NameSlotConstants.Apostrophe))
+            {
+                _segmentEnd = _index - 1;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool ReadStringNext()
+        {
+            _segmentStart = _segmentEnd = _index;
+            var ch = _buffer[_index];
+
+            if (_isConditionOperatorString && ch == NameSlotConstants.Question)
+            {
+                _tokenType = NameSlotTokenType.Condition;
+                return true;
+            }
+            else if (!_isConditionOperatorString && ch == NameSlotConstants.Colon)
+            {
+                _tokenType = NameSlotTokenType.ConditionElse;
+                return true;
+            }
+            else if (!_isConditionOperatorString && ch == NameSlotConstants.SlotEnd)
+            {
+                _tokenType = NameSlotTokenType.End;
+                return true;
+            }
+            return false;
+        }
+
         private bool ReadEnd()
         {
             _tokenType = NameSlotTokenType.End;
@@ -278,7 +388,7 @@ namespace PolarShadow.Core
             return true;
         }
 
-        private bool ReadtoChar(byte ch)
+        private bool ReadToChar(byte ch)
         {
             while (CanRead())
             {
@@ -329,10 +439,9 @@ namespace PolarShadow.Core
             return _index < _buffer.Length;
         }
 
-        private bool ReadNone()
+        private bool CanAdvance()
         {
-            _tokenType = NameSlotTokenType.None;
-            return true;
+            return _index < _buffer.Length - 1;
         }
 
         private bool ReadClose()
@@ -345,7 +454,7 @@ namespace PolarShadow.Core
 
         private bool IsFormatEnd(byte ch)
         {
-            return ch == NameSlotConstants.Space || ch == NameSlotConstants.SlotEnd;
+            return ch == NameSlotConstants.Space || ch == NameSlotConstants.SlotEnd || NameSlotConstants.ConditionExpressionStartChars.IndexOf(ch) > -1;
         }
     }
 }

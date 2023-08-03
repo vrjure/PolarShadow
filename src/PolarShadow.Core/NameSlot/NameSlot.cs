@@ -33,58 +33,117 @@ namespace PolarShadow.Core
             return sb.ToString();
         }
 
-        private static void Format(StringBuilder sb, ref NameSlotReader reader, IParameter value)
+        private static void Format(StringBuilder sb, ref NameSlotReader reader, IParameter parameter)
         {
+            string currentValue = string.Empty;
             while (reader.Read())
             {
                 switch (reader.TokenType)
                 {
                     case NameSlotTokenType.None:
                     case NameSlotTokenType.Start:
+                        currentValue = string.Empty;
+                        break;
                     case NameSlotTokenType.End:
+                        sb.Append(currentValue);
                         break;
                     case NameSlotTokenType.Text:
                         sb.Append(reader.GetString());
                         break;
-                    default:
-                        ReadValue(sb, ref reader, value);
+                    case NameSlotTokenType.Parameter:
+                        currentValue = ReadParameter(ref reader, parameter);
+                        break;
+                    case NameSlotTokenType.Format:
+                        currentValue = FormatValue(ref reader, currentValue);
+                        break;
+                    case NameSlotTokenType.Match:
+                        currentValue = MatchValue(ref reader, currentValue);
+                        break;
+                    case NameSlotTokenType.Condition:
+                    case NameSlotTokenType.ConditionOperator:
+                        currentValue = CompareValue(ref reader, parameter, currentValue);
                         break;
                 }
             }
 
         }
 
-        private static void ReadValue(StringBuilder sb, ref NameSlotReader reader, IParameter value)
+        private static string ReadParameter(ref NameSlotReader reader, IParameter parameter)
         {
-            var result = string.Empty;
-            if (reader.TokenType == NameSlotTokenType.Parameter)
+            var result = reader.GetString();
+
+            if (parameter.TryGetValue(result, out ParameterValue newResult))
             {
-                result = reader.GetString();
+                return newResult.GetValue();
             }
-
-            reader.Read();
-
-            if (value.TryGetValue(result, out ParameterValue newResult))
+            else
             {
-                result = newResult.GetValue();
-
-                if (reader.TokenType == NameSlotTokenType.Format)
-                {
-                    var format = reader.GetSegment();
-                    result = FormatValue(result, format);
-                }
-                else if (reader.TokenType == NameSlotTokenType.Match)
-                {
-                    var regex = reader.GetString();
-                    result = MatchValue(result, regex);
-                }
-                sb.Append(result);
+                return string.Empty;
             }
-                   
         }
 
-        private static string FormatValue(string value, ReadOnlySpan<byte> format)
+        private static string CompareValue(ref NameSlotReader reader, IParameter parameter, string currentValue)
         {
+            if (reader.TokenType == NameSlotTokenType.Condition)
+            {
+                if (string.IsNullOrEmpty(currentValue))
+                {
+                    reader.Read();
+                    reader.Read();
+                    reader.Read();
+                    return reader.GetString().Format(parameter);
+                }
+                else
+                {
+                    reader.Read();
+                    return reader.GetString().Format(parameter);
+                }
+            }
+            else if (reader.TokenType == NameSlotTokenType.ConditionOperator)
+            {
+                var op = reader.GetString();
+                reader.Read();
+                var compareValue = reader.GetString();
+                reader.Read();
+                reader.Read();
+                var trueValue = reader.GetString();
+                reader.Read();
+                reader.Read();
+                var falseValue = reader.GetString();
+
+                return CompareValue(currentValue, op, compareValue, trueValue, falseValue);
+            }
+            return string.Empty;
+        }
+
+
+        private static string CompareValue(string left, string op, string right, string trueValue, string falseValue)
+        {
+            decimal leftDec = 0;
+            decimal rightDec = 0;
+
+            if (op == ">" || op =="<" || op ==">=" || op == "<=")
+            {
+                if (!decimal.TryParse(left, out leftDec)) return falseValue;
+                if (!decimal.TryParse(right, out rightDec)) return falseValue;
+            }
+
+            return op switch
+            {
+                ">" => leftDec > rightDec ? trueValue : falseValue,
+                "<" => leftDec < rightDec ? trueValue : falseValue,
+                ">=" => leftDec >= rightDec ? trueValue : falseValue,
+                "<=" => leftDec <= rightDec ? trueValue : falseValue,
+                "==" => left == right ? trueValue : falseValue,
+                "!=" => left != right ? trueValue : falseValue,
+                _ => falseValue
+            };
+        }
+
+        private static string FormatValue(ref NameSlotReader reader, string value)
+        {
+            var format = reader.GetSegment();
+
             if (NameSlotConstants.UrlEncode.SequenceEqual(format))
             {
                return HttpUtility.UrlEncode(value);
@@ -107,8 +166,10 @@ namespace PolarShadow.Core
             return string.Format($"{{0:{formatStr}}}", value);
         }
 
-        private static string MatchValue(string value, string regex)
+        private static string MatchValue(ref NameSlotReader reader, string value)
         {
+            var regex = reader.GetString();
+
             Match result = default;
             if (regex.EndsWith("/i"))
             {
