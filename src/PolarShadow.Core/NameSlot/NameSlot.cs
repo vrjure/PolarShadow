@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -91,25 +93,25 @@ namespace PolarShadow.Core
                     reader.Read();
                     reader.Read();
                     reader.Read();
-                    return reader.GetString().Format(parameter);
+                    return reader.GetSegment().Format(parameter);
                 }
                 else
                 {
                     reader.Read();
-                    return reader.GetString().Format(parameter);
+                    return reader.GetSegment().Format(parameter);
                 }
             }
             else if (reader.TokenType == NameSlotTokenType.ConditionOperator)
             {
                 var op = reader.GetString();
                 reader.Read();
-                var compareValue = reader.GetString();
+                var compareValue = reader.GetSegment().Format(parameter);
                 reader.Read();
                 reader.Read();
-                var trueValue = reader.GetString();
+                var trueValue = reader.GetSegment().Format(parameter);
                 reader.Read();
                 reader.Read();
-                var falseValue = reader.GetString();
+                var falseValue = reader.GetSegment().Format(parameter);
 
                 return CompareValue(currentValue, op, compareValue, trueValue, falseValue);
             }

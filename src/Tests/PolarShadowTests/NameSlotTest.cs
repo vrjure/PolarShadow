@@ -92,7 +92,8 @@ namespace PolarShadowTests
                 "compare json value:{$.expensive:R == '11' ? 'true' : 'false'}",
                 "get html value:{///book[@genre='novel']/title}",
                 "get html value:{///book[@genre='novel']/title:/.*fid/}",
-                "get html value:{///book[@genre='novel']/title:/.*fid/i}"
+                "get html value:{///book[@genre='novel']/title:/.*fid/i}",
+                "compare html value:{///book[@genre='novel']/title:/.*fid/i=='The Confid' ? '{title}':'false'}"
             };
 
             foreach (var item in list)
