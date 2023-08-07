@@ -1,17 +1,17 @@
-﻿using PolarShadow.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
-namespace PolarShadow.Videos
+namespace PolarShadow.Core
 {
-    internal class VideoSummaryContentWriting : ContentWriting
+    internal class SitePropertyContentWriting : ContentWriting
     {
-        public override string[] RequestFilter => new string[] { VideoRequests.Search, VideoRequests.Main, VideoRequests.CategoryList };
+        public override string[] RequestFilter => new string[] { "*" };
+
         public override void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter)
         {
-            if (property.Name.Equals(nameof(VideoSummary.Src), StringComparison.OrdinalIgnoreCase))
+            if (property.Name.Equals(nameof(Link.Src), StringComparison.OrdinalIgnoreCase))
             {
                 if (parameter.TryReadValue("site:name", out string siteName))
                 {

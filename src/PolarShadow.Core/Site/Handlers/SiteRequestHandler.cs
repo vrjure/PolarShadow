@@ -16,7 +16,7 @@ namespace PolarShadow.Core
         private readonly ISiteRequest _request;
         private readonly IParameterCollection _parameters;
         private readonly IEnumerable<IContentWriting> _writingCollection;
-        public SiteRequestHandler(ISite site, IRequestHandler requesthandler, ISiteRequest request, IParameter parameter, IEnumerable<IContentWriting> writingCollection)
+        public SiteRequestHandler(ISite site, IRequestHandler requesthandler, string requestName, ISiteRequest request, IParameter parameter, IEnumerable<IContentWriting> writingCollection)
         {
             _site = site;
             _handler = requesthandler;
@@ -30,7 +30,8 @@ namespace PolarShadow.Core
             var siteInfo = new KeyValueParameter
             {
                 { "site:name", _site.Name },
-                { "site:domain", _site.Domain }
+                { "site:domain", _site.Domain },
+                { "site:request", requestName }
             };
             _parameters.Add(siteInfo);
             _writingCollection = writingCollection;

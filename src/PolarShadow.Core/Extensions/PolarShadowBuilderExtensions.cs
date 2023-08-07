@@ -12,6 +12,7 @@ namespace PolarShadow.Core
             return builder.ConfigureSiteItem(siteItemBuilder =>
             {
                 siteItemBuilder.HttpHandler = new HttpClientRequestHandler();
+                siteItemBuilder.Writings.Add(new SitePropertyContentWriting());
             });
         }
 
@@ -21,7 +22,6 @@ namespace PolarShadow.Core
             {
                 siteItemBuilder = builder.AddSiteItem();
             }
-
             itemBuilder(siteItemBuilder);
             return builder;
         }

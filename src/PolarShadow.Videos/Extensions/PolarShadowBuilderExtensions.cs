@@ -25,7 +25,6 @@ namespace PolarShadow.Videos
 
         public static ISiteItemBuilder ConfigureVideo(this ISiteItemBuilder itemBuilder)
         {
-            itemBuilder.Writings.Add(new VideoSummaryContentWriting());
             return itemBuilder;
         }
 
