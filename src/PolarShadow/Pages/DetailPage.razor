@@ -6,6 +6,7 @@
 @inject IMyCollectionService _myCollection
 @inject IHttpFileResource _imageCache
 @inject IHttpResource _httpResource
+@inject IMessageService _msg;
 
 <Layout>
     <Header>
@@ -147,6 +148,10 @@
                 }
             }
         }
+        catch(Exception ex)
+        {
+            await _msg.Error(ex.Message);
+        }
         finally
         {
             _isLoading = false;
@@ -219,6 +224,10 @@
                     }
                 }
             }
+        }
+        catch(Exception ex)
+        {
+            await _msg.Error(ex.Message);
         }
         finally
         {

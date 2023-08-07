@@ -8,7 +8,7 @@ namespace PolarShadow.Videos
 {
     internal class VideoSummaryContentWriting : ContentWriting
     {
-        public override string[] RequestFilter => new string[] { VideoRequests.Search, VideoRequests.Newest };
+        public override string[] RequestFilter => new string[] { VideoRequests.Search, VideoRequests.Main, VideoRequests.CategoryList };
         public override void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter)
         {
             if (property.Name.Equals(nameof(VideoSummary.Src), StringComparison.OrdinalIgnoreCase))

@@ -21,8 +21,17 @@ namespace PolarShadow.Core
             }
             set { _linkType = value; }  
         }
-
-        public string Site { get; set; }
+        /// <summary>
+        /// SrcName
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// 站点名称
+        /// </summary>
+        public string Site { get; set; }
+        /// <summary>
+        /// 用于请求src的Request
+        /// </summary>
+        public string Request { get; set; }
     }
 }

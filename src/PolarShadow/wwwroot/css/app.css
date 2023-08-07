@@ -61,6 +61,26 @@ html, body {
         border-radius: 3px;
         background-color: #a8a8a8a8
     }
+
+.scroll-content-h {
+    overflow-y: hidden;
+    overflow-x: auto;
+    padding: 16px;
+}
+    .scroll-content-h::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .scroll-content-h::-webkit-scrollbar-corner {
+        background-color: transparent;
+    }
+
+    .scroll-content-h::-webkit-scrollbar-thumb {
+        border-radius: 3px;
+        background-color: #a8a8a8a8
+    }
+ 
 .ant-layout-footer {
     background-color:#f9f9f9 !important;
 }

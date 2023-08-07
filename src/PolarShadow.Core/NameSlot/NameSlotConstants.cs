@@ -32,6 +32,11 @@ namespace PolarShadow.Core
         public const byte GreaterThan = (byte)'>';
         public const byte Question = (byte)'?';
 
+        public static ReadOnlySpan<byte> StartEnd => new byte[]
+        {
+            (byte)'{', (byte)'}'
+        };
+
         public static ReadOnlySpan<byte> XPathEndChars => new byte[]
         { (byte)' ', (byte)'}', (byte)':', (byte)'>', (byte)'<', (byte)'=', (byte)'!'};
 

@@ -70,8 +70,15 @@ namespace PolarShadow.Tool.Pages.ViewModels
         {
             try
             {
-
-                var result = await _selectSite.ExecuteAsync(_selectAbility, Input);
+                string result = string.Empty;
+                if (string.IsNullOrEmpty(Input))
+                {
+                    result = await _selectSite.ExecuteAsync(_selectAbility);
+                }
+                else
+                {
+                    result = await _selectSite.ExecuteAsync(_selectAbility, Input);
+                }
                 using var doc = JsonDocument.Parse(result);
 
                 using var ms = new MemoryStream();

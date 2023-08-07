@@ -16,11 +16,12 @@ namespace PolarShadow.Core
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                Converters = 
-                { 
+                Converters =
+                {
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
                     new SiteRequestConverter<SiteRequest>(),
-                    new KeyValueParameterConverter()
+                    new KeyValueParameterConverter(),
+                    new LinkConverter()
                 },
                 NumberHandling = JsonNumberHandling.AllowReadingFromString
             };

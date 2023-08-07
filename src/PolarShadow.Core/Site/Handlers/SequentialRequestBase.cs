@@ -2,10 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -151,7 +147,10 @@ namespace PolarShadow.Core
 
         protected override Task ExecuteAsync(ISiteRequestHandler request, Stream stream, CancellationToken cancellation)
         {
-            return request.ExecuteAsync(JsonSerializer.Serialize(Input, JsonOption.DefaultSerializer), stream, cancellation);
+            return request.ExecuteAsync(stream, builder => 
+            { 
+                builder.AddObjectValue(Input);
+            }, cancellation);
         }
     }
 }

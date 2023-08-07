@@ -8,7 +8,8 @@ namespace PolarShadow.Videos
     {
         public const string Search = "search";
         public const string Detail = "detail";
-        public const string Newest = "newest";
-        public const string Category = "categories";
+        public const string Main = "main";
+        public const string Categories = "categories";
+        public const string CategoryList = "category_list";
     }
 }

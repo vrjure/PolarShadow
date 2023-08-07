@@ -49,7 +49,8 @@ namespace PolarShadowTests
                 "Test12:erro format {/div/a/@href:/.*/i middle {right:F1} end",
                 "Test12:condition expression: {/div/a/@href:/.*/i ? 'a': 'b'} end",
                 "Test12:condition expression: {/div/a/@href:/.*/i == 'abc' ? 'a': 'b'} end",
-                "Test12:error condition expression: {/div/a/@href:/.*/i == 'abc' : 'a': 'b'} end"
+                "Test12:error condition expression: {/div/a/@href:/.*/i == 'abc' : 'a': 'b'} end",
+                "Test12:raw: {{/div/a/@href:/.*/i == 'abc' ? 'a': '{b}'}} end",
             };
 
             foreach (var item in readTestList)

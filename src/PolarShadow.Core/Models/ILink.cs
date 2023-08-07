@@ -11,5 +11,6 @@ namespace PolarShadow.Core
         LinkType SrcType { get; set; }
         string Site { get; set; }
         string Name { get; set; }
+        string Request { get; set; }
     }
 }

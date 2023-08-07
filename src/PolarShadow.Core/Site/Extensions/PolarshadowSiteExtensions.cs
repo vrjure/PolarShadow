@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -80,37 +81,118 @@ namespace PolarShadow.Core
 
         public static async Task ExecuteAsync(this ISiteRequestHandler handler, Stream stream, CancellationToken cancellation = default)
         {
-            await handler.ExecuteAsync(default, stream, cancellation);
+            await handler.ExecuteAsync(stream, default, cancellation);
         }
 
-        public static async Task<TResponse> ExecuteAsync<TRequest, TResponse>(this ISite site, string requestName, TRequest request, CancellationToken cancellation = default)
+        public static async Task ExecuteAsync(this ISiteRequestHandler handler, Stream stream, Action<IParameterCollection> parameters, CancellationToken cancellation = default)
         {
-            var handler = site.CreateRequestHandler(requestName);
+            await handler.ExecuteAsync(stream, parameters, cancellation);
+        }
+
+        public static async Task<TResponse> ExecuteAsync<TResponse>(this ISiteRequestHandler handler, CancellationToken cancellation = default)
+        {
             if (handler == null) return default;
-            var input = JsonSerializer.Serialize(request, JsonOption.DefaultSerializer);
             using var ms = new MemoryStream();
-            await handler.ExecuteAsync(input, ms, cancellation).ConfigureAwait(false);
+            await handler.ExecuteAsync(ms, default, cancellation).ConfigureAwait(false);
             ms.Seek(0, SeekOrigin.Begin);
             return JsonSerializer.Deserialize<TResponse>(ms, JsonOption.DefaultSerializer);
         }
 
-        public static async Task<string> ExecuteAsync(this ISite site, string requestName, string input, CancellationToken cancellation = default)
+        public static async Task<TResponse> ExecuteAsync<TResponse>(this ISiteRequestHandler handler, Action<IParameterCollection> builder = default, CancellationToken cancellation = default)
+        {
+            if (handler == null) return default;
+            using var ms = new MemoryStream();
+            await handler.ExecuteAsync(ms, builder, cancellation).ConfigureAwait(false);
+            ms.Seek(0, SeekOrigin.Begin);
+            return JsonSerializer.Deserialize<TResponse>(ms, JsonOption.DefaultSerializer);
+        }
+
+        public static async Task<TResponse> ExecuteAsync<TRequest, TResponse>(this ISiteRequestHandler handler, TRequest request, CancellationToken cancellation = default) where TRequest : class
+        {
+            if (handler == null) return default;
+            using var ms = new MemoryStream();
+            await handler.ExecuteAsync(ms, builder => 
+            { 
+                builder.AddObjectValue(request);
+            }, cancellation).ConfigureAwait(false);
+            ms.Seek(0, SeekOrigin.Begin);
+            return JsonSerializer.Deserialize<TResponse>(ms, JsonOption.DefaultSerializer);
+        }
+
+        public static Task<TResponse> ExecuteAsync<TResponse>(this ISite site, string requestName, CancellationToken cancellation = default)
         {
             var handler = site.CreateRequestHandler(requestName);
             if (handler == null) return default;
+            return ExecuteAsync<TResponse>(handler, default, cancellation);
+        }
+
+        public static Task<TResponse> ExecuteAsync<TResponse>(this ISite site, string requestName, Action<IParameterCollection> builder, CancellationToken cancellation = default)
+        {
+            var handler = site.CreateRequestHandler(requestName);
+            if (handler == null) return default;
+            return ExecuteAsync<TResponse>(handler, builder, cancellation);
+        }
+
+        public static Task<TResponse> ExecuteAsync<TRequest, TResponse>(this ISite site, string requestName, TRequest request, CancellationToken cancellation = default) where TRequest : class
+        {
+            var handler = site.CreateRequestHandler(requestName);
+            if (handler == null) return default;
+            return ExecuteAsync<TRequest, TResponse>(handler, request, cancellation);
+        }
+
+
+        public static Task<string> ExecuteAsync(this ISite site, string requestName, string input, CancellationToken cancellation = default)
+        {
+            var handler = site.CreateRequestHandler(requestName);
+            if (handler == null) return default;
+            return ExecuteAsync(handler, input, cancellation);
+        }
+
+        public static Task<string> ExecuteAsync(this ISite site, string requestName, CancellationToken cancellation = default)
+        {
+            var handler = site.CreateRequestHandler(requestName);
+            if (handler == null) return default;
+            return ExecuteAsync(handler, cancellation);
+        }
+
+        public static Task<string> ExecuteAsync(this ISite site, string requestName, Action<IParameterCollection> builder, CancellationToken cancellation = default)
+        {
+            var handler = site.CreateRequestHandler(requestName);
+            if (handler == null) return default;
+            return ExecuteAsync(handler, builder, cancellation);
+        }
+
+        public static async Task<string> ExecuteAsync(this ISiteRequestHandler request, CancellationToken cancellation = default)
+        {
+            if (request == null) return default;
             using var ms = new MemoryStream();
-            await handler.ExecuteAsync(input, ms, cancellation).ConfigureAwait(false);
+            await request.ExecuteAsync(ms, cancellation).ConfigureAwait(false);
             ms.Seek(0, SeekOrigin.Begin);
             using var sr = new StreamReader(ms);
             return sr.ReadToEnd();
         }
 
-        public static async Task<string> ExecuteAsync(this ISite site, string requestName, CancellationToken cancellation = default)
+        public static async Task<string> ExecuteAsync(this ISiteRequestHandler request, Action<IParameterCollection> builder, CancellationToken cancellation = default)
         {
-            var handler = site.CreateRequestHandler(requestName);
-            if (handler == null) return default;
+            if (request == null) return default;
             using var ms = new MemoryStream();
-            await handler.ExecuteAsync(ms, cancellation).ConfigureAwait(false);
+            await request.ExecuteAsync(ms, builder, cancellation).ConfigureAwait(false);
+            ms.Seek(0, SeekOrigin.Begin);
+            using var sr = new StreamReader(ms);
+            return sr.ReadToEnd();
+        }
+
+        public static async Task<string> ExecuteAsync(this ISiteRequestHandler request, string input, CancellationToken cancellation = default)
+        {
+            if (request == null) return default;
+            using var ms = new MemoryStream();
+            await request.ExecuteAsync(ms, builder =>
+            {
+                var objectValue = new ObjectParameter();
+                using var doc = JsonDocument.Parse(input);
+                objectValue.Add(doc.RootElement.Clone());
+                builder.Add(objectValue);
+            }, cancellation).ConfigureAwait(false);
             ms.Seek(0, SeekOrigin.Begin);
             using var sr = new StreamReader(ms);
             return sr.ReadToEnd();

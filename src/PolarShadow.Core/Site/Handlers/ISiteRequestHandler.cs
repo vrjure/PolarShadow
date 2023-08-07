@@ -10,6 +10,6 @@ namespace PolarShadow.Core
     public interface ISiteRequestHandler
     {
         bool TryGetParameter<T>(string name, out T value);
-        Task ExecuteAsync(string input, Stream output, CancellationToken cancellation = default);
+        Task ExecuteAsync(Stream output, Action<IParameterCollection> parameters, CancellationToken cancellation = default);
     }
 }

@@ -4,6 +4,7 @@
 @inject IPolarShadow _polarShadow
 @inject IStateContext _stateContext
 @inject IMessageService _msgService
+@inject NavigationManager _navManager;
 
 <Layout>
     <Content Class="scroll-content">
@@ -53,13 +54,16 @@
 
     protected override void OnInitialized()
     {
-        _source = _polarShadow.GetSites().Where(f=>f.HasRequest(VideoRequests.Newest)).ToList();
+        _source = _polarShadow.GetSites().Where(f=>f.HasRequest(VideoRequests.Main)).ToList();
     }
 
-   
+
 
     private void ItemClick(ISite site)
     {
-        
+        _nav.NavigateTo(_navManager.GetUriWithQueryParameters("/discover/site", new Dictionary<string, object>
+        {
+            {"site",site.Name}
+        }),true);
     }
 }

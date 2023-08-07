@@ -1,4 +1,4 @@
-﻿@page "/discoverPage"
+﻿@page "/discover/site"
 @layout TopLevelLayout
 
 @inject INavigationService _nav
@@ -7,6 +7,33 @@
 @inject IMessageService _msgService
 
 <Layout>
+    <Header>
+        <GridRow Gutter="16" Align="middle" Class="header-content">
+            <GridCol Flex=@("none")>
+                @if (_nav.CanBack())
+                {
+                    <Icon Type="left" Theme="outline" OnClick="()=>_nav.Back()" Class="cursor-point-style menu-icon" />
+                }
+            </GridCol>
+            <GridCol Flex=@("auto")>
+                @if (_categories != null && _categories.Count > 0)
+                {
+                    <div class="scroll-content-h">
+                        <Segmented Block TValue="ILink" Value="@_currentCategory" ValueChanged="CategoryChanged">
+                            @if (_categories != null)
+                            {
+                                foreach (var item in _categories)
+                                {
+                                    <SegmentedItem Label="@item.Name" Value="item" />
+                                }
+                            }
+                        </Segmented>
+                    </div>
+                }
+
+            </GridCol>
+        </GridRow>
+    </Header>
     <Content Class="scroll-content">
         @if (_isLoading)
         {
@@ -43,10 +70,16 @@
 </Layout>
 
 @code {
+    [Parameter]
     [SupplyParameterFromQuery(Name = "site")]
     public string Site{ get; set; }
 
+    private ICollection<ILink> _categories;
+    private ILink _currentCategory;
+
+    private PageFilter _filter;
     private List<VideoSummary> _source;
+
     private bool _isLoading = false;
     private bool _isMoreLoading = false;
     private bool _hasMore = true;
@@ -62,40 +95,104 @@
         };
     private CancellationTokenSource _cts;
     public static string _lastResultKey = "last_discover_result";
+    public static string _lastCategoryKey = "last_category_key";
+    public static string _lastSiteNameKey = "last_site_key";
+    public static string _lastCategoriesKey = "last_categories_key";
 
     private ISequentialRequest<ICollection<VideoSummary>> _discoverHandler;
 
 
     protected override async Task OnInitializedAsync()
     {
-        if (_stateContext.TryGet(_lastResultKey, out List<VideoSummary> val))
+        if (_stateContext.TryGet(_lastCategoriesKey, out ICollection<ILink> categories))
         {
-            _source = val;
-            _hasMore = false;
+            if (_stateContext.TryGet(_lastResultKey, out List<VideoSummary> val))
+            {
+                _source = val;
+                _hasMore = false;
+            }
+
+            _categories = categories;
+            if (_stateContext.TryGet(_lastCategoryKey, out ILink link))
+            {
+                _currentCategory = link;
+            }
         }
         else
         {
-            await LoadAsync();
+            if (string.IsNullOrEmpty(Site) || !_polarShadow.TryGetSite(Site, out ISite site))
+            {
+                return;
+            }
+
+            CheckCancellationToken();
+            var categoriesRequest = site.CreateRequestHandler(VideoRequests.Categories);
+            _categories = await categoriesRequest.ExecuteAsync<ICollection<ILink>>(_cts.Token);
         }
+    }
+
+    private async Task CategoryChanged(ILink link)
+    {
+        if (_currentCategory == link)
+        {
+            return;
+        }
+        _currentCategory = link;
+        await LoadAsync();
     }
 
     private async Task LoadAsync()
     {
-        _discoverHandler = _polarShadow.CreateVideoDiscoverHandler();
+        if (string.IsNullOrEmpty(Site) || !_polarShadow.TryGetSite(Site, out ISite site))
+        {
+            return;
+        }
+        if (string.IsNullOrEmpty(_currentCategory?.Request))
+        {
+            await _msgService.Info("未定义请求");
+            return;
+        }
+
+        var request = site.CreateRequestHandler(_currentCategory.Request);
+        if (request == null)
+        {
+            await _msgService.Warning($"未定义请求{_currentCategory.Request}");
+            return;
+        }
+
+        _filter = new PageFilter
+        {
+            Page = 1,
+            PageSize = 10
+        };
+
         try
         {
             CheckCancellationToken();
             _isLoading = true;
-            var result = await _discoverHandler.ExecuteAsync(_cts.Token);
-            if (result == null || result.Count == 0)
+            var result = await request.ExecuteAsync<ICollection<VideoSummary>>(builder=>
             {
-                _source = null;
-                _hasMore = false;
-                return;
+                builder.AddObjectValue(_filter);
+                builder.AddObjectValue(_currentCategory);
+            }, _cts.Token);
+            if (!_cts.IsCancellationRequested)
+            {
+                if (result == null || result.Count == 0)
+                {
+                    _source = null;
+                    _hasMore = false;
+                    return;
+                }
+                _hasMore = true;
+                _source = new List<VideoSummary>(result);
             }
-            _hasMore = true;
-            _source = new List<VideoSummary>(result);
-            _stateContext.Set(_lastResultKey, _source);
+            else
+            {
+                _hasMore = false;
+                _source = null;
+                _stateContext.Remove(_lastResultKey);
+            }
+
         }
         catch (Exception ex)
         {
@@ -110,16 +207,23 @@
 
     private async Task LoadMoreAsync()
     {
-        if (_discoverHandler == null)
+        if (!_polarShadow.TryGetSite(Site, out ISite site))
         {
             return;
         }
+
+        var request = site.CreateRequestHandler(_currentCategory.Request);
 
         _isMoreLoading = true;
         try
         {
             CheckCancellationToken();
-            var result = await _discoverHandler.ExecuteAsync(_cts.Token);
+            _filter.Page++;
+            var result = await request.ExecuteAsync<ICollection<VideoSummary>>(builder =>  
+            {
+                builder.AddObjectValue(_filter);
+                builder.AddObjectValue(_currentCategory);
+            }, _cts.Token);
             if (result == null || result.Count == 0)
             {
                 _hasMore = false;
@@ -158,7 +262,14 @@
         _nav.NavigateTo("/detail", new Dictionary<string, object>
         {
             { DetailPage._detail_parameter_Key, link}
-        }, true);
+        },
+        new Dictionary<string, object>
+        {
+            {_lastCategoryKey, _currentCategory},
+            {_lastCategoriesKey, _categories},
+            {_lastResultKey, _source}
+        },
+        true);
     }
 
     private void CheckCancellationToken()
@@ -169,6 +280,13 @@
         }
         else if (_cts.IsCancellationRequested)
         {
+            _cts.Dispose();
+            _cts = null;
+            _cts = new CancellationTokenSource();
+        }
+        else
+        {
+            _cts.Cancel();
             _cts.Dispose();
             _cts = null;
             _cts = new CancellationTokenSource();

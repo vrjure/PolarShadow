@@ -36,7 +36,7 @@ namespace PolarShadow.Core
             _writingCollection = writingCollection;
         }
 
-        public async Task ExecuteAsync(string input, Stream output, CancellationToken cancellation = default)
+        public async Task ExecuteAsync(Stream output, Action<IParameterCollection> parametersBuilder, CancellationToken cancellation = default)
         {
             if (_request.Response == null || !_request.Response.Template.HasValue)
             {
@@ -44,12 +44,8 @@ namespace PolarShadow.Core
             }
 
             var p = new Parameters(_parameters);
-            if (!string.IsNullOrEmpty(input))
-            {
-                using var doc = JsonDocument.Parse(input);
-                var objectParameter = new ObjectParameter(new ParameterValue(doc.RootElement.Clone()));
-                p.Add(objectParameter);
-            }
+            parametersBuilder?.Invoke(p);
+
             var result = await _handler.ExecuteAsync(new RequestInternal
             {
                 Request = _request.Request,

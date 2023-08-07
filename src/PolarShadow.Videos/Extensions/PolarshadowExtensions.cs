@@ -18,8 +18,8 @@ namespace PolarShadow.Videos
 
         public static ISequentialRequest<ICollection<VideoSummary>> CreateVideoDiscoverHandler(this IPolarShadow polarShadow)
         {
-            var sites = polarShadow.GetSites(f => f.HasRequest(VideoRequests.Newest));
-            return new VideoDiscoverHandler(VideoRequests.Newest, sites);
+            var sites = polarShadow.GetSites(f => f.HasRequest(VideoRequests.Main));
+            return new VideoDiscoverHandler(VideoRequests.Main, sites);
         }
 
         public static async Task<VideoDetail> GetDetailAsync(this ISite site, ILink link, CancellationToken cancellation = default)

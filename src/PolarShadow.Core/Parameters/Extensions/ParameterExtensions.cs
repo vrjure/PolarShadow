@@ -1,11 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace PolarShadow.Core
 {
     public static partial class ParameterExtensions
     {
+        public static void AddObjectValue<T>(this IParameterCollection p, T value) where T : class
+        {
+            var objectParameter = new ObjectParameter();
+            objectParameter.Add(value);
+
+            p.Add(objectParameter);
+        }
+
+        public static void AddKeyValue<T>(this IParameterCollection p, T value) where T:class
+        {
+            var keyValueParameter = new KeyValueParameter();
+            keyValueParameter.Add(value);
+            p.Add(keyValueParameter);
+        }
+
         public static bool TryReadValue<TValue>(this IParameter parameter, string path, out TValue value)
         {
             if (parameter.TryGetValue(path, out ParameterValue val))

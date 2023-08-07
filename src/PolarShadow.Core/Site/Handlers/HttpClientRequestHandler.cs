@@ -20,7 +20,7 @@ namespace PolarShadow.Core
 
         protected override async Task<IObjectParameter> OnRequestAsync(IRequest request, IParameter parameter, CancellationToken cancellation)
         {
-            var url = request.Request.Url.Format(parameter);
+            var url = request.Request.Url.Format(parameter).Format(parameter);
             using var client = new HttpClient();
 
             if (!client.DefaultRequestHeaders.Contains("User-Agent"))

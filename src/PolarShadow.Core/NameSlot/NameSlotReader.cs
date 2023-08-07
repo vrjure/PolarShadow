@@ -147,15 +147,35 @@ namespace PolarShadow.Core
         private bool ReadNoneNext()
         {
             _segmentStart = _segmentEnd = _index;
-            if (ReadToChar(NameSlotConstants.SlotStart) && !NextCharIs(NameSlotConstants.SlotStart))
+            if (ReadToCharAny(NameSlotConstants.StartEnd))
             {
-                if(_segmentStart == _index)
+                var ch = _buffer[_index];
+                if (ch == NameSlotConstants.SlotStart && !NextCharIs(NameSlotConstants.SlotStart))
                 {
-                    _tokenType = NameSlotTokenType.Start;
-                    return true;
+                    if (_segmentStart == _index)
+                    {
+                        _tokenType = NameSlotTokenType.Start;
+                        return true;
+                    }
+                }
+                else if (ch == NameSlotConstants.SlotEnd)
+                {
+                    if (NextCharIs(NameSlotConstants.SlotEnd))
+                    {
+                        _segmentEnd = _index;
+                        _index++;
+                        _tokenType = NameSlotTokenType.Text;
+                        return true;
+                    }
+                    else
+                    {
+                        _segmentEnd = _index;
+                        _tokenType = NameSlotTokenType.Text;
+                        return true;
+                    }
                 }
             }
-
+            
             _segmentEnd = --_index;
             _tokenType = NameSlotTokenType.Text;
             return true;
@@ -217,8 +237,26 @@ namespace PolarShadow.Core
             _segmentStart = _segmentEnd = _index;
             if (ch == NameSlotConstants.SlotStart)
             {
-                _tokenType = NameSlotTokenType.Start;
-                return true;
+                if (NextCharIs(NameSlotConstants.SlotStart))
+                {
+                    _segmentStart = _segmentEnd = ++_index;
+                    _tokenType = NameSlotTokenType.Text;
+                    return true;
+                }
+                else
+                {
+                    _tokenType = NameSlotTokenType.Start;
+                    return true;
+                }
+            }
+            else if (ch == NameSlotConstants.SlotEnd && NextCharIs(NameSlotConstants.SlotEnd))
+            {
+                _segmentStart = _segmentEnd = ++_index;
+                _tokenType = NameSlotTokenType.Text;
+            }
+            else
+            {
+                return ReadNoneNext();
             }
 
             return false;
@@ -402,6 +440,20 @@ namespace PolarShadow.Core
             return false;
         }
 
+        private bool ReadToCharAny(ReadOnlySpan<byte> chars)
+        {
+            while (CanRead())
+            {
+                if (chars.IndexOf(_buffer[_index]) >= 0)
+                {
+                    return true;
+                }
+                _index++;
+            }
+
+            return false;
+        }
+
         private bool NextCharIs(byte ch)
         {
             var nextIndex = _index + 1;
@@ -430,8 +482,7 @@ namespace PolarShadow.Core
 
         private bool ShouldSkip()
         {
-            return !(_tokenType == NameSlotTokenType.None
-                || _tokenType == NameSlotTokenType.End);
+            return !(_tokenType == NameSlotTokenType.None || _tokenType == NameSlotTokenType.End || _tokenType == NameSlotTokenType.Text);
         }
 
         private bool CanRead()
