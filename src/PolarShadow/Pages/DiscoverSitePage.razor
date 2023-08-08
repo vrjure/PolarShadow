@@ -8,7 +8,7 @@
 
 <Layout>
     <Header>
-        <GridRow Gutter="16" Align="middle" Class="header-content">
+        <GridRow Wrap="false" Gutter="16" Align="middle" Class="header-content">
             <GridCol Flex=@("none")>
                 @if (_nav.CanBack())
                 {
@@ -19,7 +19,7 @@
                 @if (_categories != null && _categories.Count > 0)
                 {
                     <div class="scroll-content-h">
-                        <Segmented Block TValue="ILink" Value="@_currentCategory" ValueChanged="CategoryChanged">
+                        <Segmented TValue="ILink" Value="@_currentCategory" ValueChanged="CategoryChanged">
                             @if (_categories != null)
                             {
                                 foreach (var item in _categories)
