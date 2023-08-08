@@ -193,6 +193,10 @@ namespace PolarShadow.Core
             if (ch == JsonPathConstants.StartFilter)
             {
                 _tokenType = JsonPathTokenType.StartFilter;
+                if (_inExpression)
+                {
+                    _inExpressionFilter = true;
+                }
                 return true;
             }
             return TryReadChildOrDeepScan();
@@ -241,6 +245,11 @@ namespace PolarShadow.Core
             else if (ch == JsonPathConstants.StartFilter)
             {
                 _tokenType = JsonPathTokenType.StartFilter;
+                return true;
+            }
+            else if (_inExpression && ch == JsonPathConstants.RightBracket)
+            {
+                _tokenType = JsonPathTokenType.EndExpression;
                 return true;
             }
             return false;
@@ -387,18 +396,6 @@ namespace PolarShadow.Core
             {
                 _tokenType = JsonPathTokenType.Regex;
                 return ReadRegexEnd();
-            }
-            else if (ch == JsonPathConstants.StartFilter 
-                && (_tokenType == JsonPathTokenType.In
-                || _tokenType == JsonPathTokenType.NIn
-                || _tokenType == JsonPathTokenType.Subsetof
-                || _tokenType == JsonPathTokenType.Anyof
-                || _tokenType == JsonPathTokenType.Noneof
-                || _tokenType == JsonPathTokenType.Size))
-            {
-                _tokenType = JsonPathTokenType.StartFilter;
-                _inExpressionFilter = true;
-                return true;
             }
             else if (ch == JsonPathConstants.SingleQuote)
             {

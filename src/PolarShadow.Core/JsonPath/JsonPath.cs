@@ -264,14 +264,25 @@ namespace PolarShadow.Core
         {
             if (!reader.Read()) return default;
 
-            return reader.TokenType switch
+            var result = reader.TokenType switch
             {
                 JsonPathTokenType.StartExpression => ReadStartExpressionNext(ref reader, current, root),
                 JsonPathTokenType.String => ReadStringFilterNext(ref reader, current, root),
                 JsonPathTokenType.Number => ReadNumberNext(ref reader, current, root),
-                JsonPathTokenType.Wildcard => current,
+                JsonPathTokenType.Wildcard => ReadAllChildValue(current),
                 _ => default
             };
+
+            EndFilter(ref reader);
+            return ReadEndFilterNext(ref reader, result, root);
+        }
+
+        private static void EndFilter(ref JsonPathReader reader)
+        {
+            if (reader.TokenType == JsonPathTokenType.EndFilter) return;
+            else if (reader.Read() && reader.TokenType == JsonPathTokenType.EndFilter) return;
+
+            throw new InvalidOperationException("Filter not end");
         }
 
         private static JsonElement ReadEndFilterNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
@@ -289,7 +300,6 @@ namespace PolarShadow.Core
                     {
                         JsonPathTokenType.Child => ReadChildNext(ref reader, current, root),
                         JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, current, root),
-                        JsonPathTokenType.Wildcard => current,
                         JsonPathTokenType.StartFilter => ReadStartFilterNext(ref reader, item, root),
                         _ => default
                     };
@@ -317,7 +327,6 @@ namespace PolarShadow.Core
             {
                 JsonPathTokenType.Child => ReadChildNext(ref reader, current, root),
                 JsonPathTokenType.DeepScan => ReadDeepScanNext(ref reader, current, root),
-                JsonPathTokenType.Wildcard => current,
                 JsonPathTokenType.StartFilter => ReadStartFilterNext(ref reader, current, root),
                 _ => default
             };
@@ -397,9 +406,7 @@ namespace PolarShadow.Core
 
             ms.Seek(0, SeekOrigin.Begin);
             var doc = JsonDocument.Parse(ms);
-            var clone = doc.RootElement.Clone();
-
-            return ReadEndFilterNext(ref reader, clone, root);
+            return doc.RootElement.Clone();
         }
 
         private static JsonElement ReadStringFilterNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
@@ -436,65 +443,53 @@ namespace PolarShadow.Core
             jsonWriter.Flush();
             ms.Seek(0, SeekOrigin.Begin);
             using var doc = JsonDocument.Parse(ms);
-            var clone = doc.RootElement.Clone();
-
-            return ReadEndFilterNext(ref reader, clone, root);
+            return doc.RootElement.Clone();
         }
 
         private static JsonElement ReadStartExpressionNext(ref JsonPathReader reader, JsonElement current, JsonElement root)
         {
             if (!reader.Read()) return default;
 
-            try
+            JsonElement result = default;
+            if (current.ValueKind == JsonValueKind.Object)
             {
-                if (current.ValueKind == JsonValueKind.Object)
-                {
-                    return CaculateExpression(ref reader, current, root) ? current : default;
-                }
-                else if (current.ValueKind == JsonValueKind.Array)
-                {
-                    using var ms = new MemoryStream();
-                    using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.DefaultWriteOption);
+                result = CaculateExpression(ref reader, current, root) ? current : default;
+            }
+            else if (current.ValueKind == JsonValueKind.Array)
+            {
+                using var ms = new MemoryStream();
+                using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.DefaultWriteOption);
 
-                    var state = reader.State;
-                    jsonWriter.WriteStartArray();
-                    foreach (var item in current.EnumerateArray())
+                var state = reader.State;
+                jsonWriter.WriteStartArray();
+                foreach (var item in current.EnumerateArray())
+                {
+                    reader.Reset(state);
+                    if (CaculateExpression(ref reader, item, root))
                     {
-                        reader.Reset(state);
-                        if (CaculateExpression(ref reader, item, root))
-                        {
-                            item.WriteTo(jsonWriter);
-                        }
+                        item.WriteTo(jsonWriter);
                     }
-
-                    jsonWriter.WriteEndArray();
-                    jsonWriter.Flush();
-
-                    ms.Seek(0, SeekOrigin.Begin);
-
-
-                    using var doc = JsonDocument.Parse(ms);
-
-                    return doc.RootElement.Clone();
                 }
-                return default;
+
+                jsonWriter.WriteEndArray();
+                jsonWriter.Flush();
+
+                ms.Seek(0, SeekOrigin.Begin);
+
+                using var doc = JsonDocument.Parse(ms);
+
+                result = doc.RootElement.Clone();
             }
-            finally
-            {
-                EndExpression(ref reader);
-            }
+
+            EndExpression(ref reader);
+
+            return result;
         }
 
         private static void EndExpression(ref JsonPathReader reader)
         {
-            if (reader.TokenType == JsonPathTokenType.EndExpression)
-            {
-                return;
-            }
-            else if (reader.Read() && reader.TokenType == JsonPathTokenType.EndExpression)
-            {
-                return;
-            }
+            if (reader.TokenType == JsonPathTokenType.EndExpression) return;
+            else if (reader.Read() && reader.TokenType == JsonPathTokenType.EndExpression) return;
 
             throw new InvalidOperationException("Expression not end");
         }
