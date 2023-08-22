@@ -54,7 +54,7 @@
 
     protected override void OnInitialized()
     {
-        _source = _polarShadow.GetSites().Where(f=>f.HasRequest(VideoRequests.Main)).ToList();
+        _source = _polarShadow.GetSites().Where(f=>f.HasRequest(VideoRequests.Categories)).ToList();
     }
 
 

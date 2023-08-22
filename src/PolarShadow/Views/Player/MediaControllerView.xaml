@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PolarShadow.Views.MediaControllerView"
+             xmlns:views="clr-namespace:PolarShadow.Views"
+             BackgroundColor="Black">
+    <ContentView.Resources>
+        <Style x:Key="sliderDefault" TargetType="Slider">
+            <Setter Property="MinimumTrackColor" Value="HotPink"/>
+            <Setter Property="MaximumTrackColor" Value="#2aadd8e6"/>
+            <Setter Property="ThumbColor" Value="HotPink"/>
+        </Style>
+    </ContentView.Resources>
+    <Border BackgroundColor="Transparent">
+        <Border.GestureRecognizers>
+            <PointerGestureRecognizer PointerEntered="PointerGestureRecognizer_PointerEntered"
+                                      PointerExited="PointerGestureRecognizer_PointerExited"/>
+        </Border.GestureRecognizers>
+        <Grid x:Name="Grid_Surface"
+              RowDefinitions="50,*,100" 
+              BindingContext="{x:Reference this}"
+              x:DataType="views:MediaControllerView">
+            <HorizontalStackLayout Spacing="10" BackgroundColor="#1affffff">
+                <Image HeightRequest="20" WidthRequest="20" Margin="10,0,0,0" Source="{FontImage &#xF743;, FontFamily=SegoeFluentIcons}" VerticalOptions="Center"/>
+                <Label x:Name="labelTitle" Text="Title" TextColor="White" FontSize="20" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+            <VerticalStackLayout Grid.Row="2" Spacing="10" BackgroundColor="#1affffff">
+                <Grid ColumnDefinitions="0.8*,30,100" Margin="10">
+                    <Slider x:Name="Slider_Length" Grid.Column="0" Minimum="0" Style="{DynamicResource sliderDefault}"/>
+                    <Image x:Name="Image_Volume"  Grid.Column="1" Source="{FontImage &#xE993;, FontFamily=SegoeFluentIcons, Size = 20}" Margin="10,0,0,0"/>
+                    <Slider x:Name="Slider_Volume" Grid.Column="2" Minimum="0" Maximum="100" Margin="10,0,0,0" Style="{DynamicResource sliderDefault}"/>
+                </Grid>
+                <HorizontalStackLayout Margin="10,0,0,0" Spacing="30">
+                    <Image x:Name="Image_Play" Source="{FontImage &#xF5B0;, FontFamily=SegoeFluentIcons, Size = 20}"/>
+                    <HorizontalStackLayout>
+                        <Label Text="00:00:00" TextColor="White"/>
+                        <Label Text="/" TextColor="White"/>
+                        <Label Text="1:20:20" TextColor="White"/>
+                    </HorizontalStackLayout>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Grid>
+    </Border>
+    
+</ContentView>

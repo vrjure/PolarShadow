@@ -6,7 +6,7 @@
         {
             InitializeComponent();
 
-            MainPage = service.GetRequiredService<MainPage>();
+            MainPage = service.GetRequiredService<NavigationPage>();
         }
     }
 }

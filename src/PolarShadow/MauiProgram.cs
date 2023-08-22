@@ -9,6 +9,7 @@ using PolarShadow.Cache;
 using Microsoft.Maui.Hosting;
 using PolarShadow.Videos;
 using System.Text;
+using CommunityToolkit.Maui;
 
 namespace PolarShadow
 {
@@ -19,9 +20,13 @@ namespace PolarShadow
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
+                .UseVLCPlayer()
+                .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("Segoe-Fluent-Icons.ttf", "SegoeFluentIcons");
                 }).ConfigureServices();          
 
             return builder.Build().InitializeApp();
@@ -30,6 +35,12 @@ namespace PolarShadow
         private static MauiAppBuilder ConfigureServices(this MauiAppBuilder builder)
         {
             builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton(sp =>
+            {
+                var mainPage = sp.GetRequiredService<MainPage>();             
+                return new NavigationPage(mainPage);
+            });
+
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

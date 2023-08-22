@@ -1,6 +1,6 @@
 # PolarShadow
 
-一个可以自定义源的资源搜索工具。
+一个可以自定义源的网络资源获取工具。
 
 ## 原理
 
@@ -12,4 +12,4 @@ MAUI Blazor + Ant Design Blazor（待定）
 
 ## 配置
 
-[参数配置](documents/参数语法.md)
+[参数语法](documents/参数语法.md)

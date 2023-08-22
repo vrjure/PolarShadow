@@ -10,6 +10,5 @@ namespace PolarShadow.Videos
         public const string Detail = "detail";
         public const string Main = "main";
         public const string Categories = "categories";
-        public const string CategoryList = "category_list";
     }
 }

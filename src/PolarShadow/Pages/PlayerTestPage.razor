@@ -1,0 +1,10 @@
+﻿@page "/player/test"
+@layout MainLayout
+<Button OnClick="PlayerTest">Player Test</Button>
+@code {
+
+    private async Task PlayerTest()
+    {
+        await App.Current.MainPage.Navigation.PushAsync(new PlayerPage());
+    }
+}

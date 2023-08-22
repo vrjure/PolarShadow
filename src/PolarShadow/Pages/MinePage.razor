@@ -10,7 +10,7 @@
         </Header>
     }
     <Content Class="scroll-content">
-        <Space Direction="DirectionVHType.Vertical" Style="width:100%">
+        <Space Direction="DirectionVHType.Vertical" Size="@("10")" Style="width:100%">
             <SpaceItem>
                 <Title Level="4">下载</Title>
                 <Divider />
@@ -22,6 +22,8 @@
                         <Input @bind-Value="_rpc" BindOnInput="true"></Input>
                     </GridCol>
                 </GridRow>
+            </SpaceItem>
+            <SpaceItem>
                 <GridRow Justify="start">
                     <GridCol Flex="@("100px")">
                         <Text>下载地址</Text>
