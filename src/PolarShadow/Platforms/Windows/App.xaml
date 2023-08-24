@@ -6,16 +6,17 @@
     xmlns:local="using:PolarShadow.WinUI"
     xmlns:vlc="using:LibVLCSharp.Platforms.Windows">
     <maui:MauiWinUIApplication.Resources>
-        <ResourceDictionary>
-            <Style TargetType="vlc:VideoView">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="vlc:VideoView">
-                            <SwapChainPanel x:Name="SwapChainPanel"/>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </ResourceDictionary>
+        
+        <Color x:Key="SliderTrackValueFillPointerOver">#ff69b4</Color>
+        
+        <Style TargetType="vlc:VideoView">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="vlc:VideoView">
+                        <SwapChainPanel x:Name="SwapChainPanel"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </maui:MauiWinUIApplication.Resources>
 </maui:MauiWinUIApplication>

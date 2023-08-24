@@ -3,9 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:PolarShadow"
              x:Class="PolarShadow.MainPage"
-             BackgroundColor="{DynamicResource PageBackgroundColor}"
              NavigationPage.HasNavigationBar="False">
-    <Grid x:Name="webViewContainer">
+    <Grid x:Name="webViewContainer" Margin="0,0,0,0">
         <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
             <BlazorWebView.RootComponents>
                 <RootComponent Selector="#app" ComponentType="{x:Type local:Main}" />

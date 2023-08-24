@@ -1,10 +1,18 @@
 ﻿@page "/player/test"
 @layout MainLayout
+@using Microsoft.Maui.Platform
 <Button OnClick="PlayerTest">Player Test</Button>
+<Button OnClick="TestMaxWindow">FullScreen</Button>
 @code {
 
     private async Task PlayerTest()
     {
         await App.Current.MainPage.Navigation.PushAsync(new PlayerPage());
+    }
+
+    private void TestMaxWindow()
+    {
+        var window = App.Current.Windows.First().Handler.PlatformView as MauiWinUIWindow;
+        window.GetAppWindow().SetPresenter(Microsoft.UI.Windowing.AppWindowPresenterKind.FullScreen);
     }
 }

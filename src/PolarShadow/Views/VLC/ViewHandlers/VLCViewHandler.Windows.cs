@@ -43,6 +43,7 @@ namespace PolarShadow.Views.ViewHandlers
             var platformView = sender as VideoView;
             VLCView.InitializeLibVlc(e.SwapChainOptions);
             platformView.MediaPlayer = new MediaPlayer(VLCView.LibVLC);
+            VirtualView.MediaPlayer = platformView.MediaPlayer;
         }
     }
 }

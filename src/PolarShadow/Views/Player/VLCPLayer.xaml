@@ -5,6 +5,6 @@
              x:Class="PolarShadow.Views.VLCPLayer">
     <Grid>
         <views:VLCView x:Name="VideoLayer"/>
-        <views:MediaControllerView/>
+        <views:MediaControllerView MediaPlayer="{Binding Source={x:Reference VideoLayer}, Path=MediaPlayer}"/>
     </Grid>
 </ContentView>

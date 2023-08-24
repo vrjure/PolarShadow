@@ -10,11 +10,14 @@ using Microsoft.Maui.Hosting;
 using PolarShadow.Videos;
 using System.Text;
 using CommunityToolkit.Maui;
+using Microsoft.Maui.LifecycleEvents;
+using Microsoft.Maui.Platform;
 
 namespace PolarShadow
 {
     public static class MauiProgram
     {
+
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -23,17 +26,39 @@ namespace PolarShadow
                 .UseMauiCommunityToolkit()
                 .UseVLCPlayer()
                 .UseMauiApp<App>()
+                .ConfigureWindow()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("Segoe-Fluent-Icons.ttf", "SegoeFluentIcons");
-                }).ConfigureServices();          
+                    fonts.AddFont("SegoeFluentIcons.ttf", FontsManager.SegoeFluentIcons);
+                }).ConfigureServices();       
 
             return builder.Build().InitializeApp();
         }
 
+        private static MauiAppBuilder ConfigureWindow(this MauiAppBuilder builder)
+        {
+            return builder.ConfigureLifecycleEvents(builder =>
+            {
+#if WINDOWS
+                //builder.AddWindows(windowsBuilder =>
+                //{
+                //    windowsBuilder.OnWindowCreated(window =>
+                //    {
+                //        window.ExtendsContentIntoTitleBar = false;
+                //        var appWindow = window.GetAppWindow();
+                //        appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                //        appWindow.TitleBar.BackgroundColor = Microsoft.UI.Colors.Transparent;
+                //        appWindow.TitleBar.ButtonBackgroundColor = Microsoft.UI.Colors.Transparent;
+                //    });
+                //});
+#endif
+            });
+        }
+
         private static MauiAppBuilder ConfigureServices(this MauiAppBuilder builder)
         {
+
             builder.Services.AddSingleton<MainPage>();
             builder.Services.AddSingleton(sp =>
             {
