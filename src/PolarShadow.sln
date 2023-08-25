@@ -25,6 +25,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Configuration",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Services.Abstractions", "PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj", "{15DFB1D9-7E86-464A-A327-DED420B78AC0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{8726A30E-6649-42DC-8F8B-4229BD8E517F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow", "PolarShadow\PolarShadow.csproj", "{3BCD57B9-2446-4B63-9A10-20458576EA5D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Android", "PolarShadow.Android\PolarShadow.Android.csproj", "{C3AF0489-4331-4591-8F98-5905A3486441}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Desktop", "PolarShadow.Desktop\PolarShadow.Desktop.csproj", "{9E9B3946-B17E-4C6F-A0F2-0D2D70953817}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,12 +79,29 @@ Global
 		{15DFB1D9-7E86-464A-A327-DED420B78AC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15DFB1D9-7E86-464A-A327-DED420B78AC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15DFB1D9-7E86-464A-A327-DED420B78AC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BCD57B9-2446-4B63-9A10-20458576EA5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BCD57B9-2446-4B63-9A10-20458576EA5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BCD57B9-2446-4B63-9A10-20458576EA5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BCD57B9-2446-4B63-9A10-20458576EA5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3AF0489-4331-4591-8F98-5905A3486441}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3AF0489-4331-4591-8F98-5905A3486441}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3AF0489-4331-4591-8F98-5905A3486441}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C3AF0489-4331-4591-8F98-5905A3486441}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3AF0489-4331-4591-8F98-5905A3486441}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3AF0489-4331-4591-8F98-5905A3486441}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{9E9B3946-B17E-4C6F-A0F2-0D2D70953817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E9B3946-B17E-4C6F-A0F2-0D2D70953817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E9B3946-B17E-4C6F-A0F2-0D2D70953817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E9B3946-B17E-4C6F-A0F2-0D2D70953817}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D948F56C-BB01-486C-BAAD-1C373A918C67} = {A0DA3243-6E13-4A97-A794-9AF90DF06F28}
+		{3BCD57B9-2446-4B63-9A10-20458576EA5D} = {8726A30E-6649-42DC-8F8B-4229BD8E517F}
+		{C3AF0489-4331-4591-8F98-5905A3486441} = {8726A30E-6649-42DC-8F8B-4229BD8E517F}
+		{9E9B3946-B17E-4C6F-A0F2-0D2D70953817} = {8726A30E-6649-42DC-8F8B-4229BD8E517F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
