@@ -3,14 +3,42 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:PolarShadow.ViewModels"
+			 xmlns:m="clr-namespace:PolarShadow.Models"
+			 xmlns:view="using:PolarShadow.Views"
+			 xmlns:nav="using:PolarShadow.Navigations"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.MainView"
-             x:DataType="vm:MainViewModel">
-  <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
+             x:DataType="vm:MainViewModel"
+			 Foreground="Black"
+			 x:Name="mainView"
+			 x:CompileBindings="True">
+	<DockPanel>
+		<Border DockPanel.Dock="Top" Height="60">
+		</Border>
+		<Border DockPanel.Dock="Bottom" Height="60">
+			<TabStrip ItemsSource="{Binding MenuItems}" 
+					  HorizontalAlignment="Center"
+					  x:Name="MenuStrip">
+				<Interaction.Behaviors>
+					<EventTriggerBehavior EventName="SelectionChanged" SourceObject="MenuStrip">
+						<InvokeCommandAction Command="{Binding MenuClickedCommand}" 
+											 CommandParameter="{Binding SelectedValue, ElementName=MenuStrip}"/>
+					</EventTriggerBehavior>
+				</Interaction.Behaviors>
+				<TabStrip.ItemTemplate>
+					<DataTemplate DataType="m:MenuIconItem">
+						<StackPanel x:Name="menuItem" Orientation="Vertical" Width="60">
+							<TextBlock Text="{Binding Icon}" 
+									   FontFamily="{StaticResource remixIcon}" 
+									   HorizontalAlignment="Center"/>
+						</StackPanel>
+					</DataTemplate>
+				</TabStrip.ItemTemplate>
+			</TabStrip>
+		</Border>
+		<Border>
+			<ContentControl nav:NavigationManager.ContainerName="menuContent"/>
+		</Border>
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	</DockPanel>
 </UserControl>

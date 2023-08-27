@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PolarShadow.Views.BookshelfView">
+	<DockPanel>
+		<Border DockPanel.Dock="Top">
+			<Grid ColumnDefinitions="*,60">
+				<TextBlock FontFamily="{StaticResource remixIcon}"
+						   Grid.Column="1"
+							FontSize="20"
+							Text="&#xF0D1;"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Right"
+							Margin="10"/>
+			</Grid>
+		</Border>
+		<Border />
+	</DockPanel>
+</UserControl>
