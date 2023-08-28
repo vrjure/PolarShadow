@@ -24,8 +24,17 @@ namespace PolarShadow.Navigations
             }
 
             var page = _service.GetRequiredService(viewType);
+            if (container.Content is Control old && old.DataContext is INavigationNotify notify)
+            {
+                notify.OnUnload();
+            }
 
             container.Content = page;
+
+            if(page is Control newPage && newPage.DataContext is INavigationNotify newNotify)
+            {
+                newNotify.OnLoad();
+            }
         }
     }
 }

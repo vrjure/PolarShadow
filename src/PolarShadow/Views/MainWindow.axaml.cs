@@ -12,8 +12,11 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        _nav = App.Service.GetRequiredService<INavigationService>();
-        
+    }
+
+    public MainWindow(INavigationService nav) : this()
+    {
+        _nav = nav;
     }
 
     protected override void OnLoaded(RoutedEventArgs e)

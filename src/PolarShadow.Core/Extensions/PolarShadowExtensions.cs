@@ -21,9 +21,15 @@ namespace PolarShadow.Core
             return polarShadow;
         }
 
-        public static IPolarShadow LoadJsonFileSource(this IPolarShadow polarShadow, string path, bool reLoad = false)
+        public static IPolarShadow LoadJsonFileSource(this IPolarShadow polarShadow, string path, bool reload = false)
         {
-            polarShadow.Load(new JsonFileSource { Path = path}, reLoad);
+            polarShadow.Load(new JsonFileSource { Path = path}, reload);
+            return polarShadow;
+        }
+
+        public static IPolarShadow LoadJsonStreamSource(this IPolarShadow polarShadow, Stream stream, bool reload = false)
+        {
+            polarShadow.Load(new JsonStreamSource(stream), reload);
             return polarShadow;
         }
 

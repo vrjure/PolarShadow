@@ -19,7 +19,7 @@ public partial class MainViewModel : ViewModelBase
     {
         new(){ Name = "main", Icon = "\uEE26", ViewType = typeof(BookshelfView)},
         new(){ Name = "discover", Icon = "\uEBC1"},
-        new(){ Name = "source", Icon = "\uEAE4"},
+        new(){ Name = "source", Icon = "\uEAE4", ViewType = typeof(BookSourceView)},
         new(){ Name = "user", Icon="\uF25F"}
     };
 

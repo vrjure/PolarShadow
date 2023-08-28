@@ -11,49 +11,49 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Controls
 {
-    public sealed class WrapPanelAttached
+    public sealed class PanelAttached
     {
-        static WrapPanelAttached()
+        static PanelAttached()
         {
             SourceProperty.Changed.Subscribe(SourcePropertyChanged);
             ItemTemplateProperty.Changed.Subscribe(ItemTemplatePropertyChanged);
         }
 
-        public static readonly AttachedProperty<IEnumerable> SourceProperty = AvaloniaProperty.RegisterAttached<WrapPanelAttached, WrapPanel, IEnumerable>("Source");
-        public static IEnumerable GetSource(WrapPanel panel)
+        public static readonly AttachedProperty<IEnumerable> SourceProperty = AvaloniaProperty.RegisterAttached<PanelAttached, Panel, IEnumerable>("Source");
+        public static IEnumerable GetSource(Panel panel)
         {
             return panel.GetValue(SourceProperty);
         }
-        public static void SetSource(WrapPanel panel, IEnumerable value)
+        public static void SetSource(Panel panel, IEnumerable value)
         {
             panel.SetValue(SourceProperty, value);
         }
 
-        public static readonly AttachedProperty<IDataTemplate> ItemTemplateProperty = AvaloniaProperty.RegisterAttached<WrapPanelAttached, WrapPanel, IDataTemplate>("ItemTemplate");
-        public static IDataTemplate GetItemTemplate(WrapPanel panel)
+        public static readonly AttachedProperty<IDataTemplate> ItemTemplateProperty = AvaloniaProperty.RegisterAttached<PanelAttached, Panel, IDataTemplate>("ItemTemplate");
+        public static IDataTemplate GetItemTemplate(Panel panel)
         {
             return panel.GetValue(ItemTemplateProperty);
         }
-        public static void SetItemTemplate(WrapPanel panel, IDataTemplate value)
+        public static void SetItemTemplate(Panel panel, IDataTemplate value)
         {
             panel.SetValue(ItemTemplateProperty, value);
         }
 
         private static void SourcePropertyChanged(AvaloniaPropertyChangedEventArgs<IEnumerable> args)
         {
-            if (args.Sender is not WrapPanel panel) return;
+            if (args.Sender is not Panel panel) return;
 
             DataChanged(panel, args.NewValue.Value, default);
         }
 
         private static void ItemTemplatePropertyChanged(AvaloniaPropertyChangedEventArgs<IDataTemplate> args)
         {
-            if (args.Sender is not WrapPanel panel) return;
+            if (args.Sender is not Panel panel) return;
 
             DataChanged(panel, default, args.NewValue.Value);
         }
 
-        private static void DataChanged(WrapPanel panel, IEnumerable newSource, IDataTemplate newItemTemplate)
+        private static void DataChanged(Panel panel, IEnumerable newSource, IDataTemplate newItemTemplate)
         {
             if (newSource == null)
                 newSource = GetSource(panel);

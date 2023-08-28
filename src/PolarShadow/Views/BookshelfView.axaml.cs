@@ -12,6 +12,5 @@ public partial class BookshelfView : UserControl
     public BookshelfView()
     {
         InitializeComponent();
-        DataContext = App.Service.GetRequiredService<BookshelfViewModel>();
     }
 }

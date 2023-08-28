@@ -42,24 +42,31 @@ namespace Microsoft.Extensions.DependencyInjection
             return service.AddScoped<TViewModel>();
         }
 
-        public static IServiceCollection RegisterSingletonViewWithModel<TView, TViewModel>(this IServiceCollection service) where TView : Control where TViewModel : ObservableObject
+        public static IServiceCollection RegisterSingletonViewWithModel<TView, TViewModel>(this IServiceCollection service) where TView : Control,new() where TViewModel : ObservableObject
         {
-            return service.AddSingleton<TView>().AddSingleton<TViewModel>();
+            return service.AddSingleton<TViewModel>().AddSingleton<TView>(sp =>
+            {
+                var viewModel = sp.GetService<TViewModel>();
+                return new TView() { DataContext = viewModel };
+            });
         }
         
-        public static IServiceCollection RegisterTransientViewWithModel<TView, TViewModel>(this IServiceCollection service) where TView: Control where TViewModel : ObservableObject
+        public static IServiceCollection RegisterTransientViewWithModel<TView, TViewModel>(this IServiceCollection service) where TView: Control, new() where TViewModel : ObservableObject
         {
-            return service.AddTransient<TView>().AddTransient<TViewModel>();
+            return service.AddTransient<TViewModel>().AddTransient<TView>(sp =>
+            {
+                var viewModel = sp.GetService<TViewModel>();
+                return new TView() { DataContext = viewModel };
+            });
         }
 
-        public static IServiceCollection RegisterScopedViewWithModel<TVIew, TViewModel>(this IServiceCollection service) where TVIew : Control where TViewModel : ObservableObject
+        public static IServiceCollection RegisterScopedViewWithModel<TView, TViewModel>(this IServiceCollection service) where TView : Control, new() where TViewModel : ObservableObject
         {
-            return service.AddScoped<TVIew>().AddScoped<TViewModel>();
-        }
-
-        public static IServiceCollection AddNavigation(this IServiceCollection services)
-        {
-            return services.AddSingleton<INavigationService, NavigationService>();
+            return service.AddScoped<TViewModel>().AddScoped<TView>(sp =>
+            {
+                var viewModel = sp.GetService<TViewModel>();
+                return new TView() { DataContext = viewModel };
+            });
         }
     }
 }

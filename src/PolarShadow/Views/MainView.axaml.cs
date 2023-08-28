@@ -11,7 +11,6 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        if(!Design.IsDesignMode)
-        DataContext = App.Service.GetRequiredService<MainViewModel>();
+        TopLevel.GetTopLevel(this);
     }
 }

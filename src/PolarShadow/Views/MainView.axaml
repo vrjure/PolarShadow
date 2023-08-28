@@ -13,8 +13,6 @@
 			 x:Name="mainView"
 			 x:CompileBindings="True">
 	<DockPanel>
-		<Border DockPanel.Dock="Top" Height="60">
-		</Border>
 		<Border DockPanel.Dock="Bottom" Height="60">
 			<TabStrip ItemsSource="{Binding MenuItems}" 
 					  HorizontalAlignment="Center"
@@ -22,7 +20,7 @@
 				<Interaction.Behaviors>
 					<EventTriggerBehavior EventName="SelectionChanged" SourceObject="MenuStrip">
 						<InvokeCommandAction Command="{Binding MenuClickedCommand}" 
-											 CommandParameter="{Binding SelectedValue, ElementName=MenuStrip}"/>
+											 CommandParameter="{Binding #MenuStrip.SelectedValue}"/>
 					</EventTriggerBehavior>
 				</Interaction.Behaviors>
 				<TabStrip.ItemTemplate>
