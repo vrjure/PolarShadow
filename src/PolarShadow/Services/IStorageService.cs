@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Storage
+namespace PolarShadow.Services
 {
     public interface IStorageService
     {
         Task<IReadOnlyList<IStorageFile>> OpenFilePickerAsync(FilePickerOpenOptions options);
         Task<IStorageFile> SaveFilePickerAsync(FilePickerSaveOptions optioins);
+        Task<IStorageFile> TryGetFileFromPathAsync(Uri filePath);
     }
 }

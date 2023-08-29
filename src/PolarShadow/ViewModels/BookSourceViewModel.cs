@@ -1,8 +1,9 @@
-﻿using Avalonia.Platform.Storage;
+﻿using Avalonia.Controls.Notifications;
+using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Core;
-using PolarShadow.Storage;
+using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,10 +17,12 @@ namespace PolarShadow.ViewModels
     {
         private readonly IPolarShadow _polar;
         private readonly IStorageService _storage;
-        public BookSourceViewModel(IPolarShadow polar, IStorageService storage)
+        private readonly INotificationManager _notification;
+        public BookSourceViewModel(IPolarShadow polar, IStorageService storage, INotificationManager notification)
         {
             _polar = polar;
             _storage = storage;
+            _notification = notification;
         }
         private ObservableCollection<ISite> _sites;
         public ObservableCollection<ISite> Sites
@@ -39,25 +42,32 @@ namespace PolarShadow.ViewModels
 
         private async Task ImportSource()
         {
-            var files = await _storage.OpenFilePickerAsync(new FilePickerOpenOptions
+            try
             {
-                Title = "Json File",
-                AllowMultiple = false,
-                FileTypeFilter = new[]
+                var files = await _storage.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
-                    new FilePickerFileType("json")
+                    Title = "Json File",
+                    AllowMultiple = false,
+                    FileTypeFilter = new[]
                     {
-                        Patterns = new[] { "*.json"},
-                        MimeTypes = new[] {"application/json"}
+                        new FilePickerFileType("json")
+                        {
+                            Patterns = new[] { "*.json"},
+                            MimeTypes = new[] {"application/json"}
+                        }
                     }
-                }
-            });
+                });
 
-            if (files == null || files.Count == 0) return;
+                if (files == null || files.Count == 0) return;
+                _polar.LoadJsonStreamSource(await files[0].OpenReadAsync());
+                Reflesh();
 
-            _polar.LoadJsonStreamSource(await files[0].OpenReadAsync());
-
-            Reflesh();
+                _notification.ShowSuccess();
+            }
+            catch (Exception ex)
+            {
+                _notification.Show(ex);
+            }    
         }
 
         private void Reflesh()

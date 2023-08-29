@@ -25,8 +25,25 @@
 				<Setter Property="Background" Value="Transparent"/>
 				<Setter Property="FontSize" Value="{StaticResource DefaultPointerOverFontSize}"/>
 			</Style>
+			
 			<Style Selector="^:pressed /template/ ContentPresenter">
 				<Setter Property="FontSize" Value="{StaticResource DefaultPointerOverFontSize}"/>
+			</Style>
+		</Style>
+
+
+		<Style Selector="TextBlock.icon">
+			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
+			<Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
+		</Style>
+
+		<Style Selector="ListBoxItem">
+			<Style Selector="^:pointerover /template/ ContentPresenter">
+				<Setter Property="Background" Value="Transparent"/>
+				<Setter Property="Foreground" Value="LightBlue"/>
+			</Style>
+			<Style Selector="^:selected /template/ ContentPresenter">
+				<Setter Property="Background" Value="Transparent"/>
 			</Style>
 		</Style>
     </Application.Styles>

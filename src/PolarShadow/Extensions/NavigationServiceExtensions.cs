@@ -6,10 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow
+namespace PolarShadow.Navigations
 {
-    internal static class NavigationServiceExtensions
+    public static class NavigationServiceExtensions
     {
-        
+        public static void Navigate<TViewType>(this INavigationService nav, string containerName)
+        {
+            nav.Navigate(containerName, typeof(TViewType), default);
+        }
     }
 }

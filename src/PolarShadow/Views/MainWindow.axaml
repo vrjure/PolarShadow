@@ -9,5 +9,5 @@
         x:Class="PolarShadow.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="PolarShadow"
-		nav:NavigationManager.ContainerName="content">
+		nav:NavigationManager.ContainerName="{x:Static vm:MainWindowViewModel.NavigationName}">
 </Window>

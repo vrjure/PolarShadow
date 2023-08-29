@@ -35,7 +35,7 @@
 			</TabStrip>
 		</Border>
 		<Border>
-			<ContentControl nav:NavigationManager.ContainerName="menuContent"/>
+			<ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}"/>
 		</Border>
 
 	</DockPanel>

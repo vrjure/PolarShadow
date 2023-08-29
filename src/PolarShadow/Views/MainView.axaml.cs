@@ -11,6 +11,5 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        TopLevel.GetTopLevel(this);
     }
 }
