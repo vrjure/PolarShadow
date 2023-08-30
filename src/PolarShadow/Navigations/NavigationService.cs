@@ -16,7 +16,7 @@ namespace PolarShadow.Navigations
             _service = service;
         }
 
-        public void Navigate(string containerName, Type viewType, INavigationParameters parameters)
+        public void Navigate(string containerName, Type viewType, IDictionary<string, object> parameters)
         {
             if (!NavigationManager.TryGetContainer(containerName, out ContentControl container))
             {
@@ -31,9 +31,14 @@ namespace PolarShadow.Navigations
 
             container.Content = page;
 
-            if(page is Control newPage && newPage.DataContext is INavigationNotify newNotify)
+            var newPage = page as Control;
+            if(newPage.DataContext is INavigationNotify newNotify)
             {
                 newNotify.OnLoad();
+            }
+            if (parameters != null && newPage.DataContext is IParameterObtain po)
+            {
+                po.ApplyParameter(parameters);
             }
         }
     }

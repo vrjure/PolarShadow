@@ -9,5 +9,13 @@
         x:Class="PolarShadow.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="PolarShadow"
-		nav:NavigationManager.ContainerName="{x:Static vm:MainWindowViewModel.NavigationName}">
+		ExtendClientAreaToDecorationsHint="True"
+		ExtendClientAreaChromeHints="PreferSystemChrome"
+		ExtendClientAreaTitleBarHeightHint="-1">
+	<Grid RowDefinitions="32,*">
+		<Border Background="AliceBlue"
+				IsHitTestVisible="False"></Border>
+        <ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainWindowViewModel.NavigationName}" 
+						Grid.Row="1"/>
+	</Grid>
 </Window>

@@ -11,31 +11,33 @@
 			 x:CompileBindings="True">
 	<DockPanel>
 		<Border DockPanel.Dock="Top" Height="60">
-			<Grid ColumnDefinitions="*,60">
-				<Button Grid.Column="1" 
-						Content="&#xEF76;"
-						Classes="icon">
-					<Button.Flyout>
-						<Flyout ShowMode="TransientWithDismissOnPointerMoveAway"
-								Placement="BottomEdgeAlignedRight"
-								PlacementGravity="Right">
-							<StackPanel Orientation="Vertical">
-								<Button Classes="icon"
-										Content="&#xF249;"
-										HorizontalAlignment="Center"
-										Command="{Binding ImportCommand}"/>
-							</StackPanel>
+			<Button Grid.Column="1"
+					Content="&#xEF76;"
+					Classes="icon"
+					HorizontalAlignment="Right"
+					Margin="10">
+				<Button.Flyout>
+					<Flyout ShowMode="TransientWithDismissOnPointerMoveAway"
+							Placement="BottomEdgeAlignedRight"
+							PlacementGravity="Right">
+						<StackPanel Orientation="Vertical">
+							<Button Classes="icon"
+									Content="&#xF249;"
+									HorizontalAlignment="Center"
+									Command="{Binding ImportCommand}"/>
+						</StackPanel>
 
-						</Flyout>
-					</Button.Flyout>
-				</Button>
-			</Grid>
+					</Flyout>
+				</Button.Flyout>
+			</Button>
 		</Border>
 		<Border>
 			<ListBox ItemsSource="{Binding Sites}"
 					 Margin="20"
 					 SelectionMode="Single"
-					 Background="Transparent">
+					 Background="Transparent"
+					 SelectedValue="{Binding $parent.((vm:BookSourceViewModel)DataContext).SelectedSite, Mode=TwoWay}">
+
 				<ListBox.ItemTemplate>
 					<DataTemplate DataType="polar:ISite">
 						<Border BorderBrush="LightGray"

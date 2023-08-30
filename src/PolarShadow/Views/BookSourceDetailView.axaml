@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:PolarShadow.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PolarShadow.Views.BookSourceDetailView"
+			 x:DataType="vm:BookSourceDetailViewModel"
+			 x:CompileBindings="True">
+	<Grid RowDefinitions="auto,*"
+		  Margin="20">
+		<StackPanel Orientation="Vertical"				
+					Spacing="10">
+			<TextBlock Text="Name" Classes="title" />
+			<TextBlock Text="{Binding Site.Name}"/>
+			<TextBlock Text="Domain" Classes="title" Margin="0,5,0,0"/>
+			<TextBlock Text="{Binding Site.Domain}"/>
+			<TabStrip ItemsSource="{Binding Site.Requests.Keys}"
+					  SelectedValue="{Binding $parent.((vm:BookSourceDetailViewModel)DataContext).SelectedRequest, Mode=TwoWay}"/>
+		</StackPanel>
+
+		<TextBox Text="{Binding FormatedRequest}"
+				 BorderBrush="LightGray"
+				 BorderThickness="1"
+				 Grid.Row="1"
+				 Padding="5"/>
+	</Grid>
+	
+</UserControl> 

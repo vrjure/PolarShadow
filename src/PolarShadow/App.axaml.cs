@@ -12,7 +12,6 @@ using System;
 using PolarShadow.Navigations;
 using PolarShadow.Services;
 using Avalonia.Controls.Notifications;
-
 namespace PolarShadow;
 
 public partial class App : Application
@@ -77,19 +76,22 @@ public partial class App : Application
 
     private void RegisterView(IServiceCollection service)
     {
-        service.RegisterSingletonViewWithModel<MainWindow, MainWindowViewModel>();
         service.RegisterSingletonViewWithModel<TopLayoutView, TopLayoutViewModel>();
-
+        service.RegisterSingletonViewWithModel<MainWindow, MainWindowViewModel>();
         service.RegisterTransientViewWithModel<MainView, MainViewModel>();
         service.RegisterTransientViewWithModel<BookshelfView, BookshelfViewModel>();
         service.RegisterTransientViewWithModel<BookSourceView, BookSourceViewModel>();
+        service.RegisterTransientViewWithModel<BookSourceDetailView, BookSourceDetailViewModel>();
 
     }
 
     private void RegisterPolarShadow(IServiceCollection service)
     {
         var builder = new PolarShadowBuilder();
-        builder.ConfigureDefault().ConfigreVideo();
-        service.AddSingleton(builder.Build());
+        var polarShadow = builder.ConfigureDefault()
+            .ConfigreVideo()
+            .Build();
+        polarShadow.Load();
+        service.AddSingleton(polarShadow);
     }
 }

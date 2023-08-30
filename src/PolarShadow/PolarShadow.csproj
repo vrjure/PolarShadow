@@ -32,4 +32,10 @@
     <ProjectReference Include="..\PolarShadow.Core\PolarShadow.Core.csproj" />
     <ProjectReference Include="..\PolarShadow.Videos\PolarShadow.Videos.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\BookSourceDetailView.axaml.cs">
+      <DependentUpon>BookSourceDetailView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

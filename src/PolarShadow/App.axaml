@@ -8,42 +8,55 @@
 		<FontFamily x:Key="segoeIcon" >/Assets/Fonts/SegoeFluentIcons.ttf#Segoe Fluent Icons</FontFamily>
 		<FontFamily x:Key="remixIcon" >/Assets/Fonts/remixicon.ttf#remixicon</FontFamily>
 
-		<x:Double x:Key="DefaultFontSize">25</x:Double>
-		<x:Double x:Key="DefaultPointerOverFontSize">26</x:Double>
+		<x:Double x:Key="DefaultFontSize">20</x:Double>
+		<x:Double x:Key="DefaultIconFontSize">25</x:Double>
+		<x:Double x:Key="DefaultPointerOverFontSize">21</x:Double>
+		<x:Double x:Key="DefaultPointerOverIconFontSize">26</x:Double>
+		<x:Double x:Key="TitleFontSize">25</x:Double>
 	</Application.Resources>
 	
     <Application.Styles>
         <FluentTheme />
+
+		<Style Selector="TextBlock">
+			<Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
+		</Style>
+		
+		<Style Selector="TextBlock.title">
+			<Setter Property="FontSize" Value="{StaticResource TitleFontSize}"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+		</Style>
 		
 		<Style Selector="Button.icon">
 			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
+			<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
 			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
 			<Setter Property="Padding" Value="0"/>
 			
 			<Style Selector="^:pointerover /template/ ContentPresenter">
 				<Setter Property="Background" Value="Transparent"/>
-				<Setter Property="FontSize" Value="{StaticResource DefaultPointerOverFontSize}"/>
+				<Setter Property="FontSize" Value="{StaticResource DefaultPointerOverIconFontSize}"/>
 			</Style>
 			
 			<Style Selector="^:pressed /template/ ContentPresenter">
-				<Setter Property="FontSize" Value="{StaticResource DefaultPointerOverFontSize}"/>
+				<Setter Property="FontSize" Value="{StaticResource DefaultPointerOverIconFontSize}"/>
 			</Style>
 		</Style>
 
 
 		<Style Selector="TextBlock.icon">
 			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
-			<Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
+			<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
 		</Style>
 
 		<Style Selector="ListBoxItem">
 			<Style Selector="^:pointerover /template/ ContentPresenter">
 				<Setter Property="Background" Value="Transparent"/>
-				<Setter Property="Foreground" Value="LightBlue"/>
+				<Setter Property="Foreground" Value="LightGray"/>
 			</Style>
 			<Style Selector="^:selected /template/ ContentPresenter">
 				<Setter Property="Background" Value="Transparent"/>
+				<Setter Property="Foreground" Value="LightGray"/>
 			</Style>
 		</Style>
     </Application.Styles>

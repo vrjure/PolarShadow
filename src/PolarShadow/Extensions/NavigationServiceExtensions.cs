@@ -14,5 +14,10 @@ namespace PolarShadow.Navigations
         {
             nav.Navigate(containerName, typeof(TViewType), default);
         }
+
+        public static void Navigate<TViewType>(this INavigationService nav, string containerName, IDictionary<string, object> parameters)
+        {
+            nav.Navigate(containerName, typeof(TViewType), parameters);
+        }
     }
 }

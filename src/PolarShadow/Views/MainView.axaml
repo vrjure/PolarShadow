@@ -28,7 +28,8 @@
 						<StackPanel x:Name="menuItem" Orientation="Vertical" Width="60">
 							<TextBlock Text="{Binding Icon}" 
 									   FontFamily="{StaticResource remixIcon}" 
-									   HorizontalAlignment="Center"/>
+									   HorizontalAlignment="Center"
+									   Classes="icon"/>
 						</StackPanel>
 					</DataTemplate>
 				</TabStrip.ItemTemplate>

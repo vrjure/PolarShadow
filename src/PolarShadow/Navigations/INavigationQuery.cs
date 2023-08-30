@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Navigations
 {
-    public interface INavigationService    
+    public interface INavigationQuery
     {
-        void Navigate(string container, Type viewType, IDictionary<string, object> parameters);
         
     }
 }
