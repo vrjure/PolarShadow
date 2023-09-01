@@ -12,21 +12,48 @@
 				IsHitTestVisible="False"
 				Height="{StaticResource TitleBarHeight}"/>
 		<StackPanel Orientation="Horizontal"
-					Spacing="5">
+					Spacing="10"
+					Margin="10,0,0,0">
 			<Button Classes="icon"
 					Content="&#xEA60;"
+					Name="backButton"
 					VerticalAlignment="Center"
 					VerticalContentAlignment="Center"
-					nav:NavigationManager.BackName="{x:Static vm:TopLayoutViewModel.NavigationName}"/>
-			<TextBlock Text="PolarShadow"
-					   VerticalAlignment="Center"
-					   DockPanel.Dock="Left"
-					   IsHitTestVisible="False"/>
+					nav:NavigationManager.BackName="{x:Static vm:TopLayoutViewModel.NavigationName}">
+			</Button>
+			<StackPanel Orientation="Horizontal"
+						Background="{StaticResource TitleBarColor}"						
+					    Classes.left="{Binding !#backButton.Opacity}"
+					    Classes.right="{Binding !!#BackButton.Opacity}">
+				<StackPanel.Styles>
+					<Style Selector="StackPanel.left">
+						<Setter Property="RenderTransform" Value="translateX(-33px)"/>
+					</Style>
+					<Style Selector="StackPanel.right">
+						<Setter Property="RenderTransform" Value="translateX(0px)"/>
+					</Style>
+				</StackPanel.Styles>
+				<StackPanel.Transitions>
+					<Transitions>
+						<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+					</Transitions>
+				</StackPanel.Transitions>
+				<TextBlock Text="PolarShadow"
+						   VerticalAlignment="Center">
+				</TextBlock>
+			</StackPanel>
 		</StackPanel>
-		<Border HorizontalAlignment="Right"
-				Margin="0,0,145,0">
+		<StackPanel HorizontalAlignment="Right"
+					Orientation="Horizontal"
+					Spacing="10"
+					Margin="0,0,145,0">
 			<ContentControl ctrl:ToolBarAttached.Name="titleBar"/>
-		</Border>
+			<TextBlock Text="|"
+					   VerticalAlignment="Center"
+					   Foreground="LightGray"
+					   FontSize="15">
+			</TextBlock>
+		</StackPanel>
 		
 		<ContentControl Grid.Row="1"
 						nav:NavigationManager.ContainerName="{x:Static vm:TopLayoutViewModel.NavigationName}"/>

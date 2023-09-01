@@ -11,6 +11,5 @@
         Title="PolarShadow"
 		ExtendClientAreaToDecorationsHint="True"
 		ExtendClientAreaChromeHints="PreferSystemChrome"
-		ExtendClientAreaTitleBarHeightHint="-1"
 		nav:NavigationManager.ContainerName="{x:Static vm:MainWindowViewModel.NavigationName}">
 </Window>

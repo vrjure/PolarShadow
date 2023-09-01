@@ -9,10 +9,10 @@
 		<FontFamily x:Key="remixIcon" >/Assets/Fonts/remixicon.ttf#remixicon</FontFamily>
 
 		<x:Double x:Key="DefaultFontSize">20</x:Double>
-		<x:Double x:Key="DefaultIconFontSize">25</x:Double>
 		<x:Double x:Key="DefaultPointerOverFontSize">21</x:Double>
-		<x:Double x:Key="DefaultPointerOverIconFontSize">26</x:Double>
-		<x:Double x:Key="TitleFontSize">25</x:Double>
+		<x:Double x:Key="DefaultIconFontSize">20</x:Double>
+		<x:Double x:Key="DefaultPointerOverIconFontSize">21</x:Double>
+		<x:Double x:Key="TitleFontSize">20</x:Double>
 		<x:Double x:Key="TitleBarHeight">32</x:Double>
 
 		<Color x:Key="TitleBarColor">#f3f3f3</Color>

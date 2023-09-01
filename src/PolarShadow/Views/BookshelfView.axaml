@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.BookshelfView"
-			 xmlns:ctrl="using:PolarShadow.Controls">
+			 xmlns:ctrl="using:PolarShadow.Controls"
+			 xmlns:vm="using:PolarShadow.ViewModels">
 	<ctrl:ToolBarAttached.ToolBar>
 		<ctrl:ToolBarTemplate ToolBar="titleBar">
 			<StackPanel Orientation="Horizontal" Spacing="10">
@@ -12,7 +13,8 @@
 						Content="&#xF0D1;"
 						VerticalAlignment="Center"/>
 			</StackPanel>
-
 		</ctrl:ToolBarTemplate>
 	</ctrl:ToolBarAttached.ToolBar>
+	
+	
 </UserControl>

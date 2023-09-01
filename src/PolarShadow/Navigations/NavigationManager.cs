@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Navigations
 {
-    internal sealed class NavigationManager
+    public sealed class NavigationManager
     {
         private static Dictionary<string, ContentControl> _containers = new Dictionary<string, ContentControl>(StringComparer.OrdinalIgnoreCase);
         private static Dictionary<string, Control> _backButtons = new Dictionary<string, Control>(StringComparer.OrdinalIgnoreCase);
@@ -91,7 +91,7 @@ namespace PolarShadow.Navigations
 
             if (TryGetBackButton(containerName, out Control btn))
             {
-                btn.IsVisible = CanBack(containerName, out Stack<Control> _);
+                btn.Opacity = CanBack(containerName, out Stack<Control> _) ? 1 : 0;
             }
 
         }
@@ -220,7 +220,7 @@ namespace PolarShadow.Navigations
                 {
                     backBtn.PointerReleased += BackBtn_PointerReleased;
                 }
-                backBtn.IsVisible = false;
+                backBtn.Opacity = 0;
                 _backButtons.Add(arg.NewValue.Value, backBtn);
             }
         }
