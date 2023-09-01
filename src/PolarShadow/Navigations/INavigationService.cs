@@ -8,7 +8,9 @@ namespace PolarShadow.Navigations
 {
     public interface INavigationService    
     {
-        void Navigate(string container, Type viewType, IDictionary<string, object> parameters);
+        bool CanBack(string container);
+        void Back(string container);
+        void Navigate(string container, Type viewType, IDictionary<string, object> parameters, bool canBack);
         
     }
 }

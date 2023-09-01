@@ -3,19 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PolarShadow.Views.BookshelfView">
-	<DockPanel>
-		<Border DockPanel.Dock="Top">
-			<Grid ColumnDefinitions="*,60">
-				<TextBlock FontFamily="{StaticResource remixIcon}"
-						   Grid.Column="1"
-							FontSize="20"
-							Text="&#xF0D1;"
-							VerticalAlignment="Center"
-							HorizontalAlignment="Right"
-							Margin="10"/>
-			</Grid>
-		</Border>
-		<Border />
-	</DockPanel>
+             x:Class="PolarShadow.Views.BookshelfView"
+			 xmlns:ctrl="using:PolarShadow.Controls">
+	<ctrl:ToolBarAttached.ToolBar>
+		<ctrl:ToolBarTemplate ToolBar="titleBar">
+			<StackPanel Orientation="Horizontal" Spacing="10">
+				<Button Classes="icon"
+						Content="&#xF0D1;"
+						VerticalAlignment="Center"/>
+			</StackPanel>
+
+		</ctrl:ToolBarTemplate>
+	</ctrl:ToolBarAttached.ToolBar>
 </UserControl>

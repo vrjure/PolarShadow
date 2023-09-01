@@ -9,9 +9,9 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.MainView"
              x:DataType="vm:MainViewModel"
-			 Foreground="Black"
 			 x:Name="mainView"
-			 x:CompileBindings="True">
+			 x:CompileBindings="True"
+			 nav:NavigationManager.HasContainer="{x:Static vm:MainViewModel.NavigationName}">
 	<DockPanel>
 		<Border DockPanel.Dock="Bottom" Height="60">
 			<TabStrip ItemsSource="{Binding MenuItems}" 

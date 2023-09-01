@@ -83,10 +83,10 @@ namespace PolarShadow.ViewModels
 
         private void OnSiteSelectorChanged()
         {
-            _nav.Navigate<BookSourceDetailView>(MainViewModel.NavigationName, new Dictionary<string, object>()
+            _nav.Navigate<BookSourceDetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>()
             {
                 {nameof(BookSourceDetailViewModel.Site), _selectedSite }
-            });
+            }, true);
         }
     }
 }

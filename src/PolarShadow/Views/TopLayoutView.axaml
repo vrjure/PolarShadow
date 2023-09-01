@@ -4,8 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:nav="using:PolarShadow.Navigations"
 			 xmlns:vm="using:PolarShadow.ViewModels"
+			 xmlns:ctrl="using:PolarShadow.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PolarShadow.Views.TopLayoutView"
-			 nav:NavigationManager.ContainerName="{x:Static vm:TopLayoutViewModel.NavigationName}">
-
+             x:Class="PolarShadow.Views.TopLayoutView">
+    <Grid RowDefinitions="auto,*">
+		<Border Background="{StaticResource TitleBarColor}"
+				IsHitTestVisible="False"
+				Height="{StaticResource TitleBarHeight}"/>
+		<StackPanel Orientation="Horizontal"
+					Spacing="5">
+			<Button Classes="icon"
+					Content="&#xEA60;"
+					VerticalAlignment="Center"
+					VerticalContentAlignment="Center"
+					nav:NavigationManager.BackName="{x:Static vm:TopLayoutViewModel.NavigationName}"/>
+			<TextBlock Text="PolarShadow"
+					   VerticalAlignment="Center"
+					   DockPanel.Dock="Left"
+					   IsHitTestVisible="False"/>
+		</StackPanel>
+		<Border HorizontalAlignment="Right"
+				Margin="0,0,145,0">
+			<ContentControl ctrl:ToolBarAttached.Name="titleBar"/>
+		</Border>
+		
+		<ContentControl Grid.Row="1"
+						nav:NavigationManager.ContainerName="{x:Static vm:TopLayoutViewModel.NavigationName}"/>
+	</Grid>
 </UserControl>

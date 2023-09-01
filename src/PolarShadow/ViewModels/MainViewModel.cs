@@ -30,6 +30,6 @@ public partial class MainViewModel : ViewModelBase
     public ICommand MenuClickedCommand => _menuClickedCommand ??= new RelayCommand<MenuIconItem>(item =>
     {
         if (item == null || item.ViewType == null) return;
-        _nav.Navigate(NavigationName, item.ViewType, null);
+        _nav.Navigate(NavigationName, item.ViewType);
     });
 }

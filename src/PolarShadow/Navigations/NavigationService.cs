@@ -10,36 +10,34 @@ namespace PolarShadow.Navigations
 {
     public class NavigationService : INavigationService
     {
+
         private readonly IServiceProvider _service;
         public NavigationService(IServiceProvider service)
         {
             _service = service;
         }
 
-        public void Navigate(string containerName, Type viewType, IDictionary<string, object> parameters)
+        public bool CanBack(string container)
         {
-            if (!NavigationManager.TryGetContainer(containerName, out ContentControl container))
+            if (!NavigationManager.CanBack(container, out Stack<Control> _)) return false;
+            return true;
+        }
+
+        public void Back(string container)
+        {
+            NavigationManager.Back(container);
+        }
+
+        public void Navigate(string containerName, Type viewType, IDictionary<string, object> parameters, bool canBack)
+        {
+            if (!NavigationManager.TryGetContainer(containerName, out ContentControl _))
             {
                 throw new InvalidOperationException($"Container name [{containerName}] not found");
             }
 
-            var page = _service.GetRequiredService(viewType);
-            if (container.Content is Control old && old.DataContext is INavigationNotify notify)
-            {
-                notify.OnUnload();
-            }
+            var page = _service.GetRequiredService(viewType) as Control;
 
-            container.Content = page;
-
-            var newPage = page as Control;
-            if(newPage.DataContext is INavigationNotify newNotify)
-            {
-                newNotify.OnLoad();
-            }
-            if (parameters != null && newPage.DataContext is IParameterObtain po)
-            {
-                po.ApplyParameter(parameters);
-            }
+            NavigationManager.Navigate(containerName, page, parameters, canBack);
         }
     }
 }
