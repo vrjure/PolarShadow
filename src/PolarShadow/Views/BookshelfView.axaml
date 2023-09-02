@@ -7,14 +7,14 @@
 			 xmlns:ctrl="using:PolarShadow.Controls"
 			 xmlns:vm="using:PolarShadow.ViewModels">
 	<ctrl:ToolBarAttached.ToolBar>
-		<ctrl:ToolBarTemplate ToolBar="titleBar">
+		<ctrl:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal" Spacing="10">
+				<!--Search button-->
 				<Button Classes="icon"
 						Content="&#xF0D1;"
-						VerticalAlignment="Center"/>
+						VerticalAlignment="Center"
+						Command="{Binding SearchCommand}"/>
 			</StackPanel>
 		</ctrl:ToolBarTemplate>
 	</ctrl:ToolBarAttached.ToolBar>
-	
-	
 </UserControl>

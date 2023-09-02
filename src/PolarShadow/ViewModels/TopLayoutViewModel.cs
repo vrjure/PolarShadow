@@ -11,6 +11,8 @@ namespace PolarShadow.ViewModels
     public class TopLayoutViewModel : ViewModelBase
     {
         public static string NavigationName = "TopLayoutContent";
+        public static string RightTitleBarContainer = "RightTitleBarContianer";
+        public static string CenterTitleBarContainer = "CenterTItleBarContainer";
 
         private readonly INavigationService _nav;
         public TopLayoutViewModel(INavigationService nav)

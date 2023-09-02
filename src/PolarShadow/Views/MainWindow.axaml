@@ -10,6 +10,7 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="PolarShadow"
 		ExtendClientAreaToDecorationsHint="True"
-		ExtendClientAreaChromeHints="PreferSystemChrome"
+		ExtendClientAreaChromeHints="Default"
+		ExtendClientAreaTitleBarHeightHint="40"
 		nav:NavigationManager.ContainerName="{x:Static vm:MainWindowViewModel.NavigationName}">
 </Window>

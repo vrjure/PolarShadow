@@ -10,21 +10,22 @@
 			 x:DataType="vm:BookSourceViewModel"
 			 x:CompileBindings="True">
 	<ctrl:ToolBarAttached.ToolBar>
-		<ctrl:ToolBarTemplate ToolBar="titleBar">
+		<ctrl:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal">
+				<!--Import-->
 				<Button Content="&#xF249;"
 						Classes="icon"
-						Command="{Binding $parent.((vm:BookSourceViewModel)DataContext).ImportCommand}">
+						Command="{Binding ImportCommand}">
 				</Button>
 			</StackPanel>
 		</ctrl:ToolBarTemplate>
 	</ctrl:ToolBarAttached.ToolBar>
 	<Border>
 		<ListBox ItemsSource="{Binding Sites}"
-					Margin="20"
-					SelectionMode="Single"
-					Background="Transparent"
-					SelectedValue="{Binding $parent.((vm:BookSourceViewModel)DataContext).SelectedSite, Mode=TwoWay}">
+				 Margin="20"
+				 SelectionMode="Single"
+				 Background="Transparent"
+				 SelectedValue="{Binding $parent.((vm:BookSourceViewModel)DataContext).SelectedSite, Mode=TwoWay}">
 
 			<ListBox.ItemTemplate>
 				<DataTemplate DataType="polar:ISite">

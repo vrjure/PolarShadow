@@ -81,7 +81,6 @@ namespace PolarShadow.Navigations
             }
 
             page.Loaded += Page_Loaded;
-
             container.Content = page;
 
             if (parameters != null && page.DataContext is IParameterObtain po)

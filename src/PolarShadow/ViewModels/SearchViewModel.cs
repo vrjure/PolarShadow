@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.ViewModels
 {
-    internal class SearchViewModel : ObservableRecipient
+    public class SearchViewModel : ViewModelBase
     {
 
-        protected override void OnActivated()
-        {
-            
-        }
+        
     }
 }

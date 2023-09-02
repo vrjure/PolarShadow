@@ -13,9 +13,12 @@
 			 x:CompileBindings="True"
 			 nav:NavigationManager.HasContainer="{x:Static vm:MainViewModel.NavigationName}">
 	<DockPanel>
-		<Border DockPanel.Dock="Bottom" Height="60">
+		<Border DockPanel.Dock="Bottom" 
+				Height="60"
+				Background="{StaticResource TitleBarColor}">
 			<TabStrip ItemsSource="{Binding MenuItems}" 
 					  HorizontalAlignment="Center"
+					  VerticalAlignment="Center"
 					  x:Name="MenuStrip">
 				<Interaction.Behaviors>
 					<EventTriggerBehavior EventName="SelectionChanged" SourceObject="MenuStrip">
@@ -25,18 +28,23 @@
 				</Interaction.Behaviors>
 				<TabStrip.ItemTemplate>
 					<DataTemplate DataType="m:MenuIconItem">
-						<StackPanel x:Name="menuItem" Orientation="Vertical" Width="60">
+						<StackPanel x:Name="menuItem" 
+									Orientation="Vertical" 
+									Width="60"
+									Spacing="20">
 							<TextBlock Text="{Binding Icon}" 
 									   FontFamily="{StaticResource remixIcon}" 
 									   HorizontalAlignment="Center"
-									   Classes="icon"/>
+									   Classes="icon"
+									   FontSize="30"/>
 						</StackPanel>
 					</DataTemplate>
 				</TabStrip.ItemTemplate>
 			</TabStrip>
 		</Border>
 		<Border>
-			<ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}"/>
+			<ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}">
+			</ContentControl>
 		</Border>
 
 	</DockPanel>
