@@ -10,8 +10,7 @@
              x:Class="PolarShadow.Views.MainView"
              x:DataType="vm:MainViewModel"
 			 x:Name="mainView"
-			 x:CompileBindings="True"
-			 nav:NavigationManager.HasContainer="{x:Static vm:MainViewModel.NavigationName}">
+			 x:CompileBindings="True">
 	<DockPanel>
 		<Border DockPanel.Dock="Bottom" 
 				Height="60"
@@ -43,8 +42,8 @@
 			</TabStrip>
 		</Border>
 		<Border>
-			<ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}">
-			</ContentControl>
+			<TransitioningContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}">
+			</TransitioningContentControl>
 		</Border>
 
 	</DockPanel>

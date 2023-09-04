@@ -6,31 +6,56 @@
              x:Class="PolarShadow.Views.SearchView"
 			 xmlns:ctrl="using:PolarShadow.Controls"
 			 xmlns:vm="using:PolarShadow.ViewModels"
+			 xmlns:polar="using:PolarShadow.Videos"
 			 x:DataType="vm:SearchViewModel"
 			 x:CompileBindings="True">
 	<ctrl:ToolBarAttached.ToolBar>
 		<!--Search box-->
 		<ctrl:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.CenterTitleBarContainer}">
-			<Border Background="White"
-					Height="25"
-					CornerRadius="25"
-					Padding="5,0">
-				<StackPanel Orientation="Horizontal"
-							Spacing="3">
-					<TextBlock Classes="icon"
-							   Text="&#xF0D1;"
-							   FontSize="15"
-							   VerticalAlignment="Center">
-					</TextBlock>
-					<TextBox BorderThickness="0"
-							 Width="150"
-							 VerticalAlignment="Center"
-							 Classes="nofocus"
-							 CornerRadius="25">
+			<Grid ColumnDefinitions="*,2*,*">
+				<Border Background="White"
+						Height="28"
+						CornerRadius="25"
+						Padding="5,0"
+						Grid.Column="1"
+						HorizontalAlignment="Stretch">
+					<DockPanel>
+						<TextBlock Classes="icon"
+								   Text="&#xF0D1;"
+								   FontSize="20"
+								   VerticalAlignment="Center"
+								   DockPanel.Dock="Left">
+						</TextBlock>
+						<TextBox BorderThickness="0"
+								 VerticalAlignment="Center"
+								 Classes="nofocus"
+								 CornerRadius="25"
+								 Margin="3,0,0,0"
+								 Text="{Binding SearchText, Mode=TwoWay}"
+								 >
 
-					</TextBox>
-				</StackPanel>
-			</Border>
+						</TextBox>
+					</DockPanel>
+				</Border>
+			</Grid>
 		</ctrl:ToolBarTemplate>
 	</ctrl:ToolBarAttached.ToolBar>
+
+	<Border Margin="10">
+		<ListBox>
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel/>
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+			<ListBox.ItemTemplate>
+				<DataTemplate DataType="polar:VideoSummary">
+					<StackPanel Orientation="Vertical">
+						<Image ctrl:ImageAttached.Source="{Binding ImageSrc}"/>
+						<TextBlock Text="{Binding Name}"/>
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Border>
 </UserControl>

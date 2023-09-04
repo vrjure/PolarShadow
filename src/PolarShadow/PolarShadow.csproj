@@ -38,4 +38,8 @@
       <DependentUpon>BookSourceDetailView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Animations\" />
+  </ItemGroup>
 </Project>

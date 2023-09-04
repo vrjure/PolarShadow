@@ -7,10 +7,14 @@
 			 xmlns:ctrl="using:PolarShadow.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.TopLayoutView">
-    <Grid RowDefinitions="auto,*">
+    <Grid RowDefinitions="auto,*"
+		  ColumnDefinitions="auto,*,auto">
+		<!--bar color-->
 		<Border Background="{StaticResource TitleBarColor}"
 				IsHitTestVisible="False"
-				Height="{StaticResource TitleBarHeight}"/>
+				Height="{StaticResource TitleBarHeight}"
+				Grid.ColumnSpan="3"/>
+		<!--left-->
 		<StackPanel Orientation="Horizontal"
 					Spacing="10"
 					Margin="10,0,0,0">
@@ -47,7 +51,8 @@
 		<!--CentenContainer-->
 		<TransitioningContentControl ctrl:ToolBarAttached.Name="{x:Static vm:TopLayoutViewModel.CenterTitleBarContainer}"
 									 VerticalAlignment="Center"
-									 HorizontalAlignment="Center">
+									 HorizontalAlignment="Stretch"
+									 Grid.Column="1">
 
 		</TransitioningContentControl>
 		<!--RightContainer-->
@@ -55,7 +60,8 @@
 					VerticalAlignment="Center"
 					Orientation="Horizontal"
 					Spacing="10"
-					Margin="0,0,145,0">
+					Margin="0,0,145,0"
+					Grid.Column="2">
 			<TransitioningContentControl ctrl:ToolBarAttached.Name="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 
 			</TransitioningContentControl>
@@ -67,6 +73,7 @@
 		</StackPanel>
 
 		<TransitioningContentControl Grid.Row="1"
+									 Grid.ColumnSpan="3"
 									 nav:NavigationManager.ContainerName="{x:Static vm:TopLayoutViewModel.NavigationName}">
 			
 		</TransitioningContentControl>

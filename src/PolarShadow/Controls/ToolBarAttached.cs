@@ -46,7 +46,6 @@ namespace PolarShadow.Controls
             var toolBarTemplate = GetToolBar(page);
 
             if (toolBarTemplate is not ToolBarTemplate template) return;
-            page.Unloaded += ToolBarTemplate_Unloaded;
 
             if (!_containers.TryGetValue(template.ToolBar, out ContentControl parent)) return;
 
@@ -55,6 +54,7 @@ namespace PolarShadow.Controls
 
             result.Result.DataContext = page.DataContext;
             parent.Content = result.Result;
+
         }
 
         private static void NamePropertyChanged(AvaloniaPropertyChangedEventArgs<string> arg)
@@ -65,7 +65,14 @@ namespace PolarShadow.Controls
             {
                 container = arg.Sender as ContentControl;
                 _containers.Add(arg.NewValue.Value, container);
-                container.Unloaded += Container_Unloaded;
+                container.AddHandler(ContentControl.UnloadedEvent, Container_Unloaded);
+            }
+
+            static void Container_Unloaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+            {
+                var name = (sender as ContentControl).GetValue(NameProperty);
+                if (string.IsNullOrEmpty(name)) return;
+                _containers.Remove(name);
             }
         }
 
@@ -77,37 +84,26 @@ namespace PolarShadow.Controls
             if (!_containers.TryGetValue(template.ToolBar, out ContentControl container)) return;
 
             var toolBarTemplate = arg.Sender as ContentControl;
-            toolBarTemplate.Loaded += toolBarTemplate_Loaded;
-            toolBarTemplate.Unloaded += ToolBarTemplate_Unloaded;
-        }
+            toolBarTemplate.AddHandler(ContentControl.LoadedEvent, toolBarTemplate_Loaded);
+            toolBarTemplate.AddHandler(ContentControl.UnloadedEvent, ToolBarTemplate_Unloaded);
 
-        private static void toolBarTemplate_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            var control = sender as ContentControl;
-            control.Loaded -= toolBarTemplate_Loaded;
+            static void toolBarTemplate_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+            {
+                var control = sender as ContentControl;
 
-            TryLoad(control);
-        }
+                TryLoad(control);
+            }
 
-        private static void ToolBarTemplate_Unloaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            var control = sender as ContentControl;
-            control.Unloaded -= ToolBarTemplate_Unloaded;
+            static void ToolBarTemplate_Unloaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+            {
+                var control = sender as ContentControl;
 
-            if (GetToolBar(control) is not ToolBarTemplate template) return;
-            if (!_containers.TryGetValue(template.ToolBar, out ContentControl parent)) return;
-            if (parent.Content is Control child) child.DataContext = null;
-            
-            parent.Content = null;       
-        }
+                if (GetToolBar(control) is not ToolBarTemplate template) return;
+                if (!_containers.TryGetValue(template.ToolBar, out ContentControl parent)) return;
+                if (parent.Content is Control child) child.DataContext = null;
 
-        private static void Container_Unloaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            (sender as ContentControl).Unloaded -= Container_Unloaded;
-
-            var name = (sender as ContentControl).GetValue(NameProperty);
-            if (string.IsNullOrEmpty(name)) return;
-            _containers.Remove(name);
+                parent.Content = null;
+            }
         }
     }
 }
