@@ -17,7 +17,7 @@ namespace PolarShadow.Controls
         {
             SourceProperty.Changed.Subscribe(SourcePropertyChanged);
         }
-        public static readonly AttachedProperty<Uri> SourceProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, Uri>(default);
+        public static readonly AttachedProperty<Uri> SourceProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, Uri>("Source");
         public static Uri GetSource(Image image)
         {
             return image.GetValue(SourceProperty);
@@ -29,6 +29,8 @@ namespace PolarShadow.Controls
 
         private static void SourcePropertyChanged(AvaloniaPropertyChangedEventArgs<Uri> arg)
         {
+            if (!arg.NewValue.HasValue) return;
+
             var image = arg.Sender as Image;
             if (!image.IsLoaded)
             {

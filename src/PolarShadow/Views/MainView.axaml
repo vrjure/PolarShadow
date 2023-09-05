@@ -42,8 +42,8 @@
 			</TabStrip>
 		</Border>
 		<Border>
-			<TransitioningContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}">
-			</TransitioningContentControl>
+			<ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}">
+			</ContentControl>
 		</Border>
 
 	</DockPanel>
