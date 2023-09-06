@@ -76,13 +76,14 @@ namespace PolarShadow.Navigations
 
             }
 
-            page.AddHandler(Control.LoadedEvent, Page_Loaded);
-            container.Content = page;
 
             if (parameters != null && page.DataContext is IParameterObtain po)
             {
                 po.ApplyParameter(parameters);
             }
+
+            page.AddHandler(Control.LoadedEvent, Page_Loaded);
+            container.Content = page;
 
             if (TryGetBackButton(containerName, out Control btn))
             {

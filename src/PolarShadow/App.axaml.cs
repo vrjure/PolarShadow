@@ -83,6 +83,7 @@ public partial class App : Application
         service.RegisterTransientViewWithModel<BookSourceView, BookSourceViewModel>();
         service.RegisterTransientViewWithModel<BookSourceDetailView, BookSourceDetailViewModel>();
         service.RegisterTransientViewWithModel<SearchView, SearchViewModel>();
+        service.RegisterTransientViewWithModel<DetailView, DetailViewModel>();
 
     }
 

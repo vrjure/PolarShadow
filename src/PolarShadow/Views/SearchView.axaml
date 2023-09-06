@@ -25,7 +25,8 @@
 		<ScrollViewer>
 			<StackPanel Orientation="Vertical">
 				<ListBox ItemsSource="{Binding SearchResult}"
-						 Background="White">
+						 Background="White"
+						 SelectedValue="{Binding SelectValue, Mode=TwoWay}">
 					<ListBox.ItemsPanel>
 						<ItemsPanelTemplate>
 							<WrapPanel/>
@@ -36,13 +37,14 @@
 							<StackPanel Orientation="Vertical"
 										MaxWidth="120">
 								<Image ctrl:ImageAttached.Source="{Binding ImageSrc}"/>
-								<TextBlock Text="{Binding Name}"/>
+								<TextBlock Text="{Binding Name}"
+										   TextWrapping="Wrap"/>
 							</StackPanel>
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
-				<PathIcon Classes.spin="{Binding ShowIndicator}"
-						  IsVisible="{Binding ShowIndicator}"
+				<PathIcon Classes.spin="{Binding IsLoading}"
+						  IsVisible="{Binding IsLoading}"
 						  Data="{StaticResource loader2}">
 				</PathIcon>
 				<Button Command="{Binding LoadMoreCommand}"

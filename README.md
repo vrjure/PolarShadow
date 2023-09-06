@@ -8,7 +8,7 @@
 
 ## UI
 
-MAUI Blazor + Ant Design Blazor（待定）
+AvaloniaUI
 
 ## 配置
 

@@ -23,7 +23,7 @@
     <Application.Styles>
         <FluentTheme />
 
-		<Style Selector=":is(Control).spin">
+		<Style Selector="PathIcon.spin">
 			<Style.Animations>
 				<Animation Duration="0:0:2" IterationCount="Infinite">
 					<KeyFrame Cue="0%">
@@ -37,13 +37,18 @@
 		</Style>
 		
 		
-		<Style Selector="TextBlock">
+		<Style Selector="TextBlock,SelectableTextBlock">
 			<Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
 		</Style>
 		
 		<Style Selector="TextBlock.title">
 			<Setter Property="FontSize" Value="{StaticResource TitleFontSize}"/>
 			<Setter Property="FontWeight" Value="Bold"/>
+		</Style>
+
+		<Style Selector="TextBlock.icon">
+			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
+			<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
 		</Style>
 		
 		<Style Selector="Button.icon">
@@ -65,12 +70,6 @@
 			<Style Selector="^:disabled /template/ ContentPresenter">
 				<Setter Property="Background" Value="Transparent"/>
 			</Style>
-		</Style>
-
-
-		<Style Selector="TextBlock.icon">
-			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
-			<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
 		</Style>
 
 		<Style Selector="ListBoxItem">

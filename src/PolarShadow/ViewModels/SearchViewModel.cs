@@ -5,7 +5,9 @@ using Avalonia.Xaml.Interactions.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Core;
+using PolarShadow.Navigations;
 using PolarShadow.Videos;
+using PolarShadow.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,10 +21,12 @@ namespace PolarShadow.ViewModels
     {
         private readonly IPolarShadow _polar;
         private readonly INotificationManager _notify;
-        public SearchViewModel(IPolarShadow polar, INotificationManager notify)
+        private readonly INavigationService _nav;
+        public SearchViewModel(IPolarShadow polar, INotificationManager notify, INavigationService nav)
         {
             _polar = polar;
             _notify = notify;
+            _nav = nav;
         }
 
         private string _searchText;
@@ -45,11 +49,25 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _searchResult, value);
         }
 
-        private bool _showIndicator = false;
-        public bool ShowIndicator
+        private VideoSummary _selectValue;
+        public VideoSummary SelectValue
         {
-            get => _showIndicator;
-            set => SetProperty(ref _showIndicator, value);
+            get => _selectValue;
+            set
+            {
+                SetProperty(_selectValue, value, changed => 
+                {
+                    _selectValue = value;
+                    NavigateToDetail();
+                });
+            }
+        }
+
+        private bool _isLoading = false;
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
         }
 
         private bool _showLoadMore = false;
@@ -96,7 +114,7 @@ namespace PolarShadow.ViewModels
 
         private async Task LoadMore()
         {
-            ShowIndicator = true;
+            IsLoading = true;
             ShowLoadMore = false;
             try
             {
@@ -126,7 +144,15 @@ namespace PolarShadow.ViewModels
                 _notify.Show(ex.Message);
             }
 
-            ShowIndicator = false;
+            IsLoading = false;
+        }
+
+        private void NavigateToDetail()
+        {
+            _nav.Navigate<DetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
+            {
+                {nameof(DetailViewModel.VideoSummary), SelectValue }
+            }, true);
         }
         
     }

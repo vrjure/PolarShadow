@@ -61,7 +61,8 @@ namespace PolarShadow.Controls
                 newItemTemplate = GetItemTemplate(panel);
 
             if (newSource == null || newItemTemplate == null) return;
-            
+
+            panel.DataContext = newSource;
             var o = newSource.GetEnumerator();
             while (o.MoveNext())
             {
