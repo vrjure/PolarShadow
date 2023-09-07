@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A0DA3243
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadowTests", "Tests\PolarShadowTests\PolarShadowTests.csproj", "{D948F56C-BB01-486C-BAAD-1C373A918C67}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Storage.Abstractions", "PolarShadow.Storage.Abstractions\PolarShadow.Storage.Abstractions.csproj", "{930758FF-EB25-49DB-B15E-8906AA2AD97B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Storage", "PolarShadow.Storage\PolarShadow.Storage.csproj", "{796E2A08-2312-45A5-9091-EB901A83E0F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Storage.Sqlite.Migrations", "PolarShadow.Storage.Sqlite.Migrations\PolarShadow.Storage.Sqlite.Migrations.csproj", "{C148FBED-071E-4088-9B0A-1662B866A18E}"
@@ -47,10 +45,6 @@ Global
 		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Release|Any CPU.Build.0 = Release|Any CPU
-		{930758FF-EB25-49DB-B15E-8906AA2AD97B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{930758FF-EB25-49DB-B15E-8906AA2AD97B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{930758FF-EB25-49DB-B15E-8906AA2AD97B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{930758FF-EB25-49DB-B15E-8906AA2AD97B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{796E2A08-2312-45A5-9091-EB901A83E0F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{796E2A08-2312-45A5-9091-EB901A83E0F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{796E2A08-2312-45A5-9091-EB901A83E0F3}.Release|Any CPU.ActiveCfg = Release|Any CPU

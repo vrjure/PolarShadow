@@ -2,9 +2,11 @@
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
 using PolarShadow.Navigations;
 using PolarShadow.Services;
+using PolarShadow.Storage;
 using PolarShadow.Views;
 using System;
 using System.Collections.Generic;
@@ -21,12 +23,14 @@ namespace PolarShadow.ViewModels
         private readonly IStorageService _storage;
         private readonly INotificationManager _notification;
         private readonly INavigationService _nav;
-        public BookSourceViewModel(IPolarShadow polar, IStorageService storage, INotificationManager notification, INavigationService nav)
+        private readonly IDbContextFactory<PolarShadowDbContext> _dbFactory;
+        public BookSourceViewModel(IPolarShadow polar, IStorageService storage, INotificationManager notification, INavigationService nav, IDbContextFactory<PolarShadowDbContext> dbFactory)
         {
             _polar = polar;
             _storage = storage;
             _notification = notification;
             _nav = nav;
+            _dbFactory = dbFactory;
         }
         private ObservableCollection<ISite> _sites;
         public ObservableCollection<ISite> Sites
@@ -66,7 +70,11 @@ namespace PolarShadow.ViewModels
 
                 Reflesh();
 
-                _polar.Save();
+
+                await _polar.SaveToAsync(new DbConfigurationSource
+                {
+                    DbCreater = () => _dbFactory.CreateDbContext()
+                });
 
                 _notification.ShowSuccess();
             }

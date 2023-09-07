@@ -9,11 +9,6 @@ namespace PolarShadow.Storage
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddStorageServices(this IServiceCollection services)
-        {
-            services.AddSingleton<IMyCollectionService, MyCollectionService>();
-            services.AddSingleton<IWatchRecordService, WatchRecordService>();
-            return services;
-        }
+
     }
 }

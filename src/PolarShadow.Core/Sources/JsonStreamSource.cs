@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
@@ -30,6 +31,19 @@ namespace PolarShadow.Core
 
             content.CopyTo(Stream);
             Stream.Flush();
+        }
+
+        public override async Task SaveAsync(Stream content)
+        {
+            if (Stream == null)
+            {
+                return;
+            }
+
+            Stream.SetLength(0);
+
+            await content.CopyToAsync(Stream);
+            await Stream.FlushAsync();
         }
     }
 }

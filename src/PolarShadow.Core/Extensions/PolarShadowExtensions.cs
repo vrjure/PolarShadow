@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
     public static class PolarShadowExtensions
     {
-        public static IPolarShadow SaveTo(this IPolarShadow polarShadow, IPolarShadowSource source)
+        public static void SaveTo(this IPolarShadow polarShadow, IPolarShadowSource source)
         {
             using var ms = new MemoryStream();
             using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.DefaultWriteOption);
@@ -18,7 +19,16 @@ namespace PolarShadow.Core
             jsonWriter.Flush();
             ms.Seek(0, SeekOrigin.Begin);
             source.Save(ms);
-            return polarShadow;
+        }
+
+        public static async Task SaveToAsync(this IPolarShadow polarShadow, IPolarShadowSource source)
+        {
+            using var ms = new MemoryStream();
+            using var jsonWriter = new Utf8JsonWriter(ms, JsonOption.DefaultWriteOption);
+            polarShadow.WriteTo(jsonWriter);
+            jsonWriter.Flush();
+            ms.Seek(0, SeekOrigin.Begin);
+            await source.SaveAsync(ms);
         }
 
         public static IPolarShadow LoadJsonFileSource(this IPolarShadow polarShadow, string path, bool reload = false)

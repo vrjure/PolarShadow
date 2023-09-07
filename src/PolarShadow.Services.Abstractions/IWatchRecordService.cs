@@ -1,5 +1,4 @@
 ﻿using PolarShadow.Core;
-using PolarShadow.Videos;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,8 +8,8 @@ namespace PolarShadow.Storage
 {
     public interface IWatchRecordService
     {
-        Task AddOrUpdateRecordAsync(WatchRecord record);
-        Task DeleteRecordAsync(WatchRecord record);
-        Task<ICollection<WatchRecord>> GetRecordsAsync(string videoName);
+        //Task AddOrUpdateRecordAsync(WatchRecord record);
+        //Task DeleteRecordAsync(WatchRecord record);
+        //Task<ICollection<WatchRecord>> GetRecordsAsync(string videoName);
     }
 }

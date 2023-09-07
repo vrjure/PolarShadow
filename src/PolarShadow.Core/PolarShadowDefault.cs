@@ -49,6 +49,27 @@ namespace PolarShadow.Core
 
             provider.Load();
 
+            Load(provider, reLoad);
+        }
+
+        public async Task LoadAsync(IPolarShadowSource source, bool reLoad = false)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+
+            var provider = source.Build(_builder);
+            if (provider == null)
+            {
+                return;
+            }
+
+            await provider.LoadAsync();
+
+            Load(provider, reLoad);
+        }
+
+        private void Load(IPolarShadowProvider provider, bool reLoad = false)
+        {
+            if (provider == null || provider.Root.ValueKind == JsonValueKind.Undefined) return;
             if (reLoad)
             {
                 _configPrameter.Clear();

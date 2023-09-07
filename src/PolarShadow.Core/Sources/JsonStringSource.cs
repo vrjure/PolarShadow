@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace PolarShadow.Core
 {
@@ -17,6 +18,12 @@ namespace PolarShadow.Core
         {
             using var sr = new StreamReader(content);
             Json = sr.ReadToEnd();
+        }
+
+        public override async Task SaveAsync(Stream content)
+        {
+            using var sr = new StreamReader(content);
+            Json = await sr.ReadToEndAsync();
         }
     }
 }

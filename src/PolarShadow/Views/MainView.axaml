@@ -11,40 +11,43 @@
              x:DataType="vm:MainViewModel"
 			 x:Name="mainView"
 			 x:CompileBindings="True">
-	<DockPanel>
-		<Border DockPanel.Dock="Bottom" 
-				Height="60"
-				Background="{StaticResource TitleBarColor}">
-			<TabStrip ItemsSource="{Binding MenuItems}" 
-					  HorizontalAlignment="Center"
-					  VerticalAlignment="Center"
-					  x:Name="MenuStrip">
-				<Interaction.Behaviors>
-					<EventTriggerBehavior EventName="SelectionChanged" SourceObject="MenuStrip">
-						<InvokeCommandAction Command="{Binding MenuClickedCommand}" 
-											 CommandParameter="{Binding #MenuStrip.SelectedValue}"/>
-					</EventTriggerBehavior>
-				</Interaction.Behaviors>
-				<TabStrip.ItemTemplate>
-					<DataTemplate DataType="m:MenuIconItem">
-						<StackPanel x:Name="menuItem" 
-									Orientation="Vertical" 
-									Width="60"
-									Spacing="20">
-							<TextBlock Text="{Binding Icon}" 
-									   FontFamily="{StaticResource remixIcon}" 
-									   HorizontalAlignment="Center"
-									   Classes="icon"
-									   FontSize="30"/>
-						</StackPanel>
-					</DataTemplate>
-				</TabStrip.ItemTemplate>
-			</TabStrip>
-		</Border>
-		<Border>
-			<ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}">
-			</ContentControl>
-		</Border>
+	<Grid>
+		<DockPanel>
+			<Border DockPanel.Dock="Bottom"
+					Height="60"
+					Background="{StaticResource TitleBarColor}">
+				<TabStrip ItemsSource="{Binding MenuItems}"
+						  HorizontalAlignment="Center"
+						  VerticalAlignment="Center"
+						  x:Name="MenuStrip">
+					<Interaction.Behaviors>
+						<EventTriggerBehavior EventName="SelectionChanged" SourceObject="MenuStrip">
+							<InvokeCommandAction Command="{Binding MenuClickedCommand}"
+												 CommandParameter="{Binding #MenuStrip.SelectedValue}"/>
+						</EventTriggerBehavior>
+					</Interaction.Behaviors>
+					<TabStrip.ItemTemplate>
+						<DataTemplate DataType="m:MenuIconItem">
+							<StackPanel x:Name="menuItem"
+										Orientation="Vertical"
+										Width="60"
+										Spacing="20">
+								<TextBlock Text="{Binding Icon}"
+										   FontFamily="{StaticResource remixIcon}"
+										   HorizontalAlignment="Center"
+										   Classes="icon"
+										   FontSize="30"/>
+							</StackPanel>
+						</DataTemplate>
+					</TabStrip.ItemTemplate>
+				</TabStrip>
+			</Border>
+			<Border>
+				<ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}">
+				</ContentControl>
+			</Border>
 
-	</DockPanel>
+		</DockPanel>
+	</Grid>
+
 </UserControl>

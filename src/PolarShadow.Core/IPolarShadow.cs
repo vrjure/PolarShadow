@@ -13,5 +13,6 @@ namespace PolarShadow.Core
     {
         IEnumerable<IPolarShadowItem> Items { get; }
         void Load(IPolarShadowSource source, bool reload = false);
+        Task LoadAsync(IPolarShadowSource source, bool reload = false);
     }
 }

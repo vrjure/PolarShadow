@@ -12,10 +12,18 @@ using System;
 using PolarShadow.Navigations;
 using PolarShadow.Services;
 using Avalonia.Controls.Notifications;
+using PolarShadow.Storage;
+using Microsoft.EntityFrameworkCore;
+using System.IO;
+
 namespace PolarShadow;
 
 public partial class App : Application
 {
+    public static string AppDataFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PolarShadow");
+    public static string ConfigFile => Path.Combine(AppDataFolder, "config.json");
+    public static string DbFile => Path.Combine(AppDataFolder, "polar.db");
+
     public static IServiceProvider Service => (App.Current as App)._services;
 
     private IServiceProvider _services;
@@ -60,6 +68,8 @@ public partial class App : Application
 
         RegisterPolarShadow(service);
 
+        RegisterConfigureDatabase(service);
+
         RegisterUtilities(service);
 
         _services = service.BuildServiceProvider();
@@ -93,7 +103,14 @@ public partial class App : Application
         var polarShadow = builder.ConfigureDefault()
             .ConfigreVideo()
             .Build();
-        polarShadow.Load();
         service.AddSingleton(polarShadow);
+    }
+
+    private void RegisterConfigureDatabase(IServiceCollection service)
+    {
+        service.AddDbContextFactory<PolarShadowDbContext>(op =>
+        {
+            op.UseSqlite($"Data Source={DbFile}", op => op.MigrationsAssembly(typeof(App).Assembly.FullName));
+        });
     }
 }
