@@ -12,5 +12,6 @@ namespace PolarShadow.Core
         string Site { get; set; }
         string Name { get; set; }
         string Request { get; set; }
+        string FromRequest { get; set; }
     }
 }

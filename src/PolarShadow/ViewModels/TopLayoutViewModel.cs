@@ -1,6 +1,9 @@
 ﻿using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
+using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Storage;
 using PolarShadow.Views;
@@ -12,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.ViewModels
 {
-    public class TopLayoutViewModel : ViewModelBase
+    public class TopLayoutViewModel : ViewModelBase, IRecipient<LoadingState>
     {
         public static string NavigationName = "TopLayoutContent";
         public static string RightTitleBarContainer = "RightTitleBarContianer";
@@ -28,38 +31,59 @@ namespace PolarShadow.ViewModels
             _dbFactory = dbFactory;
             _notify = notify;
             _polar = polar;
+
+            WeakReferenceMessenger.Default.Register(this);
         }
 
-        private bool _isInitialized = false;
-        public bool IsInitialized
+        private bool _isLoading = false;
+        public bool IsLoading
         {
-            get => _isInitialized;
-            set => SetProperty(ref _isInitialized, value);
+            get => _isLoading;
+            set => SetProperty(ref _isLoading, value);
         }
 
         public override async void OnLoad()
         {
-            IsInitialized = false;
+            IsLoading = true;
             try
             {
-                using var db = _dbFactory.CreateDbContext();
-                await db.Database.EnsureCreatedAsync();
+                // async 方法貌似会阻塞线程，动画不会播放？？
+                //using var db = _dbFactory.CreateDbContext();
+                //await db.Database.EnsureCreatedAsync();
 
-                var dbSource = new DbConfigurationSource()
+                //var dbSource = new DbConfigurationSource()
+                //{
+                //    DbCreater = () => _dbFactory.CreateDbContext()
+                //};
+                //await _polar.LoadAsync(dbSource, true);
+
+                await Task.Run(() =>
                 {
-                    DbCreater = () => _dbFactory.CreateDbContext()
-                };
+                    using var db = _dbFactory.CreateDbContext();
+                    db.Database.EnsureCreated();
 
-                await _polar.LoadAsync(dbSource, true);
+                    var dbSource = new DbConfigurationSource()
+                    {
+                        DbCreater = () => _dbFactory.CreateDbContext()
+                    };
 
-                _nav.Navigate<MainView>(NavigationName);
+                    _polar.Load(dbSource, true);
+                });
+
             }
             catch (Exception ex)
             {
                 _notify.Show(ex);
             }
 
-            IsInitialized = true;
+            IsLoading = false;
+            _nav.Navigate<MainView>(NavigationName);
+
+        }
+
+        void IRecipient<LoadingState>.Receive(LoadingState message)
+        {
+            IsLoading = message.IsLoading;
         }
     }
 }

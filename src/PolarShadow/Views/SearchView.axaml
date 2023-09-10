@@ -6,7 +6,7 @@
              x:Class="PolarShadow.Views.SearchView"
 			 xmlns:ctrl="using:PolarShadow.Controls"
 			 xmlns:vm="using:PolarShadow.ViewModels"
-			 xmlns:polar="using:PolarShadow.Videos"
+			 xmlns:m="using:PolarShadow.Models"
 			 x:DataType="vm:SearchViewModel"
 			 x:CompileBindings="True">
 	<ctrl:ToolBarAttached.ToolBar>
@@ -33,10 +33,11 @@
 						</ItemsPanelTemplate>
 					</ListBox.ItemsPanel>
 					<ListBox.ItemTemplate>
-						<DataTemplate DataType="polar:VideoSummary">
+						<DataTemplate DataType="m:SearchResult">
 							<StackPanel Orientation="Vertical"
 										MaxWidth="120">
-								<Image ctrl:ImageAttached.Source="{Binding ImageSrc}"/>
+								<Image ctrl:ImageAttached.Src="{Binding ImageSrc}"
+									   ctrl:ImageAttached.Cache="{Binding $parent[ListBox].((vm:SearchViewModel)DataContext).ImageCache}"/>
 								<TextBlock Text="{Binding Name}"
 										   TextWrapping="Wrap"/>
 							</StackPanel>

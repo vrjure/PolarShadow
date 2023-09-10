@@ -80,5 +80,16 @@
 									 nav:NavigationManager.ContainerName="{x:Static vm:TopLayoutViewModel.NavigationName}">
 			
 		</TransitioningContentControl>
+		
+		<PathIcon Data="{StaticResource loader2}"
+				  Width="30"
+				  Height="30"
+				  VerticalAlignment="Center"
+				  HorizontalAlignment="Center"
+				  Classes.spin="{Binding IsLoading}"
+				  IsVisible="{Binding IsLoading}"
+				  Grid.RowSpan="2"
+				  Grid.ColumnSpan="3"/>
+
 	</Grid>
 </UserControl>

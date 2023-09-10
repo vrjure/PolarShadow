@@ -18,5 +18,23 @@ namespace PolarShadow.Storage
 
         public DbSet<SiteEntity> Sites { get; set; }
         public DbSet<RequestEntity> Requests { get; set; }
+        public DbSet<ResourceEntity> Resources { get; set; }
+        public DbSet<EpisodeEntity> Episodes { get; set; }
+        public DbSet<LinkEntity> Links { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+
+            modelBuilder.Entity<ResourceEntity>()
+                .Property(e => e.SrcType)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<LinkEntity>()
+                .Property(e => e.SrcType)
+                .HasConversion<string>();
+
+        }
     }
 }

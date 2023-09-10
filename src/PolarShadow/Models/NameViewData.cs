@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace PolarShadow.Videos
+namespace PolarShadow.Models
 {
-    public class VideoSeason
+    public class NameViewData : ViewData
     {
         public string Name { get; set; }
-        public ICollection<VideoEpisode> Episodes { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace PolarShadow.Core
 {
-    internal class SitePropertyContentWriting : ContentWriting
+    internal class BasePropertyContentWriting : ContentWriting
     {
         public override string[] RequestFilter => new string[] { "*" };
 
@@ -16,6 +16,10 @@ namespace PolarShadow.Core
                 if (parameter.TryReadValue("site:name", out string siteName))
                 {
                     writer.WriteString("site", siteName);
+                }
+                if (parameter.TryReadValue("site:request", out string requestName))
+                {
+                    writer.WriteString("fromRequest", requestName);
                 }
             }
         }

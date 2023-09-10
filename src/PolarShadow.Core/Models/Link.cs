@@ -33,5 +33,9 @@ namespace PolarShadow.Core
         /// 用于请求src的Request
         /// </summary>
         public string Request { get; set; }
+        /// <summary>
+        /// 得到此src的Request
+        /// </summary>
+        public string FromRequest { get; set; }
     }
 }

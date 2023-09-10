@@ -2,6 +2,8 @@
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Microsoft.Extensions.Caching.Memory;
+using PolarShadow.Cache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,24 +17,34 @@ namespace PolarShadow.Controls
     {
         static ImageAttached()
         {
-            SourceProperty.Changed.Subscribe(SourcePropertyChanged);
+            SrcProperty.Changed.Subscribe(SrcPropertyChanged);
         }
-        public static readonly AttachedProperty<Uri> SourceProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, Uri>("Source");
-        public static Uri GetSource(Image image)
+        public static readonly AttachedProperty<Uri> SrcProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, Uri>("Source");
+        public static Uri GetSrc(Image image)
         {
-            return image.GetValue(SourceProperty);
+            return image.GetValue(SrcProperty);
         }
-        public static void SetSource(Image image, Uri value)
+        public static void SetSrc(Image image, Uri value)
         {
-            image.SetValue(SourceProperty, value);
+            image.SetValue(SrcProperty, value);
         }
 
-        private static void SourcePropertyChanged(AvaloniaPropertyChangedEventArgs<Uri> arg)
+        public static readonly AttachedProperty<IBufferCache> CacheProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, IBufferCache>("Cache");
+        public static IBufferCache GetCache(Image image)
+        {
+            return image.GetValue(CacheProperty);
+        }
+        public static void SetCache(Image image, IBufferCache value)
+        {
+            image.SetValue(CacheProperty, value);
+        }
+
+        private static void SrcPropertyChanged(AvaloniaPropertyChangedEventArgs<Uri> arg)
         {
             if (!arg.NewValue.HasValue) return;
-
             var image = arg.Sender as Image;
-            if (!image.IsLoaded)
+            
+            if (!image.IsLoaded )
             {
                 image.Loaded += Image_Loaded;
             }
@@ -46,32 +58,41 @@ namespace PolarShadow.Controls
         {
             var image = sender as Image;
             image.Loaded -= Image_Loaded;
-
             ApplySource(image);
         }
 
         private static async void ApplySource(Image image)
         {
-            var source = GetSource(image);
-            if (source == null) return;
-
-            if (source.Scheme == Uri.UriSchemeHttp || source.Scheme == Uri.UriSchemeHttps)
+            var src = GetSrc(image);
+            if (src == null)
             {
-                image.Source = await LoadFromWebAsync(source);
+                image.Source = null;
+                return;
+            }
+
+            if (src.Scheme == Uri.UriSchemeHttp || src.Scheme == Uri.UriSchemeHttps)
+            {
+                var cache = GetCache(image);
+                image.Source = await LoadFromWebAsync(src, cache);
             }
             else
             {
-                image.Source = new Bitmap(AssetLoader.Open(source));
+                image.Source = new Bitmap(AssetLoader.Open(src));
             }
         }
 
-        private static async Task<Bitmap> LoadFromWebAsync(Uri uri)
+        private static async Task<Bitmap> LoadFromWebAsync(Uri uri, IBufferCache cache = null)
         {
-            using var httpClient = new HttpClient();
+
+            using var httpClient = cache switch
+            {
+                not null => new HttpClient(new HttpCachingHandler(cache)),
+                _ => new HttpClient()
+            };
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62");
             try
             {
-                var response = await httpClient.GetAsync(uri);
+                using var response = await httpClient.GetAsync(uri);
                 response.EnsureSuccessStatusCode();
 
                 return new Bitmap(await response.Content.ReadAsStreamAsync());

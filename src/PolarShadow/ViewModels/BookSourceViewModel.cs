@@ -2,8 +2,10 @@
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
+using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Services;
 using PolarShadow.Storage;
@@ -53,7 +55,6 @@ namespace PolarShadow.ViewModels
         private IAsyncRelayCommand _importCommand;
         public IAsyncRelayCommand ImportCommand => _importCommand ??= new AsyncRelayCommand(ImportSource);
 
-
         public override void OnLoad()
         {
             Reflesh();
@@ -66,10 +67,11 @@ namespace PolarShadow.ViewModels
                 var file = await _storage.OpenPolarShadowConfigFilePickerAsync();
                 if (file == null) return;
 
+                WeakReferenceMessenger.Default.Send(new LoadingState { IsLoading = true });
+
                 _polar.LoadJsonStreamSource(await file.OpenReadAsync());
 
                 Reflesh();
-
 
                 await _polar.SaveToAsync(new DbConfigurationSource
                 {
@@ -81,7 +83,9 @@ namespace PolarShadow.ViewModels
             catch (Exception ex)
             {
                 _notification.Show(ex);
-            }    
+            }
+
+            WeakReferenceMessenger.Default.Send(new LoadingState { IsLoading = false });
         }
 
         private void Reflesh()

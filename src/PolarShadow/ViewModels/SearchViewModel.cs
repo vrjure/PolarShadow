@@ -4,7 +4,10 @@ using Avalonia.Input;
 using Avalonia.Xaml.Interactions.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Caching.Memory;
+using PolarShadow.Cache;
 using PolarShadow.Core;
+using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Videos;
 using PolarShadow.Views;
@@ -22,12 +25,16 @@ namespace PolarShadow.ViewModels
         private readonly IPolarShadow _polar;
         private readonly INotificationManager _notify;
         private readonly INavigationService _nav;
-        public SearchViewModel(IPolarShadow polar, INotificationManager notify, INavigationService nav)
+        private readonly IBufferCache _bufferCache;
+        public SearchViewModel(IPolarShadow polar, INotificationManager notify, INavigationService nav, IBufferCache bufferCache)
         {
             _polar = polar;
             _notify = notify;
             _nav = nav;
+            _bufferCache = bufferCache;
         }
+
+        public IBufferCache ImageCache => _bufferCache;
 
         private string _searchText;
         public string SearchText
@@ -42,15 +49,15 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private ObservableCollection<VideoSummary> _searchResult;
-        public ObservableCollection<VideoSummary> SearchResult
+        private ObservableCollection<SearchResult> _searchResult;
+        public ObservableCollection<SearchResult> SearchResult
         {
             get => _searchResult;
             set => SetProperty(ref _searchResult, value);
         }
 
-        private VideoSummary _selectValue;
-        public VideoSummary SelectValue
+        private SearchResult _selectValue;
+        public SearchResult SelectValue
         {
             get => _selectValue;
             set
@@ -94,7 +101,7 @@ namespace PolarShadow.ViewModels
         public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
 
 
-        private IVideoSearcHandler _searcHandler;
+        private ISearchHandler _searcHandler;
         private async Task Search()
         {
             _searchResult?.Clear();
@@ -102,7 +109,7 @@ namespace PolarShadow.ViewModels
             {
                 return;
             }
-            _searcHandler = _polar.CreateVideoSearcHandler(new SearchVideoFilter
+            _searcHandler = _polar.CreateSearchHander(new SearchFilter
             {
                 Page = 1,
                 PageSize = 10,
@@ -128,13 +135,13 @@ namespace PolarShadow.ViewModels
 
                 if (SearchResult == null)
                 {
-                    SearchResult = new ObservableCollection<VideoSummary>(result.Data);
+                    SearchResult = new ObservableCollection<SearchResult>(result.Data.Select(ToResult));
                 }
                 else
                 {
                     foreach (var item in result.Data)
                     {
-                        SearchResult.Add(item);
+                        SearchResult.Add(ToResult(item));
                     }
                 }
                 ShowLoadMore = true;
@@ -151,8 +158,19 @@ namespace PolarShadow.ViewModels
         {
             _nav.Navigate<DetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
-                {nameof(DetailViewModel.VideoSummary), SelectValue }
+                {nameof(DetailViewModel.ResourceParam), SelectValue.Tag }
             }, true);
+        }
+
+        private SearchResult ToResult(Resource resource)
+        {
+            return new SearchResult
+            {
+                Name = resource.Name,
+                Site = resource.Site,
+                ImageSrc = resource.ImageSrc,
+                Tag = resource
+            };
         }
         
     }

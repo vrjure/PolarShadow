@@ -29,7 +29,7 @@ namespace PolarShadow.Storage
         {
             using var context = _source.DbCreater();
             var manager = new SiteManager(context);
-            Root = await manager.GetAsJsonAsync();
+            Root = await manager.GetAsJsonAsync().ConfigureAwait(false);
         }
 
     }

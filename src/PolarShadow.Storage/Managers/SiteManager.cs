@@ -19,8 +19,8 @@ namespace PolarShadow.Storage
 
         public async Task<JsonElement> GetAsJsonAsync()
         {
-            var sites = await _context.Sites.OrderBy(f => f.Name).AsNoTracking().ToListAsync();
-            var requests = await _context.Requests.OrderBy(f => f.SiteName).AsNoTracking().ToListAsync();
+            var sites = await _context.Sites.OrderBy(f => f.Name).AsNoTracking().ToListAsync().ConfigureAwait(false);
+            var requests = await _context.Requests.OrderBy(f => f.SiteName).AsNoTracking().ToListAsync().ConfigureAwait(false);
 
             return Convert(sites, requests);
         }

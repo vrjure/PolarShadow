@@ -89,9 +89,11 @@ namespace PolarShadow.Core
             if (request == null) return;
             try
             {
-                BeforeRequest(request);
-                await ExecuteAsync(request, stream, cancellation).ConfigureAwait(false);
-                AfterRequest(request);
+                if (BeforeRequest(request))
+                {
+                    await ExecuteAsync(request, stream, cancellation).ConfigureAwait(false);
+                    AfterRequest(request);
+                }
             }
             catch (Exception ex)
             {
@@ -125,9 +127,9 @@ namespace PolarShadow.Core
         {
             return request.ExecuteAsync(stream, cancellation);
         }
-        protected virtual void BeforeRequest(ISiteRequestHandler request)
+        protected virtual bool BeforeRequest(ISiteRequestHandler request)
         {
-
+            return true;
         }
 
         protected virtual void AfterRequest(ISiteRequestHandler request)

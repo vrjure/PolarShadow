@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PolarShadow.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Storage
 {
-    public class SiteEntity
+    public class LinkEntity : Link
     {
         [Key]
-        [MaxLength(255)]
-        public string Name { get; set; }
-        [MaxLength(255)]
-        public string Domain { get; set; }
+        public int Id { get; set; }
+        public int EpisodeId { get; set; }
+        public int ResourceId { get; set; }
     }
 }

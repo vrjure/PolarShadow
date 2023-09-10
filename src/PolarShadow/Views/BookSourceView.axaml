@@ -20,7 +20,7 @@
 			</StackPanel>
 		</ctrl:ToolBarTemplate>
 	</ctrl:ToolBarAttached.ToolBar>
-	<Border>
+	<Grid>
 		<ListBox ItemsSource="{Binding Sites}"
 				 Margin="20"
 				 SelectionMode="Single"
@@ -51,5 +51,5 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-	</Border>
+	</Grid>
 </UserControl>

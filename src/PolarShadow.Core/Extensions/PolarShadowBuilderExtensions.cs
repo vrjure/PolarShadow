@@ -12,7 +12,7 @@ namespace PolarShadow.Core
             return builder.ConfigureSiteItem(siteItemBuilder =>
             {
                 siteItemBuilder.HttpHandler = new HttpClientRequestHandler();
-                siteItemBuilder.Writings.Add(new SitePropertyContentWriting());
+                siteItemBuilder.Writings.Add(new BasePropertyContentWriting());
             });
         }
 

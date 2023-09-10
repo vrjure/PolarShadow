@@ -62,7 +62,7 @@ namespace PolarShadow.Core
                 return;
             }
 
-            await provider.LoadAsync();
+            await provider.LoadAsync().ConfigureAwait(false);
 
             Load(provider, reLoad);
         }

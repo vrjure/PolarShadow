@@ -1,24 +1,23 @@
-﻿using PolarShadow.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Videos
+namespace PolarShadow.Core
 {
-    internal class VideoSearcHandler : SequentialRequestBase<SearchVideoFilter, PageResult<VideoSummary>>, IVideoSearcHandler
+    public class SearchSequentialRequest : SequentialRequestBase<SearchFilter, PageResult<Resource>>, ISearchHandler
     {
         bool _isSiteFirstRequest = true;
-        public VideoSearcHandler(string requestName, SearchVideoFilter input, IEnumerable<ISite> sites) : base(requestName, input, sites)
+
+        public SearchSequentialRequest(string requestName, SearchFilter input, IEnumerable<ISite> sites) : base(requestName, input, sites)
         {
+
         }
 
-        public async Task<PageResult<VideoSummary>> SearchNextAsync(CancellationToken cancellation = default)
+        public async Task<PageResult<Resource>> SearchNextAsync(CancellationToken cancellation = default)
         {
-            PageResult<VideoSummary> result = null;
+            PageResult<Resource> result = null;
             if (Current != null)
             {
                 result = await ExecuteAsync(cancellation).ConfigureAwait(false);
@@ -32,7 +31,7 @@ namespace PolarShadow.Videos
             return await SearchNextAsync(cancellation);
         }
 
-        protected override void BeforeRequest(ISiteRequestHandler request)
+        protected override bool BeforeRequest(ISiteRequestHandler request)
         {
             if (_isSiteFirstRequest)
             {
@@ -47,8 +46,23 @@ namespace PolarShadow.Videos
             }
             else
             {
-                Input.Page++;
+                if (!request.TryGetParameter("canPage", out bool canPage))
+                {
+                    Input.Page++;
+                    return true;
+                }
+
+                if (canPage)
+                {
+                    Input.Page++;
+                }
+                else
+                {
+                    return false;
+                }
             }
+
+            return true;
         }
 
         protected override void AfterRequest(ISiteRequestHandler request)

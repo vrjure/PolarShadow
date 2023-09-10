@@ -15,6 +15,7 @@ using Avalonia.Controls.Notifications;
 using PolarShadow.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using PolarShadow.Cache;
 
 namespace PolarShadow;
 
@@ -23,6 +24,7 @@ public partial class App : Application
     public static string AppDataFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PolarShadow");
     public static string ConfigFile => Path.Combine(AppDataFolder, "config.json");
     public static string DbFile => Path.Combine(AppDataFolder, "polar.db");
+    public static string CacheFolder => Path.Combine(AppDataFolder, "cache");
 
     public static IServiceProvider Service => (App.Current as App)._services;
 
@@ -72,6 +74,8 @@ public partial class App : Application
 
         RegisterUtilities(service);
 
+        RegisterCache(service);
+
         _services = service.BuildServiceProvider();
 
     }
@@ -112,5 +116,17 @@ public partial class App : Application
         {
             op.UseSqlite($"Data Source={DbFile}", op => op.MigrationsAssembly(typeof(App).Assembly.FullName));
         });
+    }
+
+    private void RegisterCache(IServiceCollection service)
+    {
+        service.AddMemoryCache();
+        service.AddSingleton<IFileCache>(new FileCache(CacheFolder));
+        service.AddSingleton<IBufferCache, BufferCache>();
+
+        if (!Directory.Exists(CacheFolder))
+        {
+            Directory.CreateDirectory(CacheFolder);
+        }
     }
 }

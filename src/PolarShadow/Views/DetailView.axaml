@@ -6,9 +6,8 @@
              x:Class="PolarShadow.Views.DetailView"
 			 xmlns:vm="using:PolarShadow.ViewModels"
 			 xmlns:ctrl="using:PolarShadow.Controls"
-			 xmlns:polar="using:PolarShadow.Videos"
-			 x:DataType="vm:DetailViewModel"
-			 x:CompileBindings="True">
+			 xmlns:m="using:PolarShadow.Models"
+			 x:DataType="vm:DetailViewModel">
 	<Grid Margin="10"
 		  RowDefinitions="*,60">
 		<ScrollViewer IsVisible="{Binding !IsLoading}">
@@ -16,7 +15,8 @@
 						Spacing="10">
 				<Image MaxWidth="120"
 					   HorizontalAlignment="Center"
-					   ctrl:ImageAttached.Source="{Binding Detail.ImageSrc}"/>
+					   ctrl:ImageAttached.Src="{Binding Detail.Image}"
+					   ctrl:ImageAttached.Cache="{Binding ImageCache}"/>
 				<SelectableTextBlock Text="{Binding Detail.Name}" 
 									 HorizontalAlignment="Center"/>
 				<TextBlock Text="简介"
@@ -27,20 +27,20 @@
 				<SelectableTextBlock Text="{Binding Detail.Site}"/>
 				<TextBlock Text="剧集"
 						   Classes="title"/>
-				<ItemsControl ItemsSource="{Binding Detail.Seasons}">
+				<ItemsControl ItemsSource="{Binding Detail.Episodes}">
 					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="polar:VideoSeason">
+						<DataTemplate>
 							<StackPanel Orientation="Vertical"
 										Spacing="10">
-								<TextBlock Text="{Binding Name}"/>
-								<ListBox ItemsSource="{Binding Episodes}">
+								<TextBlock Text="{Binding Key}"/>
+								<ListBox ItemsSource="{Binding Value}">
 									<ListBox.ItemsPanel>
 										<ItemsPanelTemplate>
 											<WrapPanel/>
 										</ItemsPanelTemplate>
 									</ListBox.ItemsPanel>
 									<ListBox.ItemTemplate>
-										<DataTemplate DataType="polar:VideoEpisode">
+										<DataTemplate>
 											<TextBlock Text="{Binding Name}"/>
 										</DataTemplate>
 									</ListBox.ItemTemplate>
@@ -68,16 +68,18 @@
 				BorderBrush="LightGray"
 				BorderThickness="0,1,0,0">
 			<Button Classes="icon"
-					Classes.save="{Binding !IsSave}"
-					Classes.delete="{Binding IsSave}"
+					Classes.save="{Binding !IsSaved}"
+					Classes.delete="{Binding IsSaved}"
 					HorizontalAlignment="Center"
-					VerticalAlignment="Center">
+					VerticalAlignment="Center"
+					Command="{Binding ResourceOperateCommand}">
 				<Button.Styles>
 					<Style Selector="Button.save">
 						<Setter Property="Content" Value="&#xF0B1;"/>
 					</Style>
 					<Style Selector="Button.delete">
 						<Setter Property="Content" Value="&#xEC2A;"/>
+						<Setter Property="Foreground" Value="Red"/>
 					</Style>
 				</Button.Styles>
 			</Button>

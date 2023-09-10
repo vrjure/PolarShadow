@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Storage
 {
-    public class SiteEntity
+    public class EpisodeEntity
     {
         [Key]
-        [MaxLength(255)]
+        public int Id { get; set; }
+        public int ResourceId { get; set; }
         public string Name { get; set; }
-        [MaxLength(255)]
-        public string Domain { get; set; }
+        public string Tag { get; set; }
     }
 }
