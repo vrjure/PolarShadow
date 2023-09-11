@@ -26,15 +26,6 @@ namespace PolarShadow.Core
                 NumberHandling = JsonNumberHandling.AllowReadingFromString
             };
 
-            ForDashSerializer = new JsonSerializerOptions
-            {
-                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                PropertyNamingPolicy = new JsonCamelCaseNamingPolicyDash(),
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
-                NumberHandling = JsonNumberHandling.AllowReadingFromString
-            };
-
             FormatSerializer = new JsonSerializerOptions(DefaultSerializer)
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.Never,
@@ -54,8 +45,6 @@ namespace PolarShadow.Core
         }
 
         public static JsonSerializerOptions DefaultSerializer { get; }
-
-        public static JsonSerializerOptions ForDashSerializer { get; }
         
         public static JsonSerializerOptions FormatSerializer { get; }
 
@@ -70,14 +59,6 @@ namespace PolarShadow.Core
         {
             option.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
             option.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            option.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-            option.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-        }
-
-        public static void ForDash(JsonSerializerOptions option)
-        {
-            option.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
-            option.PropertyNamingPolicy = new JsonCamelCaseNamingPolicyDash();
             option.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
             option.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
