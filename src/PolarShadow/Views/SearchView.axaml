@@ -33,12 +33,12 @@
 						</ItemsPanelTemplate>
 					</ListBox.ItemsPanel>
 					<ListBox.ItemTemplate>
-						<DataTemplate DataType="m:SearchResult">
+						<DataTemplate DataType="m:ResourceViewData">
 							<StackPanel Orientation="Vertical"
 										MaxWidth="120">
-								<Image ctrl:ImageAttached.Src="{Binding ImageSrc}"
+								<Image ctrl:ImageAttached.Src="{Binding Image}"
 									   ctrl:ImageAttached.Cache="{Binding $parent[ListBox].((vm:SearchViewModel)DataContext).ImageCache}"/>
-								<TextBlock Text="{Binding Name}"
+								<TextBlock Text="{Binding Text}"
 										   TextWrapping="Wrap"/>
 							</StackPanel>
 						</DataTemplate>

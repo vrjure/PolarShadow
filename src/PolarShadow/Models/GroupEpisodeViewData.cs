@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Models
 {
-    public class NameViewData : ViewData
+    public class GroupEpisodeViewData : ViewData
     {
-        public string Name { get; set; }
+        public ICollection<EpisodeViewData> Episodes { get; set; }
     }
 }

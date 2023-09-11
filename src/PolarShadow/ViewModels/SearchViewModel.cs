@@ -49,15 +49,15 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private ObservableCollection<SearchResult> _searchResult;
-        public ObservableCollection<SearchResult> SearchResult
+        private ObservableCollection<ResourceViewData> _searchResult;
+        public ObservableCollection<ResourceViewData> SearchResult
         {
             get => _searchResult;
             set => SetProperty(ref _searchResult, value);
         }
 
-        private SearchResult _selectValue;
-        public SearchResult SelectValue
+        private ResourceViewData _selectValue;
+        public ResourceViewData SelectValue
         {
             get => _selectValue;
             set
@@ -135,13 +135,13 @@ namespace PolarShadow.ViewModels
 
                 if (SearchResult == null)
                 {
-                    SearchResult = new ObservableCollection<SearchResult>(result.Data.Select(ToResult));
+                    SearchResult = new ObservableCollection<ResourceViewData>(result.Data.Select(f=> f.ToResourceViewData()));
                 }
                 else
                 {
                     foreach (var item in result.Data)
                     {
-                        SearchResult.Add(ToResult(item));
+                        SearchResult.Add(item.ToResourceViewData());
                     }
                 }
                 ShowLoadMore = true;
@@ -158,20 +158,8 @@ namespace PolarShadow.ViewModels
         {
             _nav.Navigate<DetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
-                {nameof(DetailViewModel.ResourceParam), SelectValue.Tag }
+                {nameof(DetailViewModel.Resource), (SelectValue.Data as Resource).ToResourceViewData() }
             }, true);
-        }
-
-        private SearchResult ToResult(Resource resource)
-        {
-            return new SearchResult
-            {
-                Name = resource.Name,
-                Site = resource.Site,
-                ImageSrc = resource.ImageSrc,
-                Tag = resource
-            };
-        }
-        
+        }     
     }
 }

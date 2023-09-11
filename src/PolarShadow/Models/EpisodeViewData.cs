@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Models
 {
-    public class ViewData
+    public class EpisodeViewData : ViewData
     {
-        public string Text { get; set; }
-        public object Data { get; set; }
+        public IEnumerable<ViewData>  Links { get; set; }
     }
 }

@@ -11,11 +11,6 @@ public class ViewModelBase : ObservableObject, INavigationNotify
         
     }
 
-    public virtual Task OnLoadAsync()
-    {
-        return Task.CompletedTask;
-    }
-
     public virtual void OnUnload()
     {
         

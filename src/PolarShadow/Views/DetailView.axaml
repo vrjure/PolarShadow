@@ -7,7 +7,8 @@
 			 xmlns:vm="using:PolarShadow.ViewModels"
 			 xmlns:ctrl="using:PolarShadow.Controls"
 			 xmlns:m="using:PolarShadow.Models"
-			 x:DataType="vm:DetailViewModel">
+			 x:DataType="vm:DetailViewModel"
+			 x:CompileBindings="True">
 	<Grid Margin="10"
 		  RowDefinitions="*,60">
 		<ScrollViewer IsVisible="{Binding !IsLoading}">
@@ -15,33 +16,33 @@
 						Spacing="10">
 				<Image MaxWidth="120"
 					   HorizontalAlignment="Center"
-					   ctrl:ImageAttached.Src="{Binding Detail.Image}"
+					   ctrl:ImageAttached.Src="{Binding Resource.Image}"
 					   ctrl:ImageAttached.Cache="{Binding ImageCache}"/>
-				<SelectableTextBlock Text="{Binding Detail.Name}" 
+				<SelectableTextBlock Text="{Binding Resource.Text}" 
 									 HorizontalAlignment="Center"/>
 				<TextBlock Text="简介"
 						   Classes="title"/>
-				<SelectableTextBlock Text="{Binding Detail.Description}" TextWrapping="Wrap"/>
+				<SelectableTextBlock Text="{Binding Resource.Description}" TextWrapping="Wrap"/>
 				<TextBlock Text="来源"
 						   Classes="title"/>
-				<SelectableTextBlock Text="{Binding Detail.Site}"/>
+				<SelectableTextBlock Text="{Binding Resource.Site}"/>
 				<TextBlock Text="剧集"
 						   Classes="title"/>
-				<ItemsControl ItemsSource="{Binding Detail.Episodes}">
+				<ItemsControl ItemsSource="{Binding GroupEpisode}">
 					<ItemsControl.ItemTemplate>
-						<DataTemplate>
+						<DataTemplate DataType="m:GroupEpisodeViewData">
 							<StackPanel Orientation="Vertical"
 										Spacing="10">
-								<TextBlock Text="{Binding Key}"/>
-								<ListBox ItemsSource="{Binding Value}">
+								<TextBlock Text="{Binding Text}"/>
+								<ListBox ItemsSource="{Binding Episodes}">
 									<ListBox.ItemsPanel>
 										<ItemsPanelTemplate>
 											<WrapPanel/>
 										</ItemsPanelTemplate>
 									</ListBox.ItemsPanel>
 									<ListBox.ItemTemplate>
-										<DataTemplate>
-											<TextBlock Text="{Binding Name}"/>
+										<DataTemplate DataType="m:ViewData">
+											<TextBlock Text="{Binding Text}"/>
 										</DataTemplate>
 									</ListBox.ItemTemplate>
 								</ListBox>

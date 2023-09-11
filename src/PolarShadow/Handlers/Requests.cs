@@ -21,35 +21,37 @@ namespace PolarShadow
             return new SearchSequentialRequest(Search, filter, sites);
         }
 
-        public static async Task<Resource> GetDetailAsync(this ISite site, Resource resource, CancellationToken cancellation = default)
+        public static async Task<Resource> GetDetailAsync(this ISite site, ILink link, CancellationToken cancellation = default)
         {
-            var result = await site.ExecuteAsync<ILink, Resource>(Detail, resource, cancellation);
+            var result = await site.ExecuteAsync<ILink, Resource>(Detail, link, cancellation);
             if (result == null)
             {
                 return result;
             }
 
-            if (string.IsNullOrEmpty(result.Name))
+            if (link is Resource res)
             {
-                result.Name = resource.Name;
+                if (string.IsNullOrEmpty(result.Name))
+                {
+                    result.Name = res.Name;
+                }
+                if (string.IsNullOrEmpty(result.Description))
+                {
+                    result.Description = res.Description;
+                }
+                if (string.IsNullOrEmpty(result.ImageSrc))
+                {
+                    result.ImageSrc = res.ImageSrc;
+                }
+                if (string.IsNullOrEmpty(result.Site))
+                {
+                    result.Site = res.Site;
+                }
+                if (string.IsNullOrEmpty(result.Src))
+                {
+                    result.Src = res.Src;
+                }
             }
-            if (string.IsNullOrEmpty(result.Description))
-            {
-                result.Description = resource.Description;
-            }
-            if (string.IsNullOrEmpty(result.ImageSrc))
-            {
-                result.ImageSrc = resource.ImageSrc;
-            }
-            if (string.IsNullOrEmpty(result.Site))
-            {
-                result.Site = resource.Site;
-            }
-            if (string.IsNullOrEmpty(result.Src))
-            {
-                result.Src = resource.Src;
-            }
-
             return result;
         }
     }

@@ -41,7 +41,7 @@ namespace PolarShadow.Controls
 
         private static void SrcPropertyChanged(AvaloniaPropertyChangedEventArgs<Uri> arg)
         {
-            if (!arg.NewValue.HasValue) return;
+            if (Design.IsDesignMode || !arg.NewValue.HasValue) return;
             var image = arg.Sender as Image;
             
             if (!image.IsLoaded )
