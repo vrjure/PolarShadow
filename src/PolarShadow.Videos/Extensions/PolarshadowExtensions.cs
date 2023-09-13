@@ -10,9 +10,6 @@ namespace PolarShadow.Videos
 {
     public static class PolarshadowExtensions
     {
-        public static IEnumerable<WebAnalysisSource> GetAnalysisSources(this IPolarShadow polarShadow)
-        {
-            return polarShadow.GetItem<IWebAnalysisItem>()?.Sources;
-        }
+        
     }
 }

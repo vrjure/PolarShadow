@@ -19,9 +19,10 @@ namespace PolarShadow.Core
                 Converters =
                 {
                     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
-                    new SiteRequestConverter<SiteRequest>(),
                     new KeyValueParameterConverter(),
-                    new LinkConverter()
+                    new TypeMappingConverter<IRequest, RequestInternal>(),
+                    new TypeMappingConverter<IRequestTemplate, RequestTemplate>(),
+                    new TypeMappingConverter<IResponseTemplate, ResponseTemplate>()
                 },
                 NumberHandling = JsonNumberHandling.AllowReadingFromString
             };
@@ -62,5 +63,6 @@ namespace PolarShadow.Core
             option.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
             option.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
+
     }
 }
