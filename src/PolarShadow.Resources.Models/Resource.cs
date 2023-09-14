@@ -14,6 +14,5 @@ namespace PolarShadow.Resources
         /// 图片
         /// </summary>
         public string ImageSrc { get; set; }
-        public ICollection<Resource> Children { get; set; }
     }
 }

@@ -6,7 +6,7 @@
              x:Class="PolarShadow.Views.DetailView"
 			 xmlns:vm="using:PolarShadow.ViewModels"
 			 xmlns:ctrl="using:PolarShadow.Controls"
-			 xmlns:m="using:PolarShadow.Models"
+			 xmlns:polarservice="using:PolarShadow.Services"
 			 x:DataType="vm:DetailViewModel"
 			 x:CompileBindings="True">
 	<Grid Margin="10"
@@ -16,9 +16,9 @@
 						Spacing="10">
 				<Image MaxWidth="120"
 					   HorizontalAlignment="Center"
-					   ctrl:ImageAttached.Src="{Binding Resource.Image}"
+					   ctrl:ImageAttached.Src="{Binding Resource.ImageSrc}"
 					   ctrl:ImageAttached.Cache="{Binding ImageCache}"/>
-				<SelectableTextBlock Text="{Binding Resource.Text}" 
+				<SelectableTextBlock Text="{Binding Resource.Name}" 
 									 HorizontalAlignment="Center"/>
 				<TextBlock Text="简介"
 						   Classes="title"/>
@@ -28,21 +28,21 @@
 				<SelectableTextBlock Text="{Binding Resource.Site}"/>
 				<TextBlock Text="剧集"
 						   Classes="title"/>
-				<ItemsControl ItemsSource="{Binding GroupEpisode}">
+				<ItemsControl ItemsSource="{Binding Resource.Children}">
 					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="m:GroupEpisodeViewData">
+						<DataTemplate DataType="polarservice:ResourceTreeNode">
 							<StackPanel Orientation="Vertical"
 										Spacing="10">
-								<TextBlock Text="{Binding Text}"/>
-								<ListBox ItemsSource="{Binding Episodes}">
+								<TextBlock Text="{Binding Name}"/>
+								<ListBox ItemsSource="{Binding Children}">
 									<ListBox.ItemsPanel>
 										<ItemsPanelTemplate>
 											<WrapPanel/>
 										</ItemsPanelTemplate>
 									</ListBox.ItemsPanel>
 									<ListBox.ItemTemplate>
-										<DataTemplate DataType="m:ViewData">
-											<TextBlock Text="{Binding Text}"/>
+										<DataTemplate DataType="polarservice:ResourceTreeNode">
+											<TextBlock Text="{Binding Name}"/>
 										</DataTemplate>
 									</ListBox.ItemTemplate>
 								</ListBox>

@@ -1,5 +1,5 @@
 ﻿using PolarShadow.Core;
-using PolarShadow.Videos;
+using PolarShadow.Resources;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,42 +15,18 @@ namespace PolarShadow
         public const string Main = "main";
         public const string Categories = "categories";
 
-        public static ISearchHandler CreateSearchHander(this IPolarShadow polarShadow, SearchFilter filter)
+        public static ISearchHandler<TLink> CreateSearchHander<TLink>(this IPolarShadow polarShadow, SearchFilter filter) where TLink : class, ILink
         {
             var sites = polarShadow.GetSites(f => f.HasRequest(Search));
-            return new SearchSequentialRequest(Search, filter, sites);
+            return new SearchSequentialRequest<TLink>(Search, filter, sites);
         }
 
-        public static async Task<Resource> GetDetailAsync(this ISite site, ILink link, CancellationToken cancellation = default)
+        public static async Task<ResourceTree> GetDetailAsync(this ISite site, ILink link, CancellationToken cancellation = default)
         {
-            var result = await site.ExecuteAsync<ILink, Resource>(Detail, link, cancellation);
+            var result = await site.ExecuteAsync<ILink, ResourceTree>(Detail, link, cancellation);
             if (result == null)
             {
                 return result;
-            }
-
-            if (link is Resource res)
-            {
-                if (string.IsNullOrEmpty(result.Name))
-                {
-                    result.Name = res.Name;
-                }
-                if (string.IsNullOrEmpty(result.Description))
-                {
-                    result.Description = res.Description;
-                }
-                if (string.IsNullOrEmpty(result.ImageSrc))
-                {
-                    result.ImageSrc = res.ImageSrc;
-                }
-                if (string.IsNullOrEmpty(result.Site))
-                {
-                    result.Site = res.Site;
-                }
-                if (string.IsNullOrEmpty(result.Src))
-                {
-                    result.Src = res.Src;
-                }
             }
             return result;
         }

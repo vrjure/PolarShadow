@@ -42,8 +42,6 @@ namespace PolarShadow.Resources
 
                 if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
 
-
-                IEnumerable
                 Item._writings.TryGetValue(requestName, out ICollection<IContentWriting> writings);
                 if(Item._writings.TryGetValue("*", out ICollection<IContentWriting> generalWritings))
                 {

@@ -5,8 +5,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.MineResourceView"
 			 xmlns:vm="using:PolarShadow.ViewModels"
-			 xmlns:m="using:PolarShadow.Models"
 			 xmlns:ctrl="using:PolarShadow.Controls"
+			 xmlns:polarService="using:PolarShadow.Services"
 			 x:DataType="vm:MineResourceViewModel"
 			 x:CompileBindings="True">
 	<Grid Margin="10">
@@ -18,12 +18,12 @@
 				</ItemsPanelTemplate>
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
-				<DataTemplate DataType="m:ResourceViewData">
+				<DataTemplate DataType="polarService:ResourceModel">
 					<StackPanel Orientation="Vertical"
 								MaxWidth="120">
-						<Image ctrl:ImageAttached.Src="{Binding Image}"
+						<Image ctrl:ImageAttached.Src="{Binding ImageSrc}"
 							   ctrl:ImageAttached.Cache="{Binding $parent[ListBox].((vm:MineResourceViewModel)DataContext).Cache}"/>
-						<TextBlock Text="{Binding Text}"
+						<TextBlock Text="{Binding Name}"
 								   TextWrapping="Wrap"/>
 					</StackPanel>
 				</DataTemplate>

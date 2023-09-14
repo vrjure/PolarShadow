@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Api", "PolarSha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Tool", "PolarShadow.Tool\PolarShadow.Tool.csproj", "{69C1D0FD-6ED3-4518-8EC7-E8204CD3B539}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Videos", "PolarShadow.Videos\PolarShadow.Videos.csproj", "{E6AEAB2E-A6E0-40CC-8988-45F373EEF44E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Configuration", "PolarShadow.Configuration\PolarShadow.Configuration.csproj", "{2C9F4DC0-1C7E-492D-AA72-4748B59EFD6A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Services.Abstractions", "PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj", "{15DFB1D9-7E86-464A-A327-DED420B78AC0}"
@@ -31,7 +29,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Android", "Pola
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Desktop", "PolarShadow.Desktop\PolarShadow.Desktop.csproj", "{9E9B3946-B17E-4C6F-A0F2-0D2D70953817}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Video", "Video", "{4B3A6FE6-3093-4F7E-8E2B-EF0F71EF321C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Aria2", "PolarShadow.Aria2\PolarShadow.Aria2.csproj", "{EFA51906-4C3A-451F-BAB1-FF9EE458F4C2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Resources", "PolarShadow.Resources\PolarShadow.Resources.csproj", "{30AF3822-85BD-42A3-94A5-7392691E24E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolarShadow.Resources.Models", "PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj", "{F47EFFAC-8CEF-437A-AF39-A9752BB3C832}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,10 +65,6 @@ Global
 		{69C1D0FD-6ED3-4518-8EC7-E8204CD3B539}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69C1D0FD-6ED3-4518-8EC7-E8204CD3B539}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69C1D0FD-6ED3-4518-8EC7-E8204CD3B539}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E6AEAB2E-A6E0-40CC-8988-45F373EEF44E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E6AEAB2E-A6E0-40CC-8988-45F373EEF44E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E6AEAB2E-A6E0-40CC-8988-45F373EEF44E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E6AEAB2E-A6E0-40CC-8988-45F373EEF44E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C9F4DC0-1C7E-492D-AA72-4748B59EFD6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C9F4DC0-1C7E-492D-AA72-4748B59EFD6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C9F4DC0-1C7E-492D-AA72-4748B59EFD6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -89,13 +87,24 @@ Global
 		{9E9B3946-B17E-4C6F-A0F2-0D2D70953817}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E9B3946-B17E-4C6F-A0F2-0D2D70953817}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E9B3946-B17E-4C6F-A0F2-0D2D70953817}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFA51906-4C3A-451F-BAB1-FF9EE458F4C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFA51906-4C3A-451F-BAB1-FF9EE458F4C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFA51906-4C3A-451F-BAB1-FF9EE458F4C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFA51906-4C3A-451F-BAB1-FF9EE458F4C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30AF3822-85BD-42A3-94A5-7392691E24E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30AF3822-85BD-42A3-94A5-7392691E24E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30AF3822-85BD-42A3-94A5-7392691E24E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30AF3822-85BD-42A3-94A5-7392691E24E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F47EFFAC-8CEF-437A-AF39-A9752BB3C832}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F47EFFAC-8CEF-437A-AF39-A9752BB3C832}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F47EFFAC-8CEF-437A-AF39-A9752BB3C832}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F47EFFAC-8CEF-437A-AF39-A9752BB3C832}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D948F56C-BB01-486C-BAAD-1C373A918C67} = {A0DA3243-6E13-4A97-A794-9AF90DF06F28}
-		{E6AEAB2E-A6E0-40CC-8988-45F373EEF44E} = {4B3A6FE6-3093-4F7E-8E2B-EF0F71EF321C}
 		{3BCD57B9-2446-4B63-9A10-20458576EA5D} = {8726A30E-6649-42DC-8F8B-4229BD8E517F}
 		{C3AF0489-4331-4591-8F98-5905A3486441} = {8726A30E-6649-42DC-8F8B-4229BD8E517F}
 		{9E9B3946-B17E-4C6F-A0F2-0D2D70953817} = {8726A30E-6649-42DC-8F8B-4229BD8E517F}

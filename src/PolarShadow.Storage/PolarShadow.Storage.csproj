@@ -13,12 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PolarShadow.Core\PolarShadow.Core.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
     <ProjectReference Include="..\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
-    <ProjectReference Include="..\PolarShadow.Videos\PolarShadow.Videos.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

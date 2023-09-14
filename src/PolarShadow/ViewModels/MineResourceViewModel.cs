@@ -1,5 +1,6 @@
 ﻿using PolarShadow.Cache;
 using PolarShadow.Models;
+using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,8 +19,8 @@ namespace PolarShadow.ViewModels
 
         public IBufferCache Cache { get; }
 
-        private ObservableCollection<ResourceViewData> _mineResource;
-        public ObservableCollection<ResourceViewData> MineResource
+        private ObservableCollection<ResourceModel> _mineResource;
+        public ObservableCollection<ResourceModel> MineResource
         {
             get => _mineResource;
             set => SetProperty(ref _mineResource, value);

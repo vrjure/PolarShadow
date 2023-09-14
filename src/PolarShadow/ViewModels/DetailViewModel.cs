@@ -6,8 +6,9 @@ using PolarShadow.Cache;
 using PolarShadow.Core;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
+using PolarShadow.Resources;
+using PolarShadow.Services;
 using PolarShadow.Storage;
-using PolarShadow.Videos;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,58 +22,55 @@ namespace PolarShadow.ViewModels
     {
         private readonly IPolarShadow _polar;
         private readonly INotificationManager _notify;
-        private readonly IDbContextFactory<PolarShadowDbContext> _dbFactory;
+        private readonly IMineResourceService _mineResourceService;
         private readonly IBufferCache _bufferCache;
 
-        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IDbContextFactory<PolarShadowDbContext> dbFactory, IBufferCache bufferCache)
+
+        private ResourceModel _rootResourceInDb;
+        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache)
         {
             _polar = polar;
             _notify = notify;
-            _dbFactory = dbFactory;
+            _mineResourceService = mineResourceService;
             _bufferCache = bufferCache;
         }
 
+        public ILink Param_Link { get; set; }
+
         public IBufferCache ImageCache => _bufferCache;
 
-        private ResourceViewData _resource;
-        public ResourceViewData Resource
+        private ResourceTreeNode _resource;
+        public ResourceTreeNode Resource
         {
             get => _resource;
-            set => SetProperty(ref _resource, value);
-        }
-
-        private ObservableCollection<GroupEpisodeViewData> _groupEpisode;
-        public ObservableCollection<GroupEpisodeViewData> GroupEpisode
-        {
-            get => _groupEpisode;
-            set => SetProperty(ref _groupEpisode, value);
+            private set => SetProperty(ref _resource, value);
         }
 
         private bool _isLoading = false;
         public bool IsLoading
         {
             get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
+            private set => SetProperty(ref _isLoading, value);
         }
 
         private bool _isSave;
         public bool IsSaved
         {
             get => _isSave;
-            set => SetProperty(ref _isSave, value);
+            private set => SetProperty(ref _isSave, value);
         }
 
         private IAsyncRelayCommand _refreshCommand;
-        public IAsyncRelayCommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadingDeatil);
+        public IAsyncRelayCommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadOnline);
 
         private IAsyncRelayCommand _resourceOperateCommand;
         public IAsyncRelayCommand ResourceOperateCommand => _resourceOperateCommand ??= new AsyncRelayCommand(ResourceOperate);
 
         public void ApplyParameter(IDictionary<string, object> parameters)
         {
-            if (parameters.TryGetValue(nameof(Resource), out ResourceViewData detail))
+            if (parameters.TryGetValue(nameof(Param_Link), out ILink link))
             {
-                Resource = detail;
+                Param_Link = link;
             }
         }
 
@@ -83,17 +81,17 @@ namespace PolarShadow.ViewModels
 
         private async Task LoadingDeatil()
         {
-            if (Resource == null)
+            if (Param_Link == null)
             {
                 _notify.Show("Missing parameters", NotificationType.Warning);
                 return;
             }
 
-            var savedResource = await GetSavedResource();
-            if (savedResource != null)
+            _rootResourceInDb = await _mineResourceService.GetRootResourceAsync(Param_Link.Name);
+            if (_rootResourceInDb != null)
             {
                 IsSaved = true;
-                await LoadLocal(savedResource);
+                await LoadLocal(_rootResourceInDb);
             }
             else
             {
@@ -101,73 +99,52 @@ namespace PolarShadow.ViewModels
             }            
         }
 
-        private async Task LoadLocal(ResourceEntity resource)
+        private async Task LoadLocal(ResourceModel root)
         {
-            this.Resource = new ResourceViewData
-            {
-                Image = resource.ImageSrc,
-                Description = resource.Description,
-                Site = resource.Site,
-                Text = resource.Name,
-                Data = resource
-            };
-
-            using var dbContext = _dbFactory.CreateDbContext();
-            var manager = new ResourceManager(dbContext);
-            var episodes = await manager.GetEpisodesAsync(resource.Id);
-            var links = await manager.GetLinksAsync(resource.Id);
-            var groupEpisode = episodes.GroupBy(f => f.Tag ?? "").Select(f => new GroupEpisodeViewData
-            {
-                Text = f.Key,
-                Episodes = f.Select(e => e.ToEpisodeViewData(links)).ToList()
-            });
-            this.GroupEpisode = new ObservableCollection<GroupEpisodeViewData>(groupEpisode);
-        }
-
-        private async Task LoadOnline()
-        {
-            if (Resource == null)
+            var children = await _mineResourceService.GetRootChildrenAsync(root.Id);
+            if (children.Count == 0)
             {
                 return;
             }
 
-            if (!_polar.TryGetSite(Resource.Site, out ISite site))
+            var list = children as List<ResourceModel>;
+            if (list != null)
             {
-                _notify.Show($"Can not fond Site [{Resource.Site}]", NotificationType.Warning);
+                list.Insert(0, root);
+            }
+            else if (list == null)
+            {
+                list = new List<ResourceModel>(children.Count + 1);
+                list.Add(root);
+                list.AddRange(children);
+            }
+
+            var tree = children.BuildTree();
+            this.Resource = tree;
+        }
+
+        private async Task LoadOnline()
+        {
+            if (!_polar.TryGetSite(Param_Link.Site, out ISite site))
+            {
+                _notify.Show($"Can not fond Site [{Param_Link.Site}]", NotificationType.Warning);
                 return;
             }
 
             IsLoading = true;
             try
             {
-                ILink link = null;
-                if (Resource.Data is Core.Resource r)
-                {
-                    link = r;
-                }
-                else if (Resource.Data is ResourceEntity re)
-                {
-                    link = re.ToResource();
-                }
-
-                var result = await site.GetDetailAsync(link);
+                var result = await site.GetDetailAsync(this.Param_Link);
                 if (result == null)
                 {
                     _notify.Show("No Data");
                     return;
                 }
 
-                Resource = result.ToResourceViewData();
-
-                if (result.Episodes != null)
+                this.Resource = result.ToResourceTreeNode();
+                if (_rootResourceInDb != null)
                 {
-                    var ge = result.Episodes.GroupBy(f => f.Tag ?? "").Select(f => new GroupEpisodeViewData
-                    {
-                        Text = f.Key,
-                        Episodes = f.Select(e => e.ToEpisodeViewData()).ToList()
-                    });
-
-                    this.GroupEpisode = new ObservableCollection<GroupEpisodeViewData>(ge);
+                    this.Resource.Id = _rootResourceInDb.Id;
                 }
 
                 if (IsSaved)
@@ -180,18 +157,6 @@ namespace PolarShadow.ViewModels
                 _notify.Show(ex);
             }
             IsLoading = false;
-        }
-
-        private async Task<ResourceEntity> GetSavedResource()
-        {
-            if (Resource == null)
-            {
-                return null;
-            }
-
-            using var context = _dbFactory.CreateDbContext();
-            var resourceManager = new ResourceManager(context);
-            return await resourceManager.GetResourceAsync(Resource.Text);
         }
 
         private async Task ResourceOperate()
@@ -210,49 +175,13 @@ namespace PolarShadow.ViewModels
         {
             try
             {
-                ResourceEntity resource = Resource.ToResourceEntityFromData();
+                await _mineResourceService.SaveResourceAsync(this.Resource);
 
-                var episodes = new List<KeyValuePair<EpisodeEntity, IEnumerable<LinkEntity>>>();
-
-                if (GroupEpisode != null)
-                {
-                    foreach (var ge in GroupEpisode)
-                    {
-                        foreach (var item in ge.Episodes)
-                        {
-                            EpisodeEntity ee = item.ToEpisodeEntityFromData();
-                            var links = new List<LinkEntity>();
-                            if (item.Links != null)
-                            {
-                                foreach (var link in item.Links)
-                                {
-                                    var linkEntity = link.ToLinkEntityFromData();
-                                    if (linkEntity != null)
-                                    {
-                                        links.Add(link.ToLinkEntityFromData());
-                                    }
-                                }
-                            }
-                            episodes.Add(new KeyValuePair<EpisodeEntity, IEnumerable<LinkEntity>>(ee, links));
-                        }
-                    }
-                }
-                
-
-                using var context = _dbFactory.CreateDbContext();
-                var resourceManger = new ResourceManager(context);
-                var savedResource = await resourceManger.GetResourceAsync(resource.Name);
-                if (savedResource != null)
-                {
-                    await resourceManger.DeleteResourceAsync(savedResource.Id);
-                    resource.Id = savedResource.Id;
-                }
-                await resourceManger.SaveResourceAsync(resource, episodes);
                 IsSaved = true;
 
-                if (!string.IsNullOrEmpty(resource.ImageSrc))
+                if (!string.IsNullOrEmpty(this.Resource.ImageSrc))
                 {
-                    await _bufferCache.CacheFileIfExisedInMemory(BufferCache.SHA(resource.ImageSrc));
+                    await _bufferCache.CacheFileIfExisedInMemory(BufferCache.SHA(this.Resource.ImageSrc));
                 }
             }
             catch (Exception ex)
@@ -266,20 +195,11 @@ namespace PolarShadow.ViewModels
         {
             try
             {
-                using var context = _dbFactory.CreateDbContext();
-                var resourceManger = new ResourceManager(context);
-                var savedResource = await resourceManger.GetResourceAsync(Resource.Text);
-                if (savedResource == null)
-                {
-                    IsSaved = false;
-                    return;
-                }
+                await _mineResourceService.DeleteRootResourceAsync(this.Resource.Id);
 
-                await resourceManger.DeleteResourceAsync(savedResource.Id);
-
-                if (!string.IsNullOrEmpty(savedResource.ImageSrc))
+                if (!string.IsNullOrEmpty(this.Resource.ImageSrc))
                 {
-                    _bufferCache.Remove(BufferCache.SHA(savedResource.ImageSrc), BufferLocation.File);
+                    _bufferCache.Remove(BufferCache.SHA(this.Resource.ImageSrc), BufferLocation.File);
                 }
                 IsSaved = false;
             }

@@ -9,7 +9,7 @@ using PolarShadow.Cache;
 using PolarShadow.Core;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
-using PolarShadow.Videos;
+using PolarShadow.Resources;
 using PolarShadow.Views;
 using System;
 using System.Collections.Generic;
@@ -49,15 +49,15 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private ObservableCollection<ResourceViewData> _searchResult;
-        public ObservableCollection<ResourceViewData> SearchResult
+        private ObservableCollection<Resource> _searchResult;
+        public ObservableCollection<Resource> SearchResult
         {
             get => _searchResult;
             set => SetProperty(ref _searchResult, value);
         }
 
-        private ResourceViewData _selectValue;
-        public ResourceViewData SelectValue
+        private Resource _selectValue;
+        public Resource SelectValue
         {
             get => _selectValue;
             set
@@ -101,7 +101,7 @@ namespace PolarShadow.ViewModels
         public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
 
 
-        private ISearchHandler _searcHandler;
+        private ISearchHandler<Resource> _searcHandler;
         private async Task Search()
         {
             _searchResult?.Clear();
@@ -109,10 +109,10 @@ namespace PolarShadow.ViewModels
             {
                 return;
             }
-            _searcHandler = _polar.CreateSearchHander(new SearchFilter
+            _searcHandler = _polar.CreateSearchHander<Resource>(new SearchFilter
             {
                 Page = 1,
-                PageSize = 10,
+                PageSize = 20,
                 SearchKey = SearchText
             });
 
@@ -135,13 +135,13 @@ namespace PolarShadow.ViewModels
 
                 if (SearchResult == null)
                 {
-                    SearchResult = new ObservableCollection<ResourceViewData>(result.Data.Select(f=> f.ToResourceViewData()));
+                    SearchResult = new ObservableCollection<Resource>(result.Data);
                 }
                 else
                 {
                     foreach (var item in result.Data)
                     {
-                        SearchResult.Add(item.ToResourceViewData());
+                        SearchResult.Add(item);
                     }
                 }
                 ShowLoadMore = true;
@@ -158,7 +158,7 @@ namespace PolarShadow.ViewModels
         {
             _nav.Navigate<DetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
-                {nameof(DetailViewModel.Resource), (SelectValue.Data as Resource).ToResourceViewData() }
+                {nameof(DetailViewModel.Param_Link), SelectValue }
             }, true);
         }     
     }

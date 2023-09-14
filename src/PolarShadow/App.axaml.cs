@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using PolarShadow.Core;
 using PolarShadow.ViewModels;
 using PolarShadow.Views;
-using PolarShadow.Videos;
 using System;
 using PolarShadow.Navigations;
 using PolarShadow.Services;
@@ -16,6 +15,7 @@ using PolarShadow.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using PolarShadow.Cache;
+using PolarShadow.Resources;
 
 namespace PolarShadow;
 
@@ -104,9 +104,11 @@ public partial class App : Application
     private void RegisterPolarShadow(IServiceCollection service)
     {
         var builder = new PolarShadowBuilder();
-        var polarShadow = builder.ConfigureDefault()
-            .ConfigreVideo()
-            .Build();
+        var polarShadow = builder.ConfigureAllSupported()
+            .ConfigureSiteItem(f =>
+            {
+                f.Writings.Add(new DetailContentWriting());
+            }).Build();
         service.AddSingleton(polarShadow);
     }
 
@@ -116,6 +118,7 @@ public partial class App : Application
         {
             op.UseSqlite($"Data Source={DbFile}", op => op.MigrationsAssembly(typeof(App).Assembly.FullName));
         });
+        service.RegisterStorageService();
     }
 
     private void RegisterCache(IServiceCollection service)

@@ -1,5 +1,6 @@
 ﻿using PolarShadow.Core;
 using PolarShadow.Navigations;
+using PolarShadow.Resources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

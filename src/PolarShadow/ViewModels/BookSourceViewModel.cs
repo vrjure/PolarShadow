@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
+using PolarShadow.Resources;
 using PolarShadow.Services;
 using PolarShadow.Storage;
 using PolarShadow.Views;
@@ -75,7 +76,7 @@ namespace PolarShadow.ViewModels
 
                 await _polar.SaveToAsync(new DbConfigurationSource
                 {
-                    DbCreater = () => _dbFactory.CreateDbContext()
+                    DbContextFactroy = _dbFactory
                 });
 
                 _notification.ShowSuccess();

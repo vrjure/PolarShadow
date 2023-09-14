@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\PolarShadow.Configuration\PolarShadow.Configuration.csproj" />
     <ProjectReference Include="..\..\PolarShadow.Core\PolarShadow.Core.csproj" />
-    <ProjectReference Include="..\..\PolarShadow.Videos\PolarShadow.Videos.csproj" />
   </ItemGroup>
 
   <ItemGroup>

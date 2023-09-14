@@ -32,8 +32,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PolarShadow.Core\PolarShadow.Core.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\PolarShadow.Resources.csproj" />
+    <ProjectReference Include="..\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
     <ProjectReference Include="..\PolarShadow.Storage\PolarShadow.Storage.csproj" />
-    <ProjectReference Include="..\PolarShadow.Videos\PolarShadow.Videos.csproj" />
   </ItemGroup>
 
   <ItemGroup>

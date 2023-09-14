@@ -64,7 +64,7 @@ namespace PolarShadow.ViewModels
 
                     var dbSource = new DbConfigurationSource()
                     {
-                        DbCreater = () => _dbFactory.CreateDbContext()
+                        DbContextFactroy = _dbFactory
                     };
 
                     _polar.Load(dbSource, true);

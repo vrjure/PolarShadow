@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
-using PolarShadow.Videos;
+using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,24 +16,19 @@ namespace PolarShadow.Storage
             
         }
 
-        public DbSet<SiteEntity> Sites { get; set; }
-        public DbSet<RequestEntity> Requests { get; set; }
-        public DbSet<ResourceEntity> Resources { get; set; }
-        public DbSet<EpisodeEntity> Episodes { get; set; }
-        public DbSet<LinkEntity> Links { get; set; }
+        public DbSet<SiteModel> Sites { get; set; }
+        public DbSet<RequestModel> Requests { get; set; }
+        public DbSet<ResourceModel> Resources { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<SiteModel>().HasKey(f => f.Name);
+            modelBuilder.Entity<RequestModel>().HasKey(f => new { f.Name, f.SiteName});
 
-            modelBuilder.Entity<ResourceEntity>()
-                .Property(e => e.SrcType)
-                .HasConversion<string>();
-
-            modelBuilder.Entity<LinkEntity>()
-                .Property(e => e.SrcType)
-                .HasConversion<string>();
+            modelBuilder.Entity<ResourceModel>().HasKey(f => f.Id);
+            modelBuilder.Entity<ResourceModel>().Property(e => e.SrcType).HasConversion<string>();
 
         }
     }
