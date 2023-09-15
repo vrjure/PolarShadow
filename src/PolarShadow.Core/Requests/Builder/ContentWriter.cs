@@ -8,10 +8,18 @@ namespace PolarShadow.Core
 {
     public class ContentWriter : IContentWriter
     {
+        protected virtual void BeforeWriteStartObject(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
         protected virtual void AfterWriteStartObject(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+
         protected virtual void BeforeWriteEndObject(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+        protected virtual void AfterWriteEndObject(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+
+        protected virtual void BeforeWriteStartArray(Utf8JsonWriter writer, string property, IParameter parameter) { }
         protected virtual void AfterWriteStartArray(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+
         protected virtual void BeforeWriteEndArray(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+        protected virtual void AfterWriteEndArray(Utf8JsonWriter writer, string propertyName, IParameter parameter) { }
+
         protected virtual bool BeforeWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter) => false;
         protected virtual void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter) { }
 
@@ -38,6 +46,8 @@ namespace PolarShadow.Core
 
         private void BuildObject(Utf8JsonWriter writer, JsonElement template, IParameter parameter, string propertyName = default)
         {
+            BeforeWriteStartObject(writer, propertyName, parameter);
+
             if (string.IsNullOrEmpty(propertyName))
             {
                 writer.WriteStartObject();
@@ -73,6 +83,8 @@ namespace PolarShadow.Core
             BeforeWriteEndObject(writer, propertyName, parameter);
 
             writer.WriteEndObject();
+
+            AfterWriteEndObject(writer, propertyName, parameter);
         }
 
         private void BuildArray(Utf8JsonWriter writer, JsonElement template, IParameter parameter, string propertyName = default)
@@ -81,6 +93,8 @@ namespace PolarShadow.Core
             {
                 return;
             }
+
+            BeforeWriteStartArray(writer, propertyName, parameter);
 
             if (string.IsNullOrEmpty(propertyName))
             {
@@ -98,6 +112,8 @@ namespace PolarShadow.Core
             BeforeWriteEndArray(writer, propertyName, parameter);
 
             writer.WriteEndArray();
+
+            AfterWriteEndArray(writer, propertyName, parameter);
         }
 
         private void BuildInArrayTemplate(Utf8JsonWriter writer, JsonElement template, IParameter parameter)

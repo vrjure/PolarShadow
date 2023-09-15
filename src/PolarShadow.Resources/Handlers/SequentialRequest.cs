@@ -29,7 +29,7 @@ namespace PolarShadow.Resources
         /// false 请求失败时抛出异常
         /// true 忽略异常，并请求下个site
         /// </summary>
-        public bool IgnoreError { get; set; }
+        public bool IgnoreError { get; set; } = true;
         /// <summary>
         /// 自动排序(请求失败的站点下一轮请求时自动排到最后)
         /// </summary>

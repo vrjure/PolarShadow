@@ -57,7 +57,7 @@ namespace PolarShadow.Resources
                 p.Add(result);
             }
 
-            _writings = _writingCollection?.Select(f => TryGetClone(f));
+            _writings = _writingCollection?.Select(f => TryGetClone(f)).ToList();
 
             this.Write(output, _request.Response.Template.Value, p);
         }
@@ -86,6 +86,13 @@ namespace PolarShadow.Resources
             foreach (var item in _writings) { item.AfterWriteProperty(writer, property, parameter); }
         }
 
+
+        protected override void BeforeWriteStartObject(Utf8JsonWriter writer, string propertyName, IParameter parameter)
+        {
+            if(_writings == null) return;
+            foreach (var item in _writings) { item.BeforeWriteStartObject(writer, propertyName, parameter); }
+        }
+
         protected override void AfterWriteStartObject(Utf8JsonWriter writer, string propertyName, IParameter parameter)
         {
             if (_writings == null) return;
@@ -98,16 +105,36 @@ namespace PolarShadow.Resources
             foreach(var item in _writings) { item.BeforeWriteEndObject(writer, propertyName, parameter); }
         }
 
+        protected override void AfterWriteEndObject(Utf8JsonWriter writer, string propertyName, IParameter parameter)
+        {
+            if (_writings == null) return;
+            foreach(var item in _writings) { item.AfterWriteEndObject(writer, propertyName, parameter); }
+        }
+
+
+        protected override void BeforeWriteStartArray(Utf8JsonWriter writer, string property, IParameter parameter)
+        {
+            if (_writings == null) return;
+            foreach (var item in _writings) { item.BeforeWriteStartArray(writer, property, parameter); }
+        }
+
         protected override void AfterWriteStartArray(Utf8JsonWriter writer, string propertyName, IParameter parameter)
         {
             if (_writings == null) return;
             foreach(var item in _writings) { item.AfterWriteStartArray(writer, propertyName, parameter); }
         }
 
+
         protected override void BeforeWriteEndArray(Utf8JsonWriter writer, string propertyName, IParameter parameter)
         {
             if (_writings == null) return;
             foreach(var item in _writings) { item.BeforeWriteEndArray(writer, propertyName, parameter); }
+        }
+
+        protected override void AfterWriteEndArray(Utf8JsonWriter writer, string propertyName, IParameter parameter)
+        {
+            if (writer == null) return;
+            foreach(var item in _writings) { item.AfterWriteEndArray(writer, propertyName, parameter); }
         }
 
         private IContentWriting TryGetClone(IContentWriting writing)

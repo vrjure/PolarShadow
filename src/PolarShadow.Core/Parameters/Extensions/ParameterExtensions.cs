@@ -51,22 +51,79 @@ namespace PolarShadow.Core
                         }
                         break;
                     case ParameterValueKind.Json:
-                        if (val.GetJson() is TValue vj)
+                        var jsonValue = val.GetJson();
+                        if (jsonValue is TValue vj)
                         {
                             value = vj;
                             return true;
                         }
+                        else if(TryGetJsonValue(jsonValue, out value))
+                        {
+                            return true;
+                        }
                         break;
                     case ParameterValueKind.Html:
+                        var htmlValue = val.GetHtml();
                         if (val.GetHtml() is TValue vh)
-                        {
+                        {         
                             value = vh;
                             return true;
+                        }
+                        else
+                        {
+                            var str = htmlValue.GetValue();
+                            if (str is TValue _str)
+                            {
+                                value = _str;
+                                return true;
+                            }
                         }
                         break;
                     default:
                         break;
                 }
+            }
+
+            value = default;
+            return false;
+        }
+
+        private static bool TryGetJsonValue<T>(JsonElement json, out T value)
+        {
+            switch (json.ValueKind)
+            {
+                case JsonValueKind.Object:
+                case JsonValueKind.Array:
+                    value = JsonSerializer.Deserialize<T>(json, JsonOption.DefaultSerializer);
+                    return true;
+                case JsonValueKind.String:
+                    var str = json.GetString();
+                    if (str is T _str)
+                    {
+                        value = _str;
+                        return true;
+                    }
+                    break;
+                case JsonValueKind.Number:
+                    var num = json.GetDecimal();
+                    if (num is T _num)
+                    {
+                        value = _num;
+                        return true;
+                    }
+                    break;
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    var b = json.GetBoolean();
+                    if (b is T _b)
+                    {
+                        value = _b;
+                        return true;
+                    }
+                    break;
+                case JsonValueKind.Null:
+                    value = default;
+                    return true;
             }
 
             value = default;

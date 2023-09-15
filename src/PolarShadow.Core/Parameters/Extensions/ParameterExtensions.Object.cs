@@ -16,7 +16,7 @@ namespace PolarShadow.Core
 
         public static void Add<T>(this IObjectParameter parameter, T value) where T : class
         {
-            using var doc = JsonDocument.Parse(JsonSerializer.Serialize(value, JsonOption.DefaultSerializer));
+            using var doc = JsonDocument.Parse(JsonSerializer.Serialize((object)value, JsonOption.DefaultSerializer));
             parameter.Add(new ParameterValue(doc.RootElement.Clone()));
         }
     }

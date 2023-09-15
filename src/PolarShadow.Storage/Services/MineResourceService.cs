@@ -63,7 +63,7 @@ namespace PolarShadow.Storage
                 await dbContext.Resources.Where(f => f.Id == tree.Id).ExecuteDeleteAsync();
                 await dbContext.Resources.Where(f => f.RootId == tree.Id).ExecuteDeleteAsync();
 
-                dbContext.Resources.UpdateRange(TreeEnumerable.EnumerateDeepFirst(tree, t => t.Children));
+                dbContext.Resources.AddRange(TreeEnumerable.EnumerateDeepFirst(tree, t => t.Children));
                 await dbContext.SaveChangesAsync();
 
                 foreach (var item in TreeEnumerable.EnumerateBreadthFirstWithParentChild(tree, t => t.Children))

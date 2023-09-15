@@ -10,18 +10,19 @@ namespace PolarShadow.Resources
     {
         public override string[] RequestFilter => new string[] { "*" };
 
-        public override void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter)
+        private static string sitePro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.Site));
+        private static string fromRequestPro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.Request));
+
+        public override void BeforeWriteEndObject(Utf8JsonWriter writer, string propertyName, IParameter parameter)
         {
-            if (property.Name.Equals(nameof(Link.Src), StringComparison.OrdinalIgnoreCase))
+            if (parameter.TryReadValue("site:name", out string siteName))
             {
-                if (parameter.TryReadValue("site:name", out string siteName))
-                {
-                    writer.WriteString("site", siteName);
-                }
-                if (parameter.TryReadValue("site:request", out string requestName))
-                {
-                    writer.WriteString("fromRequest", requestName);
-                }
+                writer.WriteString(sitePro, siteName);
+            }
+
+            if (parameter.TryReadValue("site:request", out string requestName))
+            {
+                writer.WriteString(fromRequestPro, requestName);
             }
         }
     }

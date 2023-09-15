@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PolarShadow.Services
@@ -16,7 +17,7 @@ namespace PolarShadow.Services
                 var children = getChildren(node);
                 if (children != null)
                 {
-                    foreach (var item in children)
+                    foreach (var item in children.Reverse())
                     {
                         stack.Push(item);
                     }
@@ -52,16 +53,19 @@ namespace PolarShadow.Services
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
-                var children = getChildren(node);
-                if (children != null)
+                if (node != null)
                 {
-                    queue.Enqueue(default);
-                    foreach (var item in children)
+                    var children = getChildren(node);
+                    if (children != null)
                     {
-                        queue.Enqueue(item);
+                        queue.Enqueue(default);
+                        foreach (var item in children)
+                        {
+                            queue.Enqueue(item);
+                        }
                     }
                 }
-
+                
                 yield return node;
             }
         }
