@@ -2,25 +2,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ps="https://github.com/PolarShadow"
+			 xmlns:psr="using:PolarShadow.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.SearchView"
-			 xmlns:ctrl="using:PolarShadow.Controls"
-			 xmlns:vm="using:PolarShadow.ViewModels"
-			 xmlns:polarres="using:PolarShadow.Resources"
-			 x:DataType="vm:SearchViewModel"
+			 x:DataType="ps:SearchViewModel"
 			 x:CompileBindings="True"
-			 ctrl:PageLoadAttached.RegisterLoad="True">
-	<ctrl:ToolBarAttached.ToolBar>
+			 ps:PageLoadAttached.RegisterLoad="True">
+	<ps:ToolBarAttached.ToolBar>
 		<!--Search box-->
-		<ctrl:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.CenterTitleBarContainer}">
+		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.CenterTitleBarContainer}">
 			<Grid ColumnDefinitions="*,2*,*">
-				<ctrl:SearchBox Grid.Column="1"
+				<ps:SearchBox Grid.Column="1"
 								SearchText="{Binding SearchText, Mode=TwoWay}"
 								SearchCommand="{Binding SearchCommand}"
 								ClearCommand="{Binding ClearCommand}"/>
 			</Grid>
-		</ctrl:ToolBarTemplate>
-	</ctrl:ToolBarAttached.ToolBar>
+		</ps:ToolBarTemplate>
+	</ps:ToolBarAttached.ToolBar>
 
 	<Grid Margin="10">
 		<ScrollViewer>
@@ -35,10 +34,10 @@
 						</ItemsPanelTemplate>
 					</ListBox.ItemsPanel>
 					<ListBox.ItemTemplate>
-						<DataTemplate DataType="polarres:Resource">
+						<DataTemplate DataType="psr:Resource">
 							<StackPanel Orientation="Vertical">
-								<Image ctrl:ImageAttached.Src="{Binding ImageSrc}"
-									   ctrl:ImageAttached.Cache="{Binding $parent[ListBox].((vm:SearchViewModel)DataContext).ImageCache}"/>
+								<Image ps:ImageAttached.Src="{Binding ImageSrc}"
+									   ps:ImageAttached.Cache="{Binding $parent[ListBox].((ps:SearchViewModel)DataContext).ImageCache}"/>
 								<TextBlock Text="{Binding Name}"
 										   TextWrapping="Wrap"/>
 							</StackPanel>

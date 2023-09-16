@@ -2,13 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:vm="using:PolarShadow.ViewModels"
-			 xmlns:ctrl="using:PolarShadow.Controls"
+			 xmlns:ps="https://github.com/PolarShadow"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.BookSourceDetailView"
-			 x:DataType="vm:BookSourceDetailViewModel"
+			 x:DataType="ps:BookSourceDetailViewModel"
 			 x:CompileBindings="True"
-			 ctrl:PageLoadAttached.RegisterLoad="True">
+			 ps:PageLoadAttached.RegisterLoad="True">
 	<Grid RowDefinitions="auto,*"
 		  Margin="20">
 		<StackPanel Orientation="Vertical"				
@@ -18,7 +17,7 @@
 			<TextBlock Text="Domain" Classes="title" Margin="0,5,0,0"/>
 			<TextBlock Text="{Binding Site.Domain}"/>
 			<TabStrip ItemsSource="{Binding Site.Requests.Keys}"
-					  SelectedValue="{Binding $parent.((vm:BookSourceDetailViewModel)DataContext).SelectedRequest, Mode=TwoWay}"/>
+					  SelectedValue="{Binding $parent.((ps:BookSourceDetailViewModel)DataContext).SelectedRequest, Mode=TwoWay}"/>
 		</StackPanel>
 
 		<TextBox Text="{Binding FormatedRequest}"

@@ -2,14 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:nav="using:PolarShadow.Navigations"
-			 xmlns:vm="using:PolarShadow.ViewModels"
-			 xmlns:ctrl="using:PolarShadow.Controls"
+			 xmlns:ps="https://github.com/PolarShadow"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.TopLayoutView"
-			 x:DataType="vm:TopLayoutViewModel"
+			 x:DataType="ps:TopLayoutViewModel"
 			 x:CompileBindings="True"
-			 ctrl:PageLoadAttached.RegisterLoad="True">
+			 ps:PageLoadAttached.RegisterLoad="True">
     <Grid RowDefinitions="auto,*"
 		  ColumnDefinitions="auto,*,auto">
 		
@@ -27,7 +25,7 @@
 					x:Name="backButton"
 					VerticalAlignment="Center"
 					VerticalContentAlignment="Center"
-					nav:NavigationManager.BackName="{x:Static vm:TopLayoutViewModel.NavigationName}">
+					ps:NavigationManager.BackName="{x:Static ps:TopLayoutViewModel.NavigationName}">
 			</Button>
 			<!--Title-->
 			<StackPanel Orientation="Horizontal"
@@ -53,7 +51,7 @@
 			</StackPanel>
 		</StackPanel>
 		<!--CentenContainer-->
-		<TransitioningContentControl ctrl:ToolBarAttached.Name="{x:Static vm:TopLayoutViewModel.CenterTitleBarContainer}"
+		<TransitioningContentControl ps:ToolBarAttached.Name="{x:Static ps:TopLayoutViewModel.CenterTitleBarContainer}"
 									 VerticalAlignment="Center"
 									 HorizontalAlignment="Stretch"
 									 Grid.Column="1">
@@ -66,7 +64,7 @@
 					Spacing="10"
 					Margin="0,0,145,0"
 					Grid.Column="2">
-			<TransitioningContentControl ctrl:ToolBarAttached.Name="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
+			<TransitioningContentControl ps:ToolBarAttached.Name="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
 
 			</TransitioningContentControl>
 			<TextBlock Text="|"
@@ -78,7 +76,7 @@
 
 		<TransitioningContentControl Grid.Row="1"
 									 Grid.ColumnSpan="3"
-									 nav:NavigationManager.ContainerName="{x:Static vm:TopLayoutViewModel.NavigationName}">
+									 ps:NavigationManager.ContainerName="{x:Static ps:TopLayoutViewModel.NavigationName}">
 			
 		</TransitioningContentControl>
 		

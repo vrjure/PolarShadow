@@ -37,6 +37,11 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        GC.KeepAlive(typeof(IPolarShadow).Assembly);
+        GC.KeepAlive(typeof(ILink).Assembly);
+        GC.KeepAlive(typeof(ISiteService).Assembly);
+        GC.KeepAlive(typeof(ISite).Assembly);
+
         ConfigureService();
 
         var topLevelService = _services.GetRequiredService<ITopLevelService>();
@@ -98,6 +103,7 @@ public partial class App : Application
         service.RegisterTransientViewWithModel<BookSourceDetailView, BookSourceDetailViewModel>();
         service.RegisterTransientViewWithModel<SearchView, SearchViewModel>();
         service.RegisterTransientViewWithModel<DetailView, DetailViewModel>();
+        service.RegisterTransientViewWithModel<DiscoverView, DiscoverViewModel>();
 
     }
 

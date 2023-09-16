@@ -41,12 +41,21 @@ namespace PolarShadow.Resources
 
         public static bool HasRequest(this ISite site, string requestName)
         {
+            if (site.Requests == null)
+            {
+                return false;
+            }
             return site.Requests.ContainsKey(requestName);
         }
 
         public static bool TryGetRequest(this ISite site, string requestName, out ISiteRequest request)
         {
-            return site.TryGetRequest(requestName, out request);
+            request = default;
+            if (site.Requests == null)
+            {
+                return false;
+            }
+            return site.Requests.TryGetValue(requestName, out request);
         }
 
         public static ISite AddOrUpdateRequest(this ISite site, string requestName, Action<ISiteRequest> requestBuilder)

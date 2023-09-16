@@ -2,16 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:ctrl="using:PolarShadow.Controls"
-			 xmlns:polarres="using:PolarShadow.Resources"
-			 xmlns:vm="using:PolarShadow.ViewModels"
+			 xmlns:ps="https://github.com/PolarShadow"
+			 xmlns:psr="using:PolarShadow.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.BookSourceView"
-			 x:DataType="vm:BookSourceViewModel"
+			 x:DataType="ps:BookSourceViewModel"
 			 x:CompileBindings="True"
-			 ctrl:PageLoadAttached.RegisterLoad="True">
-	<ctrl:ToolBarAttached.ToolBar>
-		<ctrl:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
+			 ps:PageLoadAttached.RegisterLoad="True">
+	<ps:ToolBarAttached.ToolBar>
+		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal">
 				<!--Import-->
 				<Button Content="&#xF249;"
@@ -19,18 +18,18 @@
 						Command="{Binding ImportCommand}">
 				</Button>
 			</StackPanel>
-		</ctrl:ToolBarTemplate>
-	</ctrl:ToolBarAttached.ToolBar>
+		</ps:ToolBarTemplate>
+	</ps:ToolBarAttached.ToolBar>
 	<Grid>
 		<ListBox ItemsSource="{Binding Sites}"
 				 Margin="20"
 				 SelectionMode="Single"
 				 Background="Transparent"
-				 SelectedValue="{Binding $parent.((vm:BookSourceViewModel)DataContext).SelectedSite, Mode=TwoWay}"
+				 SelectedValue="{Binding $parent.((ps:BookSourceViewModel)DataContext).SelectedSite, Mode=TwoWay}"
 				 Selection="{Binding Selection, Mode=OneWayToSource}">
 
 			<ListBox.ItemTemplate>
-				<DataTemplate DataType="polarres:ISite">
+				<DataTemplate DataType="psr:ISite">
 					<Border BorderBrush="LightGray"
 							BorderThickness="1"
 							CornerRadius="5"

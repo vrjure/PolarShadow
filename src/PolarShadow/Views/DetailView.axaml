@@ -2,14 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ps="https://github.com/PolarShadow"
+			 xmlns:pss="using:PolarShadow.Services"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.DetailView"
-			 xmlns:vm="using:PolarShadow.ViewModels"
-			 xmlns:ctrl="using:PolarShadow.Controls"
-			 xmlns:polarservice="using:PolarShadow.Services"
-			 x:DataType="vm:DetailViewModel"
+			 x:DataType="ps:DetailViewModel"
 			 x:CompileBindings="True"
-			 ctrl:PageLoadAttached.RegisterLoad="True">
+			 ps:PageLoadAttached.RegisterLoad="True">
 	<Grid Margin="10"
 		  RowDefinitions="*,60">
 		<ScrollViewer IsVisible="{Binding !IsLoading}">
@@ -17,8 +16,8 @@
 						Spacing="10">
 				<Image Width="{StaticResource ListBoxWrapPanelItemWidth}"
 					   HorizontalAlignment="Center"
-					   ctrl:ImageAttached.Src="{Binding Resource.ImageSrc}"
-					   ctrl:ImageAttached.Cache="{Binding ImageCache}"/>
+					   ps:ImageAttached.Src="{Binding Resource.ImageSrc}"
+					   ps:ImageAttached.Cache="{Binding ImageCache}"/>
 				<SelectableTextBlock Text="{Binding Resource.Name}" 
 									 HorizontalAlignment="Center"/>
 				<TextBlock Text="简介"
@@ -31,7 +30,7 @@
 						   Classes="title"/>
 				<ItemsControl ItemsSource="{Binding Resource.Children}">
 					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="polarservice:ResourceTreeNode">
+						<DataTemplate DataType="pss:ResourceTreeNode">
 							<StackPanel Orientation="Vertical"
 										Spacing="10">
 								<TextBlock Text="{Binding Name}"/>
@@ -42,7 +41,7 @@
 										</ItemsPanelTemplate>
 									</ListBox.ItemsPanel>
 									<ListBox.ItemTemplate>
-										<DataTemplate DataType="polarservice:ResourceTreeNode">
+										<DataTemplate DataType="pss:ResourceTreeNode">
 											<TextBlock Text="{Binding Name}"/>
 										</DataTemplate>
 									</ListBox.ItemTemplate>

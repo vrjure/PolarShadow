@@ -21,8 +21,8 @@ public partial class MainViewModel : ViewModelBase
     public IEnumerable<MenuIconItem> MenuItems => new List<MenuIconItem>
     {
         new(){ Name = "main", Icon = "\uEE26", ViewType = typeof(BookshelfView)},
-        new(){ Name = "discover", Icon = "\uEBC1"},
-        new(){ Name = "source", Icon = "\uEAE4", ViewType = typeof(BookSourceView)},
+        new(){ Name = "discover", Icon = "\uEBC1", ViewType = typeof(DiscoverView)},
+        new(){ Name = "source", Icon = "\uEDC6", ViewType = typeof(BookSourceView)},
         new(){ Name = "user", Icon="\uF25F"}
     };
 

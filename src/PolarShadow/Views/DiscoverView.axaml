@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ps="https://github.com/PolarShadow"
+			 xmlns:pss="using:PolarShadow.Services"
+			 xmlns:psr="using:PolarShadow.Resources"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PolarShadow.Views.DiscoverView"
+			 x:DataType="ps:DiscoverViewModel"
+			 x:CompileBindings="True"
+			 ps:PageLoadAttached.RegisterLoad="True">
+	<Border Margin="10">
+		<ListBox Background="Transparent"
+				 ItemsSource="{Binding Sites}"
+				 SelectedValue="{Binding SelectValue, Mode=TwoWay}"
+				 Selection="{Binding Selection, Mode=OneWayToSource}">
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+			<ListBox.ItemTemplate>
+				<DataTemplate DataType="psr:ISite">
+					<Border Padding="5">
+						<StackPanel Orientation="Vertical"
+									Spacing="10">
+							<TextBlock Classes="icon"
+									   Text="&#xEDC7;"
+									   FontSize="80"
+									   HorizontalAlignment="Center"/>
+							<TextBlock Text="{Binding Name}" 
+									   HorizontalAlignment="Center"/>
+						</StackPanel>
+					</Border>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Border>
+</UserControl>

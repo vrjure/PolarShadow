@@ -2,16 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ps="https://github.com/PolarShadow"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="PolarShadow.Views.BookshelfView"
-			 xmlns:ctrl="using:PolarShadow.Controls"			 
-			 xmlns:polarService="using:PolarShadow.Services"
-			 xmlns:vm="using:PolarShadow.ViewModels"
-			 x:DataType="vm:BookshelfViewModel"
+             x:Class="PolarShadow.Views.BookshelfView"	 
+			 xmlns:pss="using:PolarShadow.Services"
+			 x:DataType="ps:BookshelfViewModel"
 			 x:CompileBindings="True"
-			 ctrl:PageLoadAttached.RegisterLoad="True">
-	<ctrl:ToolBarAttached.ToolBar>
-		<ctrl:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
+			 ps:PageLoadAttached.RegisterLoad="True">
+	<ps:ToolBarAttached.ToolBar>
+		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal" Spacing="10">
 				<!--Search button-->
 				<Button Classes="icon"
@@ -19,8 +18,8 @@
 						VerticalAlignment="Center"
 						Command="{Binding SearchCommand}"/>
 			</StackPanel>
-		</ctrl:ToolBarTemplate>
-	</ctrl:ToolBarAttached.ToolBar>
+		</ps:ToolBarTemplate>
+	</ps:ToolBarAttached.ToolBar>
 
 	<Grid Margin="10">
 		<ListBox Background="Transparent"
@@ -33,10 +32,10 @@
 				</ItemsPanelTemplate>
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
-				<DataTemplate DataType="polarService:ResourceModel">
+				<DataTemplate DataType="pss:ResourceModel">
 					<StackPanel Orientation="Vertical">
-						<Image ctrl:ImageAttached.Src="{Binding ImageSrc}"
-							   ctrl:ImageAttached.Cache="{Binding $parent[ListBox].((vm:BookshelfViewModel)DataContext).Cache}"/>
+						<Image ps:ImageAttached.Src="{Binding ImageSrc}"
+							   ps:ImageAttached.Cache="{Binding $parent[ListBox].((ps:BookshelfViewModel)DataContext).Cache}"/>
 						<TextBlock Text="{Binding Name}"
 								   TextWrapping="Wrap"/>
 					</StackPanel>

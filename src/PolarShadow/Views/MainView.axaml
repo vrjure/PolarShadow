@@ -2,17 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:PolarShadow.ViewModels"
-			 xmlns:m="clr-namespace:PolarShadow.Models"
-			 xmlns:view="using:PolarShadow.Views"
-			 xmlns:nav="using:PolarShadow.Navigations"
-			 xmlns:ctrl="using:PolarShadow.Controls"
+			 xmlns:ps="https://github.com/PolarShadow"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.MainView"
-             x:DataType="vm:MainViewModel"
+             x:DataType="ps:MainViewModel"
 			 x:Name="mainView"
 			 x:CompileBindings="True"
-			 ctrl:PageLoadAttached.RegisterLoad="True">
+			 ps:PageLoadAttached.RegisterLoad="True">
 	<Grid>
 		<DockPanel>
 			<Border DockPanel.Dock="Bottom"
@@ -29,7 +25,7 @@
 						</EventTriggerBehavior>
 					</Interaction.Behaviors>
 					<TabStrip.ItemTemplate>
-						<DataTemplate DataType="m:MenuIconItem">
+						<DataTemplate DataType="ps:MenuIconItem">
 							<StackPanel x:Name="menuItem"
 										Orientation="Vertical"
 										Width="60"
@@ -45,7 +41,7 @@
 				</TabStrip>
 			</Border>
 			<Border>
-				<ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}">
+				<ContentControl ps:NavigationManager.ContainerName="{x:Static ps:MainViewModel.NavigationName}">
 				</ContentControl>
 			</Border>
 
