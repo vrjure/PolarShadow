@@ -18,6 +18,7 @@ namespace PolarShadow
         private static string namePro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.Name));
         private static string imageSrcPro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.ImageSrc));
         private static string descPro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.Description));
+        private static string srcPro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.Src));
 
         public override void BeforeWriteStartArray(Utf8JsonWriter writer, string propertyName, IParameter parameter)
         {
@@ -43,9 +44,15 @@ namespace PolarShadow
                     writer.WriteString(descPro, desc);
                 }
 
+                if (!writedPro.Contains(srcPro) && parameter.TryReadValue("$.src", out string src))
+                {
+                    writer.WriteString(srcPro, src);
+                }
+
                 writedPro.Add(namePro);
                 writedPro.Add(imageSrcPro);
                 writedPro.Add(descPro);
+                writedPro.Add(srcPro);
             }
             else
             {

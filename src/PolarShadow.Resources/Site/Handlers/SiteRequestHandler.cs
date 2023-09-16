@@ -25,9 +25,9 @@ namespace PolarShadow.Resources
             _handler = requesthandler;
             _request = request;
             _parameters = new Parameters(parameter);
-            if (request.Parameter != null)
+            if (request.Parameters != null)
             {
-                _parameters.Add(request.Parameter);
+                _parameters.Add(request.Parameters);
             }
 
             var siteInfo = new KeyValueParameter

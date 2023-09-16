@@ -6,11 +6,13 @@
 			 xmlns:m="clr-namespace:PolarShadow.Models"
 			 xmlns:view="using:PolarShadow.Views"
 			 xmlns:nav="using:PolarShadow.Navigations"
+			 xmlns:ctrl="using:PolarShadow.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.MainView"
              x:DataType="vm:MainViewModel"
 			 x:Name="mainView"
-			 x:CompileBindings="True">
+			 x:CompileBindings="True"
+			 ctrl:PageLoadAttached.RegisterLoad="True">
 	<Grid>
 		<DockPanel>
 			<Border DockPanel.Dock="Bottom"

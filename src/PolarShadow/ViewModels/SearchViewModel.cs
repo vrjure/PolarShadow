@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
+using Avalonia.Controls.Selection;
 using Avalonia.Input;
 using Avalonia.Xaml.Interactions.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -68,6 +69,13 @@ namespace PolarShadow.ViewModels
                     NavigateToDetail();
                 });
             }
+        }
+
+        private ISelectionModel _selection;
+        public ISelectionModel Selection
+        {
+            get => _selection;
+            set => SetProperty(ref _selection, value);
         }
 
         private bool _isLoading = false;
@@ -150,16 +158,27 @@ namespace PolarShadow.ViewModels
             {
                 _notify.Show(ex.Message);
             }
-
-            IsLoading = false;
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         private void NavigateToDetail()
         {
+            if (SelectValue == null)
+            {
+                return;
+            }
+
+            var selected = SelectValue;
             _nav.Navigate<DetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
-                {nameof(DetailViewModel.Param_Link), SelectValue }
+                {nameof(DetailViewModel.Param_Link), selected }
             }, true);
+
+            Selection?.Clear();
+            SelectValue = null;
         }     
     }
 }

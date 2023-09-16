@@ -4,8 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.BookshelfView"
-			 xmlns:ctrl="using:PolarShadow.Controls"
-			 xmlns:vm="using:PolarShadow.ViewModels">
+			 xmlns:ctrl="using:PolarShadow.Controls"			 
+			 xmlns:polarService="using:PolarShadow.Services"
+			 xmlns:vm="using:PolarShadow.ViewModels"
+			 x:DataType="vm:BookshelfViewModel"
+			 x:CompileBindings="True"
+			 ctrl:PageLoadAttached.RegisterLoad="True">
 	<ctrl:ToolBarAttached.ToolBar>
 		<ctrl:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal" Spacing="10">
@@ -17,4 +21,27 @@
 			</StackPanel>
 		</ctrl:ToolBarTemplate>
 	</ctrl:ToolBarAttached.ToolBar>
+
+	<Grid Margin="10">
+		<ListBox Background="Transparent"
+				 ItemsSource="{Binding MineResource}"
+				 SelectedValue="{Binding SelectValue, Mode=TwoWay}"
+				 Selection="{Binding Selection, Mode=OneWayToSource}">
+			<ListBox.ItemsPanel>
+				<ItemsPanelTemplate>
+					<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
+				</ItemsPanelTemplate>
+			</ListBox.ItemsPanel>
+			<ListBox.ItemTemplate>
+				<DataTemplate DataType="polarService:ResourceModel">
+					<StackPanel Orientation="Vertical">
+						<Image ctrl:ImageAttached.Src="{Binding ImageSrc}"
+							   ctrl:ImageAttached.Cache="{Binding $parent[ListBox].((vm:BookshelfViewModel)DataContext).Cache}"/>
+						<TextBlock Text="{Binding Name}"
+								   TextWrapping="Wrap"/>
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
 </UserControl>

@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls.Notifications;
+using Avalonia.Controls.Selection;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -53,10 +54,17 @@ namespace PolarShadow.ViewModels
             });
         }
 
+        private ISelectionModel _selection;
+        public ISelectionModel Selection
+        {
+            get => _selection;
+            set => SetProperty(ref _selection, value);
+        }
+
         private IAsyncRelayCommand _importCommand;
         public IAsyncRelayCommand ImportCommand => _importCommand ??= new AsyncRelayCommand(ImportSource);
 
-        public override void OnLoad()
+        protected override void OnLoad()
         {
             Reflesh();
         }
@@ -67,8 +75,6 @@ namespace PolarShadow.ViewModels
             {
                 var file = await _storage.OpenPolarShadowConfigFilePickerAsync();
                 if (file == null) return;
-
-                WeakReferenceMessenger.Default.Send(new LoadingState { IsLoading = true });
 
                 _polar.LoadJsonStreamSource(await file.OpenReadAsync());
 
@@ -85,8 +91,6 @@ namespace PolarShadow.ViewModels
             {
                 _notification.Show(ex);
             }
-
-            WeakReferenceMessenger.Default.Send(new LoadingState { IsLoading = false });
         }
 
         private void Reflesh()
@@ -96,10 +100,19 @@ namespace PolarShadow.ViewModels
 
         private void OnSiteSelectorChanged()
         {
+            if (SelectedSite == null)
+            {
+                return;
+            }
+
+            var selectSite = SelectedSite;
             _nav.Navigate<BookSourceDetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>()
             {
-                {nameof(BookSourceDetailViewModel.Site), _selectedSite }
+                {nameof(BookSourceDetailViewModel.Site), selectSite }
             }, true);
+
+            Selection?.Clear();
+            SelectedSite = null;
         }
     }
 }

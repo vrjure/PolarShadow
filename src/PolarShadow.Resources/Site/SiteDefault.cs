@@ -15,7 +15,7 @@ namespace PolarShadow.Resources
         [JsonRequired]
         public string Name { get; set; }
         public string Domain { get; set; }
-        public bool UseWebView { get; set; }
+        public bool? UseWebView { get; set; }
         public IKeyValueParameter Parameters { get; set; }
         public IDictionary<string, ISiteRequest> Requests { get; set; }
 
@@ -35,9 +35,9 @@ namespace PolarShadow.Resources
                 {
                     requestHandler = request.UseWebView.Value ? Item._webViewHandler : requestHandler;
                 }
-                else if (UseWebView)
+                else if (UseWebView.HasValue)
                 {
-                    requestHandler = Item._webViewHandler;
+                    requestHandler = UseWebView.Value ? Item._webViewHandler : requestHandler;
                 }
 
                 if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");

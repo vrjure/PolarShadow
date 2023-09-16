@@ -22,6 +22,11 @@ namespace PolarShadow.Resources
                 {
                     return LinkType.M3U8;
                 }
+                else if (link.EndsWith(".html"))
+                {
+                    return LinkType.HTML;
+                }
+
                 var uri = new Uri(link);
                 if (uri.Host.Equals("pan.quark.cn", StringComparison.OrdinalIgnoreCase))
                 {

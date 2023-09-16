@@ -8,13 +8,14 @@
 			 xmlns:ctrl="using:PolarShadow.Controls"
 			 xmlns:polarservice="using:PolarShadow.Services"
 			 x:DataType="vm:DetailViewModel"
-			 x:CompileBindings="True">
+			 x:CompileBindings="True"
+			 ctrl:PageLoadAttached.RegisterLoad="True">
 	<Grid Margin="10"
 		  RowDefinitions="*,60">
 		<ScrollViewer IsVisible="{Binding !IsLoading}">
 			<StackPanel Orientation="Vertical"
 						Spacing="10">
-				<Image MaxWidth="120"
+				<Image Width="{StaticResource ListBoxWrapPanelItemWidth}"
 					   HorizontalAlignment="Center"
 					   ctrl:ImageAttached.Src="{Binding Resource.ImageSrc}"
 					   ctrl:ImageAttached.Cache="{Binding ImageCache}"/>

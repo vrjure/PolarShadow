@@ -3,7 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
+using CommunityToolkit.Mvvm.Messaging;
 using PolarShadow.Controls;
+using PolarShadow.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,18 +73,13 @@ namespace PolarShadow.Navigations
                     }
                     his.Push(current);
                 }
-
-                current.AddHandler(Control.UnloadedEvent, Page_Unloaded);
-
             }
-
 
             if (parameters != null && page.DataContext is IParameterObtain po)
             {
                 po.ApplyParameter(parameters);
             }
 
-            page.AddHandler(Control.LoadedEvent, Page_Loaded);
             container.Content = page;
 
             if (TryGetBackButton(containerName, out Control btn))
@@ -90,27 +87,6 @@ namespace PolarShadow.Navigations
                 btn.Opacity = CanBack(containerName, out Stack<Control> _) ? 1 : 0;
             }
 
-        }
-
-        private static void Page_Unloaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            var control = sender as Control;
-            control.RemoveHandler(Control.UnloadedEvent, Page_Unloaded);
-            if (control.DataContext is INavigationNotify newNotify)
-            {
-                newNotify.OnUnload();
-            }
-        }
-
-        private static void Page_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            var control = sender as Control;
-            control.RemoveHandler(Control.LoadedEvent, Page_Loaded);
-
-            if (control.DataContext is INavigationNotify newNotify)
-            {
-                newNotify.OnLoad();
-            }
         }
 
         public static readonly AttachedProperty<string> ContainerNameProperty = AvaloniaProperty.RegisterAttached<NavigationManager, ContentControl, string>("ContainerName");

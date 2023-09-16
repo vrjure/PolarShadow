@@ -11,7 +11,7 @@ namespace PolarShadow.Resources
     {
         public IRequestTemplate Request { get; set; }
         public IResponseTemplate Response { get; set; }
-        public IKeyValueParameter Parameter { get; set; }
+        public IKeyValueParameter Parameters { get; set; }
 
         public bool? UseWebView { get; set; }
     }

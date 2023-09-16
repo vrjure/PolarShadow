@@ -8,7 +8,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.TopLayoutView"
 			 x:DataType="vm:TopLayoutViewModel"
-			 x:CompileBindings="True">
+			 x:CompileBindings="True"
+			 ctrl:PageLoadAttached.RegisterLoad="True">
     <Grid RowDefinitions="auto,*"
 		  ColumnDefinitions="auto,*,auto">
 		

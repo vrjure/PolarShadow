@@ -8,7 +8,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.BookSourceView"
 			 x:DataType="vm:BookSourceViewModel"
-			 x:CompileBindings="True">
+			 x:CompileBindings="True"
+			 ctrl:PageLoadAttached.RegisterLoad="True">
 	<ctrl:ToolBarAttached.ToolBar>
 		<ctrl:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal">
@@ -25,7 +26,8 @@
 				 Margin="20"
 				 SelectionMode="Single"
 				 Background="Transparent"
-				 SelectedValue="{Binding $parent.((vm:BookSourceViewModel)DataContext).SelectedSite, Mode=TwoWay}">
+				 SelectedValue="{Binding $parent.((vm:BookSourceViewModel)DataContext).SelectedSite, Mode=TwoWay}"
+				 Selection="{Binding Selection, Mode=OneWayToSource}">
 
 			<ListBox.ItemTemplate>
 				<DataTemplate DataType="polarres:ISite">

@@ -74,7 +74,7 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        public override async void OnLoad()
+        protected override async void OnLoad()
         {
             await LoadingDeatil();
         }

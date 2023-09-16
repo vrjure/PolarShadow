@@ -14,7 +14,7 @@ namespace PolarShadow.Resources
     {
         string Name { get; set; }
         string Domain { get; set; }
-        bool UseWebView { get; set; }
+        bool? UseWebView { get; set; }
         IKeyValueParameter Parameters { get; set; }
         IDictionary<string, ISiteRequest> Requests { get; }
         ISiteRequestHandler CreateRequestHandler(string requestName);

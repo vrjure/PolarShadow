@@ -1,18 +1,53 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using PolarShadow.Models;
 using PolarShadow.Navigations;
+using System;
 using System.Threading.Tasks;
 
 namespace PolarShadow.ViewModels;
 
-public class ViewModelBase : ObservableObject, INavigationNotify
+public class ViewModelBase : ObservableRecipient, INavigationNotify
 {
-    public virtual void OnLoad()
+    private bool _loaded = false;
+
+    protected override void OnActivated()
     {
-        
+        System.Diagnostics.Trace.WriteLine($"{this.GetType().Name} load");
+        if (_loaded) return;
+        _loaded = true;
+
+        Load();
+        //base.OnActivated();
     }
 
-    public virtual void OnUnload()
+    protected override void OnDeactivated()
     {
-        
+        System.Diagnostics.Trace.WriteLine($"{this.GetType().Name} unload");
+        if (!_loaded) return;
+        _loaded = false;
+
+        Unload();
+        base.OnDeactivated();
+    }
+
+    public void Load()
+    {
+        OnLoad();
+    }
+
+    public void Unload()
+    {
+        OnUnload();
+    }
+
+    protected virtual void OnLoad()
+    {
+
+    }
+
+    protected virtual void OnUnload()
+    {
+
     }
 }

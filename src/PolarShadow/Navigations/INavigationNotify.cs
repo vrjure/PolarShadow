@@ -8,7 +8,7 @@ namespace PolarShadow.Navigations
 {
     public interface INavigationNotify
     {
-        void OnLoad();
-        void OnUnload();
+        void Load();
+        void Unload();
     }
 }

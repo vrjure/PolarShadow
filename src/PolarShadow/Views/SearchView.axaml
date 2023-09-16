@@ -8,7 +8,8 @@
 			 xmlns:vm="using:PolarShadow.ViewModels"
 			 xmlns:polarres="using:PolarShadow.Resources"
 			 x:DataType="vm:SearchViewModel"
-			 x:CompileBindings="True">
+			 x:CompileBindings="True"
+			 ctrl:PageLoadAttached.RegisterLoad="True">
 	<ctrl:ToolBarAttached.ToolBar>
 		<!--Search box-->
 		<ctrl:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.CenterTitleBarContainer}">
@@ -26,16 +27,16 @@
 			<StackPanel Orientation="Vertical">
 				<ListBox ItemsSource="{Binding SearchResult}"
 						 Background="White"
-						 SelectedValue="{Binding SelectValue, Mode=TwoWay}">
+						 SelectedValue="{Binding SelectValue, Mode=TwoWay}"
+						 Selection="{Binding Selection, Mode=OneWayToSource}">
 					<ListBox.ItemsPanel>
 						<ItemsPanelTemplate>
-							<WrapPanel/>
+							<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
 						</ItemsPanelTemplate>
 					</ListBox.ItemsPanel>
 					<ListBox.ItemTemplate>
 						<DataTemplate DataType="polarres:Resource">
-							<StackPanel Orientation="Vertical"
-										MaxWidth="120">
+							<StackPanel Orientation="Vertical">
 								<Image ctrl:ImageAttached.Src="{Binding ImageSrc}"
 									   ctrl:ImageAttached.Cache="{Binding $parent[ListBox].((vm:SearchViewModel)DataContext).ImageCache}"/>
 								<TextBlock Text="{Binding Name}"

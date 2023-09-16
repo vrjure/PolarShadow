@@ -32,7 +32,7 @@ namespace PolarShadow.ViewModels
             _notify = notify;
             _polar = polar;
 
-            WeakReferenceMessenger.Default.Register(this);
+            WeakReferenceMessenger.Default.Register<LoadingState>(this);
         }
 
         private bool _isLoading = false;
@@ -42,7 +42,7 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _isLoading, value);
         }
 
-        public override async void OnLoad()
+        protected override async void OnLoad()
         {
             IsLoading = true;
             try

@@ -9,6 +9,6 @@ namespace PolarShadow.Resources
     public interface ISiteRequest : IRequest
     {
         bool? UseWebView { get; }
-        IKeyValueParameter Parameter { get; }
+        IKeyValueParameter Parameters { get; }
     }
 }

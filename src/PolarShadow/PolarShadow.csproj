@@ -42,9 +42,6 @@
     <Compile Update="Views\BookSourceDetailView.axaml.cs">
       <DependentUpon>BookSourceDetailView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\MineResourceView.axaml.cs">
-      <DependentUpon>MineResourceView.axaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
