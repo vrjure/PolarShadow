@@ -46,13 +46,6 @@ namespace PolarShadow.ViewModels
             private set => SetProperty(ref _resource, value);
         }
 
-        private bool _isLoading = false;
-        public bool IsLoading
-        {
-            get => _isLoading;
-            private set => SetProperty(ref _isLoading, value);
-        }
-
         private bool _isSave;
         public bool IsSaved
         {

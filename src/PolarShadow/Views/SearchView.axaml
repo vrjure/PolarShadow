@@ -57,8 +57,7 @@
 				</Button>
 			</StackPanel>
 		</ScrollViewer>
-		<TextBlock Classes="icon"
-				   Text="&#xF1F7; Empty"
+		<TextBlock Classes="empty"
 				   FontSize="50"
 				   HorizontalAlignment="Center"
 				   VerticalAlignment="Center"

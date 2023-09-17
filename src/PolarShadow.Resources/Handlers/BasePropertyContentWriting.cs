@@ -11,7 +11,7 @@ namespace PolarShadow.Resources
         public override string[] RequestFilter => new string[] { "*" };
 
         private static string sitePro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.Site));
-        private static string fromRequestPro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.Request));
+        private static string fromRequestPro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.FromRequest));
 
         public override void BeforeWriteEndObject(Utf8JsonWriter writer, string propertyName, IParameter parameter)
         {

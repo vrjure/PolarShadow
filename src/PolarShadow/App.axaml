@@ -35,8 +35,7 @@
 					</KeyFrame>
 				</Animation>
 			</Style.Animations>
-		</Style>
-		
+		</Style>	
 		
 		<Style Selector="TextBlock,SelectableTextBlock">
 			<Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
@@ -50,6 +49,12 @@
 		<Style Selector="TextBlock.icon">
 			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
 			<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
+		</Style>
+
+		<Style Selector="TextBlock.empty">
+			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
+			<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
+			<Setter Property="Text" Value="&#xF1F7; Empty"/>
 		</Style>
 		
 		<Style Selector="Button.icon">

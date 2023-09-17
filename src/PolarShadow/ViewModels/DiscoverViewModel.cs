@@ -4,6 +4,7 @@ using PolarShadow.Core;
 using PolarShadow.Navigations;
 using PolarShadow.Resources;
 using PolarShadow.Services;
+using PolarShadow.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -72,6 +73,11 @@ namespace PolarShadow.ViewModels
             {
                 return;
             }
+
+            _nav.Navigate<DiscoverDetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
+            {
+                { nameof(DiscoverDetailViewModel.Param_Site), SelectValue }
+            }, true);
 
             Selection?.Clear();
             SelectValue = null;

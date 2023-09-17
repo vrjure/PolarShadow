@@ -35,13 +35,6 @@ namespace PolarShadow.ViewModels
             WeakReferenceMessenger.Default.Register<LoadingState>(this);
         }
 
-        private bool _isLoading = false;
-        public bool IsLoading
-        {
-            get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
-        }
-
         protected override async void OnLoad()
         {
             IsLoading = true;

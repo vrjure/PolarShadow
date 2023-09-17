@@ -11,6 +11,20 @@ public class ViewModelBase : ObservableRecipient, INavigationNotify
 {
     private bool _loaded = false;
 
+
+    private bool _isLoading = false;
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set => SetProperty(ref _isLoading, value);
+    }
+
+    private bool _hasData = true;
+    public bool HasData
+    {
+        get => _hasData;
+        set => SetProperty(ref _hasData, value);
+    }
     protected override void OnActivated()
     {
         System.Diagnostics.Trace.WriteLine($"{this.GetType().Name} load");

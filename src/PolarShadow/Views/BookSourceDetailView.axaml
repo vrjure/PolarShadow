@@ -17,7 +17,7 @@
 			<TextBlock Text="Domain" Classes="title" Margin="0,5,0,0"/>
 			<TextBlock Text="{Binding Site.Domain}"/>
 			<TabStrip ItemsSource="{Binding Site.Requests.Keys}"
-					  SelectedValue="{Binding $parent.((ps:BookSourceDetailViewModel)DataContext).SelectedRequest, Mode=TwoWay}"/>
+					  SelectedValue="{Binding SelectedRequest, Mode=TwoWay}"/>
 		</StackPanel>
 
 		<TextBox Text="{Binding FormatedRequest}"

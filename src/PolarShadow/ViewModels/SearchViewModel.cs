@@ -78,25 +78,11 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _selection, value);
         }
 
-        private bool _isLoading = false;
-        public bool IsLoading
-        {
-            get => _isLoading;
-            set => SetProperty(ref _isLoading, value);
-        }
-
         private bool _showLoadMore = false;
         public bool ShowLoadMore
         {
             get => _showLoadMore;
             set => SetProperty(ref _showLoadMore, value);
-        }
-
-        private bool _hasData = true;
-        public bool HasData
-        {
-            get => _hasData;
-            set => SetProperty(ref _hasData, value);
         }
 
         private IAsyncRelayCommand _searchCommand;

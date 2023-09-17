@@ -3,9 +3,69 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ps="https://github.com/PolarShadow"
+			 xmlns:psr="using:PolarShadow.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.DiscoverDetailView"
 			 x:DataType="ps:DiscoverDetailViewModel"
-			 x:CompileBindings="True">
+			 x:CompileBindings="True"
+			 Padding="10"
+			 ps:PageLoadAttached.RegisterLoad="True">
 	
+	<Grid RowDefinitions="auto,*">
+		<TabStrip ItemsSource="{Binding Categories}"
+				  SelectedValue="{Binding CategoryValue, Mode=TwoWay}">
+			<TabStrip.ItemTemplate>
+				<DataTemplate DataType="psr:Resource">
+					<TextBlock Text="{Binding Name}"/>
+				</DataTemplate>
+			</TabStrip.ItemTemplate>
+		</TabStrip>
+		<Grid Margin="0,5,0,0"
+			  Grid.Row="1">
+			<ScrollViewer>
+				<StackPanel Orientation="Vertical"
+							Spacing="10">
+					<ListBox Background="Transparent"
+							 ItemsSource="{Binding ResourceList}">
+						<ListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
+							</ItemsPanelTemplate>
+						</ListBox.ItemsPanel>
+						<ListBox.ItemTemplate>
+							<DataTemplate DataType="psr:ResourceTree">
+								<Border>
+									<StackPanel Orientation="Vertical"
+												Spacing="10">
+										<TextBlock Classes="icon"
+												   Text="&#xEE4A;"
+												   FontSize="80"
+												   HorizontalAlignment="Center"/>
+										<TextBlock Text="{Binding Name}"
+												   HorizontalAlignment="Center"
+												   TextWrapping="Wrap"/>
+									</StackPanel>
+								</Border>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+					<PathIcon Classes.spin="{Binding IsLoading}"
+								IsVisible="{Binding IsLoading}"
+								Data="{StaticResource loader2}">
+					</PathIcon>
+					<Button Command="{Binding LoadMoreCommand}"
+							Content="&#xEF78;"
+							Classes="icon"
+							HorizontalAlignment="Center"
+							IsVisible="{Binding ShowLoadMore}">
+					</Button>
+				</StackPanel>
+			</ScrollViewer>
+			<TextBlock Classes="empty"
+					   FontSize="50"
+					   HorizontalAlignment="Center"
+					   VerticalAlignment="Center"
+					   IsVisible="{Binding !HasData}"/>
+		</Grid>
+	</Grid>
 </UserControl>
