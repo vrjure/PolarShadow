@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Cache;
 using PolarShadow.Navigations;
 using PolarShadow.Services;
-using PolarShadow.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -58,7 +57,7 @@ namespace PolarShadow.ViewModels
         }
 
         private IRelayCommand _searchCommand;
-        public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(() => _nav.Navigate<SearchView>(TopLayoutViewModel.NavigationName, canBack: true));
+        public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(() => _nav.Navigate<SearchViewModel>(TopLayoutViewModel.NavigationName, canBack: true));
 
         protected override async void OnLoad()
         {
@@ -83,7 +82,7 @@ namespace PolarShadow.ViewModels
 
             var selected = SelectValue;
 
-            _nav.Navigate<DetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
+            _nav.Navigate<DetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
                 {nameof(DetailViewModel.Param_Link), selected }
             }, true);

@@ -28,15 +28,19 @@ namespace PolarShadow.Navigations
             NavigationManager.Back(container);
         }
 
-        public void Navigate(string containerName, Type viewType, IDictionary<string, object> parameters, bool canBack)
+        public void Navigate(string containerName, Type viewModelType, IDictionary<string, object> parameters, bool canBack)
         {
             if (!NavigationManager.TryGetContainer(containerName, out ContentControl _))
             {
                 throw new InvalidOperationException($"Container name [{containerName}] not found");
             }
 
-            var page = _service.GetRequiredService(viewType) as Control;
+            if (!NavigationManager.TryGetView(viewModelType, out Type view))
+            {
+                throw new InvalidOperationException($"Can not found [{viewModelType.GetType()}] not found");
+            }
 
+            var page = _service.GetRequiredService(view) as Control;
             NavigationManager.Navigate(containerName, page, parameters, canBack);
         }
     }

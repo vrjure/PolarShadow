@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Navigations
 {
-    public sealed class NavigationManager
+    public sealed partial class NavigationManager
     {
         private static Dictionary<string, ContentControl> _containers = new Dictionary<string, ContentControl>(StringComparer.OrdinalIgnoreCase);
         private static Dictionary<string, Control> _backButtons = new Dictionary<string, Control>(StringComparer.OrdinalIgnoreCase);

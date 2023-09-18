@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
-using PolarShadow.Views;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,16 +19,16 @@ public partial class MainViewModel : ViewModelBase
     }
     public IEnumerable<MenuIconItem> MenuItems => new List<MenuIconItem>
     {
-        new(){ Name = "main", Icon = "\uEE26", ViewType = typeof(BookshelfView)},
-        new(){ Name = "discover", Icon = "\uEBC1", ViewType = typeof(DiscoverView)},
-        new(){ Name = "source", Icon = "\uEDC6", ViewType = typeof(BookSourceView)},
+        new(){ Name = "main", Icon = "\uEE26", VMType = typeof(BookshelfViewModel)},
+        new(){ Name = "discover", Icon = "\uEBC1", VMType = typeof(DiscoverViewModel)},
+        new(){ Name = "source", Icon = "\uEDC6", VMType = typeof(BookSourceViewModel)},
         new(){ Name = "user", Icon="\uF25F"}
     };
 
     private ICommand _menuClickedCommand;
     public ICommand MenuClickedCommand => _menuClickedCommand ??= new RelayCommand<MenuIconItem>(item =>
     {
-        if (item == null || item.ViewType == null) return;
-        _nav.Navigate(NavigationName, item.ViewType);
+        if (item == null || item.VMType == null) return;
+        _nav.Navigate(NavigationName, item.VMType);
     });
 }

@@ -10,14 +10,14 @@ namespace PolarShadow.Navigations
 {
     public static class NavigationServiceExtensions
     {
-        public static void Navigate(this INavigationService nav, string containerName, Type viewType, IDictionary<string, object> parameters = null, bool canBack = false)
+        public static void Navigate(this INavigationService nav, string containerName, Type vmType, IDictionary<string, object> parameters = null, bool canBack = false)
         {
-            nav.Navigate(containerName, viewType, parameters, canBack);
+            nav.Navigate(containerName, vmType, parameters, canBack);
         }
 
-        public static void Navigate<TViewType>(this INavigationService nav, string containerName, IDictionary<string, object> parameters = null, bool canBack = false)
+        public static void Navigate<TVMType>(this INavigationService nav, string containerName, IDictionary<string, object> parameters = null, bool canBack = false)
         {
-            nav.Navigate(containerName, typeof(TViewType), parameters, canBack);
+            nav.Navigate(containerName, typeof(TVMType), parameters, canBack);
         }
     }
 }

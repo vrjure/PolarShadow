@@ -1,17 +1,13 @@
 ﻿using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Selection;
 using Avalonia.Platform.Storage;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
-using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using PolarShadow.Storage;
-using PolarShadow.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -106,7 +102,7 @@ namespace PolarShadow.ViewModels
             }
 
             var selectSite = SelectedSite;
-            _nav.Navigate<BookSourceDetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>()
+            _nav.Navigate<BookSourceDetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>()
             {
                 {nameof(BookSourceDetailViewModel.Site), selectSite }
             }, true);

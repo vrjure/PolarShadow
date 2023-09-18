@@ -1,12 +1,10 @@
 ﻿using Avalonia.Controls.Notifications;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Storage;
-using PolarShadow.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +68,7 @@ namespace PolarShadow.ViewModels
             }
 
             IsLoading = false;
-            _nav.Navigate<MainView>(NavigationName);
+            _nav.Navigate<MainViewModel>(NavigationName);
 
         }
 

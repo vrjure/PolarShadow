@@ -1,17 +1,10 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Notifications;
+﻿using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Selection;
-using Avalonia.Input;
-using Avalonia.Xaml.Interactions.Events;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.Caching.Memory;
 using PolarShadow.Cache;
 using PolarShadow.Core;
-using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Resources;
-using PolarShadow.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -158,7 +151,7 @@ namespace PolarShadow.ViewModels
             }
 
             var selected = SelectValue;
-            _nav.Navigate<DetailView>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
+            _nav.Navigate<DetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
                 {nameof(DetailViewModel.Param_Link), selected }
             }, true);

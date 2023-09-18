@@ -10,7 +10,7 @@ namespace PolarShadow.Navigations
     {
         bool CanBack(string container);
         void Back(string container);
-        void Navigate(string container, Type viewType, IDictionary<string, object> parameters, bool canBack);
+        void Navigate(string container, Type vmType, IDictionary<string, object> parameters, bool canBack);
         
     }
 }

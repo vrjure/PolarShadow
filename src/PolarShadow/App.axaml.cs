@@ -51,13 +51,13 @@ public partial class App : Application
         {
             desktop.MainWindow = _services.GetRequiredService<MainWindow>();
             topLevelService.SetTopLevel(desktop.MainWindow);
-            nav.Navigate<TopLayoutView>(MainWindowViewModel.NavigationName);
+            nav.Navigate<TopLayoutViewModel>(MainWindowViewModel.NavigationName);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
             singleViewPlatform.MainView = _services.GetRequiredService<TopLayoutView>();
             topLevelService.SetTopLevelFactory(() => singleViewPlatform.MainView);
-            nav.Navigate<MainView>(TopLayoutViewModel.NavigationName);
+            nav.Navigate<MainViewModel>(TopLayoutViewModel.NavigationName);
         }
 
         base.OnFrameworkInitializationCompleted();

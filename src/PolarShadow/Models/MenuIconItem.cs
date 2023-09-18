@@ -12,6 +12,6 @@ namespace PolarShadow.Models
     {
         public string Name { get; set; }
         public string Icon { get; set; }
-        public Type ViewType { get; set; }
+        public Type VMType { get; set; }
     }
 }
