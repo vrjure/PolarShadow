@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls.Notifications;
+using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Core;
 using PolarShadow.Navigations;
@@ -16,13 +17,15 @@ namespace PolarShadow.ViewModels
     {
         private readonly INotificationManager _notify;
         private readonly IPolarShadow _polar;
+        private readonly INavigationService _nav;
 
         private PageFilter _filter;
 
-        public DiscoverDetailViewModel(INotificationManager notify, IPolarShadow polar)
+        public DiscoverDetailViewModel(INotificationManager notify, IPolarShadow polar, INavigationService nav)
         {
             _notify = notify;
             _polar = polar;
+            _nav = nav;
         }
 
         public ISite Param_Site { get; set; }
@@ -54,6 +57,26 @@ namespace PolarShadow.ViewModels
             }
         }
 
+        private ResourceTree _selectedResource;
+        public ResourceTree SelectedResource
+        {
+            get => _selectedResource;
+            set
+            {
+                if (SetProperty(ref _selectedResource, value))
+                {
+                    ResourceSelected();
+                }
+            }
+        }
+
+        private ISelectionModel _selection;
+        public ISelectionModel Selection
+        {
+            get => _selection;
+            set => SetProperty(ref _selection, value);
+        }
+
         private bool _showLoadMore = false;
         public bool ShowLoadMore
         {
@@ -66,6 +89,11 @@ namespace PolarShadow.ViewModels
 
         private async void CategoryValueChanged()
         {
+            if (CategoryValue == null)
+            {
+                return;
+            }
+
             IsLoading = true;
             ShowLoadMore = false;
             try
@@ -179,7 +207,22 @@ namespace PolarShadow.ViewModels
             {
                 _notify.Show(ex);
             }
+        }
 
+        private void ResourceSelected()
+        {
+            if (SelectedResource == null)
+            {
+                return;
+            }
+
+            _nav.Navigate<DetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
+            {
+                { nameof(DetailViewModel.Param_Link), SelectedResource }
+            }, true);
+
+            SelectedResource = null;
+            Selection?.Clear();
         }
     }
 }

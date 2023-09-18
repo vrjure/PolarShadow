@@ -34,18 +34,35 @@
 							<StackPanel Orientation="Vertical"
 										Spacing="10">
 								<TextBlock Text="{Binding Name}"/>
-								<ListBox ItemsSource="{Binding Children}">
-									<ListBox.ItemsPanel>
+								<ItemsControl ItemsSource="{Binding Children}">
+									<ItemsControl.ItemsPanel>
 										<ItemsPanelTemplate>
 											<WrapPanel/>
 										</ItemsPanelTemplate>
-									</ListBox.ItemsPanel>
-									<ListBox.ItemTemplate>
+									</ItemsControl.ItemsPanel>
+									<ItemsControl.ItemTemplate>
 										<DataTemplate DataType="pss:ResourceTreeNode">
-											<TextBlock Text="{Binding Name}"/>
+											<Button Content="{Binding Name}"
+													Margin="8">
+												<Button.Flyout>
+													<Flyout>
+														<ItemsControl ItemsSource="{Binding Children}">
+															<ItemsControl.ItemTemplate>
+																<DataTemplate>
+																	<Button Content="{Binding SrcType}"
+																			MinWidth="80"
+																			MinHeight="30"
+																			VerticalContentAlignment="Center"
+																			HorizontalContentAlignment="Center"/>
+																</DataTemplate>
+															</ItemsControl.ItemTemplate>
+														</ItemsControl>
+													</Flyout>
+												</Button.Flyout>
+											</Button>
 										</DataTemplate>
-									</ListBox.ItemTemplate>
-								</ListBox>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
 							</StackPanel>
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
