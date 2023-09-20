@@ -12,5 +12,7 @@ namespace PolarShadow.Services
         Task<IReadOnlyList<IStorageFile>> OpenFilePickerAsync(FilePickerOpenOptions options);
         Task<IStorageFile> SaveFilePickerAsync(FilePickerSaveOptions optioins);
         Task<IStorageFile> TryGetFileFromPathAsync(Uri filePath);
+        Task<IReadOnlyList<IStorageFolder>> OpenFolderPickerAsync(FolderPickerOpenOptions options);
+        Task<IStorageFolder> TryGetWellKnownFolderAsync(WellKnownFolder wellKnownFolder);
     }
 }

@@ -19,6 +19,7 @@ namespace PolarShadow.Storage
         public DbSet<SiteModel> Sites { get; set; }
         public DbSet<RequestModel> Requests { get; set; }
         public DbSet<ResourceModel> Resources { get; set; }
+        public DbSet<PreferenceEntity> Preferences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +31,7 @@ namespace PolarShadow.Storage
             modelBuilder.Entity<ResourceModel>().HasKey(f => f.Id);
             modelBuilder.Entity<ResourceModel>().Property(e => e.SrcType).HasConversion<string>();
 
+            modelBuilder.Entity<PreferenceEntity>().HasKey(f => f.Key);
         }
     }
 }

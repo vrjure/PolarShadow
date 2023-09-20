@@ -26,6 +26,7 @@ public partial class App : Application
     public static string ConfigFile => Path.Combine(AppDataFolder, "config.json");
     public static string DbFile => Path.Combine(AppDataFolder, "polar.db");
     public static string CacheFolder => Path.Combine(AppDataFolder, "cache");
+    public static string PreferenceFolder => Path.Combine(AppDataFolder, "preference");
 
     public static IServiceProvider Service => (App.Current as App)._services;
 
@@ -87,6 +88,7 @@ public partial class App : Application
         service.AddSingleton<IStorageService, StorageService>();
         service.AddSingleton<ITopLevelService, TopLevelService>();
         service.AddSingleton<INotificationManager, NotificationManager>();
+        service.AddSingleton<IPreference, DbPreference>();
     }
 
     private void RegisterView(IServiceCollection service)
@@ -101,6 +103,7 @@ public partial class App : Application
         service.RegisterTransientViewWithModel<DetailView, DetailViewModel>();
         service.RegisterTransientViewWithModel<DiscoverView, DiscoverViewModel>();
         service.RegisterTransientViewWithModel<DiscoverDetailView, DiscoverDetailViewModel>();
+        service.RegisterTransientViewWithModel<MineView, MineViewModel>();
 
     }
 

@@ -11,26 +11,36 @@ namespace PolarShadow.Services
 {
     internal class StorageService : IStorageService
     {
-        private readonly ITopLevelService _opLevelService;
+        private readonly ITopLevelService _topLevelService;
 
         public StorageService(ITopLevelService topLevelService)
         {
-            _opLevelService = topLevelService;
+            _topLevelService = topLevelService;
         }
 
         public Task<IReadOnlyList<IStorageFile>> OpenFilePickerAsync(FilePickerOpenOptions options)
         {
-            return _opLevelService.GetTopLevel().StorageProvider.OpenFilePickerAsync(options);
+            return _topLevelService.GetTopLevel().StorageProvider.OpenFilePickerAsync(options);
         }
 
         public Task<IStorageFile> SaveFilePickerAsync(FilePickerSaveOptions optioins)
         {
-            return _opLevelService.GetTopLevel().StorageProvider.SaveFilePickerAsync(optioins);
+            return _topLevelService.GetTopLevel().StorageProvider.SaveFilePickerAsync(optioins);
         }
 
         public Task<IStorageFile> TryGetFileFromPathAsync(Uri filePath)
         {
-            return _opLevelService.GetTopLevel().StorageProvider.TryGetFileFromPathAsync(filePath);
+            return _topLevelService.GetTopLevel().StorageProvider.TryGetFileFromPathAsync(filePath);
+        }
+
+        public Task<IReadOnlyList<IStorageFolder>> OpenFolderPickerAsync(FolderPickerOpenOptions options)
+        {
+            return _topLevelService.GetTopLevel().StorageProvider.OpenFolderPickerAsync(options);
+        }
+
+        public Task<IStorageFolder> TryGetWellKnownFolderAsync(WellKnownFolder wellKnownFolder)
+        {
+            return _topLevelService.GetTopLevel().StorageProvider.TryGetWellKnownFolderAsync(wellKnownFolder);
         }
     }
 }

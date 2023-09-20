@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ps="https://github.com/PolarShadow"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PolarShadow.Views.MineView"
+			 x:DataType="ps:MineViewModel"
+			 x:CompileBindings="True"
+			 ps:PageLoadAttached.RegisterLoad="True">
+	<ps:ToolBarAttached.ToolBar>
+		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+			<StackPanel Orientation="Horizontal">
+				<!--save-->
+				<Button Content="&#xF0B1;"
+						Classes="icon"
+						Command="{Binding SaveCommand}">
+				</Button>
+			</StackPanel>
+		</ps:ToolBarTemplate>
+	</ps:ToolBarAttached.ToolBar>
+	<UserControl.Resources>
+		<x:Double x:Key="headerTextWidth">100</x:Double>
+	</UserControl.Resources>
+	<DockPanel Margin="16"
+			   MaxWidth="800">
+		<TextBlock Text="Aria2"
+				   Classes="title"
+				   DockPanel.Dock="Top"/>
+		<Rectangle Height="2" 
+				   Fill="Red"
+				   DockPanel.Dock="Top"
+				   Margin="0,16,0,0"/>
+		<DockPanel DockPanel.Dock="Top"
+				   Margin="0,16,0,0">
+			<TextBlock Text="RPC"
+					   Width="{StaticResource headerTextWidth}"
+					   VerticalAlignment="Center"
+					   TextWrapping="Wrap"/>
+			<TextBox VerticalAlignment="Center"
+					 Text="{Binding RPC, Mode=TwoWay}"/>
+		</DockPanel>
+		<DockPanel DockPanel.Dock="Top"
+				   Margin="0,16,0,0">
+			<TextBlock Text="Download Path"
+					   Width="{StaticResource headerTextWidth}"
+					   VerticalAlignment="Center"
+					   TextWrapping="Wrap"/>
+			<Button Content="&#xEF76;"
+					Classes="icon"
+					DockPanel.Dock="Right"
+					VerticalAlignment="Center"
+					Command="{Binding PickDownloadPathCommand}"/>
+			<TextBox VerticalAlignment="Center"
+					 Text="{Binding DownloadPath, Mode=TwoWay}"/>
+		</DockPanel>
+		<Border/>
+	</DockPanel>
+</UserControl>
