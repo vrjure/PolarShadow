@@ -10,7 +10,8 @@
 			 ps:PageLoadAttached.RegisterLoad="True">
     <Grid RowDefinitions="auto,*"
 		  ColumnDefinitions="auto,*,auto">
-		
+		<!--webviewContainer-->
+		<Panel x:Name="webViewContainer"/>
 		<!--bar color-->
 		<Border Background="{StaticResource TitleBarColor}"
 				IsHitTestVisible="False"

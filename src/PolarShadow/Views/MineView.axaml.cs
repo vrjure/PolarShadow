@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using PolarShadow.ViewModels;
 
 namespace PolarShadow.Views
 {
@@ -7,6 +8,11 @@ namespace PolarShadow.Views
         public MineView()
         {
             InitializeComponent();
+        }
+
+        public MineView(MineViewModel vm) : this()
+        {
+            this.DataContext = vm;
         }
     }
 }

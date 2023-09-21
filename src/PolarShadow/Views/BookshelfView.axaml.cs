@@ -14,4 +14,9 @@ public partial class BookshelfView : UserControl
     {
         InitializeComponent();
     }
+
+    public BookshelfView(BookshelfViewModel vm) : this()
+    {
+        this.DataContext = vm;
+    }
 }

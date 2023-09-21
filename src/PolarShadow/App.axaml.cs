@@ -17,6 +17,8 @@ using System.IO;
 using PolarShadow.Cache;
 using PolarShadow.Resources;
 using System.Text;
+using AvaloniaWebView;
+using PolarShadow.Handlers;
 
 namespace PolarShadow;
 
@@ -35,6 +37,13 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(_services, this);
+    }
+
+    public override void RegisterServices()
+    {
+        base.RegisterServices();
+
+        AvaloniaWebViewBuilder.Initialize(default);
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -104,17 +113,20 @@ public partial class App : Application
         service.RegisterTransientViewWithModel<DiscoverView, DiscoverViewModel>();
         service.RegisterTransientViewWithModel<DiscoverDetailView, DiscoverDetailViewModel>();
         service.RegisterTransientViewWithModel<MineView, MineViewModel>();
-
     }
 
     private void RegisterPolarShadow(IServiceCollection service)
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+        var webViewHandler = new WebViewHandler();
+        service.AddSingleton<IWebViewRequestHandler>(webViewHandler);
         var builder = new PolarShadowBuilder();
         var polarShadow = builder.ConfigureAllSupported()
             .ConfigureSiteItem(f =>
             {
                 f.Writings.Add(new DetailContentWriting());
+                f.WebViewHandler = webViewHandler;
             }).Build();
         service.AddSingleton(polarShadow);
     }

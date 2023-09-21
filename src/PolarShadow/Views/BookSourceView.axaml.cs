@@ -12,4 +12,9 @@ public partial class BookSourceView : UserControl
     {
         InitializeComponent();
     }
+
+    public BookSourceView(BookSourceViewModel vm) : this()
+    {
+        this.DataContext = vm;
+    }
 }

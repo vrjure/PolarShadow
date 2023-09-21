@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using PolarShadow.ViewModels;
 
 namespace PolarShadow.Views
 {
@@ -7,6 +8,11 @@ namespace PolarShadow.Views
         public DiscoverView()
         {
             InitializeComponent();
+        }
+
+        public DiscoverView(DiscoverViewModel vm) : this()
+        {
+            this.DataContext = vm;
         }
     }
 }
