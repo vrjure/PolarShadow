@@ -1,11 +1,14 @@
 ﻿using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.Caching.Memory;
+using PolarShadow.Aria2;
 using PolarShadow.Cache;
 using PolarShadow.Core;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
+using PolarShadow.Options;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using PolarShadow.Storage;
@@ -24,15 +27,16 @@ namespace PolarShadow.ViewModels
         private readonly INotificationManager _notify;
         private readonly IMineResourceService _mineResourceService;
         private readonly IBufferCache _bufferCache;
-
+        private readonly IPreference _preference;
 
         private ResourceModel _rootResourceInDb;
-        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache)
+        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference)
         {
             _polar = polar;
             _notify = notify;
             _mineResourceService = mineResourceService;
             _bufferCache = bufferCache;
+            _preference = preference;
         }
 
         public ILink Param_Link { get; set; }
@@ -58,6 +62,9 @@ namespace PolarShadow.ViewModels
 
         private IAsyncRelayCommand _resourceOperateCommand;
         public IAsyncRelayCommand ResourceOperateCommand => _resourceOperateCommand ??= new AsyncRelayCommand(ResourceOperate);
+
+        private IAsyncRelayCommand _linkClickCommand;
+        public IAsyncRelayCommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(LinkClick);
 
         public void ApplyParameter(IDictionary<string, object> parameters)
         {
@@ -195,6 +202,70 @@ namespace PolarShadow.ViewModels
                     _bufferCache.Remove(BufferCache.SHA(this.Resource.ImageSrc), BufferLocation.File);
                 }
                 IsSaved = false;
+            }
+            catch (Exception ex)
+            {
+                _notify.Show(ex);
+            }
+
+        }
+
+        private async Task LinkClick(ResourceTreeNode node)
+        {
+            try
+            {
+                switch (node.SrcType)
+                {
+                    case LinkType.Magnet:
+                        await StartMagnet(node);
+                        break;
+                    case LinkType.HTML:
+                        break;
+                    default:
+                        _notify.Show($"Not support type:{node.SrcType}");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _notify.Show(ex);
+            }
+
+        }
+
+        private async Task StartMagnet(ResourceTreeNode node)
+        {
+            var rpc = await _preference.GetAsync(PreferenceOption.RPC, string.Empty);
+            var downloadFolder = await _preference.GetAsync(PreferenceOption.DownloadPath, string.Empty);
+            if (string.IsNullOrEmpty(rpc) || string.IsNullOrEmpty(downloadFolder))
+            {
+                _notify.Show("Aria2 configuration information is incomplete");
+                return;
+            }
+
+            try
+            {
+                using (var aria2 = new Aria2Http(new Uri(rpc)))
+                {
+                    var request = aria2.CreateAddUri(new string[] { node.Src }, new Aria2InputFileOption
+                    {
+                        Dir = @$"{downloadFolder}\{Resource.Name}"
+                    });
+
+                    var result = await aria2.PostAsync(request);
+                    if (result.IsOk())
+                    {
+                        _notify.Show($"{Resource.Name} downdload started");
+                    }
+                    else if (result.IsError())
+                    {
+                        _notify.Show(result.Error.Message, NotificationType.Error);
+                    }
+                    else
+                    {
+                        _notify.Show(result.Result);
+                    }
+                }
             }
             catch (Exception ex)
             {

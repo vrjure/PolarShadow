@@ -53,7 +53,9 @@
 																			MinWidth="80"
 																			MinHeight="30"
 																			VerticalContentAlignment="Center"
-																			HorizontalContentAlignment="Center"/>
+																			HorizontalContentAlignment="Center"
+																			Command="{Binding $parent[UserControl].((ps:DetailViewModel)DataContext).LinkClickCommand}"
+																			CommandParameter="{Binding}"/>
 																</DataTemplate>
 															</ItemsControl.ItemTemplate>
 														</ItemsControl>
