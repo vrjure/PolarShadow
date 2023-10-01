@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0-android</TargetFramework>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibVLCSharp" Version="3.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="VLC\" />
+  </ItemGroup>
+
+</Project>

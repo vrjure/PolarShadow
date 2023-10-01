@@ -22,7 +22,10 @@ public partial class MainViewModel : ViewModelBase
         new(){ Name = "main", Icon = "\uEE26", VMType = typeof(BookshelfViewModel)},
         new(){ Name = "discover", Icon = "\uEBC1", VMType = typeof(DiscoverViewModel)},
         new(){ Name = "source", Icon = "\uEDC6", VMType = typeof(BookSourceViewModel)},
-        new(){ Name = "user", Icon="\uF25F", VMType = typeof(MineViewModel)}
+        new(){ Name = "user", Icon="\uF25F", VMType = typeof(MineViewModel)},
+#if DEBUG
+        new(){ Name = "test", Icon="\uED3E", VMType = typeof(VideoPlayerViewModel)}
+#endif
     };
 
     private ICommand _menuClickedCommand;

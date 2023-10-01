@@ -8,8 +8,8 @@ namespace PolarShadow.Aria2
 {
     public interface IAria2Client
     {
-        public Uri Uri { get; }
-        public string Secret { get; }
-        public string Id { get; }
+        Uri Uri { get; }
+        string Secret { get; }
+        string Id { get; }
     }
 }

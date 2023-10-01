@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Avalonia.NativeControls\Avalonia.NativeControls.csproj" />
     <ProjectReference Include="..\PolarShadow.Aria2\PolarShadow.Aria2.csproj" />
     <ProjectReference Include="..\PolarShadow.Core\PolarShadow.Core.csproj" />
     <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
@@ -49,6 +50,7 @@
 
   <ItemGroup>
     <Folder Include="Animations\" />
+    <Folder Include="Styles\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
+using LibVLCSharp.Shared;
 using PolarShadow.ViewModels;
 
 namespace PolarShadow.Views

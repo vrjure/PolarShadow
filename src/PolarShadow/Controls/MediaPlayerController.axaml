@@ -1,0 +1,107 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ps="https://github.com/PolarShadow"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="PolarShadow.Controls.MediaPlayerController">
+
+	<Design.DesignStyle>
+		<Style Selector="Panel.design">
+			<Setter Property="Background" Value="Black"/>
+		</Style>
+	</Design.DesignStyle>
+	<Panel Classes="design">
+		<Grid RowDefinitions="50,*,60"
+		  Margin="0,8"
+		  Classes="autoHide">
+			<Grid.Styles>
+				<Style Selector="Grid.autoHide">
+					<Setter Property="Opacity" Value="0"/>
+					<Style Selector="^:pointerover">
+						<Setter Property="Opacity" Value="1"/>
+					</Style>
+				</Style>
+			</Grid.Styles>
+			<Grid.Transitions>
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.5"/>
+				</Transitions>
+			</Grid.Transitions>
+			<Grid ColumnDefinitions="*,*"
+				Background="#00FFFFFF">
+				<!--top left-->
+				<StackPanel Orientation="Horizontal"
+							Spacing="16"
+							VerticalAlignment="Center">
+					<!--<Button Classes="icon"
+							Content="&#xEA64;"
+							IsVisible="{Binding BackButton}"
+							Foreground="White"/>-->
+					<TextBlock Text="{Binding $parent[UserControl].Title}"
+								Foreground="White"/>
+				</StackPanel>
+				<!--top right-->
+				<StackPanel Orientation="Horizontal"
+							HorizontalAlignment="Right">
+
+				</StackPanel>
+			</Grid>
+			<Grid Grid.Row="2"
+				RowDefinitions="*,*"
+				Background="#00FFFFFF">
+				<!--bar-->
+				<Grid Margin="8,0,8,0"
+					  ColumnDefinitions="80,*,80">
+					<TextBlock Text="{Binding $parent[UserControl].Time, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
+								Grid.Column="0"
+								VerticalAlignment="Center"
+								Foreground="White"/>
+					<TextBlock Text="{Binding $parent[UserControl].Length, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
+								Grid.Column="2"
+								VerticalAlignment="Center"
+								Foreground="White"/>
+					<Slider Margin="16,0"
+							Grid.Column="1"
+							VerticalAlignment="Center"
+							Maximum="{Binding $parent[UserControl].Length, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
+							Minimum="0"
+							Value="{Binding $parent[UserControl].Time, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}, Mode=TwoWay}">
+					</Slider>
+				</Grid>
+				<DockPanel Grid.Row="1">
+					<StackPanel Orientation="Horizontal"
+								Spacing="16">
+						<Button Classes="icon"
+								Content="&#xF13F;"
+								Foreground="White"
+								VerticalContentAlignment="Center"
+								Click="PreviousClick"/>
+						<Button Classes="icon"
+								Content="&#xF00A;"
+								FontSize="32"
+								Foreground="White"
+								VerticalContentAlignment="Center"
+								Click="PlayPauseClick">
+							<Button.Styles>
+								<Style Selector="Button.play">
+									<Setter Property="Content" Value="&#xF00A;"/>
+								</Style>
+								<Style Selector="Button.pause">
+									<Setter Property="Content" Value="&#xEFD7;"/>
+								</Style>
+							</Button.Styles>
+						</Button>
+						<Button Classes="icon"
+								Content="&#xF143;"
+								Foreground="White"
+								VerticalContentAlignment="Center"
+								Click="NextClick"/>
+					</StackPanel>
+
+				</DockPanel>
+			</Grid>
+		</Grid>
+	</Panel>
+	
+</UserControl>

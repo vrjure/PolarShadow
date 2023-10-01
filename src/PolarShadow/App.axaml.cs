@@ -19,6 +19,7 @@ using PolarShadow.Resources;
 using System.Text;
 using AvaloniaWebView;
 using PolarShadow.Handlers;
+using Avalonia.NativeControls;
 
 namespace PolarShadow;
 
@@ -36,27 +37,26 @@ public partial class App : Application
 
     public override void Initialize()
     {
-        AvaloniaXamlLoader.Load(_services, this);
+        AvaloniaXamlLoader.Load(this);
+        AvaloniaWebViewBuilder.Initialize(default);
+        NativeControlHandlers.Initialize();
     }
 
     public override void RegisterServices()
     {
         base.RegisterServices();
-
-        AvaloniaWebViewBuilder.Initialize(default);
+        ConfigureService();
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
-        ConfigureService();
-
         var topLevelService = _services.GetRequiredService<ITopLevelService>();
         var nav = _services.GetRequiredService<INavigationService>();
 
         // Line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
         BindingPlugins.DataValidators.RemoveAt(0);
-
+        
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = _services.GetRequiredService<MainWindow>();
@@ -87,6 +87,8 @@ public partial class App : Application
 
         RegisterCache(service);
 
+        RegisterVLC(service);
+
         _services = service.BuildServiceProvider();
 
     }
@@ -113,6 +115,7 @@ public partial class App : Application
         service.RegisterTransientViewWithModel<DiscoverView, DiscoverViewModel>();
         service.RegisterTransientViewWithModel<DiscoverDetailView, DiscoverDetailViewModel>();
         service.RegisterTransientViewWithModel<MineView, MineViewModel>();
+        service.RegisterTransientViewWithModel<VideoPlayerView, VideoPlayerViewModel>();
     }
 
     private void RegisterPolarShadow(IServiceCollection service)
@@ -150,5 +153,10 @@ public partial class App : Application
         {
             Directory.CreateDirectory(CacheFolder);
         }
+    }
+
+    private void RegisterVLC(IServiceCollection service)
+    {
+        service.AddLibVLC();
     }
 }

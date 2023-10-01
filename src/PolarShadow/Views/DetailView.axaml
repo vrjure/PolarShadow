@@ -69,7 +69,7 @@
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
-			</StackPanel>
+		</StackPanel>
 		</ScrollViewer>
 		<PathIcon Data="{StaticResource loader2}"
 				  Classes.spin="{Binding IsLoading}"

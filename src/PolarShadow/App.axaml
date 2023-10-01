@@ -19,6 +19,13 @@
 		<x:Double x:Key="TitleBarHeight">40</x:Double>
 		<x:Double x:Key="ListBoxWrapPanelItemWidth">180</x:Double>
 		
+		<!--slider-->
+		<GridLength x:Key="SliderPreContentMargin">auto</GridLength>
+		<GridLength x:Key="SliderPostContentMargin">auto</GridLength>
+		<x:Double x:Key="SliderHorizontalHeight">10</x:Double>
+		<x:Double x:Key="SliderHorizontalThumbWidth">10</x:Double>
+		<x:Double x:Key="SliderHorizontalThumbHeight">10</x:Double>
+		
 		<!--Colors-->
 		<Color x:Key="TitleBarColor">#f3f3f3</Color>
 
