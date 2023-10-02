@@ -61,6 +61,9 @@ namespace PolarShadow.Core
                     case NameSlotTokenType.Match:
                         currentValue = MatchValue(ref reader, currentValue);
                         break;
+                    case NameSlotTokenType.SubString:
+                        currentValue = SubStringValue(ref reader, currentValue);
+                        break;
                     case NameSlotTokenType.Condition:
                     case NameSlotTokenType.ConditionOperator:
                         currentValue = CompareValue(ref reader, parameter, currentValue);
@@ -200,6 +203,39 @@ namespace PolarShadow.Core
             }
 
             return result.Success ? result.Value : string.Empty;
+        }
+
+        private static string SubStringValue(ref NameSlotReader reader, string value)
+        {
+            var range = reader.GetString().Trim();
+            var array = range.Split("..", StringSplitOptions.RemoveEmptyEntries);
+            if (array.Length > 2)
+            {
+                return value;
+            }
+            var indexArray = new Index[array.Length];
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i].StartsWith('^'))
+                {
+                    indexArray[i] = new Index(int.Parse(array[i].Trim()[1..]), true);
+                }
+                else
+                {
+                    indexArray[i] = int.Parse(array[i].Trim());
+                }
+            }
+
+            if(indexArray.Length == 0)
+            {
+                return value;
+            }
+            else if (indexArray.Length == 1)
+            {
+                return value[indexArray[0]].ToString();
+            }
+
+            return value[indexArray[0]..indexArray[1]];
         }
     }
 }

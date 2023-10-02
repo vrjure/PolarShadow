@@ -46,7 +46,11 @@ namespace PolarShadow.Core
         /// <summary>
         /// ''字符串
         /// </summary>
-        String
+        String,
+        /// <summary>
+        /// :[,]
+        /// </summary>
+        SubString
 
     }
 }

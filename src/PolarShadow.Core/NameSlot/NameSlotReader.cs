@@ -129,6 +129,8 @@ namespace PolarShadow.Core
                     return ReadFormatNext();
                 case NameSlotTokenType.Match:
                     return ReadMatchNext();
+                case NameSlotTokenType.SubString:
+                    return ReadSubStringNext();
                 case NameSlotTokenType.Parameter:
                     return ReadParameterNext();
                 case NameSlotTokenType.Text:
@@ -188,6 +190,11 @@ namespace PolarShadow.Core
             {
                 _index++;
                 return ReadMatchEnd();
+            }
+            else if (ch == NameSlotConstants.Colon && NextCharIs(NameSlotConstants.LeftBrackets))
+            {
+                _index++;
+                return ReadSubStringEnd();
             }
             else if (ch == NameSlotConstants.Colon)
             {
@@ -279,16 +286,11 @@ namespace PolarShadow.Core
 
         private bool ReadMatchNext()
         {
-            var ch = _buffer[_index];
-            if (ch == NameSlotConstants.SlotEnd)
-            {
-                return ReadEnd();
-            }
-            else if (NameSlotConstants.ConditionExpressionStartChars.IndexOf(ch) > -1)
-            {
-                return ReadConditionEnd();
-            }
-            return false;
+            return ReadFormatNext();
+        }
+        private bool ReadSubStringNext()
+        {
+            return ReadFormatNext();
         }
 
         private bool ReadMatchEnd()
@@ -324,6 +326,25 @@ namespace PolarShadow.Core
                 {
                     _tokenType = NameSlotTokenType.Format;
                     _segmentEnd = --_index;
+                    return true;
+                }
+                _index++;
+            }
+
+            return false;
+        }
+
+        private bool ReadSubStringEnd()
+        {
+            _index++;
+            Skip();
+            _segmentStart = _segmentEnd = _index;
+            while (CanRead())
+            {
+                if (IsSubStringEnd(_buffer[_index]))
+                {
+                    _tokenType = NameSlotTokenType.SubString;
+                    _segmentEnd = _index-1;
                     return true;
                 }
                 _index++;
@@ -506,6 +527,11 @@ namespace PolarShadow.Core
         private bool IsFormatEnd(byte ch)
         {
             return ch == NameSlotConstants.Space || ch == NameSlotConstants.SlotEnd || NameSlotConstants.ConditionExpressionStartChars.IndexOf(ch) > -1;
+        }
+
+        private bool IsSubStringEnd(byte ch)
+        {
+            return ch == NameSlotConstants.RightBrackets;
         }
     }
 }

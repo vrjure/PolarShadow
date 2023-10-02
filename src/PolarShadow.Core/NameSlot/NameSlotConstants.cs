@@ -25,6 +25,8 @@ namespace PolarShadow.Core
         public const byte At = (byte)'@';
         public const byte Tilde = (byte)'~';
         public const byte Apostrophe = (byte)'\'';
+        public const byte LeftBrackets = (byte)'[';
+        public const byte RightBrackets = (byte)']';
 
         public const byte Equal = (byte)'=';
         public const byte Not = (byte)'!';
