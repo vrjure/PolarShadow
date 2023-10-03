@@ -8,75 +8,76 @@
 			 x:DataType="ps:TopLayoutViewModel"
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True">
-    <Grid RowDefinitions="auto,*"
-		  ColumnDefinitions="auto,*,auto">
+    <Grid RowDefinitions="auto,*">
 		<!--webviewContainer-->
 		<Panel x:Name="webViewContainer"/>
-		<!--bar color-->
-		<Border Background="{StaticResource TitleBarColor}"
-				IsHitTestVisible="False"
-				Height="{StaticResource TitleBarHeight}"
-				Grid.ColumnSpan="3"/>
-		<!--left-->
-		<StackPanel Orientation="Horizontal"
-					Spacing="10"
-					Margin="10,0,0,0">
-			<Button Classes="icon"
-					Content="&#xEA60;"
-					x:Name="backButton"
-					VerticalAlignment="Center"
-					VerticalContentAlignment="Center"
-					ps:NavigationManager.BackName="{x:Static ps:TopLayoutViewModel.NavigationName}">
-			</Button>
-			<!--Title-->
+		<Grid ColumnDefinitions="auto,*,auto"
+			  IsVisible="{Binding ShowTitleBar}">
+			<!--bar color-->
+			<Border Background="{StaticResource TitleBarColor}"
+					IsHitTestVisible="False"
+					Height="{StaticResource TitleBarHeight}"
+					Grid.ColumnSpan="3"/>
+			<!--left-->
 			<StackPanel Orientation="Horizontal"
-						Background="{StaticResource TitleBarColor}"						
-					    Classes.left="{Binding !#backButton.Opacity}"
-					    Classes.right="{Binding !!#backButton.Opacity}">
-				<StackPanel.Styles>
-					<Style Selector="StackPanel.left">
-						<Setter Property="RenderTransform" Value="translateX(-33px)"/>
-					</Style>
-					<Style Selector="StackPanel.right">
-						<Setter Property="RenderTransform" Value="translateX(0px)"/>
-					</Style>
-				</StackPanel.Styles>
-				<StackPanel.Transitions>
-					<Transitions>
-						<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
-					</Transitions>
-				</StackPanel.Transitions>
-				<TextBlock Text="PolarShadow"
-						   VerticalAlignment="Center">
-				</TextBlock>
+						Spacing="10"
+						Margin="10,0,0,0">
+				<Button Classes="icon"
+						Content="&#xEA60;"
+						x:Name="backButton"
+						VerticalAlignment="Center"
+						VerticalContentAlignment="Center"
+						ps:NavigationManager.BackName="{x:Static ps:TopLayoutViewModel.NavigationName}">
+				</Button>
+				<!--Title-->
+				<StackPanel Orientation="Horizontal"
+							Background="{StaticResource TitleBarColor}"
+							Classes.left="{Binding !#backButton.Opacity}"
+							Classes.right="{Binding !!#backButton.Opacity}">
+					<StackPanel.Styles>
+						<Style Selector="StackPanel.left">
+							<Setter Property="RenderTransform" Value="translateX(-33px)"/>
+						</Style>
+						<Style Selector="StackPanel.right">
+							<Setter Property="RenderTransform" Value="translateX(0px)"/>
+						</Style>
+					</StackPanel.Styles>
+					<StackPanel.Transitions>
+						<Transitions>
+							<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+						</Transitions>
+					</StackPanel.Transitions>
+					<TextBlock Text="PolarShadow"
+								VerticalAlignment="Center">
+					</TextBlock>
+				</StackPanel>
 			</StackPanel>
-		</StackPanel>
-		<!--CentenContainer-->
-		<TransitioningContentControl ps:ToolBarAttached.Name="{x:Static ps:TopLayoutViewModel.CenterTitleBarContainer}"
-									 VerticalAlignment="Center"
-									 HorizontalAlignment="Stretch"
-									 Grid.Column="1">
-
-		</TransitioningContentControl>
-		<!--RightContainer-->
-		<StackPanel HorizontalAlignment="Right"
-					VerticalAlignment="Center"
-					Orientation="Horizontal"
-					Spacing="10"
-					Margin="0,0,145,0"
-					Grid.Column="2">
-			<TransitioningContentControl ps:ToolBarAttached.Name="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+			<!--CentenContainer-->
+			<TransitioningContentControl ps:ToolBarAttached.Name="{x:Static ps:TopLayoutViewModel.CenterTitleBarContainer}"
+											VerticalAlignment="Center"
+											HorizontalAlignment="Stretch"
+											Grid.Column="1">
 
 			</TransitioningContentControl>
-			<TextBlock Text="|"
-					   VerticalAlignment="Center"
-					   Foreground="LightGray"
-					   FontSize="20">
-			</TextBlock>
-		</StackPanel>
+			<!--RightContainer-->
+			<StackPanel HorizontalAlignment="Right"
+						VerticalAlignment="Center"
+						Orientation="Horizontal"
+						Spacing="10"
+						Margin="0,0,145,0"
+						Grid.Column="2">
+				<TransitioningContentControl ps:ToolBarAttached.Name="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+
+				</TransitioningContentControl>
+				<TextBlock Text="|"
+							VerticalAlignment="Center"
+							Foreground="LightGray"
+							FontSize="20">
+				</TextBlock>
+			</StackPanel>
+		</Grid>
 
 		<TransitioningContentControl Grid.Row="1"
-									 Grid.ColumnSpan="3"
 									 ps:NavigationManager.ContainerName="{x:Static ps:TopLayoutViewModel.NavigationName}">
 			
 		</TransitioningContentControl>
@@ -88,8 +89,7 @@
 				  HorizontalAlignment="Center"
 				  Classes.spin="{Binding IsLoading}"
 				  IsVisible="{Binding IsLoading}"
-				  Grid.RowSpan="2"
-				  Grid.ColumnSpan="3"/>
+				  Grid.RowSpan="2"/>
 
 	</Grid>
 </UserControl>

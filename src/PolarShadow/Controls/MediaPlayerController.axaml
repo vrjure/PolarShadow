@@ -12,9 +12,8 @@
 		</Style>
 	</Design.DesignStyle>
 	<Panel Classes="design">
-		<Grid RowDefinitions="50,*,60"
-		  Margin="0,8"
-		  Classes="autoHide">
+		<Grid RowDefinitions="60,*,auto"
+				Classes="autoHide">
 			<Grid.Styles>
 				<Style Selector="Grid.autoHide">
 					<Setter Property="Opacity" Value="0"/>
@@ -33,7 +32,8 @@
 				<!--top left-->
 				<StackPanel Orientation="Horizontal"
 							Spacing="16"
-							VerticalAlignment="Center">
+							VerticalAlignment="Center"
+							Margin="8,0,0,0">
 					<!--<Button Classes="icon"
 							Content="&#xEA64;"
 							IsVisible="{Binding BackButton}"
@@ -48,7 +48,7 @@
 				</StackPanel>
 			</Grid>
 			<Grid Grid.Row="2"
-				RowDefinitions="*,*"
+				RowDefinitions="*,*,8"
 				Background="#00FFFFFF">
 				<!--bar-->
 				<Grid Margin="8,0,8,0"
@@ -61,7 +61,7 @@
 								Grid.Column="2"
 								VerticalAlignment="Center"
 								Foreground="White"/>
-					<Slider Margin="16,0"
+					<Slider Margin="8,0"
 							Grid.Column="1"
 							VerticalAlignment="Center"
 							Maximum="{Binding $parent[UserControl].Length, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
@@ -71,18 +71,21 @@
 				</Grid>
 				<DockPanel Grid.Row="1">
 					<StackPanel Orientation="Horizontal"
-								Spacing="16">
+								Spacing="16"
+								DockPanel.Dock="Left">
 						<Button Classes="icon"
 								Content="&#xF13F;"
 								Foreground="White"
 								VerticalContentAlignment="Center"
-								Click="PreviousClick"/>
+								Click="PreviousClick"
+								IsVisible="{Binding $parent[UserControl].ShowPrevious}"/>
 						<Button Classes="icon"
-								Content="&#xF00A;"
 								FontSize="32"
 								Foreground="White"
 								VerticalContentAlignment="Center"
-								Click="PlayPauseClick">
+								Click="PlayPauseClick"
+								Classes.play="{Binding !$parent[UserControl].IsPlaying}"
+								Classes.pause="{Binding $parent[UserControl].IsPlaying}">
 							<Button.Styles>
 								<Style Selector="Button.play">
 									<Setter Property="Content" Value="&#xF00A;"/>
@@ -96,9 +99,30 @@
 								Content="&#xF143;"
 								Foreground="White"
 								VerticalContentAlignment="Center"
-								Click="NextClick"/>
+								Click="NextClick"
+								IsVisible="{Binding $parent[UserControl].ShowPrevious}"/>
 					</StackPanel>
-
+					<StackPanel DockPanel.Dock="Right"
+								Margin="8,0">
+						<Button Classes="icon"
+								VerticalAlignment="Center"
+								Foreground="White"
+								Classes.fullScreen="{Binding !$parent[UserControl].FullScreen}"
+								Classes.exitFullScreen="{Binding $parent[UserControl].FullScreen}"
+								Click="FullScreenClick">
+							<Button.Styles>
+								<Style Selector="Button.fullScreen">
+									<Setter Property="Content" Value="&#xED9B;"/>
+								</Style>
+								<Style Selector="Button.exitFullScreen">
+									<Setter Property="Content" Value="&#xED99;"/>
+								</Style>
+							</Button.Styles>
+						</Button>
+					</StackPanel>
+					<Border>
+					
+					</Border>
 				</DockPanel>
 			</Grid>
 		</Grid>

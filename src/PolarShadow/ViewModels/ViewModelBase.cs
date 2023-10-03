@@ -32,7 +32,7 @@ public class ViewModelBase : ObservableRecipient, INavigationNotify
         _loaded = true;
 
         Load();
-        //base.OnActivated();
+        base.OnActivated();
     }
 
     protected override void OnDeactivated()

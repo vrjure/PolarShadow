@@ -13,6 +13,7 @@ namespace PolarShadow.Resources
         ALiYunDrive = 8,
         Quark = 16,
         M3U8 = 32,
-        HTML = 64
+        HTML = 64,
+        Meida = 128
     }
 }

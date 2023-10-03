@@ -47,10 +47,11 @@ namespace PolarShadowTests
                 "Test10:{/div/a/@href:/.*/i} middle {right:F1} end",
                 "Test11:{///div/a/@href:/.*/i} middle {right:F1} end",
                 "Test12:erro format {/div/a/@href:/.*/i middle {right:F1} end",
-                "Test12:condition expression: {/div/a/@href:/.*/i ? 'a': 'b'} end",
-                "Test12:condition expression: {/div/a/@href:/.*/i == 'abc' ? 'a': 'b'} end",
-                "Test12:error condition expression: {/div/a/@href:/.*/i == 'abc' : 'a': 'b'} end",
-                "Test12:raw: {{/div/a/@href:/.*/i == 'abc' ? 'a': '{b}'}} end",
+                "Test13:condition expression: {/div/a/@href:/.*/i ? 'a': 'b'} end",
+                "Test14:condition expression: {/div/a/@href:/.*/i == 'abc' ? 'a': 'b'} end",
+                "Test15:error condition expression: {/div/a/@href:/.*/i == 'abc' : 'a': 'b'} end",
+                "Test16:raw: {{/div/a/@href:/.*/i == 'abc' ? 'a': '{b}'}} end",
+                "Test17:substring: {///div/a/@href:[0..^1]} middle {right:F1} end",
             };
 
             foreach (var item in readTestList)
@@ -94,7 +95,8 @@ namespace PolarShadowTests
                 "get html value:{///book[@genre='novel']/title}",
                 "get html value:{///book[@genre='novel']/title:/.*fid/}",
                 "get html value:{///book[@genre='novel']/title:/.*fid/i}",
-                "compare html value:{///book[@genre='novel']/title:/.*fid/i=='The Confid' ? '{title}':'false'}"
+                "compare html value:{///book[@genre='novel']/title:/.*fid/i=='The Confid' ? '{title}':'false'}",
+                "substring html value:{///book[@genre='novel']/title:[1..^2]}"
             };
 
             foreach (var item in list)

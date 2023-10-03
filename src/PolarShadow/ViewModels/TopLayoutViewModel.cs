@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.ViewModels
 {
-    public class TopLayoutViewModel : ViewModelBase, IRecipient<LoadingState>
+    public class TopLayoutViewModel : ViewModelBase, IRecipient<LoadingState>, IRecipient<FullScreenState>
     {
         public static string NavigationName = "TopLayoutContent";
         public static string RightTitleBarContainer = "RightTitleBarContianer";
@@ -29,8 +29,13 @@ namespace PolarShadow.ViewModels
             _dbFactory = dbFactory;
             _notify = notify;
             _polar = polar;
+        }
 
-            WeakReferenceMessenger.Default.Register<LoadingState>(this);
+        private bool _ShowTitleBar = true;
+        public bool ShowTitleBar
+        {
+            get => _ShowTitleBar;
+            set => SetProperty(ref _ShowTitleBar, value);
         }
 
         protected override async void OnLoad()
@@ -75,6 +80,11 @@ namespace PolarShadow.ViewModels
         void IRecipient<LoadingState>.Receive(LoadingState message)
         {
             IsLoading = message.IsLoading;
+        }
+
+        void IRecipient<FullScreenState>.Receive(FullScreenState message)
+        {
+            ShowTitleBar = !message.IsFullScreen;
         }
     }
 }

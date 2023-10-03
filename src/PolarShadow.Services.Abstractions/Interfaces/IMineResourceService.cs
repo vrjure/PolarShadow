@@ -25,6 +25,12 @@ namespace PolarShadow.Services
         /// <returns></returns>
         Task<ICollection<ResourceModel>> GetRootChildrenAsync(int rootId);
         /// <summary>
+        /// 获取单个资源
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<ResourceModel> GetResourceAsync(int id);
+        /// <summary>
         /// 保存资源树
         /// </summary>
         /// <param name="tree"></param>

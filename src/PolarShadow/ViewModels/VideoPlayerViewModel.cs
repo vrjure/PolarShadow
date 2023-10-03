@@ -1,11 +1,16 @@
-﻿using Avalonia.Controls.Notifications;
+﻿using Avalonia;
+using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
+using PolarShadow.Core;
+using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,17 +18,21 @@ namespace PolarShadow.ViewModels
 {
     public class VideoPlayerViewModel : ViewModelBase, IParameterObtain
     {
+        private static readonly Thickness FullSceenPadding = new Thickness(0);
+        private static readonly Thickness NormalScreenPadding = new Thickness(1, 0, 2, 1);
+
         private readonly LibVLC _libVLC;
         private readonly INotificationManager _notify;
-        private readonly INavigationService _nav;
-        public VideoPlayerViewModel(LibVLC libVLC, INotificationManager notify, INavigationService nav)
+        private readonly ITopLevelService _topLevel;
+        public VideoPlayerViewModel(LibVLC libVLC, INotificationManager notify, ITopLevelService topLevel)
         {
             _libVLC = libVLC;
             _notify = notify;
-            _nav = nav;
+            _topLevel = topLevel;
         }
 
         public ILink Param_Episode { get; set; }
+        public string Param_Title { get; set; }
 
         private MediaPlayer _mediaPlayer;
         public MediaPlayer MediaPlayer
@@ -32,11 +41,57 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _mediaPlayer, value);
         }
 
-        public string _title;
+        private string _title;
         public string Title
         {
             get => _title;
             set => SetProperty(ref _title, value);
+        }
+
+        private bool _showNext;
+        public bool ShowNext
+        {
+            get => _showNext;
+            set => SetProperty(ref _showNext, value);
+        }
+
+        private bool _showPrevious;
+        public bool ShowPrevious
+        {
+            get => _showPrevious;
+            set => SetProperty(ref _showPrevious, value);
+        }
+
+        private bool _fullScreen;
+        public bool FullScreen
+        {
+            get => _fullScreen;
+            set
+            {
+                if (SetProperty(ref _fullScreen, value))
+                {
+                    if (_fullScreen)
+                    {
+                        Messenger.Send(FullScreenState.FullScreen);
+                        Padding = FullSceenPadding;
+                        _topLevel.FullScreen();
+                    }
+                    else
+                    {
+                        Messenger.Send(FullScreenState.Normal);
+                        Padding = NormalScreenPadding;
+                        _topLevel.ExitFullScreen();
+                    }
+
+                }
+            }
+        }
+
+        private Thickness _padding = NormalScreenPadding;
+        public Thickness Padding
+        {
+            get => _padding;
+            set => SetProperty(ref _padding, value);
         }
 
         public void ApplyParameter(IDictionary<string, object> parameters)
@@ -44,7 +99,11 @@ namespace PolarShadow.ViewModels
             if (parameters.TryGetValue(nameof(Param_Episode), out ILink node))
             {
                 Param_Episode = node;
-                Title = Param_Episode.Name;
+            }
+
+            if (parameters.TryGetValue(nameof(Param_Title), out string title))
+            {
+                Title = title;
             }
         }
 
@@ -56,12 +115,51 @@ namespace PolarShadow.ViewModels
                 return;
             }
 
-            
+            ShowPrevious = false;
+            ShowNext = false;
 
+            var videoUrl = Param_Episode;
+
+            switch (Param_Episode.SrcType)
+            {
+                case LinkType.M3U8:
+                case LinkType.Meida:
+                    break;
+                default:
+                    _notify.Show($"not support media [{Param_Episode.SrcType}]");
+                    return;
+            }
+
+            if (videoUrl == null)
+            {
+                _notify.Show("No resource");
+                return;
+            }
+            
             if (MediaPlayer == null)
             {
                 MediaPlayer = new MediaPlayer(_libVLC);
             }
+
+            MediaPlayer.Play(new Media(_libVLC, new Uri(videoUrl.Src)));
+        }
+
+        protected override void OnUnload()
+        {
+            try
+            {
+                if (MediaPlayer == null)
+                {
+                    return;
+                }
+                MediaPlayer.Stop();
+
+                var mp = MediaPlayer;
+                MediaPlayer = null;
+                mp.Dispose();
+            }
+            catch { }
+
         }
     }
 }

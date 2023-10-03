@@ -104,21 +104,20 @@ namespace Avalonia.NativeControls
         private void InitializeNativeOverlay()
         {
             if (!this.IsAttachedToVisualTree()) return;
-
+            
             if (_floatingContent == null && Content != null)
             {
-                var rect = this.Bounds;
-
                 _floatingContent = new Window
                 {
                     SystemDecorations = SystemDecorations.None,
                     TransparencyLevelHint = new WindowTransparencyLevel[] { WindowTransparencyLevel.Transparent },
                     Background = Brushes.Transparent,
-                    SizeToContent = SizeToContent.WidthAndHeight,
+                    SizeToContent = SizeToContent.Manual,
                     CanResize = false,
                     ShowInTaskbar = false,
                     Opacity = 1,
-                    ZIndex = int.MaxValue
+                    ZIndex = int.MaxValue,
+                    DataContext = this.DataContext
                 };
 
                 _disposables = new List<IDisposable>
@@ -144,64 +143,28 @@ namespace Avalonia.NativeControls
         {
             if (_floatingContent == null) return;
 
-            var forceSetWidth = true;
-            var forceSetHeight = true;
-
-            var topLeft = new Point();
-
-            var child = _floatingContent.Presenter?.Child;
-
-            if (child?.IsArrangeValid == true)
-            {
-                switch (child.HorizontalAlignment)
-                {
-                    case Layout.HorizontalAlignment.Stretch:
-                        forceSetWidth = true;
-                        break;
-                    case Layout.HorizontalAlignment.Center:
-                        topLeft = topLeft.WithX((Bounds.Width - _floatingContent.Width) / 2);
-                        break;
-                    case Layout.HorizontalAlignment.Right:
-                        topLeft = topLeft.WithX(Bounds.Width - _floatingContent.Bounds.Width);
-                        break;
-                }
-
-                switch (child.VerticalAlignment)
-                {
-                    case Layout.VerticalAlignment.Stretch:
-                        forceSetHeight = true;
-                        break;
-                    case Layout.VerticalAlignment.Center:
-                        topLeft = topLeft.WithY((Bounds.Height - _floatingContent.Bounds.Height) / 2);
-                        break;
-                    case Layout.VerticalAlignment.Bottom:
-                        topLeft = topLeft.WithY(Bounds.Height - _floatingContent.Bounds.Height);
-                        break;
-                }
-            }
-
-            if (forceSetWidth && forceSetHeight)
-                _floatingContent.SizeToContent = SizeToContent.Manual;
-            else if (forceSetHeight)
-                _floatingContent.SizeToContent = SizeToContent.Width;
-            else if (forceSetWidth)
-                _floatingContent.SizeToContent = SizeToContent.Height;
-            else
-                _floatingContent.SizeToContent = SizeToContent.Manual;
-
-            _floatingContent.Width = forceSetWidth ? Bounds.Width : double.NaN;
-            _floatingContent.Height = forceSetHeight ? Bounds.Height : double.NaN;
+            _floatingContent.Width = Bounds.Width;
+            _floatingContent.Height = Bounds.Height;
 
             _floatingContent.MaxWidth = Bounds.Width;
             _floatingContent.MaxHeight = Bounds.Height;
 
-            var newPosition = this.PointToScreen(topLeft);
+            PixelPoint newPosition;
+            if (VisualRoot is Window root && root.WindowState == WindowState.FullScreen)
+            {
+                newPosition = new PixelPoint(0, 0);
+            }
+            else
+            {
+                newPosition = this.PointToScreen(this.Bounds.Position);
+            }
 
             if (newPosition != _floatingContent.Position)
             {
                 _floatingContent.Position = newPosition;
             }
         }
+
 
         private void ShowNativeOverlay(bool visible)
         {

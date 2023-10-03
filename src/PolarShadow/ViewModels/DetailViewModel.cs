@@ -29,15 +29,17 @@ namespace PolarShadow.ViewModels
         private readonly IMineResourceService _mineResourceService;
         private readonly IBufferCache _bufferCache;
         private readonly IPreference _preference;
+        private readonly INavigationService _nav;
 
         private ResourceModel _rootResourceInDb;
-        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference)
+        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav)
         {
             _polar = polar;
             _notify = notify;
             _mineResourceService = mineResourceService;
             _bufferCache = bufferCache;
             _preference = preference;
+            _nav = nav;
         }
 
         public ILink Param_Link { get; set; }
@@ -62,7 +64,7 @@ namespace PolarShadow.ViewModels
         public IAsyncRelayCommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadOnline);
 
         private IAsyncRelayCommand _resourceOperateCommand;
-        public IAsyncRelayCommand ResourceOperateCommand => _resourceOperateCommand ??= new AsyncRelayCommand(ResourceOperate);
+        public IAsyncRelayCommand ResourceOperateCommand => _resourceOperateCommand ??= new AsyncRelayCommand(ResourceOperate, () => !IsLoading);
 
         private IAsyncRelayCommand _linkClickCommand;
         public IAsyncRelayCommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(LinkClick);
@@ -221,6 +223,21 @@ namespace PolarShadow.ViewModels
                         await StartMagnet(node);
                         break;
                     case LinkType.HTML:
+                        var url = await TryAnalysisVideoUrl(node);
+                        if (url == null)
+                        {
+                            //TODO Open Browser
+                        }
+                        else
+                        {
+                            var parent = await _mineResourceService.GetResourceAsync(node.ParentId);
+
+                            _nav.Navigate<VideoPlayerViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
+                            {
+                                {nameof(VideoPlayerViewModel.Param_Episode), url },
+                                {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{parent?.Name}" }
+                            }, true);
+                        }
                         break;
                     default:
                         _notify.Show($"Not support type:{node.SrcType}");
@@ -273,6 +290,45 @@ namespace PolarShadow.ViewModels
                 _notify.Show(ex);
             }
 
+        }
+
+        private async Task<ILink> TryAnalysisVideoUrl(ILink link)
+        {
+            try
+            {
+                IsLoading = true;
+                if (!_polar.TryGetSite(link.Site, out ISite site))
+                {
+                    _notify.Show($"Can not found site [{link.Site}]");
+                    return null;
+                }
+
+                var requestName = link.Request;
+                if (string.IsNullOrEmpty(requestName))
+                {
+                    requestName = Requests.Video;
+                }
+
+                if (!site.TryGetRequest(requestName, out ISiteRequest request))
+                {
+                    _notify.Show($"Can not found requst [{requestName}]");
+                    return null;
+                }
+
+                return await site.ExecuteAsync<ILink>(requestName, builder =>
+                {
+                    builder.AddObjectValue(link);
+                });
+            }
+            catch (Exception ex)
+            {
+                _notify.Show(ex);
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+            return null;
         }
     }
 }

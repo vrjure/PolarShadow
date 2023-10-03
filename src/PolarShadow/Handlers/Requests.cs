@@ -14,6 +14,7 @@ namespace PolarShadow
         public static string Detail = "detail";
         public const string Main = "main";
         public const string Categories = "categories";
+        public const string Video = "video";
 
         public static ISearchHandler<TLink> CreateSearchHander<TLink>(this IPolarShadow polarShadow, SearchFilter filter) where TLink : class, ILink
         {

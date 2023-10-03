@@ -11,7 +11,7 @@
 			 ps:PageLoadAttached.RegisterLoad="True">
 	<Grid Margin="10"
 		  RowDefinitions="*,60">
-		<ScrollViewer IsVisible="{Binding !IsLoading}">
+		<ScrollViewer>
 			<StackPanel Orientation="Vertical"
 						Spacing="10">
 				<Image Width="{StaticResource ListBoxWrapPanelItemWidth}"

@@ -9,10 +9,11 @@
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True"
 			 Background="Black">
-	<Grid>
+	<Border Padding="{Binding Padding}">
 		<ps:VideoView MediaPlayer="{Binding MediaPlayer}">
 			<ps:MediaPlayerController MediaPlayer="{Binding MediaPlayer}"
-									  Title="{Binding Title}"/>
+									  Title="{Binding Title}"
+									  FullScreen="{Binding FullScreen, Mode=TwoWay}"/>
 		</ps:VideoView>
-	</Grid>
+	</Border>
 </UserControl>

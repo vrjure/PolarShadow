@@ -35,6 +35,12 @@ namespace PolarShadow.Storage
             }
         }
 
+        public async Task<ResourceModel> GetResourceAsync(int id)
+        {
+            using var dbcontent = _dbContextFactory.CreateDbContext();
+            return await dbcontent.Resources.Where(f => f.Id == id).AsNoTracking().FirstOrDefaultAsync();
+        }
+
         public async Task<ICollection<ResourceModel>> GetRootChildrenAsync(int rootId)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
