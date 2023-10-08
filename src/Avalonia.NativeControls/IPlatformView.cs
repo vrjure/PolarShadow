@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Avalonia.NativeControls
 {
-    public interface IPlatformView : IPlatformHandle
+    public interface IPlatformView
     {
         IPlatformHandle CreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault);
         void DestroyControl(IPlatformHandle handle);

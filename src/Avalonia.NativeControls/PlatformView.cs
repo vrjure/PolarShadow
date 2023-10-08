@@ -7,29 +7,21 @@ namespace Avalonia.NativeControls
 {
     public abstract class PlatformView : IPlatformView
     {
-        public IntPtr Handle { get; private set; }
-
-        public string HandleDescriptor { get; private set; }
+        public IPlatformHandle Handle { get; set; }
 
         public IPlatformHandle CreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {
-            var handle = createDefault();
-
-            this.Handle = handle.Handle;
-            this.HandleDescriptor = handle.HandleDescriptor;
-
-            CreateControl();
-            return handle;
+            Handle = CreateControl(parent) ?? createDefault();
+            return Handle;
         }
 
 
         public void DestroyControl(IPlatformHandle handler)
         {
-            Handle = IntPtr.Zero;
-            HandleDescriptor = string.Empty;
             DestroyControl();
+            Handle = null;
         }
-        protected abstract void CreateControl();
+        protected abstract IPlatformHandle CreateControl(IPlatformHandle parent);
         protected abstract void DestroyControl();
     }
 }

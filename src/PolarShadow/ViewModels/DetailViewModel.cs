@@ -99,7 +99,7 @@ namespace PolarShadow.ViewModels
             else
             {
                 await LoadOnline();
-            }            
+            }
         }
 
         private async Task LoadLocal(ResourceModel root)

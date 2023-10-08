@@ -26,15 +26,11 @@ namespace Avalonia.NativeControls
 
         static VideoView()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            ContentProperty.Changed.AddClassHandler<VideoView>((s, e) =>
             {
-                ContentProperty.Changed.AddClassHandler<VideoView>((s, e) =>
-                {
-                    s.InitializeNativeOverlay();
-                    s.UpdateOverlayPosition();
-                });
-                BoundsProperty.Changed.AddClassHandler<VideoView>((s, e) => s.UpdateOverlayPosition());
-            }
+                s.SetOverlayContent();
+            });
+
         }
 
         public static readonly DirectProperty<VideoView, MediaPlayer> MediaPlayerProperty = AvaloniaProperty.RegisterDirect<VideoView, MediaPlayer>(
@@ -85,6 +81,7 @@ namespace Avalonia.NativeControls
             }
 
             this.Handler.SetVirtualView(this);
+            this.SetOverlayContent();
 
             if (this.Handler.PlatformView == null)
             {
@@ -101,128 +98,15 @@ namespace Avalonia.NativeControls
             base.DestroyNativeControlCore(control);
         }
 
-        private void InitializeNativeOverlay()
+        private void SetOverlayContent()
         {
-            if (!this.IsAttachedToVisualTree()) return;
-            
-            if (_floatingContent == null && Content != null)
+            if (this.Handler == null)
             {
-                _floatingContent = new Window
-                {
-                    SystemDecorations = SystemDecorations.None,
-                    TransparencyLevelHint = new WindowTransparencyLevel[] { WindowTransparencyLevel.Transparent },
-                    Background = Brushes.Transparent,
-                    SizeToContent = SizeToContent.Manual,
-                    CanResize = false,
-                    ShowInTaskbar = false,
-                    Opacity = 1,
-                    ZIndex = int.MaxValue,
-                    DataContext = this.DataContext
-                };
-
-                _disposables = new List<IDisposable>
-                {
-                    _floatingContent.Bind(Window.ContentProperty, this.GetObservable(ContentProperty))
-                };
-
-                if (VisualRoot is Window root)
-                {
-                    root.PositionChanged += Window_PositionChanged;
-                }
+                return;
             }
 
-            ShowNativeOverlay(IsEffectivelyVisible);
+            this.Handler.PlatformView.OverlayContent = Content;
         }
 
-        private void Window_PositionChanged(object sender, PixelPointEventArgs e)
-        {
-            UpdateOverlayPosition();
-        }
-
-        private void UpdateOverlayPosition()
-        {
-            if (_floatingContent == null) return;
-
-            _floatingContent.Width = Bounds.Width;
-            _floatingContent.Height = Bounds.Height;
-
-            _floatingContent.MaxWidth = Bounds.Width;
-            _floatingContent.MaxHeight = Bounds.Height;
-
-            PixelPoint newPosition;
-            if (VisualRoot is Window root && root.WindowState == WindowState.FullScreen)
-            {
-                newPosition = new PixelPoint(0, 0);
-            }
-            else
-            {
-                newPosition = this.PointToScreen(this.Bounds.Position);
-            }
-
-            if (newPosition != _floatingContent.Position)
-            {
-                _floatingContent.Position = newPosition;
-            }
-        }
-
-
-        private void ShowNativeOverlay(bool visible)
-        {
-            if (_floatingContent == null || _floatingContent.IsVisible == visible) return;
-
-            if (_isAttached && visible)
-            {
-                _floatingContent.Show(VisualRoot as Window);
-            }
-            else
-            {
-                _floatingContent.Hide();
-            }
-        }
-
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            base.OnAttachedToVisualTree(e);
-
-            _isAttached = true;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                InitializeNativeOverlay();
-            }
-
-        }
-
-        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            base.OnDetachedFromVisualTree(e);
-
-            _isAttached = false;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                ShowNativeOverlay(false);
-            }
-        }
-
-        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
-        {
-            base.OnDetachedFromLogicalTree(e);
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                if (_disposables != null)
-                {
-                    foreach (var item in _disposables)
-                    {
-                        item.Dispose();
-                    }
-                }
-                _disposables = null;
-
-                _floatingContent?.Close();
-                _floatingContent = null;
-            }
-        }
     }
 }

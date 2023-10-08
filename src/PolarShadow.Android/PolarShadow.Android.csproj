@@ -3,13 +3,16 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0-android</TargetFramework>
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
-    <Nullable>enable</Nullable>
-    <ApplicationId>com.CompanyName.AvaloniaTest</ApplicationId>
+    <Nullable>disable</Nullable>
+    <ApplicationId>com.vrjure.PolarShadow</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\xml\network_security_config.xml" />
+  </ItemGroup>
 
   <ItemGroup>
     <AndroidResource Include="Icon.png">
@@ -19,11 +22,13 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Android" Version="11.0.4" />
+    <PackageReference Include="VideoLAN.LibVLC.Android" Version="3.5.3" />
     <PackageReference Include="WebView.Avalonia.Android" Version="11.0.0.1" />
     <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Avalonia.NativeControls.Android\Avalonia.NativeControls.Android.csproj" />
     <ProjectReference Include="..\PolarShadow\PolarShadow.csproj" />
   </ItemGroup>
 </Project>

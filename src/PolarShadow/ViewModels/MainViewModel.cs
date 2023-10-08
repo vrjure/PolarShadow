@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
 using System;
@@ -13,9 +14,11 @@ public partial class MainViewModel : ViewModelBase
 {
     public static string NavigationName = "MainViewContent";
     private readonly INavigationService _nav;
-    public MainViewModel(INavigationService nav)
+    private readonly INotificationManager _notify;
+    public MainViewModel(INavigationService nav, INotificationManager notify)
     {
         _nav = nav;
+        _notify = notify;
     }
     public IEnumerable<MenuIconItem> MenuItems => new List<MenuIconItem>
     {
@@ -32,6 +35,14 @@ public partial class MainViewModel : ViewModelBase
     public ICommand MenuClickedCommand => _menuClickedCommand ??= new RelayCommand<MenuIconItem>(item =>
     {
         if (item == null || item.VMType == null) return;
-        _nav.Navigate(NavigationName, item.VMType);
+        try
+        {
+            _nav.Navigate(NavigationName, item.VMType);
+
+        }
+        catch (Exception ex)
+        {
+            _notify.Show(ex);
+        }
     });
 }

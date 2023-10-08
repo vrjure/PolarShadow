@@ -6,11 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Avalonia.Android" Version="11.0.4" />
     <PackageReference Include="LibVLCSharp" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="VLC\" />
+    <ProjectReference Include="..\Avalonia.NativeControls\Avalonia.NativeControls.csproj" />
   </ItemGroup>
 
 </Project>

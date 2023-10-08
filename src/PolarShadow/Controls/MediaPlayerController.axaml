@@ -12,14 +12,18 @@
 		</Style>
 	</Design.DesignStyle>
 	<Panel Classes="design">
-		<Grid RowDefinitions="60,*,auto"
-				Classes="autoHide">
+		<Grid RowDefinitions="auto,*,auto"
+			  x:Name="part_panel"
+			  Focusable="True">
 			<Grid.Styles>
 				<Style Selector="Grid.autoHide">
 					<Setter Property="Opacity" Value="0"/>
 					<Style Selector="^:pointerover">
 						<Setter Property="Opacity" Value="1"/>
 					</Style>
+				</Style>
+				<Style Selector="Grid.android">
+					<Setter Property="Background" Value="#00FFFFFF"/>
 				</Style>
 			</Grid.Styles>
 			<Grid.Transitions>
@@ -28,18 +32,20 @@
 				</Transitions>
 			</Grid.Transitions>
 			<Grid ColumnDefinitions="*,*"
-				Background="#00FFFFFF">
+				Background="#00FFFFFF"
+				  x:Name="part_top">
 				<!--top left-->
 				<StackPanel Orientation="Horizontal"
 							Spacing="16"
 							VerticalAlignment="Center"
-							Margin="8,0,0,0">
+							Margin="8,8,0,0">
 					<!--<Button Classes="icon"
 							Content="&#xEA64;"
 							IsVisible="{Binding BackButton}"
 							Foreground="White"/>-->
 					<TextBlock Text="{Binding $parent[UserControl].Title}"
-								Foreground="White"/>
+								Foreground="White"
+							   />
 				</StackPanel>
 				<!--top right-->
 				<StackPanel Orientation="Horizontal"
@@ -48,31 +54,17 @@
 				</StackPanel>
 			</Grid>
 			<Grid Grid.Row="2"
-				RowDefinitions="*,*,8"
-				Background="#00FFFFFF">
+				RowDefinitions="*,8"
+				Background="#00FFFFFF"
+				x:Name="part_bottom">
 				<!--bar-->
-				<Grid Margin="8,0,8,0"
-					  ColumnDefinitions="80,*,80">
-					<TextBlock Text="{Binding $parent[UserControl].Time, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
-								Grid.Column="0"
-								VerticalAlignment="Center"
-								Foreground="White"/>
-					<TextBlock Text="{Binding $parent[UserControl].Length, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
-								Grid.Column="2"
-								VerticalAlignment="Center"
-								Foreground="White"/>
-					<Slider Margin="8,0"
-							Grid.Column="1"
-							VerticalAlignment="Center"
-							Maximum="{Binding $parent[UserControl].Length, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
-							Minimum="0"
-							Value="{Binding $parent[UserControl].Time, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}, Mode=TwoWay}">
-					</Slider>
-				</Grid>
-				<DockPanel Grid.Row="1">
+				<Grid Margin="16,0"
+					  ColumnDefinitions="auto,*,80,auto,auto">
 					<StackPanel Orientation="Horizontal"
 								Spacing="16"
-								DockPanel.Dock="Left">
+								DockPanel.Dock="Left"
+								Margin="-8,0,0,0"
+								VerticalAlignment="Center">
 						<Button Classes="icon"
 								Content="&#xF13F;"
 								Foreground="White"
@@ -102,10 +94,29 @@
 								Click="NextClick"
 								IsVisible="{Binding $parent[UserControl].ShowPrevious}"/>
 					</StackPanel>
-					<StackPanel DockPanel.Dock="Right"
-								Margin="8,0">
+					<Slider Margin="8,0"
+							x:Name="part_slider"
+							Padding="8,0"
+							Grid.Column="1"
+							VerticalAlignment="Center"
+							Maximum="{Binding $parent[UserControl].Length, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
+							Minimum="0"
+							Value="{Binding $parent[UserControl].Time, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}, Mode=TwoWay}">
+					</Slider>
+					<TextBlock Text="{Binding $parent[UserControl].Time, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
+								Grid.Column="2"
+								VerticalAlignment="Center"
+								Foreground="White"/>
+					<TextBlock Text="{Binding $parent[UserControl].Length, Converter={x:Static ps:TimeSpanToStringConverter.Instance}, StringFormat='/{0}'}"
+								Grid.Column="3"
+								VerticalAlignment="Center"
+								Foreground="White"/>
+					<StackPanel Grid.Column="4"
+								VerticalAlignment="Center"
+								Margin="8,0,0,0">
 						<Button Classes="icon"
 								VerticalAlignment="Center"
+								VerticalContentAlignment="Center"
 								Foreground="White"
 								Classes.fullScreen="{Binding !$parent[UserControl].FullScreen}"
 								Classes.exitFullScreen="{Binding $parent[UserControl].FullScreen}"
@@ -120,10 +131,7 @@
 							</Button.Styles>
 						</Button>
 					</StackPanel>
-					<Border>
-					
-					</Border>
-				</DockPanel>
+				</Grid>
 			</Grid>
 		</Grid>
 	</Panel>

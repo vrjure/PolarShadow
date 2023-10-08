@@ -38,8 +38,17 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _ShowTitleBar, value);
         }
 
+        private bool _isDesktop = true;
+        public bool IsDesktop
+        {
+            get => _isDesktop;
+            set => SetProperty(ref _isDesktop, value);
+        }
+
         protected override async void OnLoad()
         {
+            IsDesktop = OperatingSystem.IsWindows();
+
             IsLoading = true;
             try
             {

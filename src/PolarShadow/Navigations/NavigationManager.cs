@@ -114,6 +114,10 @@ namespace PolarShadow.Navigations
             if (Design.IsDesignMode || !args.NewValue.HasValue) return;
             var control = args.Sender as ContentControl;
             var containerName = args.NewValue.Value;
+            if (_containers.ContainsKey(containerName))
+            {
+                return;
+            }
             if (!_containers.TryGetValue(containerName, out ContentControl container))
             {
                 container = control;

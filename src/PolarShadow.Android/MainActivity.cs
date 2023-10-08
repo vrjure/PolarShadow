@@ -1,8 +1,8 @@
 ﻿using Android.App;
 using Android.Content.PM;
-
 using Avalonia;
 using Avalonia.Android;
+using Avalonia.NativeControls.Android;
 using Avalonia.WebView.Android;
 
 namespace PolarShadow.Android;
@@ -19,6 +19,7 @@ public class MainActivity : AvaloniaMainActivity<App>
     {
         return base.CustomizeAppBuilder(builder)
             .WithInterFont()
-            .UseAndroidWebView();
+            .UseAndroidWebView()
+            .UseNativeControls();
     }
 }

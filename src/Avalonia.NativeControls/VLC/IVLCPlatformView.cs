@@ -9,5 +9,6 @@ namespace Avalonia.NativeControls
     public interface IVLCPlatformView : IPlatformView
     {
         MediaPlayer MediaPlayer { get; set; }
+        object OverlayContent { get; set; }
     }
 }

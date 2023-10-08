@@ -1,8 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using LibVLCSharp.Shared;
 using SQLitePCL;
@@ -23,6 +25,7 @@ namespace PolarShadow.Controls
         public MediaPlayerController()
         {
             InitializeComponent();
+            Initialize();
         }
 
         public static readonly StyledProperty<LibVLCSharp.Shared.MediaPlayer> MediaPlayerProperty = AvaloniaProperty.Register<MediaPlayerController, LibVLCSharp.Shared.MediaPlayer>(nameof(MediaPlayer));
@@ -39,12 +42,12 @@ namespace PolarShadow.Controls
             set => SetValue(TitleProperty, value);
         }
 
-        public static readonly StyledProperty<bool> BackButtonProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(BackButton));
-        public bool BackButton
-        {
-            get => GetValue(BackButtonProperty);
-            set => SetValue(BackButtonProperty, value);
-        }
+        //public static readonly StyledProperty<bool> BackButtonProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(BackButton));
+        //public bool BackButton
+        //{
+        //    get => GetValue(BackButtonProperty);
+        //    set => SetValue(BackButtonProperty, value);
+        //}
 
         public static readonly StyledProperty<TimeSpan> LengthProperty = AvaloniaProperty.Register<MediaPlayerController, TimeSpan>(nameof(Length));
         public TimeSpan Length
@@ -245,6 +248,69 @@ namespace PolarShadow.Controls
         private void MediaChanged(object sender, LibVLCSharp.Shared.MediaPlayerMediaChangedEventArgs e)
         {
 
+        }
+
+        private void Initialize()
+        {
+            part_slider.SmallChange = 5;
+            part_slider.LargeChange = 15;
+
+            if (OperatingSystem.IsWindows())
+            {
+                part_panel.Classes.Add("autoHide");
+            }
+            else if (OperatingSystem.IsAndroid())
+            {
+                part_panel.Classes.Add("android");
+                part_panel.RowDefinitions = new RowDefinitions("auto, auto, auto");
+                //part_panel.PointerReleased += Part_panel_PointerReleased;//TODO waitting...
+                part_top.IsVisible = false;
+            }
+        }
+
+        private void Part_panel_PointerReleased(object sender, Avalonia.Input.PointerReleasedEventArgs e)
+        {
+            if (part_panel.Opacity == 1)
+            {
+                part_panel.Opacity = 0;
+            }
+            else
+            {
+                part_panel.Opacity = 1;
+            }
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.Handled || e.KeyModifiers != KeyModifiers.None) return;
+
+            var target = Time;
+            var handled = false;
+            switch (e.Key)
+            {
+                case Key.Left:
+                    target = target - TimeSpan.FromSeconds(part_slider.SmallChange);
+                    handled = true;
+                    break;
+                case Key.Right:
+                    target = target + TimeSpan.FromSeconds(part_slider.SmallChange);
+                    handled = true;
+                    break;
+            }
+
+            e.Handled = handled;
+            if (target < TimeSpan.Zero)
+            {
+                target = TimeSpan.Zero;
+            }
+            else if (target > Length)
+            {
+                target = Length;
+            }
+
+            Time = target;
         }
     }
 }

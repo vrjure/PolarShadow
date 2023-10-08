@@ -87,7 +87,7 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private Thickness _padding = NormalScreenPadding;
+        private Thickness _padding = OperatingSystem.IsWindows() ? NormalScreenPadding : FullSceenPadding;
         public Thickness Padding
         {
             get => _padding;
@@ -109,14 +109,14 @@ namespace PolarShadow.ViewModels
 
         protected override void OnLoad()
         {
+            ShowPrevious = false;
+            ShowNext = false;
+
             if (Param_Episode == null)
             {
                 _notify.Show($"Miss {nameof(Param_Episode)}");
                 return;
             }
-
-            ShowPrevious = false;
-            ShowNext = false;
 
             var videoUrl = Param_Episode;
 

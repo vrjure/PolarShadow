@@ -16,7 +16,7 @@ namespace Avalonia.NativeControls.Windows
 
         protected override IPlatformView OnCreatePlatformView()
         {
-            return new VideoView();
+            return new VideoView(VirtualView);
         }
     }
 }

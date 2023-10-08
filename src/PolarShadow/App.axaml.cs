@@ -67,7 +67,6 @@ public partial class App : Application
         {
             singleViewPlatform.MainView = _services.GetRequiredService<TopLayoutView>();
             topLevelService.SetTopLevelFactory(() => singleViewPlatform.MainView);
-            nav.Navigate<MainViewModel>(TopLayoutViewModel.NavigationName);
         }
 
         base.OnFrameworkInitializationCompleted();
