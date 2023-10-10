@@ -24,11 +24,11 @@ namespace PolarShadow.Handlers
 
         protected override async Task<IObjectParameter> OnRequestAsync(IRequest request, IParameter parameter, CancellationToken cancellation)
         {
-            var webView = GetIdleWebView();
+            var tab = GetIdleWebView();
             try
             {
-                var url = request.Request.Url.Format(parameter);
-                var html = await webView.LoadAsync(new Uri(url), cancellation);
+                var url = request.Request.Url.Format(parameter).Format(parameter);
+                var html = await tab.LoadAsync(new Uri(url), cancellation);
                 html = Regex.Unescape(Regex.Unescape(html).Trim('"'));
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
@@ -38,9 +38,10 @@ namespace PolarShadow.Handlers
             {
                 lock (_tabs)
                 {
-                    if (webView.State == WebViewState.Idle)
+                    if (tab.State == WebViewState.Idle)
                     {
-                        _tabs.Remove(webView);
+                        tab.Close();
+                        _tabs.Remove(tab);
                     }
                 }
             }
@@ -50,13 +51,13 @@ namespace PolarShadow.Handlers
         {
             lock (_tabs)
             {
-                WebViewTab idleWebView = _tabs.FirstOrDefault(f => f.State == WebViewState.Idle);
-                if (idleWebView == null)
+                WebViewTab idleTab = _tabs.FirstOrDefault(f => f.State == WebViewState.Idle);
+                if (idleTab == null)
                 {
-                    idleWebView = new WebViewTab(_container);
-                    _tabs.Add(idleWebView);
+                    idleTab = new WebViewTab(_container);
+                    _tabs.Add(idleTab);
                 }
-                return idleWebView;
+                return idleTab;
             }
         }
     }
