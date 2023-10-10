@@ -79,7 +79,6 @@ namespace Avalonia.NativeControls.Android
             //TODO AvaloniaView can not transparent, but maybe it's not impossible, waitting... maybe?
             //see https://github.com/AvaloniaUI/Avalonia/issues/10807
             _overlayLayer = new AvaloniaView(context);
-            _overlayLayer.SetBackgroundColor(global::Android.Graphics.Color.Black);
 
             if (OverlayContent != null)
             {

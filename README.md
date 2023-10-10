@@ -10,6 +10,23 @@
 
 AvaloniaUI
 
-## 配置
+## 功能
 
-[参数语法](documents/参数语法.md)
+- [ ] 自定义源
+- [ ] 资源搜索
+- [ ] 资源浏览
+- [ ] 在线播放
+- [ ] 集成aria2RPC
+
+## 文档
+
+- [参数语法](documents/参数语法.md)
+- [资源定义](documents/资源定义.md)
+- [源配置](documents/源配置.md)
+- [请求定义](documents/请求定义.md)
+
+## 引用
+
+- [AvaloniaUI](https://github.com/AvaloniaUI/Avalonia)
+- [libvlcsharp](https://github.com/videolan/libvlcsharp)
+- [Avalonia.WebView](https://github.com/MicroSugarDeveloperOrg/Avalonia.WebView)

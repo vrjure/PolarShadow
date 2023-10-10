@@ -232,6 +232,14 @@ namespace PolarShadow.Core
             }
             else if (indexArray.Length == 1)
             {
+                if (range.StartsWith(".."))
+                {
+                    return value[..indexArray[0]];
+                }
+                else if (range.EndsWith(".."))
+                {
+                    return value[indexArray[0]..];
+                }
                 return value[indexArray[0]].ToString();
             }
 
