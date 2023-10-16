@@ -1,6 +1,7 @@
 ﻿using PolarShadow.Core;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,16 +19,17 @@ namespace PolarShadow.Resources
 
         internal readonly IRequestHandler _httpHandler;
         internal readonly IRequestHandler _webViewHandler;
-        internal readonly IParameter _globalParameter;
-        internal readonly IDictionary<string, ICollection<IContentWriting>> _writings;
+
+
+        private readonly IReadOnlyCollection<RequestRule> _requestRules;
 
         private readonly Dictionary<string, ISite> _sites = new Dictionary<string, ISite>(StringComparer.OrdinalIgnoreCase);
-        public SiteItem(IRequestHandler httpHandler, IRequestHandler webViewHandler, IParameter globalParameters, IDictionary<string, ICollection<IContentWriting>> writings)
+        public SiteItem(IRequestHandler httpHandler, IRequestHandler webViewHandler, IEnumerable<RequestRule> requestRules)
         {
             _httpHandler = httpHandler;
             _webViewHandler = webViewHandler;
-            _globalParameter = globalParameters;
-            _writings = writings;
+
+            _requestRules = new ReadOnlyCollection<RequestRule>(requestRules.ToList());
         }
 
         public string Name => SitesName;
@@ -39,6 +41,10 @@ namespace PolarShadow.Resources
         }
 
         public IEnumerable<ISite> Sites => _sites.Values;
+
+        public IRequestHandler HttpHandler => _httpHandler;
+
+        public IRequestHandler WebViewHandler => _webViewHandler;
 
         public void Load(IPolarShadowProvider provider, bool reLoad = false)
         {
@@ -71,18 +77,6 @@ namespace PolarShadow.Resources
         private ISite BuildSite(JsonElement siteConfig)
         {
             var site = JsonSerializer.Deserialize<SiteDefault>(siteConfig, JsonOption.DefaultSerializer);
-            var p = new Parameters();
-            if (_globalParameter != null)
-            {
-                p.Add(_globalParameter);
-            }
-
-            if (site.Parameters != null)
-            {
-                p.Add(site.Parameters);
-            }
-            site.ParametersInternal = p;
-            site.Item = this;
             return site;
         }
 
@@ -112,6 +106,31 @@ namespace PolarShadow.Resources
             }
 
             BuildSites(provider.Root);
+        }
+
+        public IEnumerable<RequestRule> EnumeratorRequestRules(string requestName = "")
+        {
+            if (_requestRules?.Count > 0)
+            {
+                if (string.IsNullOrEmpty(requestName))
+                {
+                    foreach (var item in _requestRules)
+                    {
+                        yield return item;
+                    }
+                }
+                else
+                {
+                    foreach (var item in _requestRules)
+                    {
+                        if (item.RequestName == "*" || item.RequestName.Equals(requestName))
+                        {
+                            yield return item;
+                        }
+                    }
+                }
+            }
+                 
         }
     }
 }

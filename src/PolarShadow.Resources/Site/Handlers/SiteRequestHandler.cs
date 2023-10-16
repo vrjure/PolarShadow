@@ -15,28 +15,16 @@ namespace PolarShadow.Resources
         private readonly ISite _site;
         private readonly IRequestHandler _handler;
         private readonly ISiteRequest _request;
-        private readonly IParameterCollection _parameters;
+        private readonly IParameter _parameters;
         private readonly IEnumerable<IContentWriting> _writingCollection;
 
         private IEnumerable<IContentWriting> _writings;
-        public SiteRequestHandler(ISite site, IRequestHandler requesthandler, string requestName, ISiteRequest request, IParameter parameter, IEnumerable<IContentWriting> writingCollection)
+        public SiteRequestHandler(ISite site, IRequestHandler requesthandler, ISiteRequest request, IParameter parameter, IEnumerable<IContentWriting> writingCollection)
         {
             _site = site;
             _handler = requesthandler;
             _request = request;
-            _parameters = new Parameters(parameter);
-            if (request.Parameters != null)
-            {
-                _parameters.Add(request.Parameters);
-            }
-
-            var siteInfo = new KeyValueParameter
-            {
-                { "site:name", _site.Name },
-                { "site:domain", _site.Domain },
-                { "site:request", requestName }
-            };
-            _parameters.Add(siteInfo);
+            _parameters = parameter;
             _writingCollection = writingCollection;
         }
 

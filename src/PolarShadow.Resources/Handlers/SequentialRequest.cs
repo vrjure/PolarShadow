@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -17,10 +18,11 @@ namespace PolarShadow.Resources
 
         protected string RequestName;
         protected int Index = -1;
-
-        public SequentialRequest(string requestName, IEnumerable<ISite> sites)
+        private readonly IPolarShadow _polar;
+        public SequentialRequest(IPolarShadow polar, string requestName)
         {
-            _sites = new List<ISite>(sites);
+            _polar = polar;
+            _sites = polar.GetSites(f=>f.HasRequest(requestName)).ToList();
             RequestName = requestName;
             Reset();
         }
@@ -86,7 +88,7 @@ namespace PolarShadow.Resources
                 return;
             }
 
-            var request = Current.CreateRequestHandler(RequestName);
+            var request = Current.CreateRequestHandler(_polar, RequestName);
             if (request == null) return;
             try
             {
@@ -142,7 +144,7 @@ namespace PolarShadow.Resources
     public class SequentialRequest<TInput, TOutput> : SequentialRequest<TOutput> where TInput : class
     {
         protected TInput Input { get; }
-        public SequentialRequest(string requestName, TInput input, IEnumerable<ISite> sites) : base(requestName, sites)
+        public SequentialRequest(IPolarShadow polar, string requestName, TInput input) : base(polar, requestName)
         {
             Input = input;
         }

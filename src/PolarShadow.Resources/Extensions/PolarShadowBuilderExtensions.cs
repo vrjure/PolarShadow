@@ -11,7 +11,8 @@ namespace PolarShadow.Resources
         public static IPolarShadowBuilder ConfigureAllSupported(this IPolarShadowBuilder builder)
         {
             return builder.ConfigureSiteDefault()
-                .AddWebAnalysisItem();
+                .AddWebAnalysisItem()
+                .AddParameterItem();
         }
 
         public static IPolarShadowBuilder ConfigureSiteDefault(this IPolarShadowBuilder builder)
@@ -19,7 +20,7 @@ namespace PolarShadow.Resources
             return builder.ConfigureSiteItem(siteItemBuilder =>
             {
                 siteItemBuilder.HttpHandler = new HttpClientRequestHandler();
-                siteItemBuilder.Writings.Add(new BasePropertyContentWriting());
+                siteItemBuilder.RequestRules.Add(new RequestRule("*") { Writings = new List<IContentWriting>{ new BasePropertyContentWriting() } });
             }).ConfigureSiteJsonOption();
         }
 
@@ -57,6 +58,11 @@ namespace PolarShadow.Resources
         public static IPolarShadowBuilder AddWebAnalysisItem(this IPolarShadowBuilder builder)
         {
             return builder.Add(new WebAnalysisItemBuilder());
+        }
+
+        public static IPolarShadowBuilder AddParameterItem(this IPolarShadowBuilder builder)
+        {
+            return builder.Add(new ParameterItemBuilder());
         }
     }
 }

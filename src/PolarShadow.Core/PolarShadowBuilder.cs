@@ -22,8 +22,6 @@ namespace PolarShadow.Core
 
         public IEnumerable<IPolarShadowItemBuilder> ItemBuilders => _itemBuilders;
 
-        public IKeyValueParameter Parameters => _parameters;
-
 
         public IPolarShadowBuilder Add(IPolarShadowItemBuilder builder)
         {

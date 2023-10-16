@@ -12,11 +12,10 @@ namespace PolarShadow.Resources
 {
     public interface ISite
     {
-        string Name { get; set; }
-        string Domain { get; set; }
-        bool? UseWebView { get; set; }
-        IKeyValueParameter Parameters { get; set; }
-        IDictionary<string, ISiteRequest> Requests { get; }
-        ISiteRequestHandler CreateRequestHandler(string requestName);
+        string Name { get; }
+        string Domain { get; }
+        bool? UseWebView { get; }
+        IKeyValueParameter Parameters { get; }
+        IReadOnlyDictionary<string, ISiteRequest> Requests { get; }
     }
 }

@@ -9,7 +9,6 @@ namespace PolarShadow.Core
 {
     public interface IPolarShadowBuilder
     {
-        IKeyValueParameter Parameters { get; }
         IPolarShadowBuilder Add(IPolarShadowItemBuilder builder);
         IEnumerable<IPolarShadowItemBuilder> ItemBuilders { get; }
         IPolarShadow Build();

@@ -102,7 +102,7 @@ namespace PolarShadow.ViewModels
                 _filter ??= new PageFilter();
                 _filter.Page = 1;
                 _filter.PageSize = 10;
-                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(CategoryValue.Request, builder =>
+                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, CategoryValue.Request, builder =>
                 {
                     builder.AddObjectValue(CategoryValue);
                     builder.AddObjectValue(_filter);
@@ -146,7 +146,7 @@ namespace PolarShadow.ViewModels
             try
             {
                 _filter.Page++;
-                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(CategoryValue.Request, builder =>
+                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, CategoryValue.Request, builder =>
                 {
                     builder.AddObjectValue(CategoryValue);
                     builder.AddObjectValue(_filter);
@@ -192,7 +192,7 @@ namespace PolarShadow.ViewModels
             try
             {
                 IsLoading = true;
-                var categories = await Param_Site.ExecuteAsync<ICollection<Resource>>(Requests.Categories);
+                var categories = await Param_Site.ExecuteAsync<ICollection<Resource>>(_polar, Requests.Categories);
                 IsLoading = false;
                 if (categories == null)
                 {

@@ -7,7 +7,6 @@ namespace PolarShadow.Core
 {
     public abstract class ContentWriting : IContentWriting
     {
-        public abstract string[] RequestFilter { get; }
 
         public virtual void BeforeWriteStartObject(Utf8JsonWriter writer, string propertyName, IParameter parameter)
         {

@@ -18,13 +18,12 @@ namespace PolarShadow
 
         public static ISearchHandler<TLink> CreateSearchHander<TLink>(this IPolarShadow polarShadow, SearchFilter filter) where TLink : class, ILink
         {
-            var sites = polarShadow.GetSites(f => f.HasRequest(Search));
-            return new SearchSequentialRequest<TLink>(Search, filter, sites);
+            return new SearchSequentialRequest<TLink>(polarShadow, Search, filter);
         }
 
-        public static async Task<ResourceTree> GetDetailAsync(this ISite site, ILink link, CancellationToken cancellation = default)
+        public static async Task<ResourceTree> GetDetailAsync(this IPolarShadow polar, ISite site, ILink link, CancellationToken cancellation = default)
         {
-            var result = await site.ExecuteAsync<ILink, ResourceTree>(Detail, link, cancellation);
+            var result = await site.ExecuteAsync<ILink, ResourceTree>(polar, Detail, link, cancellation);
             if (result == null)
             {
                 return result;

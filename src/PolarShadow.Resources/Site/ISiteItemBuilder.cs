@@ -9,6 +9,6 @@ namespace PolarShadow.Resources
     {
         IRequestHandler WebViewHandler { get; set; }
         IRequestHandler HttpHandler { get; set; }
-        ICollection<IContentWriting> Writings { get; }
+        ICollection<RequestRule> RequestRules { get; }
     }
 }

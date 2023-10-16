@@ -8,8 +8,6 @@ namespace PolarShadow.Resources
 {
     internal class BasePropertyContentWriting : ContentWriting
     {
-        public override string[] RequestFilter => new string[] { "*" };
-
         private static string sitePro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.Site));
         private static string fromRequestPro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.FromRequest));
 

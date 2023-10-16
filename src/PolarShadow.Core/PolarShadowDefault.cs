@@ -13,20 +13,10 @@ namespace PolarShadow.Core
     {
         private readonly IPolarShadowBuilder _builder;
         private readonly ICollection<IPolarShadowItem> _items;
-        private readonly IParameterCollection _globalePrameter;
-        private readonly IKeyValueParameter _configPrameter;
 
         public PolarShadowDefault(IPolarShadowBuilder builder)
         {
             _builder = builder;
-            _globalePrameter = new Parameters();
-            if(builder.Parameters != null)
-            {
-                _globalePrameter.Add(builder.Parameters);
-            }
-
-            _configPrameter = new KeyValueParameter();
-            _globalePrameter.Add(_configPrameter);
 
             _items = new List<IPolarShadowItem>();
             foreach (var b in builder.ItemBuilders)
@@ -70,11 +60,6 @@ namespace PolarShadow.Core
         private void Load(IPolarShadowProvider provider, bool reLoad = false)
         {
             if (provider == null || provider.Root.ValueKind == JsonValueKind.Undefined) return;
-            if (reLoad)
-            {
-                _configPrameter.Clear();
-            }
-            BuildParameters(provider);
 
             foreach (var item in _items)
             {
@@ -88,14 +73,6 @@ namespace PolarShadow.Core
             Load(source, true);
         }
 
-        private void BuildParameters(IPolarShadowProvider provider)
-        {
-            if (provider.Root.TryGetProperty("parameters", out JsonElement value))
-            {
-                _configPrameter.Add(value);
-            }
-        }
-
         public void LoadFrom(IPolarShadowSource source)
         {
             Load(source, true);
@@ -104,20 +81,6 @@ namespace PolarShadow.Core
         public void WriteTo(Utf8JsonWriter writer)
         {
             writer.WriteStartObject();
-
-            if (_globalePrameter.Count > 0)
-            {
-                writer.WritePropertyName("parameters");
-                var combine = new KeyValueParameter();
-                foreach (IKeyValueParameter p in _globalePrameter)
-                {
-                    foreach (var item in p)
-                    {
-                        combine[item.Key] = item.Value;
-                    }
-                }
-                combine.WriteTo(writer);
-            }
 
             foreach (var item in _items)
             {

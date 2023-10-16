@@ -20,6 +20,7 @@ using System.Text;
 using AvaloniaWebView;
 using PolarShadow.Handlers;
 using Avalonia.NativeControls;
+using System.Collections.Generic;
 
 namespace PolarShadow;
 
@@ -127,7 +128,7 @@ public partial class App : Application
         var polarShadow = builder.ConfigureAllSupported()
             .ConfigureSiteItem(f =>
             {
-                f.Writings.Add(new DetailContentWriting());
+                f.RequestRules.Add(new RequestRule(Requests.Detail) { Writings = new List<IContentWriting>{ new DetailContentWriting() }});
                 f.WebViewHandler = webViewHandler;
             }).Build();
         service.AddSingleton(polarShadow);

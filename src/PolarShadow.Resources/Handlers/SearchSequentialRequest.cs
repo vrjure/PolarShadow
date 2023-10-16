@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PolarShadow.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -10,7 +11,7 @@ namespace PolarShadow.Resources
     {
         bool _isSiteFirstRequest = true;
 
-        public SearchSequentialRequest(string requestName, SearchFilter input, IEnumerable<ISite> sites) : base(requestName, input, sites)
+        public SearchSequentialRequest(IPolarShadow polar, string requestName, SearchFilter input) : base(polar, requestName, input)
         {
 
         }

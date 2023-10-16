@@ -23,22 +23,6 @@ namespace PolarShadow.Resources
             return site != null;
         }
 
-        public static ISiteItem AddOrUpdateSite(this ISiteItem item, string siteName, Action<ISite> siteBuilder)
-        {
-            if (string.IsNullOrEmpty(siteName) || string.IsNullOrWhiteSpace(siteName))
-            {
-                throw new ArgumentException("site name must be set", nameof(siteName));
-            }
-
-            if (!item.TryGetSite(siteName, out ISite site))
-            {
-                site = new SiteDefault();
-            }
-            siteBuilder(site);
-            item[siteName] = site;
-            return item;
-        }
-
         public static bool HasRequest(this ISite site, string requestName)
         {
             if (site.Requests == null)
@@ -58,25 +42,6 @@ namespace PolarShadow.Resources
             return site.Requests.TryGetValue(requestName, out request);
         }
 
-        public static ISite AddOrUpdateRequest(this ISite site, string requestName, Action<ISiteRequest> requestBuilder)
-        {
-            if (string.IsNullOrEmpty(requestName) || string.IsNullOrWhiteSpace(requestName))
-            {
-                throw new ArgumentException("request name must be set", nameof(requestName));
-            }
-
-            if (HasRequest(site, requestName))
-            {
-                throw new ArgumentException($"{requestName} exist in site [{site.Name}]");
-            }
-
-            var request = new SiteRequest();
-            requestBuilder(request);
-
-            site.Requests[requestName] = request;
-            return site;
-        }
-
         public static string GetRequestJson(this ISiteRequest request, JsonWriterOptions options = default)
         {
             using var ms = new MemoryStream();
@@ -89,6 +54,8 @@ namespace PolarShadow.Resources
             return sr.ReadToEnd();
         }
 
+
+
         public static async Task ExecuteAsync(this ISiteRequestHandler handler, Stream stream, CancellationToken cancellation = default)
         {
             await handler.ExecuteAsync(stream, default, cancellation);
@@ -98,6 +65,8 @@ namespace PolarShadow.Resources
         {
             await handler.ExecuteAsync(stream, parameters, cancellation);
         }
+
+
 
         public static async Task<TResponse> ExecuteAsync<TResponse>(this ISiteRequestHandler handler, CancellationToken cancellation = default)
         {
@@ -129,45 +98,46 @@ namespace PolarShadow.Resources
             return JsonSerializer.Deserialize<TResponse>(ms, JsonOption.DefaultSerializer);
         }
 
-        public static Task<TResponse> ExecuteAsync<TResponse>(this ISite site, string requestName, CancellationToken cancellation = default)
+        public static Task<TResponse> ExecuteAsync<TResponse>(this ISite site, IPolarShadow polar, string requestName, CancellationToken cancellation = default)
         {
-            var handler = site.CreateRequestHandler(requestName);
+            var handler = site.CreateRequestHandler(polar, requestName);
             if (handler == null) return default;
             return ExecuteAsync<TResponse>(handler, default, cancellation);
         }
 
-        public static Task<TResponse> ExecuteAsync<TResponse>(this ISite site, string requestName, Action<IParameterCollection> builder, CancellationToken cancellation = default)
+        public static Task<TResponse> ExecuteAsync<TResponse>(this ISite site, IPolarShadow polar, string requestName, Action<IParameterCollection> builder, CancellationToken cancellation = default)
         {
-            var handler = site.CreateRequestHandler(requestName);
+            var handler = site.CreateRequestHandler(polar, requestName);
             if (handler == null) return default;
             return ExecuteAsync<TResponse>(handler, builder, cancellation);
         }
 
-        public static Task<TResponse> ExecuteAsync<TRequest, TResponse>(this ISite site, string requestName, TRequest request, CancellationToken cancellation = default) where TRequest : class
+        public static Task<TResponse> ExecuteAsync<TRequest, TResponse>(this ISite site, IPolarShadow polar, string requestName, TRequest request, CancellationToken cancellation = default) where TRequest : class
         {
-            var handler = site.CreateRequestHandler(requestName);
+            var handler = site.CreateRequestHandler(polar, requestName);
             if (handler == null) return default;
             return ExecuteAsync<TRequest, TResponse>(handler, request, cancellation);
         }
 
 
-        public static Task<string> ExecuteAsync(this ISite site, string requestName, string input, CancellationToken cancellation = default)
+
+        public static Task<string> ExecuteAsync(this ISite site, IPolarShadow polar, string requestName, string input, CancellationToken cancellation = default)
         {
-            var handler = site.CreateRequestHandler(requestName);
+            var handler = site.CreateRequestHandler(polar, requestName);
             if (handler == null) return default;
             return ExecuteAsync(handler, input, cancellation);
         }
 
-        public static Task<string> ExecuteAsync(this ISite site, string requestName, CancellationToken cancellation = default)
+        public static Task<string> ExecuteAsync(this ISite site, IPolarShadow polar, string requestName, CancellationToken cancellation = default)
         {
-            var handler = site.CreateRequestHandler(requestName);
+            var handler = site.CreateRequestHandler(polar, requestName);
             if (handler == null) return default;
             return ExecuteAsync(handler, cancellation);
         }
 
-        public static Task<string> ExecuteAsync(this ISite site, string requestName, Action<IParameterCollection> builder, CancellationToken cancellation = default)
+        public static Task<string> ExecuteAsync(this ISite site, IPolarShadow polar, string requestName, Action<IParameterCollection> builder, CancellationToken cancellation = default)
         {
-            var handler = site.CreateRequestHandler(requestName);
+            var handler = site.CreateRequestHandler(polar, requestName);
             if (handler == null) return default;
             return ExecuteAsync(handler, builder, cancellation);
         }
@@ -206,6 +176,69 @@ namespace PolarShadow.Resources
             ms.Seek(0, SeekOrigin.Begin);
             using var sr = new StreamReader(ms);
             return sr.ReadToEnd();
+        }
+
+
+
+        public static ISiteRequestHandler CreateRequestHandler(this ISite site, IPolarShadow polar, string requestName)
+        {
+            if (!site.Requests.TryGetValue(requestName, out ISiteRequest request))
+            {
+                return null;
+
+            }
+
+            var siteItem = polar.GetItem<ISiteItem>();
+            var parameterItem = polar.GetItem<IParameterItem>();
+
+            var requestHandler = siteItem.HttpHandler;
+            if (request.UseWebView.HasValue)
+            {
+                requestHandler = request.UseWebView.Value ? siteItem.WebViewHandler : requestHandler;
+            }
+            else if (site.UseWebView.HasValue)
+            {
+                requestHandler = site.UseWebView.Value ? siteItem.WebViewHandler : requestHandler;
+            }
+
+            if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
+
+            var parameters = new Parameters();
+            if (parameterItem != null && parameterItem.Parameters?.Count > 0)
+            {
+                parameters.Add(parameterItem.Parameters);
+            }
+
+            if (site.Parameters != null && site.Parameters.Count > 0)
+            {
+                parameters.Add(site.Parameters);
+            }
+
+            if (request.Parameters != null && request.Parameters.Count > 0)
+            {
+                parameters.Add(request.Parameters);
+            }
+
+            var siteInfo = new KeyValueParameter
+            {
+                { "site:name", site.Name },
+                { "site:domain", site.Domain },
+                { "site:request", requestName }
+            };
+
+            parameters.Add(siteInfo);
+
+            var writings = new List<IContentWriting>();
+            foreach (var item in siteItem.EnumeratorRequestRules(requestName))
+            {
+                if (item.Writings == null || item.Writings.Count == 0 )
+                {
+                    continue;
+                }
+                writings.AddRange(item.Writings);
+            }
+
+            return new SiteRequestHandler(site, requestHandler, request, parameters, writings);
         }
     }
 }

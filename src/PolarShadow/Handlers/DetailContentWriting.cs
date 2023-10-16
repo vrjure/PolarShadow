@@ -11,8 +11,6 @@ namespace PolarShadow
 {
     internal class DetailContentWriting : ContentWriting, ICloneable
     {
-        public override string[] RequestFilter => new[] { Requests.Detail };
-
         private HashSet<string> writedPro = new HashSet<string>();
 
         private static string namePro = JsonNamingPolicy.CamelCase.ConvertName(nameof(Resource.Name));

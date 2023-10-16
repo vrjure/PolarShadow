@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace PolarShadow.Resources
 {
@@ -33,21 +34,15 @@ namespace PolarShadow.Resources
             return item.TryGetSite(siteName, out site);
         }
 
-        public static IPolarShadow AddOrUpdateSite(this IPolarShadow polarShadow, string siteName, Action<ISite> siteBuilder)
-        {
-            var siteItem = polarShadow.GetItem<ISiteItem>();
-            if (siteItem == null)
-            {
-                throw new ArgumentException("ISiteItem not exist");
-            }
-            siteItem.AddOrUpdateSite(siteName, siteBuilder);
-
-            return polarShadow;
-        }
-
         public static IEnumerable<WebAnalysisSource> GetAnalysisSources(this IPolarShadow polarShadow)
         {
             return polarShadow.GetItem<IWebAnalysisItem>()?.Sources;
+        }
+
+        public static ISiteRequestHandler CreateSiteRequestHandler(this IPolarShadow polar, ISite site, string requestName)
+        {
+            return site.CreateRequestHandler(polar, requestName);
+
         }
     }
 }

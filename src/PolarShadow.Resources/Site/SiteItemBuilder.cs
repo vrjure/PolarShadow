@@ -16,28 +16,11 @@ namespace PolarShadow.Resources
 
         public ICollection<IContentWriting> Writings { get; } = new List<IContentWriting>();
 
+        public ICollection<RequestRule> RequestRules { get; } = new List<RequestRule>();
+
         public IPolarShadowItem Build(IPolarShadowBuilder builder)
         {
-            var writingDict = new Dictionary<string, ICollection<IContentWriting>>();
-            foreach (var b in Writings)
-            {
-                if (b.RequestFilter == null)
-                {
-                    continue;
-                }
-
-                foreach (var item in b.RequestFilter)
-                {
-                    if (!writingDict.TryGetValue(item, out ICollection<IContentWriting> writings))
-                    {
-                        writings = new List<IContentWriting>();
-                        writingDict[item] = writings;
-                    }
-
-                    writings.Add(b);
-                }
-            }
-            return new SiteItem(HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, builder.Parameters, writingDict);
+            return new SiteItem(HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, RequestRules);
         }
     }
 }
