@@ -137,7 +137,7 @@ namespace PolarShadow.ViewModels
             IsLoading = true;
             try
             {
-                var result = await _polar.GetDetailAsync(site, this.Param_Link);
+                var result = await site.ExecuteAsync<ResourceTree>(_polar, this.Param_Link);
                 if (result == null)
                 {
                     _notify.Show("No Data");

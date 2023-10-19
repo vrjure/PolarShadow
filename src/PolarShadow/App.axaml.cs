@@ -128,8 +128,11 @@ public partial class App : Application
         var polarShadow = builder.ConfigureAllSupported()
             .ConfigureSiteItem(f =>
             {
-                f.RequestRules.Add(new RequestRule(Requests.Detail) { Writings = new List<IContentWriting>{ new DetailContentWriting() }});
                 f.WebViewHandler = webViewHandler;
+                f.RequestRules.Add(new RequestRule(Requests.Detail) { Writings = new List<IContentWriting>{ new DetailContentWriting() }});
+                f.RequestRules.Add(new RequestRule(Requests.Detail) { NextRequst = Requests.Detail });
+                f.RequestRules.Add(new RequestRule(Requests.Search) { NextRequst = Requests.Detail });
+                f.RequestRules.Add(new RequestRule("category_*") { NextRequst = Requests.Detail });
             }).Build();
         service.AddSingleton(polarShadow);
     }

@@ -121,6 +121,44 @@ namespace PolarShadow.Resources
 
 
 
+        public static Task<TResponse> ExecuteAsync<TResponse>(this ISite site, IPolarShadow polar, ILink link, CancellationToken cancellation = default)
+        {
+            if (link == null) throw new ArgumentNullException(nameof(link));
+            var requst = string.Empty;
+            if (string.IsNullOrEmpty(link.Request))
+            {
+                if (string.IsNullOrEmpty(link.FromRequest)) throw new ArgumentException("[FromRequest] must be set when [Requst] is not set", nameof(ILink.FromRequest));
+
+                var siteItem = polar.GetItem<ISiteItem>();
+                foreach (var item in siteItem.EnumeratorRequestRules(link.FromRequest))
+                {
+                    if (string.IsNullOrEmpty(item.NextRequst))
+                    {
+                        continue;
+                    }
+
+                    requst = item.NextRequst;
+                    break;
+                }
+            }
+            else
+            {
+                requst = link.Request;
+            }
+
+            if (string.IsNullOrEmpty(requst))
+            {
+                throw new ArgumentException("Invalid link", nameof(link));
+            }
+
+            return ExecuteAsync<TResponse>(site, polar, requst, builder =>
+            {
+                builder.AddObjectValue(link);
+            }, cancellation);
+
+        }
+
+
         public static Task<string> ExecuteAsync(this ISite site, IPolarShadow polar, string requestName, string input, CancellationToken cancellation = default)
         {
             var handler = site.CreateRequestHandler(polar, requestName);

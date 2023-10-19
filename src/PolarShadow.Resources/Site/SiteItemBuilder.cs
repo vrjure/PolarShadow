@@ -13,9 +13,6 @@ namespace PolarShadow.Resources
     {   
         public IRequestHandler WebViewHandler { get; set; }
         public IRequestHandler HttpHandler { get; set; }
-
-        public ICollection<IContentWriting> Writings { get; } = new List<IContentWriting>();
-
         public ICollection<RequestRule> RequestRules { get; } = new List<RequestRule>();
 
         public IPolarShadowItem Build(IPolarShadowBuilder builder)

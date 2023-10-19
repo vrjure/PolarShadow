@@ -21,7 +21,7 @@ namespace PolarShadow.Resources
         internal readonly IRequestHandler _webViewHandler;
 
 
-        private readonly IReadOnlyCollection<RequestRule> _requestRules;
+        private readonly ICollection<RequestRule> _requestRules;
 
         private readonly Dictionary<string, ISite> _sites = new Dictionary<string, ISite>(StringComparer.OrdinalIgnoreCase);
         public SiteItem(IRequestHandler httpHandler, IRequestHandler webViewHandler, IEnumerable<RequestRule> requestRules)
@@ -29,7 +29,7 @@ namespace PolarShadow.Resources
             _httpHandler = httpHandler;
             _webViewHandler = webViewHandler;
 
-            _requestRules = new ReadOnlyCollection<RequestRule>(requestRules.ToList());
+            _requestRules = new List<RequestRule>(requestRules);
         }
 
         public string Name => SitesName;
@@ -123,14 +123,13 @@ namespace PolarShadow.Resources
                 {
                     foreach (var item in _requestRules)
                     {
-                        if (item.RequestName == "*" || item.RequestName.Equals(requestName))
+                        if (item.RequestName == "*" || item.RequestName.Equals(requestName) || RequestRule.MatchWithWildcard(requestName, item.RequestName))
                         {
                             yield return item;
                         }
                     }
                 }
             }
-                 
         }
     }
 }
