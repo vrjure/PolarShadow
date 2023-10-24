@@ -96,12 +96,7 @@ namespace PolarShadow.ViewModels
             {
                 return;
             }
-            _searcHandler = _polar.CreateSearchHander<Resource>(new SearchFilter
-            {
-                Page = 1,
-                PageSize = 20,
-                SearchKey = SearchText
-            });
+            _searcHandler = _polar.CreateSearchHander<Resource>(SearchText);
 
             await LoadMore();
         }
@@ -114,7 +109,7 @@ namespace PolarShadow.ViewModels
             {
                 var result = await _searcHandler.SearchNextAsync();
 
-                if (result == null || result.Data == null || result.Data.Count == 0)
+                if (result == null || result.Count == 0)
                 {
                     ShowLoadMore = false;
                     return;
@@ -122,11 +117,11 @@ namespace PolarShadow.ViewModels
 
                 if (SearchResult == null)
                 {
-                    SearchResult = new ObservableCollection<Resource>(result.Data);
+                    SearchResult = new ObservableCollection<Resource>(result);
                 }
                 else
                 {
-                    foreach (var item in result.Data)
+                    foreach (var item in result)
                     {
                         SearchResult.Add(item);
                     }

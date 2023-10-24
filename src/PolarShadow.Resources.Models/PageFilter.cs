@@ -14,7 +14,6 @@ namespace PolarShadow.Resources
 
     public class PageResult<T> : PageFilter where T : class
     {
-        public int Total { get; set; }
         public ICollection<T> Data { get; set; }
     }
 }

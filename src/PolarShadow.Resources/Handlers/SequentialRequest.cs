@@ -19,10 +19,15 @@ namespace PolarShadow.Resources
         protected string RequestName;
         protected int Index = -1;
         private readonly IPolarShadow _polar;
-        public SequentialRequest(IPolarShadow polar, string requestName)
+        public SequentialRequest(IPolarShadow polar, string requestName):this(polar, polar.GetSites(f=>f.HasRequest(requestName)), requestName)
+        {
+
+        }
+
+        public SequentialRequest(IPolarShadow polar, IEnumerable<ISite> sites, string requestName)
         {
             _polar = polar;
-            _sites = polar.GetSites(f=>f.HasRequest(requestName)).ToList();
+            _sites = sites.ToList();
             RequestName = requestName;
             Reset();
         }
@@ -90,39 +95,39 @@ namespace PolarShadow.Resources
 
             var request = Current.CreateRequestHandler(_polar, RequestName);
             if (request == null) return;
-            try
+
+            if (BeforeRequest(request))
             {
-                if (BeforeRequest(request))
+                try
                 {
                     await ExecuteAsync(request, stream, cancellation).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    if (AutoSort)
+                    {
+                        if (Current != null)
+                        {
+                            if (_siteFailedQueue == null)
+                            {
+                                _siteFailedQueue = new Queue<ISite>();
+                            }
+                            _siteFailedQueue.Enqueue(Current);
+                            _sites.RemoveAt(Index);
+                        }
+                    }
+
+                    if (!IgnoreError)
+                    {
+                        throw ex;
+                    }
+                }
+                finally
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
                     AfterRequest(request);
                 }
             }
-            catch (Exception ex)
-            {
-                if (AutoSort)
-                {
-                    if (Current != null)
-                    {
-                        if (_siteFailedQueue == null)
-                        {
-                            _siteFailedQueue = new Queue<ISite>();
-                        }
-                        _siteFailedQueue.Enqueue(Current);
-                        _sites.RemoveAt(Index);
-                    }          
-                }
-
-                if (!IgnoreError)
-                {
-                    throw ex;
-                }
-            }
-            finally
-            {
-                stream.Seek(0, SeekOrigin.Begin);
-            }
-
         }
 
 
@@ -145,6 +150,11 @@ namespace PolarShadow.Resources
     {
         protected TInput Input { get; }
         public SequentialRequest(IPolarShadow polar, string requestName, TInput input) : base(polar, requestName)
+        {
+            Input = input;
+        }
+
+        public SequentialRequest(IPolarShadow polar, IEnumerable<ISite> sites, string requestName, TInput input):base(polar, sites, requestName)
         {
             Input = input;
         }
