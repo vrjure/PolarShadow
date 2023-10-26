@@ -95,6 +95,11 @@
 			</Style>
 		</Style>
 
+		<Style Selector="Button.gridItem">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Padding" Value="8"/>
+		</Style>
+
 		<Style Selector="ListBoxItem">
 			<Style Selector="^:pointerover /template/ ContentPresenter">
 				<Setter Property="Background" Value="Transparent"/>

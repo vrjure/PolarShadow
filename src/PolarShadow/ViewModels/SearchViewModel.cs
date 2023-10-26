@@ -50,27 +50,6 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _searchResult, value);
         }
 
-        private Resource _selectValue;
-        public Resource SelectValue
-        {
-            get => _selectValue;
-            set
-            {
-                SetProperty(_selectValue, value, changed => 
-                {
-                    _selectValue = value;
-                    NavigateToDetail();
-                });
-            }
-        }
-
-        private ISelectionModel _selection;
-        public ISelectionModel Selection
-        {
-            get => _selection;
-            set => SetProperty(ref _selection, value);
-        }
-
         private bool _showLoadMore = false;
         public bool ShowLoadMore
         {
@@ -87,6 +66,9 @@ namespace PolarShadow.ViewModels
         private IAsyncRelayCommand _loadMoreCommand;
         public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
 
+
+        private IRelayCommand _itemClickCommand;
+        public IRelayCommand ItemClickCommand => _itemClickCommand ??= new RelayCommand<Resource>(NavigateToDetail);
 
         private ISearchHandler<Resource> _searcHandler;
         private async Task Search()
@@ -139,21 +121,17 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private void NavigateToDetail()
+        private void NavigateToDetail(Resource searchValue)
         {
-            if (SelectValue == null)
+            if (searchValue == null)
             {
                 return;
             }
 
-            var selected = SelectValue;
             _nav.Navigate<DetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
-                {nameof(DetailViewModel.Param_Link), selected }
+                {nameof(DetailViewModel.Param_Link), searchValue }
             }, true);
-
-            Selection?.Clear();
-            SelectValue = null;
         }     
     }
 }

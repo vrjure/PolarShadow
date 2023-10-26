@@ -57,26 +57,6 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private ResourceTree _selectedResource;
-        public ResourceTree SelectedResource
-        {
-            get => _selectedResource;
-            set
-            {
-                if (SetProperty(ref _selectedResource, value))
-                {
-                    ResourceSelected();
-                }
-            }
-        }
-
-        private ISelectionModel _selection;
-        public ISelectionModel Selection
-        {
-            get => _selection;
-            set => SetProperty(ref _selection, value);
-        }
-
         private bool _showLoadMore = false;
         public bool ShowLoadMore
         {
@@ -86,6 +66,9 @@ namespace PolarShadow.ViewModels
 
         private IAsyncRelayCommand _loadMoreCommand;
         public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
+
+        private IRelayCommand _itemClickCommand;
+        public IRelayCommand ItemClickCommand => _itemClickCommand ??= new RelayCommand<ResourceTree>(ResourceSelected);
 
         protected override void IsLoadingChanged()
         {
@@ -226,20 +209,17 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private void ResourceSelected()
+        private void ResourceSelected(ResourceTree res)
         {
-            if (SelectedResource == null)
+            if (res == null)
             {
                 return;
             }
 
             _nav.Navigate<DetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
-                { nameof(DetailViewModel.Param_Link), SelectedResource }
+                { nameof(DetailViewModel.Param_Link), res }
             }, true);
-
-            SelectedResource = null;
-            Selection?.Clear();
         }
     }
 }

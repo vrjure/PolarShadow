@@ -22,25 +22,28 @@
 	</ps:ToolBarAttached.ToolBar>
 
 	<Grid Margin="10">
-		<ListBox Background="Transparent"
-				 ItemsSource="{Binding MineResource}"
-				 SelectedValue="{Binding SelectValue, Mode=TwoWay}"
-				 Selection="{Binding Selection, Mode=OneWayToSource}">
-			<ListBox.ItemsPanel>
+		<ItemsControl Background="Transparent"
+					  ItemsSource="{Binding MineResource}">
+			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
 				</ItemsPanelTemplate>
-			</ListBox.ItemsPanel>
-			<ListBox.ItemTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
 				<DataTemplate DataType="pss:ResourceModel">
-					<StackPanel Orientation="Vertical">
-						<Image ps:ImageAttached.Src="{Binding ImageSrc}"
-							   ps:ImageAttached.Cache="{Binding $parent[ListBox].((ps:BookshelfViewModel)DataContext).Cache}"/>
-						<TextBlock Text="{Binding Name}"
-								   TextWrapping="Wrap"/>
-					</StackPanel>
+					<Button Command="{Binding $parent[ItemsControl].((ps:BookshelfViewModel)DataContext).ItemClickCommand}"
+							CommandParameter="{Binding}"
+							Classes="gridItem">
+						<StackPanel Orientation="Vertical">
+							<Image ps:ImageAttached.Src="{Binding ImageSrc}"
+								   ps:ImageAttached.Cache="{Binding $parent[ItemsControl].((ps:BookshelfViewModel)DataContext).Cache}"/>
+							<TextBlock Text="{Binding Name}"
+									   TextWrapping="Wrap"/>
+						</StackPanel>
+					</Button>
+
 				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 	</Grid>
 </UserControl>

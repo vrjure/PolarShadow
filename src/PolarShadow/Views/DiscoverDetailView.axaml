@@ -25,18 +25,18 @@
 			<ScrollViewer>
 				<StackPanel Orientation="Vertical"
 							Spacing="10">
-					<ListBox Background="Transparent"
-							 ItemsSource="{Binding ResourceList}"
-							 SelectedValue="{Binding SelectedResource}"
-							 Selection="{Binding Selection}">
-						<ListBox.ItemsPanel>
+					<ItemsControl Background="Transparent"
+								  ItemsSource="{Binding ResourceList}">
+						<ItemsControl.ItemsPanel>
 							<ItemsPanelTemplate>
 								<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
 							</ItemsPanelTemplate>
-						</ListBox.ItemsPanel>
-						<ListBox.ItemTemplate>
+						</ItemsControl.ItemsPanel>
+						<ItemsControl.ItemTemplate>
 							<DataTemplate DataType="psr:ResourceTree">
-								<Border>
+								<Button Command="{Binding $parent[UserControl].((ps:DiscoverDetailViewModel)DataContext).ItemClickCommand}"
+										CommandParameter="{Binding}"
+										Classes="gridItem">
 									<StackPanel Orientation="Vertical"
 												Spacing="10">
 										<TextBlock Classes="icon"
@@ -47,10 +47,10 @@
 												   HorizontalAlignment="Center"
 												   TextWrapping="Wrap"/>
 									</StackPanel>
-								</Border>
+								</Button>
 							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
 					<PathIcon Classes.spin="{Binding IsLoading}"
 								IsVisible="{Binding IsLoading}"
 								Data="{StaticResource loader2}">

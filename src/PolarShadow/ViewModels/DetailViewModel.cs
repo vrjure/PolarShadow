@@ -309,7 +309,6 @@ namespace PolarShadow.ViewModels
 
                 if (!site.TryGetRequest(requestName, out ISiteRequest request))
                 {
-                    _notify.Show($"Can not found requst [{requestName}]");
                     return null;
                 }
 

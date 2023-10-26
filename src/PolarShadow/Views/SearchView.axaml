@@ -24,26 +24,28 @@
 	<Grid Margin="10">
 		<ScrollViewer>
 			<StackPanel Orientation="Vertical">
-				<ListBox ItemsSource="{Binding SearchResult}"
-						 Background="White"
-						 SelectedValue="{Binding SelectValue, Mode=TwoWay}"
-						 Selection="{Binding Selection, Mode=OneWayToSource}">
-					<ListBox.ItemsPanel>
+				<ItemsControl ItemsSource="{Binding SearchResult}"
+						 Background="White">
+					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
 							<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
 						</ItemsPanelTemplate>
-					</ListBox.ItemsPanel>
-					<ListBox.ItemTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
 						<DataTemplate DataType="psr:Resource">
-							<StackPanel Orientation="Vertical">
-								<Image ps:ImageAttached.Src="{Binding ImageSrc}"
-									   ps:ImageAttached.Cache="{Binding $parent[ListBox].((ps:SearchViewModel)DataContext).ImageCache}"/>
-								<TextBlock Text="{Binding Name}"
-										   TextWrapping="Wrap"/>
-							</StackPanel>
+							<Button Command="{Binding $parent[ItemsControl].((ps:SearchViewModel)DataContext).ItemClickCommand}"
+									CommandParameter="{Binding}"
+									Classes="gridItem">
+								<StackPanel Orientation="Vertical">
+									<Image ps:ImageAttached.Src="{Binding ImageSrc}"
+										   ps:ImageAttached.Cache="{Binding $parent[ItemsControl].((ps:SearchViewModel)DataContext).ImageCache}"/>
+									<TextBlock Text="{Binding Name}"
+											   TextWrapping="Wrap"/>
+								</StackPanel>
+							</Button>
 						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
 				<PathIcon Classes.spin="{Binding IsLoading}"
 						  IsVisible="{Binding IsLoading}"
 						  Data="{StaticResource loader2}">
