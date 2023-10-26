@@ -2,107 +2,109 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:ps="https://github.com/PolarShadow"
-			 xmlns:pss="using:PolarShadow.Services"
+             xmlns:ps="https://github.com/PolarShadow"
+             xmlns:pss="using:PolarShadow.Services"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.DetailView"
-			 x:DataType="ps:DetailViewModel"
-			 x:CompileBindings="True"
-			 ps:PageLoadAttached.RegisterLoad="True">
-	<Grid Margin="10"
-		  RowDefinitions="*,60">
-		<ScrollViewer>
-			<StackPanel Orientation="Vertical"
-						Spacing="10">
-				<Image Width="{StaticResource ListBoxWrapPanelItemWidth}"
-					   HorizontalAlignment="Center"
-					   ps:ImageAttached.Src="{Binding Resource.ImageSrc}"
-					   ps:ImageAttached.Cache="{Binding ImageCache}"/>
-				<SelectableTextBlock Text="{Binding Resource.Name}" 
-									 HorizontalAlignment="Center"/>
-				<TextBlock Text="简介"
-						   Classes="title"/>
-				<SelectableTextBlock Text="{Binding Resource.Description}" TextWrapping="Wrap"/>
-				<TextBlock Text="来源"
-						   Classes="title"/>
-				<SelectableTextBlock Text="{Binding Resource.Site}"/>
-				<TextBlock Text="剧集"
-						   Classes="title"/>
-				<ItemsControl ItemsSource="{Binding Resource.Children}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="pss:ResourceTreeNode">
-							<StackPanel Orientation="Vertical"
-										Spacing="10">
-								<TextBlock Text="{Binding Name}"/>
-								<ItemsControl ItemsSource="{Binding Children}">
-									<ItemsControl.ItemsPanel>
-										<ItemsPanelTemplate>
-											<WrapPanel/>
-										</ItemsPanelTemplate>
-									</ItemsControl.ItemsPanel>
-									<ItemsControl.ItemTemplate>
-										<DataTemplate DataType="pss:ResourceTreeNode">
-											<Button Content="{Binding Name}"
-													Margin="8">
-												<Button.Flyout>
-													<Flyout>
-														<ItemsControl ItemsSource="{Binding Children}">
-															<ItemsControl.ItemTemplate>
-																<DataTemplate>
-																	<Button Content="{Binding SrcType}"
-																			MinWidth="80"
-																			MinHeight="30"
-																			VerticalContentAlignment="Center"
-																			HorizontalContentAlignment="Center"
-																			Command="{Binding $parent[UserControl].((ps:DetailViewModel)DataContext).LinkClickCommand}"
-																			CommandParameter="{Binding}"/>
-																</DataTemplate>
-															</ItemsControl.ItemTemplate>
-														</ItemsControl>
-													</Flyout>
-												</Button.Flyout>
-											</Button>
-										</DataTemplate>
-									</ItemsControl.ItemTemplate>
-								</ItemsControl>
-							</StackPanel>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
-		</StackPanel>
-		</ScrollViewer>
-		<PathIcon Data="{StaticResource loader2}"
-				  Classes.spin="{Binding IsLoading}"
-				  IsVisible="{Binding IsLoading}"
-				  Height="30"
-				  Width="30"/>
-		
-		<Button Classes="icon"
-				Content="&#xF064;"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Bottom"
-				Margin="20"
-				Command="{Binding RefreshCommand}"/>
+             x:DataType="ps:DetailViewModel"
+             x:CompileBindings="True"
+             ps:PageLoadAttached.RegisterLoad="True">
+    <Grid Margin="10"
+          RowDefinitions="*,60">
+        <ScrollViewer>
+            <StackPanel Orientation="Vertical"
+                        Spacing="10">
+                <Image Width="{StaticResource ListBoxWrapPanelItemWidth}"
+                       HorizontalAlignment="Center"
+                       ps:ImageAttached.Src="{Binding Resource.ImageSrc}"
+                       ps:ImageAttached.Cache="{Binding ImageCache}"/>
+                <SelectableTextBlock Text="{Binding Resource.Name}" 
+                                     HorizontalAlignment="Center"/>
+                <TextBlock Text="简介"
+                           Classes="title"/>
+                <SelectableTextBlock Text="{Binding Resource.Description}" TextWrapping="Wrap"/>
+                <TextBlock Text="来源"
+                           Classes="title"/>
+                <SelectableTextBlock Text="{Binding Resource.Site}"/>
+                <TextBlock Text="剧集"
+                           Classes="title"/>
+                <ItemsControl ItemsSource="{Binding Resource.Children}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="pss:ResourceTreeNode">
+                            <StackPanel Orientation="Vertical"
+                                        Spacing="10">
+                                <TextBlock Text="{Binding Name}"/>
+                                <ItemsControl ItemsSource="{Binding Children}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="pss:ResourceTreeNode">
+                                            <Button Content="{Binding Name}"
+                                                    Margin="8">
+                                                <Button.Flyout>
+                                                    <Flyout>
+                                                        <ItemsControl ItemsSource="{Binding Children}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Button Content="{Binding SrcType}"
+                                                                            MinWidth="80"
+                                                                            MinHeight="30"
+                                                                            VerticalContentAlignment="Center"
+                                                                            HorizontalContentAlignment="Center"
+                                                                            Command="{Binding $parent[UserControl].((ps:DetailViewModel)DataContext).LinkClickCommand}"
+                                                                            CommandParameter="{Binding}"/>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </Flyout>
+                                                </Button.Flyout>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+        </StackPanel>
+        </ScrollViewer>
 
-		<Border Grid.Row="1"
-				BorderBrush="LightGray"
-				BorderThickness="0,1,0,0">
-			<Button Classes="icon"
-					Classes.save="{Binding !IsSaved}"
-					Classes.delete="{Binding IsSaved}"
-					HorizontalAlignment="Center"
-					VerticalAlignment="Center"
-					Command="{Binding ResourceOperateCommand}">
-				<Button.Styles>
-					<Style Selector="Button.save">
-						<Setter Property="Content" Value="&#xF0B1;"/>
-					</Style>
-					<Style Selector="Button.delete">
-						<Setter Property="Content" Value="&#xEC2A;"/>
-						<Setter Property="Foreground" Value="Red"/>
-					</Style>
-				</Button.Styles>
-			</Button>
-		</Border>
-	</Grid>
+        <Border Grid.Row="1"
+                BorderBrush="LightGray"
+                BorderThickness="0,1,0,0">
+            <Button Classes="icon"
+                    Classes.save="{Binding !IsSaved}"
+                    Classes.delete="{Binding IsSaved}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Command="{Binding ResourceOperateCommand}">
+                <Button.Styles>
+                    <Style Selector="Button.save">
+                        <Setter Property="Content" Value="&#xF0B1;"/>
+                    </Style>
+                    <Style Selector="Button.delete">
+                        <Setter Property="Content" Value="&#xEC2A;"/>
+                        <Setter Property="Foreground" Value="Red"/>
+                    </Style>
+                </Button.Styles>
+            </Button>
+        </Border>
+
+        <Button Classes="icon"
+                Content="&#xF064;"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="20"
+                Command="{Binding RefreshCommand}"/>
+        
+        <Border IsVisible="{Binding IsLoading}">
+            <PathIcon Data="{StaticResource loader2}"
+                      Classes.spin="{Binding IsLoading}"
+                      Height="30"
+                      Width="30"/>
+        </Border>
+    </Grid>
 </UserControl>

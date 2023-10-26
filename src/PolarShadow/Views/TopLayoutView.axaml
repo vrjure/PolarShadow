@@ -94,6 +94,6 @@
 				  HorizontalAlignment="Center"
 				  Classes.spin="{Binding IsLoading}"
 				  IsVisible="{Binding IsLoading}"
-				  Grid.RowSpan="2"/>
+				  Grid.Row="1"/>
 	</Grid>
 </UserControl>

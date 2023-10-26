@@ -1,8 +1,6 @@
 ﻿using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.Extensions.Caching.Memory;
 using PolarShadow.Aria2;
 using PolarShadow.Cache;
 using PolarShadow.Core;
@@ -14,7 +12,6 @@ using PolarShadow.Services;
 using PolarShadow.Storage;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -137,7 +134,7 @@ namespace PolarShadow.ViewModels
             IsLoading = true;
             try
             {
-                var result = await site.ExecuteAsync<ResourceTree>(_polar, this.Param_Link);
+                var result = await site.ExecuteAsync<ResourceTree>(_polar, this.Param_Link, Cancellation.Token);
                 if (result == null)
                 {
                     _notify.Show("No Data");
@@ -155,6 +152,7 @@ namespace PolarShadow.ViewModels
                     await SaveResource();
                 }
             }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 _notify.Show(ex);
@@ -318,8 +316,9 @@ namespace PolarShadow.ViewModels
                 return await site.ExecuteAsync<ILink>(_polar, requestName, builder =>
                 {
                     builder.AddObjectValue(link);
-                });
+                }, Cancellation.Token);
             }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 _notify.Show(ex);

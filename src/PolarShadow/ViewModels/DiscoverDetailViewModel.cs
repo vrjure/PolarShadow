@@ -20,7 +20,7 @@ namespace PolarShadow.ViewModels
         private readonly INavigationService _nav;
 
         private PageFilter _filter;
-
+        private TaskCompletionSource _loading;
         public DiscoverDetailViewModel(INotificationManager notify, IPolarShadow polar, INavigationService nav)
         {
             _notify = notify;
@@ -87,13 +87,27 @@ namespace PolarShadow.ViewModels
         private IAsyncRelayCommand _loadMoreCommand;
         public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
 
+        protected override void IsLoadingChanged()
+        {
+            if(_loading != null && !IsLoading)
+            {
+                _loading.TrySetResult();
+            }
+        }
+
         private async void CategoryValueChanged()
         {
             if (CategoryValue == null)
             {
                 return;
             }
-
+            if (IsLoading)
+            {
+                _loading = new TaskCompletionSource();
+                Cancellation.Cancel();
+                await _loading.Task;
+                _loading = null;
+            }
             IsLoading = true;
             ShowLoadMore = false;
             try
@@ -106,7 +120,7 @@ namespace PolarShadow.ViewModels
                 {
                     builder.AddObjectValue(CategoryValue);
                     builder.AddObjectValue(_filter);
-                });
+                }, Cancellation.Token);
                 if (resources == null || resources.Count == 0)
                 {
                     HasData = false;
@@ -129,6 +143,7 @@ namespace PolarShadow.ViewModels
 
                 ShowLoadMore = true;
             }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 _notify.Show(ex);
@@ -150,7 +165,7 @@ namespace PolarShadow.ViewModels
                 {
                     builder.AddObjectValue(CategoryValue);
                     builder.AddObjectValue(_filter);
-                });
+                }, Cancellation.Token);
                 if (resources == null || resources.Count == 0)
                 {
                     ShowLoadMore = false;
@@ -163,6 +178,7 @@ namespace PolarShadow.ViewModels
                 }
                 ShowLoadMore = true;
             }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 _notify.Show(ex);
@@ -192,7 +208,7 @@ namespace PolarShadow.ViewModels
             try
             {
                 IsLoading = true;
-                var categories = await Param_Site.ExecuteAsync<ICollection<Resource>>(_polar, Requests.Categories);
+                var categories = await Param_Site.ExecuteAsync<ICollection<Resource>>(_polar, Requests.Categories, Cancellation.Token);
                 IsLoading = false;
                 if (categories == null)
                 {
@@ -203,6 +219,7 @@ namespace PolarShadow.ViewModels
 
                 Categories = new ObservableCollection<Resource>(categories);
             }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 _notify.Show(ex);

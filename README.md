@@ -30,3 +30,4 @@ AvaloniaUI
 - [AvaloniaUI](https://github.com/AvaloniaUI/Avalonia)
 - [libvlcsharp](https://github.com/videolan/libvlcsharp)
 - [Avalonia.WebView](https://github.com/MicroSugarDeveloperOrg/Avalonia.WebView)
+- [HtmlAgilityPack](https://github.com/zzzprojects/html-agility-pack)

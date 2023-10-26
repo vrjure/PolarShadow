@@ -107,7 +107,7 @@ namespace PolarShadow.ViewModels
             ShowLoadMore = false;
             try
             {
-                var result = await _searcHandler.SearchNextAsync();
+                var result = await _searcHandler.SearchNextAsync(Cancellation.Token);
 
                 if (result == null || result.Count == 0)
                 {
@@ -128,6 +128,7 @@ namespace PolarShadow.ViewModels
                 }
                 ShowLoadMore = true;
             }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 _notify.Show(ex.Message);
