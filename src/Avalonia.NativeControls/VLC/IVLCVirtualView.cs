@@ -7,6 +7,6 @@ namespace Avalonia.NativeControls
 {
     public interface IVLCVirtualView : IVirtualView
     {
-        new IVLCHandler Handler { get; set; }
+        new IVLCHandler Handler { get; }
     }
 }

@@ -2,26 +2,33 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Avalonia.NativeControls
 {
     public abstract class PlatformView : IPlatformView
     {
-        public IPlatformHandle Handle { get; set; }
+        protected IPlatformHandle Handle { get; private set; }
 
         public IPlatformHandle CreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {
-            Handle = CreateControl(parent) ?? createDefault();
+            Handle = OnCreateControl(parent, createDefault) ?? createDefault();
             return Handle;
         }
-
 
         public void DestroyControl(IPlatformHandle handler)
         {
             DestroyControl();
             Handle = null;
         }
-        protected abstract IPlatformHandle CreateControl(IPlatformHandle parent);
-        protected abstract void DestroyControl();
+
+        protected virtual IPlatformHandle OnCreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
+        {
+            return null;
+        }
+        protected virtual void DestroyControl()
+        {
+
+        }
     }
 }

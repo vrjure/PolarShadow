@@ -23,16 +23,16 @@ namespace Avalonia.NativeControls.Windows
         {
             this.VirtualView = virtualView;
 
-            this.VirtualView.VirtualView.AttachedToVisualTree += VirtualView_AttachedToVisualTree;
-            this.VirtualView.VirtualView.DetachedFromVisualTree += VirtualView_DetachedFromVisualTree;
-            this.VirtualView.VirtualView.DetachedFromLogicalTree += VirtualView_DetachedFromLogicalTree;
-            this.VirtualView.VirtualView.SizeChanged += VirtualView_SizeChanged;
+            this.VirtualView.AsHost().AttachedToVisualTree += VirtualView_AttachedToVisualTree;
+            this.VirtualView.AsHost().DetachedFromVisualTree += VirtualView_DetachedFromVisualTree;
+            this.VirtualView.AsHost().DetachedFromLogicalTree += VirtualView_DetachedFromLogicalTree;
+            this.VirtualView.AsHost().SizeChanged += VirtualView_SizeChanged;
            
         }
 
-        private IRenderRoot VisualRoot => VirtualView.VirtualView.GetVisualRoot();
-        private Rect Bounds => VirtualView.VirtualView.Bounds;
-        private bool IsEffectivelyVisible => VirtualView.VirtualView.IsEffectivelyVisible;
+        private IRenderRoot VisualRoot => VirtualView.AsHost().GetVisualRoot();
+        private Rect Bounds => VirtualView.AsHost().Bounds;
+        private bool IsEffectivelyVisible => VirtualView.AsHost().IsEffectivelyVisible;
 
         private MediaPlayer _mediaPlayer;
         public MediaPlayer MediaPlayer
@@ -68,17 +68,16 @@ namespace Avalonia.NativeControls.Windows
             }
         }
 
-        protected override IPlatformHandle CreateControl(IPlatformHandle parent)
+        protected override IPlatformHandle OnCreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {
-            if (MediaPlayer == null)
+            if (this.MediaPlayer == null)
             {
-                return null;
+                return createDefault();
             }
 
-            MediaPlayer.Hwnd = Handle.Handle;
-
-            InitializeNativeOverlay();
-            return null;
+            var handler = createDefault();
+            this.MediaPlayer.Hwnd = handler.Handle;
+            return handler;
         }
 
         protected override void DestroyControl()
@@ -94,7 +93,7 @@ namespace Avalonia.NativeControls.Windows
         private void InitializeNativeOverlay()
         {
             if (VirtualView == null) return;
-            if (!VirtualView.VirtualView.IsAttachedToVisualTree()) return;
+            if (!VirtualView.AsHost().IsAttachedToVisualTree()) return;
 
             InitializeDesktopNativeOverlay();
             UpdateOverlayPosition();
@@ -115,7 +114,7 @@ namespace Avalonia.NativeControls.Windows
                     ShowInTaskbar = false,
                     Opacity = 1,
                     ZIndex = int.MaxValue,
-                    DataContext = VirtualView.VirtualView.DataContext
+                    DataContext = VirtualView.AsHost().DataContext
                 };
 
                 if (OverlayContent != null)
@@ -152,7 +151,7 @@ namespace Avalonia.NativeControls.Windows
             }
             else
             {
-                newPosition = VirtualView.VirtualView.PointToScreen(this.Bounds.Position);
+                newPosition = VirtualView.AsHost().PointToScreen(this.Bounds.Position);
             }
 
             if (newPosition != _floatingContent.Position)

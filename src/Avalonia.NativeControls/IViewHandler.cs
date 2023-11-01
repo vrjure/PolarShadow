@@ -10,5 +10,6 @@ namespace Avalonia.NativeControls
         IVirtualView VirtualView { get; }
         IPlatformView PlatformView { get; }
         void SetVirtualView(IVirtualView virtualView);
+        void DisconnectHandler();
     }
 }

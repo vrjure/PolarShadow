@@ -57,7 +57,7 @@ namespace Avalonia.NativeControls.Android
                 _overlayContent = value;
                 if (_overlayContent is Visual ctl)
                 {
-                    ctl.DataContext = _virtualView.VirtualView.DataContext;
+                    ctl.DataContext = _virtualView.AsHost().DataContext;
                 }
                 if (_overlayLayer != null)
                 {
@@ -66,7 +66,7 @@ namespace Avalonia.NativeControls.Android
             }
         }
 
-        protected override IPlatformHandle CreateControl(IPlatformHandle parent)
+        protected override IPlatformHandle OnCreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {
             var context = (parent as AndroidViewControlHandle)?.View.Context ?? global::Android.App.Application.Context;
 

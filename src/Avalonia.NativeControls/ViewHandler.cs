@@ -6,15 +6,34 @@ using System.Text;
 
 namespace Avalonia.NativeControls
 {
-    public abstract class ViewHandler: IViewHandler
+    public abstract class ViewHandler : IViewHandler
     {
         public IVirtualView VirtualView { get; private set; }
 
         public IPlatformView PlatformView { get; protected set; }
 
+        public void DisconnectHandler()
+        {
+            if (this.PlatformView == null)
+            {
+                return;
+            }
+            DisconnectHandler(this.PlatformView);
+        }
+
         protected abstract IPlatformView OnCreatePlatformView();
 
-        public virtual void SetVirtualView(IVirtualView virtualView)
+        private protected virtual void ConnectHandler(IPlatformView platformView)
+        {
+            
+        }
+
+        private protected virtual void DisconnectHandler(IPlatformView platformView)
+        {
+            
+        }
+
+        public void SetVirtualView(IVirtualView virtualView)
         {
             _ = virtualView ?? throw new ArgumentNullException(nameof(virtualView));
 
@@ -26,9 +45,9 @@ namespace Avalonia.NativeControls
             VirtualView = virtualView;
             PlatformView = OnCreatePlatformView();
 
-            if (virtualView.Handler != this)
+            if (PlatformView != null)
             {
-                virtualView.Handler = this;
+                ConnectHandler(this.PlatformView);
             }
         }
     }
@@ -41,5 +60,20 @@ namespace Avalonia.NativeControls
             get => (TPlatformView)base.PlatformView;
             set =>  base.PlatformView = value;
         }
+
+
+        protected virtual void ConnectHandler(TPlatformView platformView)
+        {
+
+        }
+
+        protected virtual void DisconnectHandler(TPlatformView platformView)
+        {
+
+        }
+
+        private protected override void ConnectHandler(IPlatformView platformView) => ConnectHandler((TPlatformView)platformView);
+
+        private protected override void DisconnectHandler(IPlatformView platformView) => DisconnectHandler((TPlatformView)platformView);
     }
 }

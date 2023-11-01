@@ -16,20 +16,11 @@ namespace Avalonia.NativeControls
 {
     /// <summary>
     /// <see cref="https://github.com/radiolondra/AvaVLCWindow/blob/main/LibVLCSharp.Avalonia.Unofficial/VideoView.cs"/>
-    /// TODO For Android
     /// </summary>
-    public class VideoView : NativeControlHost, IVLCVirtualView
+    public class VideoView : VirtualView, IVLCVirtualView
     {
-        private Window _floatingContent;
-        private ICollection<IDisposable> _disposables;
-        private bool _isAttached;
-
-        static VideoView()
+        public VideoView() : base(NativeControlHandlers.GetHandler<IVLCHandler>())
         {
-            ContentProperty.Changed.AddClassHandler<VideoView>((s, e) =>
-            {
-                s.SetOverlayContent();
-            });
 
         }
 
@@ -50,63 +41,14 @@ namespace Avalonia.NativeControls
                     return;
                 }
                 _mediaPlayer = value;
-                this.Handler.PlatformView.MediaPlayer = value;
+                if (this.Handler != null && this.Handler.PlatformView != null)
+                {
+                    this.Handler.PlatformView.MediaPlayer = value;
+                }
             }
         }
 
-        public static readonly StyledProperty<object> ContentProperty = ContentControl.ContentProperty.AddOwner<VideoView>();
-        [Content]
-        public object Content
-        {
-            get => GetValue(ContentProperty);
-            set => SetValue(ContentProperty, value);
-        }
-
-        public Control VirtualView => this;
-
-        public IVLCHandler Handler { get; set; }
-
-        IViewHandler IVirtualView.Handler
-        {
-            get => this.Handler;
-            set => this.Handler = (IVLCHandler)value;
-        }
-
-        protected override IPlatformHandle CreateNativeControlCore(IPlatformHandle parent)
-        {
-            this.Handler = NativeControlHandlers.GetHandler<IVLCHandler>();
-            if (this.Handler == null)
-            {
-                return base.CreateNativeControlCore(parent);
-            }
-
-            this.Handler.SetVirtualView(this);
-            this.SetOverlayContent();
-
-            if (this.Handler.PlatformView == null)
-            {
-                return base.CreateNativeControlCore(parent);
-            }
-       
-            return this.Handler.PlatformView.CreateControl(parent, () => base.CreateNativeControlCore(parent)) ?? base.CreateNativeControlCore(parent);
-        }
-
-        protected override void DestroyNativeControlCore(IPlatformHandle control)
-        {
-            this.Handler?.PlatformView?.DestroyControl(control);
-
-            base.DestroyNativeControlCore(control);
-        }
-
-        private void SetOverlayContent()
-        {
-            if (this.Handler == null)
-            {
-                return;
-            }
-
-            this.Handler.PlatformView.OverlayContent = Content;
-        }
+        public new IVLCHandler Handler => base.Handler as IVLCHandler;
 
     }
 }
