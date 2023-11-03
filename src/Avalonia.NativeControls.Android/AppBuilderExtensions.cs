@@ -11,6 +11,7 @@ namespace Avalonia.NativeControls.Android
         public static AppBuilder UseNativeControls(this AppBuilder appBuilder)
         {
             NativeControlHandlers.AddHandler<IVLCHandler, VideoViewHandler>();
+            NativeControlHandlers.AddHandler<IWebViewHandler, WebViewHandler>();
             return appBuilder;
         }
     }

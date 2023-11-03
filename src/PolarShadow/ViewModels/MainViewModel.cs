@@ -27,7 +27,7 @@ public partial class MainViewModel : ViewModelBase
         new(){ Name = "source", Icon = "\uEDC6", VMType = typeof(BookSourceViewModel)},
         new(){ Name = "user", Icon="\uF25F", VMType = typeof(MineViewModel)},
 #if DEBUG
-        new(){ Name = "test", Icon="\uED3E", VMType = typeof(VideoPlayerViewModel)}
+        new(){ Name = "test", Icon="\uED3E", VMType = typeof(TestViewModel)}
 #endif
     };
 

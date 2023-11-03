@@ -12,7 +12,6 @@
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.18" />
-    <PackageReference Include="WebView.Avalonia.Desktop" Version="11.0.0.1" />
   </ItemGroup>
 
   <ItemGroup>

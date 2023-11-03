@@ -1,12 +1,11 @@
-﻿using AvaloniaWebView;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using Avalonia.Controls;
-using WebViewCore.Events;
+using Avalonia.NativeControls;
 
 namespace PolarShadow.Handlers
 {
@@ -22,7 +21,7 @@ namespace PolarShadow.Handlers
 
             _container = container;
             _webView = new WebView { IsVisible = false };
-            _webView.NavigationCompleted += _webView_Navigated;
+            _webView.Navigated += _webView_Navigated;
             _container.Children.Add(_webView);
             State = WebViewState.Idle;
         }
@@ -39,7 +38,7 @@ namespace PolarShadow.Handlers
             try
             {
                 _tcs = new TaskCompletionSource<string>();
-                _webView.Url = source;
+                _webView.Url = source.ToString();
                 return await _tcs.Task.WaitAsync(_timeout, cancellation);
             }
             finally
@@ -59,11 +58,11 @@ namespace PolarShadow.Handlers
                 }
                 catch { }
             }
-            _webView.NavigationCompleted -= _webView_Navigated;
+            _webView.Navigated -= _webView_Navigated;
             _container.Children.Remove(_webView);
         }
 
-        private async void _webView_Navigated(object sender, WebViewUrlLoadedEventArg e)
+        private async void _webView_Navigated(object sender, WebViewNavigatedArgs e)
         {
             if (e.IsSuccess)
             {

@@ -17,7 +17,6 @@ using System.IO;
 using PolarShadow.Cache;
 using PolarShadow.Resources;
 using System.Text;
-using AvaloniaWebView;
 using PolarShadow.Handlers;
 using Avalonia.NativeControls;
 using System.Collections.Generic;
@@ -39,7 +38,6 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        AvaloniaWebViewBuilder.Initialize(default);
         NativeControlHandlers.Initialize();
     }
 
@@ -116,6 +114,11 @@ public partial class App : Application
         service.RegisterTransientViewWithModel<DiscoverDetailView, DiscoverDetailViewModel>();
         service.RegisterTransientViewWithModel<MineView, MineViewModel>();
         service.RegisterTransientViewWithModel<VideoPlayerView, VideoPlayerViewModel>();
+
+
+#if DEBUG
+        service.RegisterTransientViewWithModel<TestView, TestViewModel>();
+#endif
     }
 
     private void RegisterPolarShadow(IServiceCollection service)

@@ -2,7 +2,6 @@
 
 using Avalonia;
 using Avalonia.NativeControls.Windows;
-using Avalonia.WebView.Desktop;
 
 namespace PolarShadow.Desktop;
 
@@ -21,7 +20,6 @@ class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
-            .UseDesktopWebView()
             .UseNativeControls();
 
 }
