@@ -13,12 +13,12 @@ namespace PolarShadow.Resources
 
         public override void BeforeWriteEndObject(Utf8JsonWriter writer, string propertyName, IParameter parameter)
         {
-            if (parameter.TryReadValue("site:name", out string siteName))
+            if (parameter.TryReadValue(SiteParams.SiteName, out string siteName))
             {
                 writer.WriteString(sitePro, siteName);
             }
 
-            if (parameter.TryReadValue("site:request", out string requestName))
+            if (parameter.TryReadValue(SiteParams.SiteRequest, out string requestName))
             {
                 writer.WriteString(fromRequestPro, requestName);
             }

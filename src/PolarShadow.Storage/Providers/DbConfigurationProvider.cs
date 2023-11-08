@@ -50,10 +50,6 @@ namespace PolarShadow.Storage
                 jsonWriter.WriteStartObject();
                 jsonWriter.WriteString("name", item.Site.Name);
                 jsonWriter.WriteString("domain", item.Site.Domain);
-                if (item.Site.UseWebView.HasValue)
-                {
-                    jsonWriter.WriteBoolean("useWebView", item.Site.UseWebView.Value);
-                }
                 if (!string.IsNullOrEmpty(item.Site.Parameters))
                 {
                     jsonWriter.WritePropertyName("parameters");
@@ -64,11 +60,6 @@ namespace PolarShadow.Storage
                 foreach (var request in item.Requests)
                 {
                     jsonWriter.WriteStartObject(request.Name);
-
-                    if (request.UseWebView.HasValue)
-                    {
-                        jsonWriter.WriteBoolean("useWebView", item.Site.UseWebView.Value);
-                    }
 
                     if (!string.IsNullOrEmpty(request.Parameters))
                     {

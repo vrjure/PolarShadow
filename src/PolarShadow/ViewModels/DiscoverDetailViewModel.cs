@@ -15,12 +15,14 @@ namespace PolarShadow.ViewModels
 {
     public class DiscoverDetailViewModel : ViewModelBase, IParameterObtain
     {
+
         private readonly INotificationManager _notify;
         private readonly IPolarShadow _polar;
         private readonly INavigationService _nav;
 
         private PageFilter _filter;
         private TaskCompletionSource _loading;
+        private bool _inCache = false;
         public DiscoverDetailViewModel(INotificationManager notify, IPolarShadow polar, INavigationService nav)
         {
             _notify = notify;
@@ -188,6 +190,12 @@ namespace PolarShadow.ViewModels
                 return;
             }
 
+            if (_inCache)
+            {
+                _inCache = false;
+                return;
+            }
+
             try
             {
                 IsLoading = true;
@@ -216,10 +224,13 @@ namespace PolarShadow.ViewModels
                 return;
             }
 
+            _inCache = true;
+
             _nav.Navigate<DetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
                 { nameof(DetailViewModel.Param_Link), res }
             }, true);
+
         }
     }
 }

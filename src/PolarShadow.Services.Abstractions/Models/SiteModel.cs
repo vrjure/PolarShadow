@@ -8,7 +8,6 @@ namespace PolarShadow.Services
     {
         public virtual string Name { get; set; }
         public virtual string Domain { get; set; }
-        public virtual bool? UseWebView { get; set; }
         public virtual string Parameters { get; set; }
     }
 }

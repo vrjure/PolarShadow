@@ -228,12 +228,10 @@ namespace PolarShadow.ViewModels
                         }
                         else
                         {
-                            var parent = await _mineResourceService.GetResourceAsync(node.ParentId);
-
                             _nav.Navigate<VideoPlayerViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
                             {
                                 {nameof(VideoPlayerViewModel.Param_Episode), url },
-                                {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{parent?.Name}" }
+                                {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{Param_Link?.Name}" }
                             }, true);
                         }
                         break;

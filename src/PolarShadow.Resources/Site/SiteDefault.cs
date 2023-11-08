@@ -15,7 +15,6 @@ namespace PolarShadow.Resources
         [JsonRequired]
         public string Name { get; set; }
         public string Domain { get; set; }
-        public bool? UseWebView { get; set; }
         public IKeyValueParameter Parameters { get; set; }
         public IReadOnlyDictionary<string, ISiteRequest> Requests { get; set; }
     }

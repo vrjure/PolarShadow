@@ -18,7 +18,7 @@ namespace PolarShadow.Resources
             }
             else if (link.StartsWith("http"))
             {
-                if (link.EndsWith(".m3u8"))
+                if (link.Split('?')[0].EndsWith(".m3u8"))
                 {
                     return LinkType.M3U8;
                 }

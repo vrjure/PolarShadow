@@ -12,16 +12,14 @@ namespace PolarShadow.Resources
 {
     internal class SiteRequestHandler : ContentWriter, ISiteRequestHandler
     {
-        private readonly ISite _site;
         private readonly IRequestHandler _handler;
         private readonly ISiteRequest _request;
         private readonly IParameter _parameters;
         private readonly IEnumerable<IContentWriting> _writingCollection;
 
         private IEnumerable<IContentWriting> _writings;
-        public SiteRequestHandler(ISite site, IRequestHandler requesthandler, ISiteRequest request, IParameter parameter, IEnumerable<IContentWriting> writingCollection)
+        public SiteRequestHandler(IRequestHandler requesthandler, ISiteRequest request, IParameter parameter, IEnumerable<IContentWriting> writingCollection)
         {
-            _site = site;
             _handler = requesthandler;
             _request = request;
             _parameters = parameter;

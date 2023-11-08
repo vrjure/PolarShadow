@@ -4,6 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Resources
 {
+    [Flags]
     public enum LinkType
     {
         None = 0,

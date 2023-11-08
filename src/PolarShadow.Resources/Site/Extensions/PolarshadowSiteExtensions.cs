@@ -229,18 +229,6 @@ namespace PolarShadow.Resources
             var siteItem = polar.GetItem<ISiteItem>();
             var parameterItem = polar.GetItem<IParameterItem>();
 
-            var requestHandler = siteItem.HttpHandler;
-            if (request.UseWebView.HasValue)
-            {
-                requestHandler = request.UseWebView.Value ? siteItem.WebViewHandler : requestHandler;
-            }
-            else if (site.UseWebView.HasValue)
-            {
-                requestHandler = site.UseWebView.Value ? siteItem.WebViewHandler : requestHandler;
-            }
-
-            if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
-
             var parameters = new Parameters();
             if (parameterItem != null && parameterItem.Parameters?.Count > 0)
             {
@@ -257,11 +245,17 @@ namespace PolarShadow.Resources
                 parameters.Add(request.Parameters);
             }
 
+            parameters.TryReadValue(SiteParams.UseWebView, out bool useWebView);
+
+            var requestHandler = useWebView ? siteItem.WebViewHandler : siteItem.HttpHandler;
+
+            if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
+
             var siteInfo = new KeyValueParameter
             {
-                { "site:name", site.Name },
-                { "site:domain", site.Domain },
-                { "site:request", requestName }
+                { SiteParams.SiteName, site.Name },
+                { SiteParams.SiteDomain, site.Domain },
+                { SiteParams.SiteRequest, requestName }
             };
 
             parameters.Add(siteInfo);
@@ -276,7 +270,7 @@ namespace PolarShadow.Resources
                 writings.AddRange(item.Writings);
             }
 
-            return new SiteRequestHandler(site, requestHandler, request, parameters, writings);
+            return new SiteRequestHandler(requestHandler, request, parameters, writings);
         }
     }
 }

@@ -58,16 +58,10 @@ namespace PolarShadow.Storage
                 }
                 var siteName = siteElement.GetString();
                 var domain = string.Empty;
-                bool? useWebView = null;
                 var parameters = string.Empty;
                 if (site.TryGetProperty("domain", out JsonElement domainElement) && domainElement.ValueKind == JsonValueKind.String)
                 {
                     domain = domainElement.GetString();
-                }
-
-                if (site.TryGetProperty("useWebView", out JsonElement useWebViewElement))
-                {
-                    useWebView = useWebViewElement.GetBoolean();
                 }
 
                 if (site.TryGetProperty("parameters", out JsonElement parameterElement) && parameterElement.ValueKind == JsonValueKind.Object)
@@ -81,7 +75,6 @@ namespace PolarShadow.Storage
                     {
                         Name = siteName,
                         Domain = domain,
-                        UseWebView = useWebView,
                         Parameters = parameters
                     }
                 });
@@ -112,10 +105,6 @@ namespace PolarShadow.Storage
                         if (request.Name.Equals("response", StringComparison.OrdinalIgnoreCase))
                         {
                             reqEntity.Response = request.Value.GetRawText();
-                        }
-                        if (request.Name.Equals("useWebView", StringComparison.OrdinalIgnoreCase))
-                        {
-                            reqEntity.UseWebView = request.Value.GetBoolean();
                         }
                         if (request.Name.Equals("parameters", StringComparison.OrdinalIgnoreCase))
                         {
