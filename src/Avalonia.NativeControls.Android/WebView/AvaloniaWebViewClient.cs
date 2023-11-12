@@ -12,6 +12,7 @@ namespace Avalonia.NativeControls.Android
     {
         public event EventHandler<WebViewNavigatingArgs> PageStarted;
         public event EventHandler<WebViewNavigatedArgs> PageFinished;
+        public event EventHandler<string> LoadResource;
         public override void OnPageStarted(global::Android.Webkit.WebView view, string url, Bitmap favicon)
         {
             PageStarted?.Invoke(view, new WebViewNavigatingArgs(url));
@@ -21,5 +22,11 @@ namespace Avalonia.NativeControls.Android
         {
             PageFinished?.Invoke(view, new WebViewNavigatedArgs(200));
         }
+
+        public override void OnLoadResource(global::Android.Webkit.WebView view, string url)
+        {
+            LoadResource?.Invoke(view,url);
+        }
+
     }
 }

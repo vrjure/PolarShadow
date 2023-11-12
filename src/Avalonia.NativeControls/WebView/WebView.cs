@@ -29,7 +29,15 @@ namespace Avalonia.NativeControls
             remove => RemoveHandler(NavigatedEvent, value);
         }
 
+        public static readonly RoutedEvent<WebViewLoadResourceArgs> LoadResourceEvent = RoutedEvent.Register<WebView, WebViewLoadResourceArgs>(nameof(LoadResource), RoutingStrategies.Direct);
+        public event EventHandler<WebViewLoadResourceArgs> LoadResource
+        {
+            add => AddHandler(LoadResourceEvent, value);
+            remove => RemoveHandler(LoadResourceEvent, value);
+        }
+
         public static readonly DirectProperty<WebView, string> UrlProperty = AvaloniaProperty.RegisterDirect<WebView, string>(nameof(Url), wv => wv.Url, (wv, v) => wv.Url = v, string.Empty);
+
         public string Url
         {
             get => this.Handler.PlatformView.Url;

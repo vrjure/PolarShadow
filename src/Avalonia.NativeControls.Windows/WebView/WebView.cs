@@ -8,6 +8,7 @@ using Microsoft.Web.WebView2.Core;
 using System.Diagnostics;
 using System.Drawing;
 using Avalonia.Controls;
+using System.Net;
 
 namespace Avalonia.NativeControls.Windows
 {
@@ -57,6 +58,7 @@ namespace Avalonia.NativeControls.Windows
 
         public event EventHandler<WebViewNavigatingArgs> Navigating;
         public event EventHandler<WebViewNavigatedArgs> Navigated;
+        public event EventHandler<WebViewLoadResourceArgs> LoadResource;
 
         protected override IPlatformHandle OnCreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {
@@ -80,6 +82,7 @@ namespace Avalonia.NativeControls.Windows
                 _controller.ParentWindow = IntPtr.Zero;
                 _controller.CoreWebView2.NavigationStarting -= CoreWebView2_NavigationStarting;
                 _controller.CoreWebView2.FrameNavigationCompleted -= CoreWebView2_NavigationCompleted;
+                _controller.CoreWebView2.WebResourceRequested -= CoreWebView2_WebResourceRequested;
                 _controller.Close();
                 _controller = null;
             }
@@ -103,11 +106,18 @@ namespace Avalonia.NativeControls.Windows
             _controller = await _environment.CreateCoreWebView2ControllerAsync(handle, _environment.CreateCoreWebView2ControllerOptions());
             _controller.CoreWebView2.NavigationStarting += CoreWebView2_NavigationStarting;
             _controller.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
+            _controller.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
+            _controller.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
             SetSize();
             if (!string.IsNullOrEmpty(_url))
             {
                 _controller.CoreWebView2.Navigate(_url);
             }
+        }
+
+        private void CoreWebView2_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e)
+        {
+            LoadResource?.Invoke(this, new WebViewLoadResourceArgs(e.Request.Uri));
         }
 
         private void CoreWebView2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)

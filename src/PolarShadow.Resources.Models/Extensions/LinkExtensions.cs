@@ -26,24 +26,6 @@ namespace PolarShadow.Resources
                 {
                     return LinkType.HTML;
                 }
-
-                var uri = new Uri(link);
-                if (uri.Host.Equals("pan.quark.cn", StringComparison.OrdinalIgnoreCase))
-                {
-                    return LinkType.Quark;
-                }
-                else if (uri.Host.Equals("pan.baidu.com"))
-                {
-                    return LinkType.BaiDu;
-                }
-                else if (uri.Host.Equals("www.aliyundrive.com", StringComparison.OrdinalIgnoreCase))
-                {
-                    return LinkType.ALiYunDrive;
-                }
-                else
-                {
-                    return LinkType.HttpFile;
-                }
             }
 
             return LinkType.None;

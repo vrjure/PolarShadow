@@ -10,8 +10,10 @@ namespace Avalonia.NativeControls
     {
         string Url { get; set; }
         void Stop();
+        Task<string> ExecuteScriptAsync(string script);
+
         event EventHandler<WebViewNavigatingArgs> Navigating;
         event EventHandler<WebViewNavigatedArgs> Navigated;
-        Task<string> ExecuteScriptAsync(string script);
+        event EventHandler<WebViewLoadResourceArgs> LoadResource;
     }
 }

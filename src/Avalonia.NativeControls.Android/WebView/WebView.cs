@@ -38,6 +38,7 @@ namespace Avalonia.NativeControls.Android
 
         public event EventHandler<WebViewNavigatingArgs> Navigating;
         public event EventHandler<WebViewNavigatedArgs> Navigated;
+        public event EventHandler<WebViewLoadResourceArgs> LoadResource;
 
         public async Task<string> ExecuteScriptAsync(string script)
         {
@@ -70,6 +71,7 @@ namespace Avalonia.NativeControls.Android
 
             _webViewClient.PageStarted += Client_PageStarted;
             _webViewClient.PageFinished += Client_PageFinished;
+            _webViewClient.LoadResource += Client_LoadResource;
                 
             return new AndroidViewControlHandle(_androidWebView);
         }
@@ -80,6 +82,7 @@ namespace Avalonia.NativeControls.Android
             {
                 _webViewClient.PageStarted -= Client_PageStarted;
                 _webViewClient.PageFinished -= Client_PageFinished;
+                _webViewClient.LoadResource -= Client_LoadResource;
                 _webViewClient = null;
             }
 
@@ -99,6 +102,11 @@ namespace Avalonia.NativeControls.Android
         private void Client_PageFinished(object sender, WebViewNavigatedArgs e)
         {
             this.Navigated?.Invoke(this, e);    
+        }
+
+        private void Client_LoadResource(object sender, string e)
+        {
+            this.LoadResource?.Invoke(this, new WebViewLoadResourceArgs(e));
         }
     }
 }

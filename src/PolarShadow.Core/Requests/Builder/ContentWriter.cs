@@ -161,7 +161,11 @@ namespace PolarShadow.Core
 
         private void BuildValue(Utf8JsonWriter writer, JsonProperty property, IParameter parameter)
         {
-            if (BeforeWriteProperty(writer, property, parameter)) return;
+            if (BeforeWriteProperty(writer, property, parameter))
+            {
+                AfterWriteProperty(writer, property, parameter);
+                return;
+            }
 
             writer.WritePropertyName(property.Name);
             BuildValue(writer, property.Value, parameter);

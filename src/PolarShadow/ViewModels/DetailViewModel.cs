@@ -235,6 +235,8 @@ namespace PolarShadow.ViewModels
                             }, true);
                         }
                         break;
+                    case LinkType.WebAnalysis:
+                        break;
                     default:
                         _notify.Show($"Not support type:{node.SrcType}");
                         break;
