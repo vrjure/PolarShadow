@@ -136,6 +136,10 @@ public partial class App : Application
                 f.RequestRules.Add(new RequestRule(Requests.Detail) { NextRequst = Requests.Detail });
                 f.RequestRules.Add(new RequestRule(Requests.Search) { NextRequst = Requests.Detail });
                 f.RequestRules.Add(new RequestRule("category_*") { NextRequst = Requests.Detail });
+            })
+            .ConfigureWebAnalysis(f =>
+            {
+                f.WebViewHandler = webViewHandler;
             }).Build();
         service.AddSingleton(polarShadow);
     }

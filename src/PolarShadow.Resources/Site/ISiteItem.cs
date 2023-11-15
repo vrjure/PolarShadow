@@ -14,4 +14,10 @@ namespace PolarShadow.Resources
         void Remove(string name);
         IEnumerable<RequestRule> EnumeratorRequestRules(string requestName = "");
     }
+
+    public interface ISiteItem<TSite> : ISiteItem where TSite : ISite
+    {
+        new TSite this[string name] { get; set; }
+        new IEnumerable<TSite> Sites { get; }
+    }
 }

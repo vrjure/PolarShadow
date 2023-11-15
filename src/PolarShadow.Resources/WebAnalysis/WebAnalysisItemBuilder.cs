@@ -5,11 +5,11 @@ using System.Text;
 
 namespace PolarShadow.Resources
 {
-    internal class WebAnalysisItemBuilder : IPolarShadowItemBuilder
+    internal class WebAnalysisItemBuilder : SiteItemBuilderBase
     {
-        public IPolarShadowItem Build(IPolarShadowBuilder builder)
+        public override IPolarShadowItem Build(IPolarShadowBuilder builder)
         {
-            return new WebAnalysisItem();
+            return new WebAnalysisItem(HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, RequestRules);
         }
     }
 }

@@ -34,9 +34,9 @@ namespace PolarShadow.Resources
             return item.TryGetSite(siteName, out site);
         }
 
-        public static IEnumerable<WebAnalysisSource> GetAnalysisSources(this IPolarShadow polarShadow)
+        public static IEnumerable<IWebAnalysisSite> GetWebAnalysisSites(this IPolarShadow polarShadow)
         {
-            return polarShadow.GetItem<IWebAnalysisItem>()?.Sources;
+            return polarShadow.GetItem<IWebAnalysisItem>()?.Sites;
         }
 
         public static ISiteRequestHandler CreateSiteRequestHandler(this IPolarShadow polar, ISite site, string requestName)

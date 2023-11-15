@@ -4,12 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using PolarShadow.Aria2;
 using PolarShadow.Cache;
 using PolarShadow.Core;
-using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Options;
 using PolarShadow.Resources;
 using PolarShadow.Services;
-using PolarShadow.Storage;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -290,12 +288,13 @@ namespace PolarShadow.ViewModels
 
         }
 
-        private async Task<ILink> TryAnalysisVideoUrl(ILink link)
+        private async Task<ILink> TryAnalysisVideoUrl(ILink link, ISite site = default)
         {
             try
             {
                 IsLoading = true;
-                if (!_polar.TryGetSite(link.Site, out ISite site))
+
+                if (site == null && !_polar.TryGetSite(link.Site, out site))
                 {
                     _notify.Show($"Can not found site [{link.Site}]");
                     return null;

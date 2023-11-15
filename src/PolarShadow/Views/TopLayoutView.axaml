@@ -10,7 +10,8 @@
 			 ps:PageLoadAttached.RegisterLoad="True">
     <Grid RowDefinitions="auto,*">
 		<!--webviewContainer-->
-		<Panel x:Name="webViewContainer"/>
+		<Panel x:Name="webViewContainer"
+			   Grid.Row="1"/>
 		<Grid ColumnDefinitions="auto,*,auto"
 			  IsVisible="{Binding ShowTitleBar}">
 			<!--bar color-->

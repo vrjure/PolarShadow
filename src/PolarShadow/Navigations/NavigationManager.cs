@@ -79,7 +79,7 @@ namespace PolarShadow.Navigations
             {
                 po.ApplyParameter(parameters);
             }
-
+            container.Content = null;//unload first
             container.Content = page;
 
             if (TryGetBackButton(containerName, out Control btn))

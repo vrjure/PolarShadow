@@ -84,8 +84,8 @@ namespace PolarShadow.Controls
             if (!_containers.TryGetValue(template.ToolBar, out ContentControl container)) return;
 
             var toolBarTemplate = arg.Sender as ContentControl;
-            toolBarTemplate.AddHandler(ContentControl.LoadedEvent, toolBarTemplate_Loaded);
             toolBarTemplate.AddHandler(ContentControl.UnloadedEvent, ToolBarTemplate_Unloaded);
+            toolBarTemplate.AddHandler(ContentControl.LoadedEvent, toolBarTemplate_Loaded);
 
             static void toolBarTemplate_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
             {

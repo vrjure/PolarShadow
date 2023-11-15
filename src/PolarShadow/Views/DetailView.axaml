@@ -4,13 +4,33 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ps="https://github.com/PolarShadow"
              xmlns:pss="using:PolarShadow.Services"
+			 xmlns:psr="using:PolarShadow.Resources"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.DetailView"
              x:DataType="ps:DetailViewModel"
              x:CompileBindings="True"
              ps:PageLoadAttached.RegisterLoad="True">
-    <Grid Margin="10"
-          RowDefinitions="*,60">
+	<ps:ToolBarAttached.ToolBar>
+		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+			<Button Classes="icon"
+		            Classes.save="{Binding !IsSaved}"
+		            Classes.delete="{Binding IsSaved}"
+		            VerticalAlignment="Center"
+		            Command="{Binding ResourceOperateCommand}">
+				<Button.Styles>
+					<Style Selector="Button.save">
+						<Setter Property="Content" Value="&#xF0B1;"/>
+					</Style>
+					<Style Selector="Button.delete">
+						<Setter Property="Content" Value="&#xEC2A;"/>
+						<Setter Property="Foreground" Value="Red"/>
+					</Style>
+				</Button.Styles>
+			</Button>
+		</ps:ToolBarTemplate>
+	</ps:ToolBarAttached.ToolBar>
+	
+    <Grid Margin="10">
         <ScrollViewer>
             <StackPanel Orientation="Vertical"
                         Spacing="10">
@@ -72,27 +92,6 @@
         </StackPanel>
         </ScrollViewer>
 
-        <Border Grid.Row="1"
-                BorderBrush="LightGray"
-                BorderThickness="0,1,0,0">
-            <Button Classes="icon"
-                    Classes.save="{Binding !IsSaved}"
-                    Classes.delete="{Binding IsSaved}"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Command="{Binding ResourceOperateCommand}">
-                <Button.Styles>
-                    <Style Selector="Button.save">
-                        <Setter Property="Content" Value="&#xF0B1;"/>
-                    </Style>
-                    <Style Selector="Button.delete">
-                        <Setter Property="Content" Value="&#xEC2A;"/>
-                        <Setter Property="Foreground" Value="Red"/>
-                    </Style>
-                </Button.Styles>
-            </Button>
-        </Border>
-
         <Button Classes="icon"
                 Content="&#xF064;"
                 HorizontalAlignment="Right"
@@ -106,5 +105,5 @@
                       Height="30"
                       Width="30"/>
         </Border>
-    </Grid>
+	</Grid>
 </UserControl>

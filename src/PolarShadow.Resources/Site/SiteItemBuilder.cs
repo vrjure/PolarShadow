@@ -9,13 +9,9 @@ using System.Text.Json;
 
 namespace PolarShadow.Resources
 {
-    internal sealed class SiteItemBuilder : ISiteItemBuilder
+    internal sealed class SiteItemBuilder : SiteItemBuilderBase, ISiteItemBuilder
     {   
-        public IRequestHandler WebViewHandler { get; set; }
-        public IRequestHandler HttpHandler { get; set; }
-        public ICollection<RequestRule> RequestRules { get; } = new List<RequestRule>();
-
-        public IPolarShadowItem Build(IPolarShadowBuilder builder)
+        public override IPolarShadowItem Build(IPolarShadowBuilder builder)
         {
             return new SiteItem(HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, RequestRules);
         }

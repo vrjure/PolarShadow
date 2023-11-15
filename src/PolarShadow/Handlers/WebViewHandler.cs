@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,10 +28,16 @@ namespace PolarShadow.Handlers
             try
             {
                 var url = request.Request.Url.Format(parameter).Format(parameter);
-                var html = await tab.LoadAsync(new Uri(url), cancellation);
-                html = Regex.Unescape(Regex.Unescape(html).Trim('"'));
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
+                HtmlDocument doc = null;
+                if(parameter.TryReadValue(WebViewParams.Sniff, out string sniff))
+                {
+                    Enum.TryParse(sniff, true, out Sniff sf);
+                    doc = await tab.LoadAsync(new Uri(url), sf, cancellation);
+                }
+                else
+                {
+                    doc = await tab.LoadAsync(new Uri(url), cancellation);
+                }
                 return new ObjectParameter(new ParameterValue(new HtmlElement(doc.CreateNavigator())));
             }
             finally
@@ -55,6 +62,10 @@ namespace PolarShadow.Handlers
                 {
                     idleTab = new WebViewTab(_container);
                     _tabs.Add(idleTab);
+                }
+                else
+                {
+                    idleTab.SetReady();
                 }
                 return idleTab;
             }

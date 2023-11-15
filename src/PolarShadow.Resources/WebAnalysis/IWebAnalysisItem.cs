@@ -5,10 +5,8 @@ using System.Text;
 
 namespace PolarShadow.Resources
 {
-    public interface IWebAnalysisItem : IPolarShadowItem
+    public interface IWebAnalysisItem : ISiteItem<IWebAnalysisSite>
     {
-        WebAnalysisSource this[string name] { get; set; }
-        IEnumerable<WebAnalysisSource> Sources { get; }
-        void Remove(string name);
+        
     }
 }
