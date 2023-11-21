@@ -83,6 +83,7 @@ namespace Avalonia.NativeControls.Windows
                 _controller.CoreWebView2.NavigationStarting -= CoreWebView2_NavigationStarting;
                 _controller.CoreWebView2.FrameNavigationCompleted -= CoreWebView2_NavigationCompleted;
                 _controller.CoreWebView2.WebResourceRequested -= CoreWebView2_WebResourceRequested;
+                //_controller.CoreWebView2.WebResourceResponseReceived -= CoreWebView2_WebResourceResponseReceived;
                 _controller.Close();
                 _controller = null;
             }
@@ -107,12 +108,19 @@ namespace Avalonia.NativeControls.Windows
             _controller.CoreWebView2.NavigationStarting += CoreWebView2_NavigationStarting;
             _controller.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
             _controller.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
-            _controller.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+            //_controller.CoreWebView2.WebResourceResponseReceived += CoreWebView2_WebResourceResponseReceived;
+            _controller.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All, CoreWebView2WebResourceRequestSourceKinds.All);
             SetSize();
             if (!string.IsNullOrEmpty(_url))
             {
                 _controller.CoreWebView2.Navigate(_url);
             }
+        }
+
+
+        private void CoreWebView2_WebResourceResponseReceived(object sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        {
+            LoadResource?.Invoke(this, new WebViewLoadResourceArgs(e.Request.Uri));
         }
 
         private void CoreWebView2_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e)

@@ -59,7 +59,7 @@ namespace PolarShadow.ViewModels
         public IAsyncRelayCommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadOnline);
 
         private IAsyncRelayCommand _resourceOperateCommand;
-        public IAsyncRelayCommand ResourceOperateCommand => _resourceOperateCommand ??= new AsyncRelayCommand(ResourceOperate, () => !IsLoading);
+        public IAsyncRelayCommand ResourceOperateCommand => _resourceOperateCommand ??= new AsyncRelayCommand(ResourceOperate);
 
         private IAsyncRelayCommand _linkClickCommand;
         public IAsyncRelayCommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(LinkClick);
@@ -226,6 +226,11 @@ namespace PolarShadow.ViewModels
                         }
                         else
                         {
+                            if (string.IsNullOrEmpty(url.Src))
+                            {
+                                _notify.Show("Empty src");
+                                return;
+                            }
                             _nav.Navigate<VideoPlayerViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
                             {
                                 {nameof(VideoPlayerViewModel.Param_Episode), url },

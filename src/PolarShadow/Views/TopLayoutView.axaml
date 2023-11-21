@@ -11,7 +11,9 @@
     <Grid RowDefinitions="auto,*">
 		<!--webviewContainer-->
 		<Panel x:Name="webViewContainer"
-			   Grid.Row="1"/>
+			   Grid.Row="1"
+			   Width="1"
+			   Height="1"/>
 		<Grid ColumnDefinitions="auto,*,auto"
 			  IsVisible="{Binding ShowTitleBar}">
 			<!--bar color-->

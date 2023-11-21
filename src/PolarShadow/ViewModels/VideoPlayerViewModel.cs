@@ -141,22 +141,31 @@ namespace PolarShadow.ViewModels
                 MediaPlayer = new MediaPlayer(_libVLC);
             }
 
-            MediaPlayer.Play(new Media(_libVLC, new Uri(videoUrl.Src)));
+            try
+            {
+                MediaPlayer.Play(new Media(_libVLC, new Uri(videoUrl.Src)));
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine(ex.ToString());
+            }
         }
 
         protected override void OnUnload()
         {
             try
             {
-                if (MediaPlayer == null)
+                var mp = MediaPlayer;
+                MediaPlayer = null;
+                if (mp == null)
                 {
                     return;
                 }
-                MediaPlayer.Stop();
-
-                var mp = MediaPlayer;
-                MediaPlayer = null;
-                mp.Dispose();
+                Task.Run(() =>
+                {
+                    mp.Stop();
+                    mp.Dispose();
+                });
             }
             catch { }
 

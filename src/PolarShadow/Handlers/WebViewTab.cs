@@ -27,7 +27,7 @@ namespace PolarShadow.Handlers
             if (container == null) throw new ArgumentNullException(nameof(container));
 
             _container = container;
-            _webView = new WebView { IsVisible = false };
+            _webView = new WebView { IsVisible = true };
             _webView.Navigated += _webView_Navigated;
             _webView.LoadResource += _webView_LoadResource;
             _container.Children.Add(_webView);
@@ -164,6 +164,7 @@ namespace PolarShadow.Handlers
 
         private void MatchM3U8(string uri)
         {
+            System.Diagnostics.Trace.WriteLine(uri);
             var u = new Uri(uri);
             if (u.AbsolutePath.EndsWith(".m3u8", StringComparison.OrdinalIgnoreCase))
             {

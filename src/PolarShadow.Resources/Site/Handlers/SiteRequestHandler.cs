@@ -46,6 +46,18 @@ namespace PolarShadow.Resources
             _writings = _writingCollection?.Select(f => TryGetClone(f)).ToList();
 
             this.Write(output, _request.Response.Template.Value, p);
+
+#if DEBUG
+            try
+            {
+                output.Seek(0, SeekOrigin.Begin);
+                var sr = new StreamReader(output);
+                System.Diagnostics.Debug.WriteLine(sr.ReadToEnd());
+                output.Seek(0, SeekOrigin.Begin);
+
+            }
+            catch { }
+#endif
         }
 
         public bool TryGetParameter<T>(string name, out T value)

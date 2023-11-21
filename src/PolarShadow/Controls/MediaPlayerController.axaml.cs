@@ -201,7 +201,7 @@ namespace PolarShadow.Controls
             }
 
             var newValue = arg.NewValue.Value;
-            if (Math.Abs((newValue - _currentSetTime).TotalSeconds) < _ignore.Seconds)
+            if ((int)Math.Abs((newValue - _currentSetTime).TotalSeconds) < _ignore.Seconds)
             {
                 return;
             }
@@ -234,6 +234,7 @@ namespace PolarShadow.Controls
             Dispatcher.UIThread.Post(() =>
             {
                 IsPlaying = true;
+                Unloading();
             });
         }
 
@@ -247,7 +248,7 @@ namespace PolarShadow.Controls
 
         private void MediaChanged(object sender, LibVLCSharp.Shared.MediaPlayerMediaChangedEventArgs e)
         {
-
+            Loading();
         }
 
         private void Initialize()
@@ -311,6 +312,18 @@ namespace PolarShadow.Controls
             }
 
             Time = target;
+        }
+
+        private void Loading()
+        {
+            part_loading.IsVisible = true;
+            part_loading.Classes.Add("spin");
+        }
+
+        private void Unloading()
+        {
+            part_loading.IsVisible = false;
+            part_loading.Classes.Remove("spin");
         }
     }
 }

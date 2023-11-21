@@ -16,14 +16,14 @@
 		            Classes.save="{Binding !IsSaved}"
 		            Classes.delete="{Binding IsSaved}"
 		            VerticalAlignment="Center"
-		            Command="{Binding ResourceOperateCommand}">
+		            Command="{Binding ResourceOperateCommand}"
+					IsEnabled="{Binding !IsLoading}">
 				<Button.Styles>
 					<Style Selector="Button.save">
 						<Setter Property="Content" Value="&#xF0B1;"/>
 					</Style>
 					<Style Selector="Button.delete">
 						<Setter Property="Content" Value="&#xEC2A;"/>
-						<Setter Property="Foreground" Value="Red"/>
 					</Style>
 				</Button.Styles>
 			</Button>
@@ -42,7 +42,7 @@
                                      HorizontalAlignment="Center"/>
                 <TextBlock Text="简介"
                            Classes="title"/>
-                <SelectableTextBlock Text="{Binding Resource.Description}" TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding Resource.Description}" TextWrapping="Wrap"/>
                 <TextBlock Text="来源"
                            Classes="title"/>
                 <SelectableTextBlock Text="{Binding Resource.Site}"/>

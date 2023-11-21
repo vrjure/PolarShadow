@@ -65,7 +65,10 @@ namespace PolarShadow.Resources
 
                     result.AddRange(list);
                 }
-                catch { }
+                catch(Exception ex)
+                {
+                   System.Diagnostics.Trace.WriteLine(ex.ToString());
+                }
 
                 _tasks.Remove(task);
             }
