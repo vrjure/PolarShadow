@@ -13,13 +13,19 @@ namespace PolarShadow.Controls.Converters
         public static readonly PercentConverter Instance = new();
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (targetType.IsAssignableTo(typeof(double)) 
-                && value is string sourceValue 
-                && parameter is string parameterValue
-                && double.TryParse(sourceValue, out var dSource)
-                && double.TryParse(parameterValue, out var dParemeter))
+            if (targetType.IsAssignableTo(typeof(double))
+                && value is double dSource)
             {
-                return dSource * dParemeter;
+                var dParameter = 1d;
+                if (parameter is string dp && double.TryParse(dp, out double dp1))
+                {
+                    dParameter = dp1;
+                }
+                else if (parameter is double dp2)
+                {
+                    dParameter = dp2;
+                }
+                return dSource * dParameter;
             }
 
             return value;

@@ -20,6 +20,7 @@ using System.Text;
 using PolarShadow.Handlers;
 using Avalonia.NativeControls;
 using System.Collections.Generic;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace PolarShadow;
 
@@ -30,10 +31,6 @@ public partial class App : Application
     public static string DbFile => Path.Combine(AppDataFolder, "polar.db");
     public static string CacheFolder => Path.Combine(AppDataFolder, "cache");
     public static string PreferenceFolder => Path.Combine(AppDataFolder, "preference");
-
-    public static IServiceProvider Service => (App.Current as App)._services;
-
-    private IServiceProvider _services;
 
     public override void Initialize()
     {
@@ -49,8 +46,8 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        var topLevelService = _services.GetRequiredService<ITopLevelService>();
-        var nav = _services.GetRequiredService<INavigationService>();
+        var topLevelService = Ioc.Default.GetRequiredService<ITopLevelService>();
+        var nav = Ioc.Default.GetRequiredService<INavigationService>();
 
         // Line below is needed to remove Avalonia data validation.
         // Without this line you will get duplicate validations from both Avalonia and CT
@@ -58,13 +55,13 @@ public partial class App : Application
         
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = _services.GetRequiredService<MainWindow>();
+            desktop.MainWindow = Ioc.Default.GetRequiredService<MainWindow>();
             topLevelService.SetTopLevel(desktop.MainWindow);
             nav.Navigate<TopLayoutViewModel>(MainWindowViewModel.NavigationName);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = _services.GetRequiredService<TopLayoutView>();
+            singleViewPlatform.MainView = Ioc.Default.GetRequiredService<TopLayoutView>();
             topLevelService.SetTopLevelFactory(() => singleViewPlatform.MainView);
         }
 
@@ -87,8 +84,9 @@ public partial class App : Application
 
         RegisterVLC(service);
 
-        _services = service.BuildServiceProvider();
+        var services = service.BuildServiceProvider();
 
+        Ioc.Default.ConfigureServices(services);
     }
 
     private void RegisterUtilities(IServiceCollection service)

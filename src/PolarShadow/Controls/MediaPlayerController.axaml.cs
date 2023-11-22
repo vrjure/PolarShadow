@@ -16,7 +16,7 @@ namespace PolarShadow.Controls
     public partial class MediaPlayerController : UserControl
     {
         private static readonly TimeSpan _ignore = TimeSpan.FromSeconds(1);
-        private static TimeSpan _currentSetTime;
+        private long _lastTime = 0;
         static MediaPlayerController()
         {
             MediaPlayerProperty.Changed.Subscribe(MediaPlayerPropertyChanged);
@@ -201,7 +201,7 @@ namespace PolarShadow.Controls
             }
 
             var newValue = arg.NewValue.Value;
-            if ((int)Math.Abs((newValue - _currentSetTime).TotalSeconds) < _ignore.Seconds)
+            if (Math.Abs((newValue.TotalMilliseconds - controller.MediaPlayer.Time)) < _ignore.TotalMilliseconds)
             {
                 return;
             }
@@ -210,13 +210,15 @@ namespace PolarShadow.Controls
 
         private void TimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
         {
-            var time = e.Time > 0 ? e.Time : 0;
+            if (Math.Abs(e.Time - _lastTime) < _ignore.TotalMilliseconds)
+            {
+                return;
+            }
+            _lastTime = e.Time / 1000 * 1000;
 
             Dispatcher.UIThread.Post(() =>
             {
-                _currentSetTime = TimeSpan.FromMilliseconds(time);
-                if (this.Time == _currentSetTime) return;
-                this.Time = _currentSetTime;
+                this.Time = TimeSpan.FromMilliseconds(_lastTime);
             });
         }
 
@@ -316,14 +318,14 @@ namespace PolarShadow.Controls
 
         private void Loading()
         {
-            part_loading.IsVisible = true;
-            part_loading.Classes.Add("spin");
+            //part_loading.IsVisible = true;
+            //part_loading.Classes.Add("spin");
         }
 
         private void Unloading()
         {
-            part_loading.IsVisible = false;
-            part_loading.Classes.Remove("spin");
+            //part_loading.IsVisible = false;
+            //part_loading.Classes.Remove("spin");
         }
     }
 }

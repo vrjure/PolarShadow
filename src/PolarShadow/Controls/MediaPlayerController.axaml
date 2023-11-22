@@ -12,14 +12,6 @@
 		</Style>
 	</Design.DesignStyle>
 	<Panel Classes="design">
-		<Border Grid.Row="1">
-			<PathIcon Data="{StaticResource loader2}"
-					  Height="30"
-					  Width="30"
-					  Foreground="White"
-					  x:Name="part_loading"
-					  IsVisible="False"/>
-		</Border>
 		<Grid RowDefinitions="auto,*,auto"
 			  x:Name="part_panel"
 			  Focusable="True">
