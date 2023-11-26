@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Selection;
+using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Core;
 using PolarShadow.Navigations;
 using PolarShadow.Resources;
@@ -33,25 +34,8 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _sites, value);
         }
 
-        private ISite _selectValue;
-        public ISite SelectValue
-        {
-            get => _selectValue;
-            set
-            {
-                if (SetProperty(ref _selectValue, value))
-                {
-                    SiteSelectChanged();
-                }
-            }
-        }
-
-        private ISelectionModel _selection;
-        public ISelectionModel Selection
-        {
-            get => _selection;
-            set => SetProperty(ref _selection, value);
-        }
+        private IRelayCommand _siteSelectedCommand;
+        public IRelayCommand SiteSelectedCommand => _siteSelectedCommand ??= new RelayCommand<ISite>(SiteSelectChanged);
 
         protected override void OnLoad()
         {
@@ -66,20 +50,17 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private void SiteSelectChanged()
+        private void SiteSelectChanged(ISite site)
         {
-            if (SelectValue == null)
+            if (site == null)
             {
                 return;
             }
 
             _nav.Navigate<DiscoverDetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
-                { nameof(DiscoverDetailViewModel.Param_Site), SelectValue }
+                { nameof(DiscoverDetailViewModel.Param_Site), site }
             }, true);
-
-            Selection?.Clear();
-            SelectValue = null;
         }
     }
 }

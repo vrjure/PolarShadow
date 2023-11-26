@@ -1,36 +1,23 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:psr="using:PolarShadow.Resources"
              x:Class="PolarShadow.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
 	<Application.Resources>
-		<FontFamily x:Key="segoeIcon" >/Assets/Fonts/SegoeFluentIcons.ttf#Segoe Fluent Icons</FontFamily>
-		<FontFamily x:Key="remixIcon" >/Assets/Fonts/remixicon.ttf#remixicon</FontFamily>
-
-		<!--FontSize-->
-		<x:Double x:Key="DefaultFontSize">18</x:Double>
-		<x:Double x:Key="DefaultPointerOverFontSize">21</x:Double>
-		<x:Double x:Key="DefaultIconFontSize">23</x:Double>
-		<x:Double x:Key="DefaultPointerOverIconFontSize">24</x:Double>
-		<x:Double x:Key="TitleFontSize">20</x:Double>
-		
-		<!--Width/Height-->
-		<x:Double x:Key="TitleBarHeight">40</x:Double>
-		<x:Double x:Key="ListBoxWrapPanelItemWidth">180</x:Double>
-		
-		<!--slider-->
-		<GridLength x:Key="SliderPreContentMargin">auto</GridLength>
-		<GridLength x:Key="SliderPostContentMargin">auto</GridLength>
-		<x:Double x:Key="SliderHorizontalHeight">10</x:Double>
-		<x:Double x:Key="SliderHorizontalThumbWidth">10</x:Double>
-		<x:Double x:Key="SliderHorizontalThumbHeight">10</x:Double>
-		
-		<!--Colors-->
-		<Color x:Key="TitleBarColor">#f3f3f3</Color>
-
-		<!--Path-->
-		<StreamGeometry x:Key="loader2">M12 2C12.5523 2 13 2.44772 13 3V6C13 6.55228 12.5523 7 12 7C11.4477 7 11 6.55228 11 6V3C11 2.44772 11.4477 2 12 2ZM12 17C12.5523 17 13 17.4477 13 18V21C13 21.5523 12.5523 22 12 22C11.4477 22 11 21.5523 11 21V18C11 17.4477 11.4477 17 12 17ZM22 12C22 12.5523 21.5523 13 21 13H18C17.4477 13 17 12.5523 17 12C17 11.4477 17.4477 11 18 11H21C21.5523 11 22 11.4477 22 12ZM7 12C7 12.5523 6.55228 13 6 13H3C2.44772 13 2 12.5523 2 12C2 11.4477 2.44772 11 3 11H6C6.55228 11 7 11.4477 7 12ZM19.0711 19.0711C18.6805 19.4616 18.0474 19.4616 17.6569 19.0711L15.5355 16.9497C15.145 16.5592 15.145 15.9261 15.5355 15.5355C15.9261 15.145 16.5592 15.145 16.9497 15.5355L19.0711 17.6569C19.4616 18.0474 19.4616 18.6805 19.0711 19.0711ZM8.46447 8.46447C8.07394 8.85499 7.44078 8.85499 7.05025 8.46447L4.92893 6.34315C4.53841 5.95262 4.53841 5.31946 4.92893 4.92893C5.31946 4.53841 5.95262 4.53841 6.34315 4.92893L8.46447 7.05025C8.85499 7.44078 8.85499 8.07394 8.46447 8.46447ZM4.92893 19.0711C4.53841 18.6805 4.53841 18.0474 4.92893 17.6569L7.05025 15.5355C7.44078 15.145 8.07394 15.145 8.46447 15.5355C8.85499 15.9261 8.85499 16.5592 8.46447 16.9497L6.34315 19.0711C5.95262 19.4616 5.31946 19.4616 4.92893 19.0711ZM15.5355 8.46447C15.145 8.07394 15.145 7.44078 15.5355 7.05025L17.6569 4.92893C18.0474 4.53841 18.6805 4.53841 19.0711 4.92893C19.4616 5.31946 19.4616 5.95262 19.0711 6.34315L16.9497 8.46447C16.5592 8.85499 15.9261 8.85499 15.5355 8.46447Z</StreamGeometry>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="/Assets/Values/Fonts.axaml"/>
+				<ResourceInclude Source="/Assets/Values/Sizes.axaml"/>
+				<ResourceInclude Source="/Assets/Values/Colors.axaml"/>
+				<ResourceInclude Source="/Assets/Values/Paths.axaml"/>	
+				
+				<ResourceInclude Source="/Assets/Themes/SliderThemes.axaml"/>
+				<ResourceInclude Source="/Assets/Themes/ItemsControlThemes.axaml"/>
+				<ResourceInclude Source="/Assets/Themes/ButtonThemes.axaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 	</Application.Resources>
 	
     <Application.Styles>
@@ -41,84 +28,12 @@
 			</FluentTheme.Palettes>
 		</FluentTheme>
 
-		<Style Selector="PathIcon.spin">
-			<Style.Animations>
-				<Animation Duration="0:0:2" IterationCount="Infinite">
-					<KeyFrame Cue="0%">
-						<Setter Property="RotateTransform.Angle" Value="0.0"/>
-					</KeyFrame>
-					<KeyFrame Cue="100%">
-						<Setter Property="RotateTransform.Angle" Value="360.0"/>
-					</KeyFrame>
-				</Animation>
-			</Style.Animations>
-		</Style>	
-		
-		<Style Selector="TextBlock,SelectableTextBlock">
-			<Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
-		</Style>
-		
-		<Style Selector="TextBlock.title">
-			<Setter Property="FontSize" Value="{StaticResource TitleFontSize}"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-		</Style>
-
-		<Style Selector="TextBlock.icon">
-			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
-			<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
-		</Style>
-
-		<Style Selector="TextBlock.empty">
-			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
-			<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
-			<Setter Property="Text" Value="&#xF1F7; Empty"/>
-		</Style>
-		
-		<Style Selector="Button.icon">
-			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
-			<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
-			<Setter Property="Padding" Value="0"/>
-			<Setter Property="BorderThickness" Value="0"/>
-			<Setter Property="CornerRadius" Value="0"/>
-			
-			<Style Selector="^:pointerover /template/ ContentPresenter">
-				<Setter Property="Background" Value="Transparent"/>
-				<Setter Property="Foreground" Value="Red"/>
-			</Style>
-			
-			<Style Selector="^:pressed /template/ ContentPresenter">
-				<Setter Property="Foreground" Value="Red"/>
-			</Style>
-			<Style Selector="^:disabled /template/ ContentPresenter">
-				<Setter Property="Background" Value="Transparent"/>
-			</Style>
-		</Style>
-
-		<Style Selector="Button.gridItem">
-			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="Padding" Value="8"/>
-		</Style>
-
-		<Style Selector="ListBoxItem">
-			<Style Selector="^:pointerover /template/ ContentPresenter">
-				<Setter Property="Background" Value="Transparent"/>
-				<Setter Property="Foreground" Value="Red"/>
-			</Style>
-			<Style Selector="^:selected /template/ ContentPresenter">
-				<Setter Property="Background" Value="Transparent"/>
-				<Setter Property="Foreground" Value="Red"/>
-			</Style>
-		</Style>
-
-		<Style Selector="TextBox">
-			<Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
-		</Style>
-		<Style Selector="TextBox.nofocus">
-			<Style Selector="^:focus /template/ Border#PART_BorderElement">
-				<Setter Property="BorderThickness" Value="0"/>
-			</Style>
-		</Style>
+		<StyleInclude Source="/Assets/Styles/BorderStyles.axaml"/>
+		<StyleInclude Source="/Assets/Styles/ButtonStyles.axaml"/>
+		<StyleInclude Source="/Assets/Styles/TextBlockStyles.axaml"/>
+		<StyleInclude Source="/Assets/Styles/TextBoxStyles.axaml"/>
+		<StyleInclude Source="/Assets/Styles/PathIconStyles.axaml"/>
+				
     </Application.Styles>
 	
 </Application>

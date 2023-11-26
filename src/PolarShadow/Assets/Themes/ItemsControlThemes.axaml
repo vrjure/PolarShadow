@@ -1,0 +1,51 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Add Resources Here -->
+	<ControlTheme x:Key="BaseTheme" TargetType="ItemsControl">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						CornerRadius="{TemplateBinding CornerRadius}"
+						Padding="{TemplateBinding Padding}">
+					<ItemsPresenter Name="PART_ItemsPresenter"
+									ItemsPanel="{TemplateBinding ItemsPanel}"/>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+	</ControlTheme>
+	
+	<ControlTheme x:Key="Card" TargetType="ItemsControl" BasedOn="{StaticResource BaseTheme}">
+		<Setter Property="ItemsPanel">
+			<ItemsPanelTemplate>
+				<WrapPanel/>
+			</ItemsPanelTemplate>
+		</Setter>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource CardItemPresenter}"/>
+	</ControlTheme>
+
+	<ControlTheme x:Key="VerticalList" TargetType="ItemsControl" BasedOn="{StaticResource BaseTheme}">
+		<Setter Property="ItemsPanel">
+			<ItemsPanelTemplate>
+				<StackPanel Orientation="Vertical"/>
+			</ItemsPanelTemplate>
+		</Setter>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource VerticalListItemPresenter}"/>
+	</ControlTheme>
+
+	<ControlTheme TargetType="ContentPresenter" x:Key="CardItemPresenter">
+		<Setter Property="Width" Value="{StaticResource CardItemWidth}"/>
+		<Setter Property="Height" Value="{StaticResource CardItemHeight}"/>
+		<Setter Property="CornerRadius" Value="{StaticResource CardItemCornerRadius}"/>
+		<Setter Property="BoxShadow" Value="0 0 15 0 LightGray"/>
+		<Setter Property="Margin" Value="8"/>
+	</ControlTheme>
+
+	<ControlTheme TargetType="ContentPresenter" x:Key="VerticalListItemPresenter">
+		<Setter Property="Height" Value="{StaticResource VerticalListHeight}"/>
+		<Setter Property="HorizontalAlignment" Value="Stretch"/>
+		<Setter Property="BoxShadow" Value="0 0 15 0 LightGray"/>
+		<Setter Property="Margin" Value="8"/>
+	</ControlTheme>
+</ResourceDictionary>

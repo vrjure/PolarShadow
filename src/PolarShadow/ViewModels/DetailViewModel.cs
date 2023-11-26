@@ -27,6 +27,8 @@ namespace PolarShadow.ViewModels
         private readonly INavigationService _nav;
 
         private ResourceModel _rootResourceInDb;
+        private ResourceTreeNode _selectedWenAnalysisResource;
+        
         public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav)
         {
             _polar = polar;
@@ -48,6 +50,13 @@ namespace PolarShadow.ViewModels
             private set => SetProperty(ref _resource, value);
         }
 
+        private ICollection<IWebAnalysisSite> _webAnalysisSites;
+        public ICollection<IWebAnalysisSite> WebAnalysisSites
+        {
+            get => _webAnalysisSites;
+            private set => SetProperty(ref _webAnalysisSites, value);
+        }
+
         private bool _isSave;
         public bool IsSaved
         {
@@ -63,6 +72,9 @@ namespace PolarShadow.ViewModels
 
         private IAsyncRelayCommand _linkClickCommand;
         public IAsyncRelayCommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(LinkClick);
+
+        private IAsyncRelayCommand _webAnalysisSelectedCommand;
+        public IAsyncRelayCommand WebAnalysisSelectedCommand => _webAnalysisSelectedCommand ??= new AsyncRelayCommand<IWebAnalysisSite>(WebAnalysisSelected);
 
         public void ApplyParameter(IDictionary<string, object> parameters)
         {
@@ -125,7 +137,7 @@ namespace PolarShadow.ViewModels
         {
             if (!_polar.TryGetSite(Param_Link.Site, out ISite site))
             {
-                _notify.Show($"Can not fond Site [{Param_Link.Site}]", NotificationType.Warning);
+                _notify.Show($"Can not fond site [{Param_Link.Site}]", NotificationType.Warning);
                 return;
             }
 
@@ -218,27 +230,13 @@ namespace PolarShadow.ViewModels
                     case LinkType.Magnet:
                         await StartMagnet(node);
                         break;
-                    case LinkType.HTML:
+                    case LinkType.HtmlSource:
                         var url = await TryAnalysisVideoUrl(node);
-                        if (url == null)
-                        {
-                            //TODO Open Browser
-                        }
-                        else
-                        {
-                            if (string.IsNullOrEmpty(url.Src))
-                            {
-                                _notify.Show("Empty src");
-                                return;
-                            }
-                            _nav.Navigate<VideoPlayerViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
-                            {
-                                {nameof(VideoPlayerViewModel.Param_Episode), url },
-                                {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{Param_Link?.Name}" }
-                            }, true);
-                        }
+                        ToPlayVideo(url);
                         break;
-                    case LinkType.WebAnalysis:
+                    case LinkType.WebAnalysisSource:
+                        _selectedWenAnalysisResource = node;
+                        WebAnalysisSites = _polar.GetWebAnalysisSites().ToList();
                         break;
                     default:
                         _notify.Show($"Not support type:{node.SrcType}");
@@ -248,6 +246,36 @@ namespace PolarShadow.ViewModels
             catch (Exception ex)
             {
                 _notify.Show(ex);
+            }
+
+        }
+
+        private async Task WebAnalysisSelected(IWebAnalysisSite site)
+        {
+            if (_selectedWenAnalysisResource == null)
+            {
+                _notify.Show("No resource selected");
+                return;
+            }
+
+            IsLoading = true;
+            try
+            {
+                var result = await site.ExecuteAsync<ILink>(_polar, Requests.Video, builder =>
+                {
+                    builder.AddObjectValue(_selectedWenAnalysisResource);
+                }, Cancellation.Token);
+
+                ToPlayVideo(result);
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                _notify.Show(ex);
+            }
+            finally
+            {
+                IsLoading = false;
             }
 
         }
@@ -331,6 +359,20 @@ namespace PolarShadow.ViewModels
                 IsLoading = false;
             }
             return null;
+        }
+
+        private void ToPlayVideo(ILink videoSource)
+        {
+            if (videoSource == null || string.IsNullOrEmpty(videoSource.Src))
+            {
+                _notify.Show("Invaild resource");
+                return;
+            }
+            _nav.Navigate<VideoPlayerViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
+            {
+                {nameof(VideoPlayerViewModel.Param_Episode), videoSource },
+                {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{Param_Link?.Name}" }
+            }, true);
         }
     }
 }

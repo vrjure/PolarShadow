@@ -29,25 +29,28 @@
 								  ItemsSource="{Binding ResourceList}">
 						<ItemsControl.ItemsPanel>
 							<ItemsPanelTemplate>
-								<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
+								<WrapPanel/>
 							</ItemsPanelTemplate>
 						</ItemsControl.ItemsPanel>
 						<ItemsControl.ItemTemplate>
 							<DataTemplate DataType="psr:ResourceTree">
-								<Button Command="{Binding $parent[UserControl].((ps:DiscoverDetailViewModel)DataContext).ItemClickCommand}"
-										CommandParameter="{Binding}"
-										Classes="gridItem">
-									<StackPanel Orientation="Vertical"
-												Spacing="10">
-										<TextBlock Classes="icon"
-												   Text="&#xEE4A;"
-												   FontSize="80"
-												   HorizontalAlignment="Center"/>
-										<TextBlock Text="{Binding Name}"
-												   HorizontalAlignment="Center"
-												   TextWrapping="Wrap"/>
-									</StackPanel>
-								</Button>
+								<Border Classes="WrapPanelItem">
+									<Button Command="{Binding $parent[UserControl].((ps:DiscoverDetailViewModel)DataContext).ItemClickCommand}"
+											CommandParameter="{Binding}"
+											Classes="WrapPanelItem">
+										<StackPanel Orientation="Vertical"
+													Spacing="10">
+											<TextBlock Classes="icon"
+													   Text="&#xEE4A;"
+													   FontSize="80"
+													   HorizontalAlignment="Center"/>
+											<TextBlock Text="{Binding Name}"
+													   HorizontalAlignment="Center"
+													   TextWrapping="Wrap"/>
+										</StackPanel>
+									</Button>
+								</Border>
+
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>
 					</ItemsControl>

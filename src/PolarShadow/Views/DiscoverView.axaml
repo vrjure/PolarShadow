@@ -11,30 +11,25 @@
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True">
 	<Border Margin="10">
-		<ListBox Background="Transparent"
-				 ItemsSource="{Binding Sites}"
-				 SelectedValue="{Binding SelectValue, Mode=TwoWay}"
-				 Selection="{Binding Selection, Mode=OneWayToSource}">
-			<ListBox.ItemsPanel>
-				<ItemsPanelTemplate>
-					<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
-				</ItemsPanelTemplate>
-			</ListBox.ItemsPanel>
-			<ListBox.ItemTemplate>
+		<ItemsControl ItemsSource="{Binding Sites}"
+					  Theme="{StaticResource Card}">
+			<ItemsControl.ItemTemplate>
 				<DataTemplate DataType="psr:ISite">
-					<Border Padding="5">
+					<Button Theme="{StaticResource CardItem}"
+							Command="{Binding $parent[UserControl].((ps:DiscoverViewModel)DataContext).SiteSelectedCommand}"
+							CommandParameter="{Binding}">
 						<StackPanel Orientation="Vertical"
-									Spacing="10">
+								Spacing="10">
 							<TextBlock Classes="icon"
-									   Text="&#xEDC7;"
-									   FontSize="80"
-									   HorizontalAlignment="Center"/>
-							<TextBlock Text="{Binding Name}" 
-									   HorizontalAlignment="Center"/>
+										Text="&#xEDC7;"
+										FontSize="80"
+										HorizontalAlignment="Center"/>
+							<TextBlock Text="{Binding Name}"
+										HorizontalAlignment="Center"/>
 						</StackPanel>
-					</Border>
+					</Button>
 				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 	</Border>
 </UserControl>

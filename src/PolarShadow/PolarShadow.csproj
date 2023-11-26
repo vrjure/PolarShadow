@@ -12,6 +12,21 @@
 
   
   <ItemGroup>
+    <AvaloniaResource Remove="Assets\Themes\ButtonThemes.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\ColorResources.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\FontResources.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\ItemsControlThemes.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\PathResources.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\SizeResources.axaml" />
+    <AvaloniaResource Remove="Assets\Styles\ButtonStyles.axaml" />
+    <AvaloniaResource Remove="Assets\Styles\PathIconStyles.axaml" />
+    <AvaloniaResource Remove="Assets\Styles\TextBlockStyles.axaml" />
+    <AvaloniaResource Remove="Assets\Styles\TextBoxStyles.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\SliderThemes.axaml" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
     <None Remove="Assets\Fonts\remixicon.ttf" />
     <None Remove="Assets\Fonts\SegoeFluentIcons.ttf" />
   </ItemGroup>
@@ -20,8 +35,8 @@
     <PackageReference Include="Avalonia" Version="11.0.5" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.2" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.0.5" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5" />
@@ -49,10 +64,75 @@
 
   <ItemGroup>
     <Folder Include="Animations\" />
-    <Folder Include="Styles\" />
   </ItemGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\DetailView.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Themes\ButtonThemes.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Themes\ItemsControlThemes.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Styles\PathIconStyles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Styles\TextBoxStyles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Styles\TextBlockStyles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Styles\ButtonStyles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Values\Paths.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Values\Colors.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Themes\SliderThemes.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Values\Fonts.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Values\Sizes.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
   </ItemGroup>
 </Project>

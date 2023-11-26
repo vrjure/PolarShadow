@@ -89,6 +89,11 @@
 									 ps:NavigationManager.ContainerName="{x:Static ps:TopLayoutViewModel.NavigationName}">
 			
 		</TransitioningContentControl>
+
+		<TransitioningContentControl Grid.Row="1"
+									 ps:NavigationManager.ContainerName="{x:Static ps:TopLayoutViewModel.Overlayer}">
+			
+		</TransitioningContentControl>
 		
 		<PathIcon Data="{StaticResource loader2}"
 				  Width="30"

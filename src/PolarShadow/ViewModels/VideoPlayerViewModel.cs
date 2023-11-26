@@ -24,11 +24,13 @@ namespace PolarShadow.ViewModels
         private readonly LibVLC _libVLC;
         private readonly INotificationManager _notify;
         private readonly ITopLevelService _topLevel;
-        public VideoPlayerViewModel(LibVLC libVLC, INotificationManager notify, ITopLevelService topLevel)
+        private readonly IPolarShadow _polar;
+        public VideoPlayerViewModel(LibVLC libVLC, INotificationManager notify, ITopLevelService topLevel, IPolarShadow polar)
         {
             _libVLC = libVLC;
             _notify = notify;
             _topLevel = topLevel;
+            _polar = polar;
         }
 
         public ILink Param_Episode { get; set; }
@@ -107,7 +109,7 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        protected override void OnLoad()
+        protected override  void OnLoad()
         {
             ShowPrevious = false;
             ShowNext = false;
@@ -122,15 +124,14 @@ namespace PolarShadow.ViewModels
 
             switch (Param_Episode.SrcType)
             {
-                case LinkType.M3U8:
-                case LinkType.Meida:
+                case LinkType.Video:
                     break;
                 default:
                     _notify.Show($"not support media [{Param_Episode.SrcType}]");
                     return;
             }
 
-            if (videoUrl == null)
+            if (videoUrl == null || string.IsNullOrEmpty(videoUrl.Src))
             {
                 _notify.Show("No resource");
                 return;

@@ -18,6 +18,7 @@ namespace PolarShadow.ViewModels
         public static string NavigationName = "TopLayoutContent";
         public static string RightTitleBarContainer = "RightTitleBarContianer";
         public static string CenterTitleBarContainer = "CenterTItleBarContainer";
+        public static string Overlayer = "Overlayer";
 
         private readonly INavigationService _nav;
         private readonly IDbContextFactory<PolarShadowDbContext> _dbFactory;

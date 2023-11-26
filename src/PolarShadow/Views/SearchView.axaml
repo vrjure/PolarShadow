@@ -25,22 +25,21 @@
 		<ScrollViewer>
 			<StackPanel Orientation="Vertical">
 				<ItemsControl ItemsSource="{Binding SearchResult}"
-						 Background="White">
-					<ItemsControl.ItemsPanel>
-						<ItemsPanelTemplate>
-							<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
-						</ItemsPanelTemplate>
-					</ItemsControl.ItemsPanel>
+							  Background="White"
+							  Theme="{StaticResource Card}">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate DataType="psr:Resource">
-							<Button Command="{Binding $parent[ItemsControl].((ps:SearchViewModel)DataContext).ItemClickCommand}"
+							<Button Command="{Binding $parent[UserControl].((ps:SearchViewModel)DataContext).ItemClickCommand}"
 									CommandParameter="{Binding}"
-									Classes="gridItem">
+									Theme="{StaticResource CardItem}">
 								<StackPanel Orientation="Vertical">
 									<Image ps:ImageAttached.Src="{Binding ImageSrc}"
-										   ps:ImageAttached.Cache="{Binding $parent[ItemsControl].((ps:SearchViewModel)DataContext).ImageCache}"/>
+											ps:ImageAttached.Cache="{Binding $parent[UserControl].((ps:SearchViewModel)DataContext).ImageCache}"
+											HorizontalAlignment="Center"
+											Height="{Binding $parent[0].Bounds.Height,Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
 									<TextBlock Text="{Binding Name}"
-											   TextWrapping="Wrap"/>
+											   TextWrapping="Wrap"
+											   HorizontalAlignment="Center"/>
 								</StackPanel>
 							</Button>
 						</DataTemplate>

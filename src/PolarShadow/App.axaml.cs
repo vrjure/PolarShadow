@@ -21,6 +21,8 @@ using PolarShadow.Handlers;
 using Avalonia.NativeControls;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Platform;
 
 namespace PolarShadow;
 

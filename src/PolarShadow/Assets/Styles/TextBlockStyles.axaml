@@ -1,0 +1,30 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <!-- Add Controls for Previewer Here -->
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- Add Styles Here -->
+
+	<Style Selector="TextBlock,SelectableTextBlock">
+		<Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
+	</Style>
+
+	<Style Selector="TextBlock.title">
+		<Setter Property="FontSize" Value="{StaticResource TitleFontSize}"/>
+		<Setter Property="FontWeight" Value="Bold"/>
+	</Style>
+
+	<Style Selector="TextBlock.icon">
+		<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
+		<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
+	</Style>
+
+	<Style Selector="TextBlock.empty">
+		<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
+		<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
+		<Setter Property="Text" Value="&#xF1F7; Empty"/>
+	</Style>
+</Styles>

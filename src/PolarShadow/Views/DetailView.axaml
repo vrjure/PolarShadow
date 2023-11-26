@@ -30,7 +30,26 @@
 		</ps:ToolBarTemplate>
 	</ps:ToolBarAttached.ToolBar>
 	
-    <Grid Margin="10">
+    <Grid Margin="10"
+		  x:Name="part_container">
+		<FlyoutBase.AttachedFlyout>
+			<Flyout Placement="Center">
+				<ItemsControl ItemsSource="{Binding WebAnalysisSites}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="psr:IWebAnalysisSite">
+							<Button Content="{Binding Title}"
+									Command="{Binding $parent[UserControl].((ps:DetailViewModel)DataContext).WebAnalysisSelectedCommand}"
+									CommandParameter="{Binding}"/>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</Flyout>
+		</FlyoutBase.AttachedFlyout>
         <ScrollViewer>
             <StackPanel Orientation="Vertical"
                         Spacing="10">
@@ -69,7 +88,7 @@
                                                         <ItemsControl ItemsSource="{Binding Children}">
                                                             <ItemsControl.ItemTemplate>
                                                                 <DataTemplate>
-                                                                    <Button Content="{Binding SrcType}"
+																	<Button Content="{Binding SrcType}"
                                                                             MinWidth="80"
                                                                             MinHeight="30"
                                                                             VerticalContentAlignment="Center"
@@ -98,8 +117,8 @@
                 VerticalAlignment="Bottom"
                 Margin="20"
                 Command="{Binding RefreshCommand}"/>
-        
-        <Border IsVisible="{Binding IsLoading}">
+        <Border IsVisible="{Binding IsLoading}" 
+				Background="Transparent">
             <PathIcon Data="{StaticResource loader2}"
                       Classes.spin="{Binding IsLoading}"
                       Height="30"

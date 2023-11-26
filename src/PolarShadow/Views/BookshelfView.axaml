@@ -21,27 +21,25 @@
 		</ps:ToolBarTemplate>
 	</ps:ToolBarAttached.ToolBar>
 
-	<Grid Margin="10">
+	<Grid Margin="8">
 		<ItemsControl Background="Transparent"
-					  ItemsSource="{Binding MineResource}">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<WrapPanel ItemWidth="{StaticResource ListBoxWrapPanelItemWidth}"/>
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
+					  ItemsSource="{Binding MineResource}"
+					  Theme="{StaticResource Card}">
 			<ItemsControl.ItemTemplate>
 				<DataTemplate DataType="pss:ResourceModel">
-					<Button Command="{Binding $parent[ItemsControl].((ps:BookshelfViewModel)DataContext).ItemClickCommand}"
+					<Button Command="{Binding $parent[UserControl].((ps:BookshelfViewModel)DataContext).ItemClickCommand}"
 							CommandParameter="{Binding}"
-							Classes="gridItem">
+							Theme="{StaticResource CardItem}">
 						<StackPanel Orientation="Vertical">
 							<Image ps:ImageAttached.Src="{Binding ImageSrc}"
-								   ps:ImageAttached.Cache="{Binding $parent[ItemsControl].((ps:BookshelfViewModel)DataContext).Cache}"/>
+									ps:ImageAttached.Cache="{Binding $parent[UserControl].((ps:BookshelfViewModel)DataContext).Cache}"
+									HorizontalAlignment="Center"
+									Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
 							<TextBlock Text="{Binding Name}"
-									   TextWrapping="Wrap"/>
+										TextWrapping="Wrap"
+										HorizontalAlignment="Center"/>
 						</StackPanel>
 					</Button>
-
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>

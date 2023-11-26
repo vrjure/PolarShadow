@@ -20,11 +20,11 @@ namespace PolarShadow.Resources
             {
                 if (link.Split('?')[0].EndsWith(".m3u8"))
                 {
-                    return LinkType.M3U8;
+                    return LinkType.Video;
                 }
                 else if (link.EndsWith(".html"))
                 {
-                    return LinkType.HTML;
+                    return LinkType.HtmlSource;
                 }
             }
 
