@@ -17,6 +17,7 @@
     <AvaloniaResource Remove="Assets\Themes\FontResources.axaml" />
     <AvaloniaResource Remove="Assets\Themes\ItemsControlThemes.axaml" />
     <AvaloniaResource Remove="Assets\Themes\PathResources.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\RadioButtonThemes.axaml" />
     <AvaloniaResource Remove="Assets\Themes\SizeResources.axaml" />
     <AvaloniaResource Remove="Assets\Styles\ButtonStyles.axaml" />
     <AvaloniaResource Remove="Assets\Styles\PathIconStyles.axaml" />
@@ -64,10 +65,18 @@
 
   <ItemGroup>
     <Folder Include="Animations\" />
+    <Folder Include="Controls\MarkupExtensions\" />
+    <Folder Include="Controls\Models\" />
   </ItemGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\DetailView.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Themes\RadioButtonThemes.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
   </ItemGroup>
 
   <ItemGroup>

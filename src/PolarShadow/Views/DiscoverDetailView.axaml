@@ -8,49 +8,50 @@
              x:Class="PolarShadow.Views.DiscoverDetailView"
 			 x:DataType="ps:DiscoverDetailViewModel"
 			 x:CompileBindings="True"
-			 Padding="10"
+			 Padding="8"
 			 ps:PageLoadAttached.RegisterLoad="True">
 	
 	<Grid RowDefinitions="auto,*">
-		<TabStrip ItemsSource="{Binding Categories}"
-				  SelectedValue="{Binding CategoryValue, Mode=TwoWay}">
-			<TabStrip.ItemTemplate>
-				<DataTemplate DataType="psr:Resource">
-					<TextBlock Text="{Binding Name}"/>
-				</DataTemplate>
-			</TabStrip.ItemTemplate>
-		</TabStrip>
-		<Grid Margin="0,5,0,0"
-			  Grid.Row="1">
+		<ScrollViewer HorizontalScrollBarVisibility="Auto"
+					  VerticalScrollBarVisibility="Disabled">
+			<ItemsControl ItemsSource="{Binding Categories}"
+						  Theme="{StaticResource Horizontal}">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate DataType="psr:Resource">
+						<RadioButton Content="{Binding Name}"
+									 Theme="{StaticResource ToggleButton}"
+									 GroupName="categoryItem"
+									 Command="{Binding $parent[UserControl].((ps:DiscoverDetailViewModel)DataContext).CategorySelectedCommand}"
+									 CommandParameter="{Binding}"/>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</ScrollViewer>
+
+		<Grid Grid.Row="1">
 			<ScrollViewer>
 				<StackPanel Orientation="Vertical"
 							Spacing="10">
 					<ItemsControl Background="Transparent"
-								  ItemsSource="{Binding ResourceList}">
-						<ItemsControl.ItemsPanel>
-							<ItemsPanelTemplate>
-								<WrapPanel/>
-							</ItemsPanelTemplate>
-						</ItemsControl.ItemsPanel>
+								  ItemsSource="{Binding ResourceList}"
+								  Theme="{StaticResource Card}">
 						<ItemsControl.ItemTemplate>
 							<DataTemplate DataType="psr:ResourceTree">
-								<Border Classes="WrapPanelItem">
-									<Button Command="{Binding $parent[UserControl].((ps:DiscoverDetailViewModel)DataContext).ItemClickCommand}"
-											CommandParameter="{Binding}"
-											Classes="WrapPanelItem">
-										<StackPanel Orientation="Vertical"
-													Spacing="10">
-											<TextBlock Classes="icon"
-													   Text="&#xEE4A;"
-													   FontSize="80"
-													   HorizontalAlignment="Center"/>
-											<TextBlock Text="{Binding Name}"
-													   HorizontalAlignment="Center"
-													   TextWrapping="Wrap"/>
-										</StackPanel>
-									</Button>
-								</Border>
-
+								<Button Command="{Binding $parent[UserControl].((ps:DiscoverDetailViewModel)DataContext).ItemClickCommand}"
+										CommandParameter="{Binding}"
+										Theme="{StaticResource CardItem}">
+									<StackPanel Orientation="Vertical">
+										<TextBlock Classes="icon"
+													Text="&#xEE4A;"
+													FontSize="80"
+													HorizontalAlignment="Center"
+												   TextAlignment="Center"
+												    Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
+										<TextBlock Text="{Binding Name}"
+													HorizontalAlignment="Center"
+													TextWrapping="Wrap"/>
+									</StackPanel>
+								</Button>
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>
 					</ItemsControl>

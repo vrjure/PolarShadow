@@ -33,6 +33,7 @@
 						<StackPanel Orientation="Vertical">
 							<Image ps:ImageAttached.Src="{Binding ImageSrc}"
 									ps:ImageAttached.Cache="{Binding $parent[UserControl].((ps:BookshelfViewModel)DataContext).Cache}"
+								   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
 									HorizontalAlignment="Center"
 									Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
 							<TextBlock Text="{Binding Name}"

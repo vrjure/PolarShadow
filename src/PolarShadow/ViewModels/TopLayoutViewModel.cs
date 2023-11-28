@@ -1,9 +1,11 @@
 ﻿using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
+using PolarShadow.Services;
 using PolarShadow.Storage;
 using System;
 using System.Collections.Generic;
@@ -24,12 +26,14 @@ namespace PolarShadow.ViewModels
         private readonly IDbContextFactory<PolarShadowDbContext> _dbFactory;
         private readonly INotificationManager _notify;
         private readonly IPolarShadow _polar;
-        public TopLayoutViewModel(INavigationService nav, IDbContextFactory<PolarShadowDbContext> dbFactory, INotificationManager notify, IPolarShadow polar)
+        private readonly ITopLevelService _topLevel;
+        public TopLayoutViewModel(INavigationService nav, IDbContextFactory<PolarShadowDbContext> dbFactory, INotificationManager notify, IPolarShadow polar, ITopLevelService toplevel)
         {
             _nav = nav;
             _dbFactory = dbFactory;
             _notify = notify;
             _polar = polar;
+            _topLevel = toplevel;
         }
 
         private bool _ShowTitleBar = true;
@@ -48,6 +52,7 @@ namespace PolarShadow.ViewModels
 
         protected override async void OnLoad()
         {
+            _topLevel.GetTopLevel().BackRequested += App_BackRequested;
             IsDesktop = OperatingSystem.IsWindows();
 
             IsLoading = true;
@@ -87,6 +92,11 @@ namespace PolarShadow.ViewModels
 
         }
 
+        protected override void OnUnload()
+        {
+            _topLevel.GetTopLevel().BackRequested -= App_BackRequested;
+        }
+
         void IRecipient<LoadingState>.Receive(LoadingState message)
         {
             IsLoading = message.IsLoading;
@@ -95,6 +105,15 @@ namespace PolarShadow.ViewModels
         void IRecipient<FullScreenState>.Receive(FullScreenState message)
         {
             ShowTitleBar = !message.IsFullScreen;
+        }
+
+        private void App_BackRequested(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {           
+            if (_nav.CanBack(TopLayoutViewModel.NavigationName))
+            {
+                _nav.Back(TopLayoutViewModel.NavigationName);
+                e.Handled = true;
+            }
         }
     }
 }

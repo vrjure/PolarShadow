@@ -12,7 +12,7 @@
 	<ps:ToolBarAttached.ToolBar>
 		<!--Search box-->
 		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.CenterTitleBarContainer}">
-			<Grid ColumnDefinitions="*,2*,*">
+			<Grid ColumnDefinitions="16,*,16">
 				<ps:SearchBox Grid.Column="1"
 								SearchText="{Binding SearchText, Mode=TwoWay}"
 								SearchCommand="{Binding SearchCommand}"
@@ -21,7 +21,7 @@
 		</ps:ToolBarTemplate>
 	</ps:ToolBarAttached.ToolBar>
 
-	<Grid Margin="10">
+	<Grid Margin="8">
 		<ScrollViewer>
 			<StackPanel Orientation="Vertical">
 				<ItemsControl ItemsSource="{Binding SearchResult}"
@@ -34,9 +34,10 @@
 									Theme="{StaticResource CardItem}">
 								<StackPanel Orientation="Vertical">
 									<Image ps:ImageAttached.Src="{Binding ImageSrc}"
-											ps:ImageAttached.Cache="{Binding $parent[UserControl].((ps:SearchViewModel)DataContext).ImageCache}"
-											HorizontalAlignment="Center"
-											Height="{Binding $parent[0].Bounds.Height,Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
+										   ps:ImageAttached.Cache="{Binding $parent[UserControl].((ps:SearchViewModel)DataContext).ImageCache}"
+										   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
+										   HorizontalAlignment="Center"
+										   Height="{Binding $parent[0].Bounds.Height,Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
 									<TextBlock Text="{Binding Name}"
 											   TextWrapping="Wrap"
 											   HorizontalAlignment="Center"/>

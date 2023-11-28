@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:ps="https://github.com/PolarShadow">
     <!-- Add Resources Here -->
 	<ControlTheme TargetType="Button" x:Key="BaseTheme">
 		<Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
@@ -80,12 +81,18 @@
 			</Style>
 		</Style>
 	</ControlTheme>
-	
+
 	<ControlTheme TargetType="Button" x:Key="CardItem" BasedOn="{StaticResource BaseTheme}">
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="Padding" Value="8"/>
-		<Setter Property="Width" Value="{StaticResource CardItemWidth}"/>
 		<Setter Property="Height" Value="{StaticResource CardItemHeight}"/>
+		<Setter Property="Width" Value="{StaticResource CardItemWidth}"/>
 		<Setter Property="CornerRadius" Value="{StaticResource CardItemCornerRadius}"/>
+	</ControlTheme>
+
+	<ControlTheme TargetType="Button" x:Key="HorizontalItem" BasedOn="{StaticResource BaseTheme}">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Padding" Value="8"/>
+		<Setter Property="CornerRadius" Value="5"/>
 	</ControlTheme>
 </ResourceDictionary>

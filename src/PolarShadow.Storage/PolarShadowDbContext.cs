@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace PolarShadow.Storage
@@ -30,6 +31,9 @@ namespace PolarShadow.Storage
 
             modelBuilder.Entity<ResourceModel>().HasKey(f => f.Id);
             modelBuilder.Entity<ResourceModel>().Property(e => e.SrcType).HasConversion<string>();
+            modelBuilder.Entity<ResourceModel>().Property(e => e.ImageSrcHeaders).HasConversion(
+                f => JsonSerializer.Serialize(f, JsonOption.DefaultSerializer),
+                f => JsonSerializer.Deserialize<IDictionary<string, string>>(f, JsonOption.DefaultSerializer));
 
             modelBuilder.Entity<PreferenceEntity>().HasKey(f => f.Key);
         }

@@ -53,10 +53,12 @@
         <ScrollViewer>
             <StackPanel Orientation="Vertical"
                         Spacing="10">
-                <Image Width="{StaticResource ListBoxWrapPanelItemWidth}"
+                <Image Width="{StaticResource CardItemWidth}"
+					   Height="{StaticResource CardItemHeight}"
                        HorizontalAlignment="Center"
                        ps:ImageAttached.Src="{Binding Resource.ImageSrc}"
-                       ps:ImageAttached.Cache="{Binding ImageCache}"/>
+                       ps:ImageAttached.Cache="{Binding ImageCache}"
+					   ps:ImageAttached.Headers="{Binding Resource.ImageSrcHeaders}"/>
                 <SelectableTextBlock Text="{Binding Resource.Name}" 
                                      HorizontalAlignment="Center"/>
                 <TextBlock Text="简介"

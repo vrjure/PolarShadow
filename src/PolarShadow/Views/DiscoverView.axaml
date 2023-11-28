@@ -18,12 +18,13 @@
 					<Button Theme="{StaticResource CardItem}"
 							Command="{Binding $parent[UserControl].((ps:DiscoverViewModel)DataContext).SiteSelectedCommand}"
 							CommandParameter="{Binding}">
-						<StackPanel Orientation="Vertical"
-								Spacing="10">
+						<StackPanel Orientation="Vertical">
 							<TextBlock Classes="icon"
 										Text="&#xEDC7;"
 										FontSize="80"
-										HorizontalAlignment="Center"/>
+										HorizontalAlignment="Center"
+									    TextAlignment="Center"
+									   Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
 							<TextBlock Text="{Binding Name}"
 										HorizontalAlignment="Center"/>
 						</StackPanel>

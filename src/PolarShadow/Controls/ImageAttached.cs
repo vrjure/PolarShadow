@@ -39,6 +39,10 @@ namespace PolarShadow.Controls
             image.SetValue(CacheProperty, value);
         }
 
+        public static readonly AttachedProperty<IDictionary<string, string>> HeadersProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, IDictionary<string, string>>("Headers");
+        public static IDictionary<string, string> GetHeaders(Image image) => image.GetValue(HeadersProperty);
+        public static void SetHeaders(Image image, IDictionary<string, string> value) => image.SetValue(HeadersProperty, value);
+
         private static void SrcPropertyChanged(AvaloniaPropertyChangedEventArgs<Uri> arg)
         {
             if (Design.IsDesignMode || !arg.NewValue.HasValue) return;
@@ -73,7 +77,8 @@ namespace PolarShadow.Controls
             if (src.Scheme == Uri.UriSchemeHttp || src.Scheme == Uri.UriSchemeHttps)
             {
                 var cache = GetCache(image);
-                image.Source = await LoadFromWebAsync(src, cache);
+                var headers = GetHeaders(image);
+                image.Source = await LoadFromWebAsync(src, cache, headers);
             }
             else
             {
@@ -81,7 +86,7 @@ namespace PolarShadow.Controls
             }
         }
 
-        private static async Task<Bitmap> LoadFromWebAsync(Uri uri, IBufferCache cache = null)
+        private static async Task<Bitmap> LoadFromWebAsync(Uri uri, IBufferCache cache = null, IDictionary<string, string> headers = null)
         {
 
             using var httpClient = cache switch
@@ -90,6 +95,22 @@ namespace PolarShadow.Controls
                 _ => new HttpClient()
             };
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62");
+
+            try
+            {
+                if (headers != null && headers.Count > 0)
+                {
+                    foreach (var item in headers)
+                    {
+                        httpClient.DefaultRequestHeaders.Add(item.Key, item.Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine($"Add header error:{ex.Message}");
+            }
+
             try
             {
                 using var response = await httpClient.GetAsync(uri);
@@ -99,7 +120,7 @@ namespace PolarShadow.Controls
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred while downloading image '{uri}' : {ex.Message}");
+                System.Diagnostics.Trace.WriteLine($"Downloading image error '{uri}' : {ex.Message}");
             }
             return null;
         }

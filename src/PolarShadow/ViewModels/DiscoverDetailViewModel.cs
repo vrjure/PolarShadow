@@ -46,6 +46,9 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _resourceList, value);
         }
 
+        private IRelayCommand _categorySelectedCommand;
+        public IRelayCommand CategorySelectedCommand => _categorySelectedCommand ??= new RelayCommand<Resource>(f => CategoryValue = f);
+
         private Resource _categoryValue;
         public Resource CategoryValue
         {

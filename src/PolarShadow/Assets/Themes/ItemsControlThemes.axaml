@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Add Resources Here -->
-	<ControlTheme x:Key="BaseTheme" TargetType="ItemsControl">
+	<ControlTheme TargetType="ItemsControl" x:Key="BaseTheme">
 		<Setter Property="Template">
 			<ControlTemplate>
 				<Border Background="{TemplateBinding Background}"
@@ -16,22 +16,31 @@
 		</Setter>
 	</ControlTheme>
 	
-	<ControlTheme x:Key="Card" TargetType="ItemsControl" BasedOn="{StaticResource BaseTheme}">
+	<ControlTheme TargetType="ItemsControl"  x:Key="Card" BasedOn="{StaticResource BaseTheme}">
 		<Setter Property="ItemsPanel">
 			<ItemsPanelTemplate>
 				<WrapPanel/>
 			</ItemsPanelTemplate>
-		</Setter>
+		</Setter>	
 		<Setter Property="ItemContainerTheme" Value="{StaticResource CardItemPresenter}"/>
 	</ControlTheme>
 
-	<ControlTheme x:Key="VerticalList" TargetType="ItemsControl" BasedOn="{StaticResource BaseTheme}">
+	<ControlTheme TargetType="ItemsControl" x:Key="Vertical" BasedOn="{StaticResource BaseTheme}">
 		<Setter Property="ItemsPanel">
 			<ItemsPanelTemplate>
 				<StackPanel Orientation="Vertical"/>
 			</ItemsPanelTemplate>
 		</Setter>
-		<Setter Property="ItemContainerTheme" Value="{StaticResource VerticalListItemPresenter}"/>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource VerticalItemPresenter}"/>
+	</ControlTheme>
+
+	<ControlTheme TargetType="ItemsControl" x:Key="Horizontal" BasedOn="{StaticResource BaseTheme}">
+		<Setter Property="ItemsPanel">
+			<ItemsPanelTemplate>
+				<StackPanel Orientation="Horizontal"/>
+			</ItemsPanelTemplate>
+		</Setter>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource HorizontalItemPresenter}"/>
 	</ControlTheme>
 
 	<ControlTheme TargetType="ContentPresenter" x:Key="CardItemPresenter">
@@ -42,10 +51,14 @@
 		<Setter Property="Margin" Value="8"/>
 	</ControlTheme>
 
-	<ControlTheme TargetType="ContentPresenter" x:Key="VerticalListItemPresenter">
-		<Setter Property="Height" Value="{StaticResource VerticalListHeight}"/>
+	<ControlTheme TargetType="ContentPresenter" x:Key="VerticalItemPresenter">
+		<Setter Property="Height" Value="{StaticResource VerticalItemHeight}"/>
 		<Setter Property="HorizontalAlignment" Value="Stretch"/>
 		<Setter Property="BoxShadow" Value="0 0 15 0 LightGray"/>
+		<Setter Property="Margin" Value="8"/>
+	</ControlTheme>
+
+	<ControlTheme TargetType="ContentPresenter" x:Key="HorizontalItemPresenter">
 		<Setter Property="Margin" Value="8"/>
 	</ControlTheme>
 </ResourceDictionary>
