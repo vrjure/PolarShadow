@@ -68,6 +68,30 @@ namespace Avalonia.NativeControls.Windows
             }
         }
 
+        private bool _fullScreen;
+        public bool FullScreen
+        {
+            get => _fullScreen;
+            set
+            {
+                if (_fullScreen == value)
+                {
+                    return;
+                }
+                _fullScreen = value;
+                if (_fullScreen)
+                {
+                    (_topLevel as Window).WindowState = WindowState.FullScreen;
+                }
+                else
+                {
+                    (_topLevel as Window).WindowState = WindowState.Normal;
+                }
+            }
+        }
+
+        private TopLevel _topLevel => TopLevel.GetTopLevel(VirtualView as Visual);
+
         protected override IPlatformHandle OnCreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {
             if (this.MediaPlayer == null)
@@ -194,7 +218,6 @@ namespace Avalonia.NativeControls.Windows
         private void VirtualView_AttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs e)
         {
             _isAttached = true;
-
             InitializeNativeOverlay();
         }
     }

@@ -11,7 +11,7 @@
 			 Background="Black">
 	<Border Padding="{Binding Padding}">
 		<Panel>
-			<ps:VideoView MediaPlayer="{Binding MediaPlayer}">
+			<ps:VideoView MediaPlayer="{Binding MediaPlayer}" FullScreen="{Binding FullScreen}">
 				<ps:MediaPlayerController MediaPlayer="{Binding MediaPlayer}"
 							  Title="{Binding Title}"
 							  FullScreen="{Binding FullScreen, Mode=TwoWay}"

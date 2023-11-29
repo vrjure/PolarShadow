@@ -17,6 +17,11 @@ namespace PolarShadow
             {
                 window.WindowState = WindowState.FullScreen;
             }
+            else if (OperatingSystem.IsAndroid())
+            {
+                top.InsetsManager.DisplayEdgeToEdge = true;
+                top.InsetsManager.IsSystemBarVisible = false;
+            }
         }
 
         public static void ExitFullScreen(this ITopLevelService topLevel)
@@ -25,6 +30,11 @@ namespace PolarShadow
             if (top is Window window)
             {
                 window.WindowState = WindowState.Normal;
+            }
+            else if (OperatingSystem.IsAndroid())
+            {
+                top.InsetsManager.DisplayEdgeToEdge = false;
+                top.InsetsManager.IsSystemBarVisible = true;
             }
         }
     }

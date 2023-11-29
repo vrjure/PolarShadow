@@ -169,7 +169,7 @@ namespace PolarShadow.Handlers
             if (u.AbsolutePath.EndsWith(".m3u8", StringComparison.OrdinalIgnoreCase))
             {
                 _sniffUrls.Add(uri);
-                _sniffTask.SetResult();
+                _sniffTask.TrySetResult();
             }
         }
     }

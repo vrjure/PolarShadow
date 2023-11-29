@@ -109,9 +109,9 @@ namespace PolarShadow.ViewModels
 
         private void App_BackRequested(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {           
-            if (_nav.CanBack(TopLayoutViewModel.NavigationName))
+            if (_nav.CanBack(NavigationName))
             {
-                _nav.Back(TopLayoutViewModel.NavigationName);
+                _nav.Back(NavigationName);
                 e.Handled = true;
             }
         }

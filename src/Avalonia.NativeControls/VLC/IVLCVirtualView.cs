@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Avalonia.NativeControls
 {
-    public interface IVLCVirtualView : IVirtualView
+    public interface IVLCVirtualView : IVirtualView, IVideoView
     {
         new IVLCHandler Handler { get; }
     }

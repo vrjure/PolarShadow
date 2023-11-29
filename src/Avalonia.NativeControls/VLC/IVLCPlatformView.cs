@@ -6,8 +6,8 @@ using System.Text;
 
 namespace Avalonia.NativeControls
 {
-    public interface IVLCPlatformView : IPlatformView, IOverlayerContent
+    public interface IVLCPlatformView : IPlatformView, IOverlayerContent, IVideoView
     {
-        MediaPlayer MediaPlayer { get; set; }
+
     }
 }

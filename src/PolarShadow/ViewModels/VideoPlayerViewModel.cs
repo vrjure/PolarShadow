@@ -70,22 +70,18 @@ namespace PolarShadow.ViewModels
             get => _fullScreen;
             set
             {
-                if (SetProperty(ref _fullScreen, value))
+                SetProperty(_fullScreen, value, v =>
                 {
+                    _fullScreen = value;
                     if (_fullScreen)
                     {
-                        Messenger.Send(FullScreenState.FullScreen);
-                        Padding = FullSceenPadding;
-                        _topLevel.FullScreen();
+                        SetFullScreen();
                     }
                     else
                     {
-                        Messenger.Send(FullScreenState.Normal);
-                        Padding = NormalScreenPadding;
-                        _topLevel.ExitFullScreen();
+                        ExitFullScreen();
                     }
-
-                }
+                });
             }
         }
 
@@ -156,6 +152,11 @@ namespace PolarShadow.ViewModels
         {
             try
             {
+                if (FullScreen)
+                {
+                    FullScreen = false; 
+                }
+
                 var mp = MediaPlayer;
                 MediaPlayer = null;
                 if (mp == null)
@@ -170,6 +171,20 @@ namespace PolarShadow.ViewModels
             }
             catch { }
 
+        }
+
+        private void SetFullScreen()
+        {
+            Messenger.Send(FullScreenState.FullScreen);
+            Padding = FullSceenPadding;
+            //_topLevel.FullScreen();
+        }
+
+        private void ExitFullScreen()
+        {
+            Messenger.Send(FullScreenState.Normal);
+            Padding = NormalScreenPadding;
+            //_topLevel.ExitFullScreen();
         }
     }
 }

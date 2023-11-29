@@ -9,5 +9,5 @@
 			 ps:PageLoadAttached.RegisterLoad="True"
 			 x:DataType="ps:TestViewModel"
 			 x:CompileBindings="True">
-	<!--<psn:WebView Url="https://baidu.com"/>-->
+	<ps:MediaPlayerController/>
 </UserControl>

@@ -11,6 +11,7 @@ using Avalonia.VisualTree;
 using Avalonia.Media;
 using System.Runtime.InteropServices;
 using Avalonia.LogicalTree;
+using Avalonia.Input;
 
 namespace Avalonia.NativeControls
 {
@@ -48,7 +49,16 @@ namespace Avalonia.NativeControls
             }
         }
 
-        public new IVLCHandler Handler => base.Handler as IVLCHandler;
+        public static readonly DirectProperty<VideoView, bool> FullScreenProperty = AvaloniaProperty.RegisterDirect<VideoView, bool>(nameof(FullScreen),
+            o => o.FullScreen,
+            (o, v) => o.FullScreen = v,
+            defaultBindingMode: BindingMode.OneWay);
 
+        public bool FullScreen
+        {
+            get => this.Handler.PlatformView.FullScreen;
+            set => this.Handler.PlatformView.FullScreen = value;
+        }
+        public new IVLCHandler Handler => base.Handler as IVLCHandler;
     }
 }
