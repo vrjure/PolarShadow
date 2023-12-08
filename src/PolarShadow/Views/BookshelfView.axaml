@@ -13,7 +13,7 @@
 		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal" Spacing="10">
 				<!--Search button-->
-				<Button Classes="icon"
+				<Button Theme="{StaticResource Icon}"
 						Content="&#xF0D1;"
 						VerticalAlignment="Center"
 						Command="{Binding SearchCommand}"/>

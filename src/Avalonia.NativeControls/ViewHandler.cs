@@ -19,6 +19,8 @@ namespace Avalonia.NativeControls
                 return;
             }
             DisconnectHandler(this.PlatformView);
+            this.PlatformView = null;
+            this.VirtualView = null;
         }
 
         protected abstract IPlatformView OnCreatePlatformView();

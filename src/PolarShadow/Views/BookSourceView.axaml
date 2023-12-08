@@ -14,7 +14,7 @@
 			<StackPanel Orientation="Horizontal">
 				<!--Import-->
 				<Button Content="&#xF249;"
-						Classes="icon"
+						Theme="{StaticResource Icon}"
 						Command="{Binding ImportCommand}">
 				</Button>
 			</StackPanel>

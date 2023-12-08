@@ -12,7 +12,7 @@
              ps:PageLoadAttached.RegisterLoad="True">
 	<ps:ToolBarAttached.ToolBar>
 		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
-			<Button Classes="icon"
+			<Button Theme="{StaticResource Icon}"
 		            Classes.save="{Binding !IsSaved}"
 		            Classes.delete="{Binding IsSaved}"
 		            VerticalAlignment="Center"
@@ -113,7 +113,7 @@
         </StackPanel>
         </ScrollViewer>
 
-        <Button Classes="icon"
+        <Button Theme="{StaticResource Icon}"
                 Content="&#xF064;"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"

@@ -19,7 +19,7 @@
 			</TextBlock>
 
 			<!--search button-->
-			<Button Classes="icon"
+			<Button Theme="{StaticResource Icon}"
 					Content="&#xEA6E;"
 					VerticalAlignment="Center"
 					DockPanel.Dock="Right"
@@ -27,7 +27,7 @@
 
 			</Button>
 			<!--clear button-->
-			<Button Classes="icon"
+			<Button Theme="{StaticResource Icon}"
 					Content="&#xEB98;"
 					VerticalAlignment="Center"
 					DockPanel.Dock="Right"

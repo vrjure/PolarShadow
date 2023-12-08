@@ -61,7 +61,7 @@
 					</PathIcon>
 					<Button Command="{Binding LoadMoreCommand}"
 							Content="&#xEF78;"
-							Classes="icon"
+							Theme="{StaticResource Icon}"
 							HorizontalAlignment="Center"
 							IsVisible="{Binding ShowLoadMore}">
 					</Button>

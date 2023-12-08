@@ -13,7 +13,7 @@
 			<StackPanel Orientation="Horizontal">
 				<!--save-->
 				<Button Content="&#xF0B1;"
-						Classes="icon"
+						Theme="{StaticResource Icon}"
 						Command="{Binding SaveCommand}">
 				</Button>
 			</StackPanel>
@@ -47,7 +47,7 @@
 					   VerticalAlignment="Center"
 					   TextWrapping="Wrap"/>
 			<Button Content="&#xEF76;"
-					Classes="icon"
+					Theme="{StaticResource Icon}"
 					DockPanel.Dock="Right"
 					VerticalAlignment="Center"
 					Command="{Binding PickDownloadPathCommand}"/>

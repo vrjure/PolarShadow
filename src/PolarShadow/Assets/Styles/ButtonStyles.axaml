@@ -8,25 +8,4 @@
 
     <!-- Add Styles Here -->
 
-	<Style Selector="Button.icon">
-		<Setter Property="Background" Value="Transparent"/>
-		<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
-		<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
-		<Setter Property="Padding" Value="0"/>
-		<Setter Property="BorderThickness" Value="0"/>
-		<Setter Property="CornerRadius" Value="0"/>
-
-		<Style Selector="^:pointerover /template/ ContentPresenter">
-			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="Foreground" Value="Red"/>
-		</Style>
-
-		<Style Selector="^:pressed /template/ ContentPresenter">
-			<Setter Property="Foreground" Value="Red"/>
-		</Style>
-		<Style Selector="^:disabled /template/ ContentPresenter">
-			<Setter Property="Background" Value="Transparent"/>
-		</Style>
-	</Style>
-
 </Styles>
