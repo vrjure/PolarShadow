@@ -1,32 +1,37 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.LogicalTree;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using LibVLCSharp.Shared;
-using SQLitePCL;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace PolarShadow.Controls
 {
-    public partial class MediaPlayerController : UserControl
+    public class MediaPlayerController : ContentControl, IMediaPlayerController
     {
         private static readonly TimeSpan _ignore = TimeSpan.FromSeconds(1);
         private long _lastTime = 0;
+        private Point _cursorPoint;
+
+        private Button _previousBtn;
+        private Button _playBtn;
+        private Button _nextBtn;
+        private Button _fullScreenBtn;
+        private Slider _part_slider;
+        private Border _part_root;
+
         static MediaPlayerController()
         {
             MediaPlayerProperty.Changed.Subscribe(MediaPlayerPropertyChanged);
             TimeProperty.Changed.Subscribe(TimePropertyChanged);
         }
-        public MediaPlayerController()
-        {
-            InitializeComponent();
-            Initialize();
-        }
+
 
         public static readonly StyledProperty<LibVLCSharp.Shared.MediaPlayer> MediaPlayerProperty = AvaloniaProperty.Register<MediaPlayerController, LibVLCSharp.Shared.MediaPlayer>(nameof(MediaPlayer));
         public LibVLCSharp.Shared.MediaPlayer MediaPlayer
@@ -42,25 +47,18 @@ namespace PolarShadow.Controls
             set => SetValue(TitleProperty, value);
         }
 
-        //public static readonly StyledProperty<bool> BackButtonProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(BackButton));
-        //public bool BackButton
-        //{
-        //    get => GetValue(BackButtonProperty);
-        //    set => SetValue(BackButtonProperty, value);
-        //}
-
         public static readonly StyledProperty<TimeSpan> LengthProperty = AvaloniaProperty.Register<MediaPlayerController, TimeSpan>(nameof(Length));
         public TimeSpan Length
         {
             get => GetValue(LengthProperty);
-            set => SetValue(LengthProperty, value);
+            private set => SetValue(LengthProperty, value);
         }
 
         public static readonly StyledProperty<TimeSpan> TimeProperty = AvaloniaProperty.Register<MediaPlayerController, TimeSpan>(nameof(Time));
         public TimeSpan Time
         {
             get => GetValue(TimeProperty);
-            set => SetValue(TimeProperty, value);
+            private set => SetValue(TimeProperty, value);
         }
 
         public static readonly StyledProperty<bool> IsPlayingProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(IsPlaying));
@@ -70,26 +68,13 @@ namespace PolarShadow.Controls
             private set => SetValue(IsPlayingProperty, value);
         }
 
-        public static readonly StyledProperty<bool> ShowNextProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(ShowNext));
-        public bool ShowNext
-        {
-            get => GetValue(ShowNextProperty);
-            set => SetValue(ShowNextProperty, value);
-        }
-
-        public static readonly StyledProperty<bool> ShowPreviousProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(ShowPreviousProperty));
-        public bool ShowPrevious
-        {
-            get => GetValue(ShowPreviousProperty);
-            set => SetValue(ShowPreviousProperty, value);
-        }
-
         public static readonly StyledProperty<bool> FullScreenProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(FullScreen));
         public bool FullScreen
         {
             get => GetValue(FullScreenProperty);
             set => SetValue(FullScreenProperty, value);
         }
+
 
         public static readonly StyledProperty<ICommand> PreviousCommandProperty = AvaloniaProperty.Register<MediaPlayerController, ICommand>(nameof(PreviousCommand));
         public ICommand PreviousCommand
@@ -105,66 +90,23 @@ namespace PolarShadow.Controls
             set => SetValue(NextCommandProperty, value);
         }
 
-        public static readonly StyledProperty<ICommand> PlayPauseCommandProperty = AvaloniaProperty.Register<MediaPlayerController, ICommand>(nameof(PlayPauseCommand));
-        public ICommand PlayPauseCommand
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            get => GetValue(PlayPauseCommandProperty);
-            set => SetValue(PlayPauseCommandProperty, value);
+            base.OnApplyTemplate(e);
+
+            _previousBtn = e.NameScope.Get<Button>("Part_Previous");
+            _playBtn = e.NameScope.Get<Button>("Part_PlayPause");
+            _nextBtn = e.NameScope.Get<Button>("Part_Next");
+            _fullScreenBtn = e.NameScope.Get<Button>("Part_FullScreen");
+            _part_slider = e.NameScope.Get<Slider>("Part_Slider");
+            _part_root = e.NameScope.Get<Border>("Part_Root");
+
+            _previousBtn.Click += PreviousBtn_Click;
+            _nextBtn.Click += NextBtn_Click;
+            _playBtn.Click += PlayBtn_Click;
+            _fullScreenBtn.Click += FullScreenBtn_Click;
         }
 
-        private void PreviousClick(object sender, RoutedEventArgs arg)
-        {
-            if (PreviousCommand == null)
-            {
-                return;
-            }
-            if(PreviousCommand.CanExecute(default))
-            PreviousCommand.Execute(default);
-        }
-
-        private void NextClick(object sender, RoutedEventArgs arg)
-        {
-            if (NextCommand == null)
-            {
-                return;
-            }
-            if (NextCommand.CanExecute(default))
-            NextCommand.Execute(default);
-        }
-
-        private void PlayPauseClick(object sender, RoutedEventArgs arg)
-        {
-            if (MediaPlayer == null)
-            {
-                return;
-            }
-            if (MediaPlayer.IsPlaying)
-            {
-                if (MediaPlayer.CanPause)
-                {
-                    MediaPlayer.Pause();
-                }
-            }
-            else
-            {
-                MediaPlayer.Play();
-            }
-
-            if (PlayPauseCommand == null)
-            {
-                return;
-            }
-
-            if (PlayPauseCommand.CanExecute(IsPlaying))
-            {
-                PlayPauseCommand.Execute(IsPlaying);
-            }
-        }
-
-        private void FullScreenClick(object sender, RoutedEventArgs arg)
-        {
-            FullScreen = !FullScreen;
-        }
 
         private static void MediaPlayerPropertyChanged(AvaloniaPropertyChangedEventArgs<LibVLCSharp.Shared.MediaPlayer> arg)
         {
@@ -236,7 +178,6 @@ namespace PolarShadow.Controls
             Dispatcher.UIThread.Post(() =>
             {
                 IsPlaying = true;
-                Unloading();
             });
         }
 
@@ -250,55 +191,40 @@ namespace PolarShadow.Controls
 
         private void MediaChanged(object sender, LibVLCSharp.Shared.MediaPlayerMediaChangedEventArgs e)
         {
-            Loading();
+            
         }
 
-        private void Initialize()
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            part_slider.SmallChange = 5;
-            part_slider.LargeChange = 15;
-
-            if (OperatingSystem.IsWindows())
-            {
-                part_panel.Classes.Add("autoHide");
-            }
-            else if (OperatingSystem.IsAndroid())
-            {
-                part_panel.Classes.Add("android");
-                part_panel.RowDefinitions = new RowDefinitions("auto, auto, auto");
-                //part_panel.PointerReleased += Part_panel_PointerReleased;//TODO waitting...
-                part_top.IsVisible = false;
-            }
+            base.OnAttachedToVisualTree(e);
         }
 
-        private void Part_panel_PointerReleased(object sender, Avalonia.Input.PointerReleasedEventArgs e)
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
-            if (part_panel.Opacity == 1)
-            {
-                part_panel.Opacity = 0;
-            }
-            else
-            {
-                part_panel.Opacity = 1;
-            }
+            base.OnDetachedFromVisualTree(e);
+
+            _previousBtn.Click -= PreviousBtn_Click;
+            _nextBtn.Click -= NextBtn_Click;
+            _playBtn.Click -= PlayBtn_Click;
+            _fullScreenBtn.Click -= FullScreenBtn_Click;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
 
-            if (e.Handled || e.KeyModifiers != KeyModifiers.None) return;
+            if (e.Handled || e.KeyModifiers != KeyModifiers.None || _part_slider == null) return;
 
             var target = Time;
             var handled = false;
             switch (e.Key)
             {
                 case Key.Left:
-                    target = target - TimeSpan.FromSeconds(part_slider.SmallChange);
+                    target = target - TimeSpan.FromSeconds(_part_slider.SmallChange);
                     handled = true;
                     break;
                 case Key.Right:
-                    target = target + TimeSpan.FromSeconds(part_slider.SmallChange);
+                    target = target + TimeSpan.FromSeconds(_part_slider.SmallChange);
                     handled = true;
                     break;
             }
@@ -316,16 +242,83 @@ namespace PolarShadow.Controls
             Time = target;
         }
 
-        private void Loading()
+        protected override void OnPointerMoved(PointerEventArgs e)
         {
-            //part_loading.IsVisible = true;
-            //part_loading.Classes.Add("spin");
+            base.OnPointerMoved(e);
+            if (_part_root == null || _cursorPoint == new Point(0,0))
+            {
+                return;
+            }
+            var current = e.GetPosition(this);
+            var dis = Point.Distance(_cursorPoint, current);
+            if (dis > 10)
+            {
+                _part_root.Cursor = Cursor.Default;
+                _part_root.Opacity = 1;
+            }
         }
 
-        private void Unloading()
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
-            //part_loading.IsVisible = false;
-            //part_loading.Classes.Remove("spin");
+            base.OnPointerPressed(e);
+            if (_part_root == null) return;
+
+            if (_part_root.Opacity == 1)
+            {
+                _part_root.Cursor = new Cursor(StandardCursorType.None);
+                _part_root.Opacity = 0;
+                _cursorPoint = e.GetPosition(this);
+            }
+            else
+            {
+                _part_root.Cursor = Cursor.Default;
+                _part_root.Opacity = 1;
+                _cursorPoint = e.GetPosition(this);
+
+            }
+        }
+
+        private void PreviousBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (PreviousCommand == null) return;
+            if (PreviousCommand.CanExecute(default))
+            {
+                PreviousCommand.Execute(default);
+            }
+            
+        }
+
+        private void NextBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (NextCommand == null) return;
+            if (NextCommand.CanExecute(default))
+            {
+                NextCommand.Execute(default);
+            }
+        }
+
+        private void PlayBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            if (MediaPlayer == null)
+            {
+                return;
+            }
+            if (MediaPlayer.IsPlaying)
+            {
+                if (MediaPlayer.CanPause)
+                {
+                    MediaPlayer.Pause();
+                }
+            }
+            else
+            {
+                MediaPlayer.Play();
+            }
+        }
+
+        private void FullScreenBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            FullScreen = !FullScreen;
         }
     }
 }

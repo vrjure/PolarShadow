@@ -69,6 +69,9 @@ namespace Avalonia.NativeControls.Windows
         }
 
         private bool _fullScreen;
+
+        public event EventHandler PlatformClick;
+
         public bool FullScreen
         {
             get => _fullScreen;
@@ -106,6 +109,11 @@ namespace Avalonia.NativeControls.Windows
 
         protected override void DestroyControl()
         {
+            this.VirtualView.AsHost().AttachedToVisualTree -= VirtualView_AttachedToVisualTree;
+            this.VirtualView.AsHost().DetachedFromVisualTree -= VirtualView_DetachedFromVisualTree;
+            this.VirtualView.AsHost().DetachedFromLogicalTree -= VirtualView_DetachedFromLogicalTree;
+            this.VirtualView.AsHost().SizeChanged -= VirtualView_SizeChanged;
+
             if (MediaPlayer == null)
             {
                 return;

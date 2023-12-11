@@ -54,11 +54,18 @@ namespace Avalonia.NativeControls
             (o, v) => o.FullScreen = v,
             defaultBindingMode: BindingMode.OneWay);
 
+        public event EventHandler PlatformClick;
+
         public bool FullScreen
         {
             get => this.Handler.PlatformView.FullScreen;
             set => this.Handler.PlatformView.FullScreen = value;
         }
         public new IVLCHandler Handler => base.Handler as IVLCHandler;
+
+        public void OnPlatformClick()
+        {
+            PlatformClick?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

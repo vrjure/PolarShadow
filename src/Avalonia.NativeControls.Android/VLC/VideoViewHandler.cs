@@ -14,5 +14,20 @@ namespace Avalonia.NativeControls.Android
         {
             return new VideoView(VirtualView);
         }
+
+        protected override void ConnectHandler(VideoView platformView)
+        {
+            platformView.PlatformClick += PlatformView_PlatformClick;
+        }
+
+        protected override void DisconnectHandler(VideoView platformView)
+        {
+            platformView.PlatformClick -= PlatformView_PlatformClick;
+        }
+
+        private void PlatformView_PlatformClick(object sender, EventArgs e)
+        {
+            this.VirtualView?.OnPlatformClick();
+        }
     }
 }

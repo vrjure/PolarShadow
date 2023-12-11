@@ -11,5 +11,6 @@ namespace Avalonia.NativeControls
     {
         MediaPlayer MediaPlayer { get; set; }
         bool FullScreen { get; set; }
+        event EventHandler PlatformClick;
     }
 }

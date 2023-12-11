@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Android" Version="11.0.5" />
+    <PackageReference Include="Avalonia.Android" Version="11.0.6" />
     <PackageReference Include="LibVLCSharp" Version="3.7.0" />
   </ItemGroup>
 

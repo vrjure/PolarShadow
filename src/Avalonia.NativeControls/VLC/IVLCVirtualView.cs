@@ -8,5 +8,6 @@ namespace Avalonia.NativeControls
     public interface IVLCVirtualView : IVirtualView, IVideoView
     {
         new IVLCHandler Handler { get; }
+        void OnPlatformClick();
     }
 }

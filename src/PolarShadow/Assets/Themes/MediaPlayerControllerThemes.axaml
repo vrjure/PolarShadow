@@ -1,0 +1,155 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:ps="https://github.com/PolarShadow">
+	<Design.PreviewWith>
+		<Border Padding="20"
+				Background="Black">
+			<!-- Add Controls for Previewer Here -->
+			<ps:MediaPlayerController/>
+		</Border>
+	</Design.PreviewWith>
+    <!-- Add Resources Here -->
+	<ControlTheme TargetType="ps:MediaPlayerController" x:Key="{x:Type ps:MediaPlayerController}">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border Background="Transparent"
+						Padding="{TemplateBinding Padding}"
+						Margin="{TemplateBinding Margin}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						CornerRadius="{TemplateBinding CornerRadius}"
+						IsVisible="{TemplateBinding IsVisible}"
+						Opacity="{TemplateBinding Opacity}"
+						x:Name="Part_Root">
+					<Border.Transitions>
+						<Transitions>
+							<DoubleTransition Property="Opacity" Duration="0:0:0.5" />
+						</Transitions>
+					</Border.Transitions>
+					
+					<Grid RowDefinitions="auto,*,auto">
+						<OnPlatform>
+							<OnPlatform.Default>
+								<ContentPresenter Grid.RowSpan="3"
+												  VerticalContentAlignment="Stretch"
+												  HorizontalContentAlignment="Stretch"
+												  Content="{TemplateBinding Content}"
+												  ContentTemplate="{TemplateBinding ContentTemplate}"/>
+							</OnPlatform.Default>
+							<OnPlatform.Android>
+								<ContentPresenter Grid.Row="1"
+												  VerticalContentAlignment="Stretch"
+												  HorizontalContentAlignment="Stretch"
+												  Content="{TemplateBinding Content}"
+												  ContentTemplate="{TemplateBinding ContentTemplate}"/>
+							</OnPlatform.Android>
+						</OnPlatform>
+						<Grid ColumnDefinitions="*,*"
+							  x:Name="Part_Top">
+							<!--top left-->
+							<StackPanel Orientation="Horizontal"
+										Spacing="16"
+										VerticalAlignment="Center"
+										Margin="8,8,0,0">
+								<TextBlock Text="{TemplateBinding Title}"
+										   Foreground="White"/>
+							</StackPanel>
+						</Grid>
+						
+						<Grid Grid.Row="2"
+							  RowDefinitions="*,8"
+							  x:Name="Part_Bottom">
+							<!--bar-->
+							<Grid Margin="16,0"
+								  ColumnDefinitions="auto,*,80,auto,auto">
+								<StackPanel Orientation="Horizontal"
+											Spacing="16"
+											DockPanel.Dock="Left"
+											Margin="-8,0,0,0"
+											VerticalAlignment="Center">
+									<Button Theme="{DynamicResource Icon}"
+											Content="&#xF13F;"
+											Foreground="White"
+											VerticalContentAlignment="Center"
+											x:Name="Part_Previous"/>
+									<Button Theme="{DynamicResource Icon}"
+											FontSize="32"
+											Foreground="White"
+											VerticalContentAlignment="Center"
+											Classes.play="{Binding !IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
+											Classes.pause="{Binding IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
+											x:Name="Part_PlayPause">
+										<Button.Styles>
+											<Style Selector="Button.play">
+												<Setter Property="Content" Value="&#xF00A;"/>
+											</Style>
+											<Style Selector="Button.pause">
+												<Setter Property="Content" Value="&#xEFD7;"/>
+											</Style>
+										</Button.Styles>
+									</Button>
+									<Button Theme="{DynamicResource Icon}"
+											Content="&#xF143;"
+											Foreground="White"
+											VerticalContentAlignment="Center"
+											x:Name="Part_Next"/>
+								</StackPanel>
+								<Slider Margin="8,0"
+										x:Name="Part_Slider"
+										Padding="8,0"
+										Grid.Column="1"
+										VerticalAlignment="Center"
+										Maximum="{TemplateBinding Length, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
+										Minimum="0"
+										Value="{Binding Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}, Mode=TwoWay}">
+								</Slider>
+								<TextBlock Text="{TemplateBinding Time, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
+											Grid.Column="2"
+											VerticalAlignment="Center"
+											Foreground="White"/>
+								<TextBlock Text="{Binding Length, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToStringConverter.Instance}, StringFormat='/{0}'}"
+											Grid.Column="3"
+											VerticalAlignment="Center"
+											Foreground="White"/>
+								<StackPanel Grid.Column="4"
+											VerticalAlignment="Center"
+											Margin="8,0,0,0">
+									<Button Theme="{DynamicResource Icon}"
+											VerticalAlignment="Center"
+											VerticalContentAlignment="Center"
+											Foreground="White"
+											Classes.fullScreen="{Binding !FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
+											Classes.exitFullScreen="{Binding FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
+											x:Name="Part_FullScreen">
+										<Button.Styles>
+											<Style Selector="Button.fullScreen">
+												<Setter Property="Content" Value="&#xED9B;"/>
+											</Style>
+											<Style Selector="Button.exitFullScreen">
+												<Setter Property="Content" Value="&#xED99;"/>
+											</Style>
+										</Button.Styles>
+									</Button>
+								</StackPanel>
+							</Grid>
+						</Grid>
+					</Grid>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+
+		<!--<Style Selector="^ /template/ Border#Part_Root[Opacity=0]">
+			<OnPlatform>
+				<OnPlatform.Android>
+					<Style Selector="^ Grid#Part_Bottom">
+						<Setter Property="IsVisible" Value="False"/>
+					</Style>
+				</OnPlatform.Android>
+			</OnPlatform>
+		</Style>-->
+
+		<!--<Style Selector="^:pointerover /template/ Border#Part_Root">
+			<Setter Property="Opacity" Value="1"/>
+		</Style>-->
+	</ControlTheme>
+</ResourceDictionary>

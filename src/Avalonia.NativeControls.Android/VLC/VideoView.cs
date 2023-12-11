@@ -20,8 +20,8 @@ namespace Avalonia.NativeControls.Android
 {
     internal class VideoView : PlatformView, IVLCPlatformView
     {
+        private AvaloniaView _overlayLayer;// new well be cause memoryleak? not sure. so try use static.
         private LibVLCSharp.Platforms.Android.VideoView _platformView;
-        private AvaloniaView _overlayLayer;
 
         private readonly IVirtualView _virtualView;
         public VideoView(IVirtualView virtualView)
@@ -90,6 +90,9 @@ namespace Avalonia.NativeControls.Android
         }
 
         private TopLevel _topLevelCache;
+
+        public event EventHandler PlatformClick;
+
         private TopLevel _topLevel => _topLevelCache ??= TopLevel.GetTopLevel(_virtualView as Visual);
         private TopLevel _overLayerTopLevel => TopLevel.GetTopLevel(_overlayContent as Visual);
 
@@ -102,15 +105,12 @@ namespace Avalonia.NativeControls.Android
                 MediaPlayer = this.MediaPlayer
             };
             _platformView.Click += _platformView_Click;
-           
-            //_platformView.FindOnBackInvokedDispatcher()?.RegisterOnBackInvokedCallback(0, new VideoViewOnBackCallback());
-            //_platformView.SetOnKeyListener(new DisableBackKeyListener());
-            //TODO AvaloniaView can not transparent, but maybe it's not impossible, waitting... maybe?
-            //see https://github.com/AvaloniaUI/Avalonia/issues/10807
-            _overlayLayer = new AvaloniaView(context);
 
             if (OverlayContent != null)
             {
+                //TODO AvaloniaView can not transparent, but maybe it's not impossible, waitting... maybe?
+                //see https://github.com/AvaloniaUI/Avalonia/issues/10807
+                _overlayLayer = new AvaloniaView(context);
                 _overlayLayer.Content = new Border
                 {
                     Child = OverlayContent as Control,
@@ -121,15 +121,18 @@ namespace Avalonia.NativeControls.Android
                 {
                     _overLayerTopLevel.BackRequested += _overLayerTopLevel_BackRequested;
                 }
+
+
+                var container = new RelativeLayout(context);
+                container.AddView(_platformView);
+                var lp = new RelativeLayout.LayoutParams(WindowManagerLayoutParams.MatchParent, 120);
+                lp.AddRule(LayoutRules.AlignParentBottom);
+                container.AddView(_overlayLayer, lp);
+
+                return new AndroidViewControlHandle(container);
             }
 
-            var container = new RelativeLayout(context);
-            container.AddView(_platformView);
-            var lp = new RelativeLayout.LayoutParams(WindowManagerLayoutParams.MatchParent, 120);
-            lp.AddRule(LayoutRules.AlignParentBottom);
-            container.AddView(_overlayLayer, lp);
-            
-            return new AndroidViewControlHandle(container);
+            return new AndroidViewControlHandle(_platformView);
         }
 
         private void _overLayerTopLevel_BackRequested(object sender, Interactivity.RoutedEventArgs e)
@@ -139,6 +142,7 @@ namespace Avalonia.NativeControls.Android
 
         private void _platformView_Click(object sender, EventArgs e)
         {
+            PlatformClick?.Invoke(this, e);
             if (_overlayLayer == null)
             {
                 return;
@@ -156,15 +160,21 @@ namespace Avalonia.NativeControls.Android
 
         protected override void DestroyControl()
         {
-            var platformView = Handle as AndroidViewControlHandle;
-            if (platformView != null)
-            {
-                platformView.Destroy();
-            }
-
             if (_overLayerTopLevel != null)
             {
                 _overLayerTopLevel.BackRequested -= _overLayerTopLevel_BackRequested;
+
+                var type = _overLayerTopLevel.PlatformImpl.GetType();
+                var closedPro = type.GetProperty("Closed", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+                var closed = (Action)closedPro?.GetValue(_overLayerTopLevel.PlatformImpl);
+                closed?.Invoke();
+                _overLayerTopLevel.PlatformImpl.Dispose();
+            }
+
+            if (_overlayLayer != null)
+            {
+                _overlayLayer.Dispose();
+                _overlayLayer = null;
             }
         }
 
