@@ -72,9 +72,6 @@ namespace PolarShadow.ViewModels
         private IAsyncRelayCommand _loadMoreCommand;
         public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
 
-        private IRelayCommand _itemClickCommand;
-        public IRelayCommand ItemClickCommand => _itemClickCommand ??= new RelayCommand<ResourceTree>(ResourceSelected);
-
         protected override void IsLoadingChanged()
         {
             if(_loading != null && !IsLoading)
@@ -234,6 +231,15 @@ namespace PolarShadow.ViewModels
                 { nameof(DetailViewModel.Param_Link), res }
             }, true);
 
+        }
+
+        protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
+        {
+            if (e.SelectedItems.Count> 0)
+            {
+                ResourceSelected(e.SelectedItems.First() as ResourceTree);
+                SelectionModel.Deselect(e.SelectedIndexes.First());
+            }
         }
     }
 }

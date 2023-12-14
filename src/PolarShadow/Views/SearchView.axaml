@@ -24,28 +24,10 @@
 	<Grid Margin="8">
 		<ScrollViewer>
 			<StackPanel Orientation="Vertical">
-				<ItemsControl ItemsSource="{Binding SearchResult}"
-							  Background="White"
-							  Theme="{StaticResource Card}">
-					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="psr:Resource">
-							<Button Command="{Binding $parent[UserControl].((ps:SearchViewModel)DataContext).ItemClickCommand}"
-									CommandParameter="{Binding}"
-									Theme="{StaticResource CardItem}">
-								<StackPanel Orientation="Vertical">
-									<Image ps:ImageAttached.Src="{Binding ImageSrc}"
-										   ps:ImageAttached.Cache="{Binding $parent[UserControl].((ps:SearchViewModel)DataContext).ImageCache}"
-										   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
-										   HorizontalAlignment="Center"
-										   Height="{Binding $parent[0].Bounds.Height,Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
-									<TextBlock Text="{Binding Name}"
-											   TextWrapping="Wrap"
-											   HorizontalAlignment="Center"/>
-								</StackPanel>
-							</Button>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
+				<ListBox ItemsSource="{Binding SearchResult}"
+						 Theme="{StaticResource Card}"
+						 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
+				</ListBox>
 				<PathIcon Classes.spin="{Binding IsLoading}"
 						  IsVisible="{Binding IsLoading}"
 						  Data="{StaticResource loader2}">

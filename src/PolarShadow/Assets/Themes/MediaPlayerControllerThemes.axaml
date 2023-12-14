@@ -139,13 +139,7 @@
 		</Setter>
 
 		<!--<Style Selector="^ /template/ Border#Part_Root[Opacity=0]">
-			<OnPlatform>
-				<OnPlatform.Android>
-					<Style Selector="^ Grid#Part_Bottom">
-						<Setter Property="IsVisible" Value="False"/>
-					</Style>
-				</OnPlatform.Android>
-			</OnPlatform>
+			<Setter Property="IsVisible" Value="False"/>
 		</Style>-->
 
 		<!--<Style Selector="^:pointerover /template/ Border#Part_Root">

@@ -1,0 +1,54 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:ps="https://github.com/PolarShadow">
+    <!-- Add Resources Here -->
+	<ControlTheme TargetType="ListBox" x:Key="Card" BasedOn="{StaticResource {x:Type ListBox}}">
+		<Setter Property="ItemsPanel">
+			<ItemsPanelTemplate>
+				<UniformGrid Columns="{Binding $self.Bounds.Width, Converter={x:Static ps:RowColumnConverter.Instance}, ConverterParameter={StaticResource CardItemWidth}}"/>
+			</ItemsPanelTemplate>
+		</Setter>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource CardItem}"/>
+		<Setter Property="VerticalAlignment" Value="Top"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="AutoScrollToSelectedItem" Value="False"/>
+		<Setter Property="(ScrollViewer.BringIntoViewOnFocusChange)" Value="False"/>
+	</ControlTheme>
+
+	<ControlTheme TargetType="ListBoxItem" x:Key="CardItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+		<Setter Property="Height" Value="{StaticResource CardItemHeight}"/>
+		<Setter Property="CornerRadius" Value="{StaticResource CardItemCornerRadius}"/>
+		<Setter Property="Template">
+			<ControlTemplate>
+				<ContentPresenter Name="PART_ContentPresenter"
+								  Background="{TemplateBinding Background}"
+								  BorderBrush="{TemplateBinding BorderBrush}"
+								  BorderThickness="{TemplateBinding BorderThickness}"
+								  CornerRadius="{TemplateBinding CornerRadius}"
+								  ContentTemplate="{TemplateBinding ContentTemplate}"
+								  Content="{TemplateBinding Content}"
+								  FontWeight="{TemplateBinding FontWeight}"
+								  FontSize="{TemplateBinding FontSize}"
+								  Padding="{TemplateBinding Padding}"
+								  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+								  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
+								  BoxShadow="0 0 15 0 LightGray"
+								  Margin="8"/>
+			</ControlTemplate>
+		</Setter>
+
+		<Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="Transparent" />
+		</Style>
+		
+		<Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="Transparent" />
+		</Style>
+
+		<Style Selector="^:selected">
+			<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+				<Setter Property="Background" Value="Transparent" />
+			</Style>
+		</Style>
+	</ControlTheme>
+</ResourceDictionary>

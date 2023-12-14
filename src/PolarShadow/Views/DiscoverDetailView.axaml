@@ -32,29 +32,26 @@
 			<ScrollViewer>
 				<StackPanel Orientation="Vertical"
 							Spacing="10">
-					<ItemsControl Background="Transparent"
-								  ItemsSource="{Binding ResourceList}"
-								  Theme="{StaticResource Card}">
+					<ListBox Background="Transparent"
+							 ItemsSource="{Binding ResourceList}"
+							 Theme="{StaticResource Card}"
+							 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
 						<ItemsControl.ItemTemplate>
 							<DataTemplate DataType="psr:ResourceTree">
-								<Button Command="{Binding $parent[UserControl].((ps:DiscoverDetailViewModel)DataContext).ItemClickCommand}"
-										CommandParameter="{Binding}"
-										Theme="{StaticResource CardItem}">
-									<StackPanel Orientation="Vertical">
-										<TextBlock Classes="icon"
-													Text="&#xEE4A;"
-													FontSize="80"
-													HorizontalAlignment="Center"
-												   TextAlignment="Center"
-												    Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
-										<TextBlock Text="{Binding Name}"
-													HorizontalAlignment="Center"
-													TextWrapping="Wrap"/>
-									</StackPanel>
-								</Button>
+								<StackPanel Orientation="Vertical">
+									<TextBlock Classes="icon"
+												Text="&#xEE4A;"
+												FontSize="80"
+												HorizontalAlignment="Center"
+												TextAlignment="Center"
+												Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
+									<TextBlock Text="{Binding Name}"
+												HorizontalAlignment="Center"
+												TextWrapping="Wrap"/>
+								</StackPanel>
 							</DataTemplate>
 						</ItemsControl.ItemTemplate>
-					</ItemsControl>
+					</ListBox>
 					<PathIcon Classes.spin="{Binding IsLoading}"
 								IsVisible="{Binding IsLoading}"
 								Data="{StaticResource loader2}">

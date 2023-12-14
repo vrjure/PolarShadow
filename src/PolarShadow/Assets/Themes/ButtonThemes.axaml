@@ -2,101 +2,20 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:ps="https://github.com/PolarShadow">
     <!-- Add Resources Here -->
-	<ControlTheme TargetType="Button" x:Key="BaseTheme">
-		<Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
-		<Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
-		<Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
-		<Setter Property="BorderThickness" Value="{DynamicResource ButtonBorderThemeThickness}" />
-		<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
-		<Setter Property="Padding" Value="{DynamicResource ButtonPadding}" />
-		<Setter Property="HorizontalAlignment" Value="Left" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-		<Setter Property="RenderTransform" Value="none" />
-		<Setter Property="Transitions">
-			<Transitions>
-				<TransformOperationsTransition Property="RenderTransform" Duration="0:0:.075" />
-			</Transitions>
-		</Setter>
-
-		<Setter Property="Template">
-			<ControlTemplate>
-				<ContentPresenter x:Name="PART_ContentPresenter"
-								  Background="{TemplateBinding Background}"
-								  BorderBrush="{TemplateBinding BorderBrush}"
-								  BorderThickness="{TemplateBinding BorderThickness}"
-								  CornerRadius="{TemplateBinding CornerRadius}"
-								  Content="{TemplateBinding Content}"
-								  ContentTemplate="{TemplateBinding ContentTemplate}"
-								  Padding="{TemplateBinding Padding}"
-								  RecognizesAccessKey="True"
-								  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-								  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-				</ControlTemplate>
-		</Setter>
-		<Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-			<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
-			<Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
-			<Setter Property="Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
-		</Style>
-
-		<Style Selector="^:pressed">
-			<Setter Property="RenderTransform" Value="scale(0.98)" />
-		</Style>
-
-		<Style Selector="^:pressed  /template/ ContentPresenter#PART_ContentPresenter">
-			<Setter Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />
-			<Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
-			<Setter Property="Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
-		</Style>
-
-		<Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
-			<Setter Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
-			<Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
-			<Setter Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
-		</Style>
-
-		<Style Selector="^.accent">
-			<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-				<Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
-				<Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
-			</Style>
-
-			<Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-				<Setter Property="Background" Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPointerOver}" />
-				<Setter Property="Foreground" Value="{DynamicResource AccentButtonForegroundPointerOver}" />
-			</Style>
-
-			<Style Selector="^:pressed  /template/ ContentPresenter#PART_ContentPresenter">
-				<Setter Property="Background" Value="{DynamicResource AccentButtonBackgroundPressed}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPressed}" />
-				<Setter Property="Foreground" Value="{DynamicResource AccentButtonForegroundPressed}" />
-			</Style>
-
-			<Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
-				<Setter Property="Background" Value="{DynamicResource AccentButtonBackgroundDisabled}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushDisabled}" />
-				<Setter Property="Foreground" Value="{DynamicResource AccentButtonForegroundDisabled}" />
-			</Style>
-		</Style>
-	</ControlTheme>
-
-	<ControlTheme TargetType="Button" x:Key="CardItem" BasedOn="{StaticResource BaseTheme}">
+	<ControlTheme TargetType="Button" x:Key="CardItem" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="Padding" Value="8"/>
 		<Setter Property="Height" Value="{StaticResource CardItemHeight}"/>
-		<Setter Property="Width" Value="{StaticResource CardItemWidth}"/>
 		<Setter Property="CornerRadius" Value="{StaticResource CardItemCornerRadius}"/>
 	</ControlTheme>
 
-	<ControlTheme TargetType="Button" x:Key="HorizontalItem" BasedOn="{StaticResource BaseTheme}">
+	<ControlTheme TargetType="Button" x:Key="HorizontalItem" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="Padding" Value="8"/>
 		<Setter Property="CornerRadius" Value="5"/>
 	</ControlTheme>
 
-	<ControlTheme TargetType="Button" x:Key="Icon" BasedOn="{StaticResource BaseTheme}">
+	<ControlTheme TargetType="Button" x:Key="Icon" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
 		<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>

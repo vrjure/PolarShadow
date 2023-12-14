@@ -1,7 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Controls.Selection;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
+using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -50,6 +52,26 @@ public class ViewModelBase : ObservableRecipient, INavigationNotify
             return _cts;
         }
     }
+
+    private ISelectionModel _selectionModel;
+    public ISelectionModel SelectionModel
+    {
+        get => _selectionModel;
+        set
+        {
+            SetProperty(_selectionModel, value, n =>
+            {
+                if (_selectionModel != null)
+                {
+                    _selectionModel.SelectionChanged -= SelectionModel_SelectionChanged;
+                }
+                _selectionModel = n;
+                _selectionModel.SelectionChanged += SelectionModel_SelectionChanged;
+            });
+
+        }
+    }
+
     protected override void OnActivated()
     {
         System.Diagnostics.Trace.WriteLine($"{this.GetType().Name} load");
@@ -102,5 +124,15 @@ public class ViewModelBase : ObservableRecipient, INavigationNotify
     protected virtual void IsLoadingChanged()
     {
 
+    }
+
+    protected virtual void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
+    {
+
+    }
+
+    private void SelectionModel_SelectionChanged(object sender, SelectionModelSelectionChangedEventArgs e)
+    {
+        OnSelectionChanged(e);
     }
 }

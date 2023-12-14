@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using PolarShadow.Cache;
 using System;
@@ -88,7 +89,7 @@ namespace PolarShadow.Controls
 
         private static async Task<Bitmap> LoadFromWebAsync(Uri uri, IBufferCache cache = null, IDictionary<string, string> headers = null)
         {
-
+            cache ??= Ioc.Default.GetService<IBufferCache>();
             using var httpClient = cache switch
             {
                 not null => new HttpClient(new HttpCachingHandler(cache)),

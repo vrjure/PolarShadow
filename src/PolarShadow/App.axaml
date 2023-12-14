@@ -1,6 +1,8 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:ps="https://github.com/PolarShadow"
 			 xmlns:psr="using:PolarShadow.Resources"
+			 xmlns:pss="using:PolarShadow.Services"
              x:Class="PolarShadow.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -15,9 +17,11 @@
 				
 				<ResourceInclude Source="/Assets/Themes/SliderThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ItemsControlThemes.axaml"/>
+				<ResourceInclude Source="/Assets/Themes/ListBoxThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ButtonThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/RadioButtonThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/MediaPlayerControllerThemes.axaml"/>
+				<ResourceInclude Source="/Assets/Themes/ScrollViewThemes.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
@@ -35,7 +39,46 @@
 		<StyleInclude Source="/Assets/Styles/TextBlockStyles.axaml"/>
 		<StyleInclude Source="/Assets/Styles/TextBoxStyles.axaml"/>
 		<StyleInclude Source="/Assets/Styles/PathIconStyles.axaml"/>
+		<StyleInclude Source="/Assets/Styles/ScrollViewStyles.axaml"/>
 				
     </Application.Styles>
-	
+	<Application.DataTemplates>
+		<DataTemplate DataType="pss:ResourceModel">
+			<StackPanel Orientation="Vertical">
+				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
+					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
+					   HorizontalAlignment="Center"
+					   Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
+				<TextBlock Text="{Binding Name}"
+							TextWrapping="Wrap"
+							HorizontalAlignment="Center"/>
+			</StackPanel>
+		</DataTemplate>
+
+		<DataTemplate DataType="psr:Resource">
+			<StackPanel Orientation="Vertical">
+				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
+						ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
+						HorizontalAlignment="Center"
+						Height="{Binding $parent[0].Bounds.Height,Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
+				<TextBlock Text="{Binding Name}"
+						   TextWrapping="Wrap"
+						   HorizontalAlignment="Center"/>
+			</StackPanel>
+		</DataTemplate>
+
+		<DataTemplate DataType="psr:ResourceTree">
+			<StackPanel Orientation="Vertical">
+				<TextBlock Classes="icon"
+							Text="&#xEE4A;"
+							FontSize="80"
+							HorizontalAlignment="Center"
+							TextAlignment="Center"
+							Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
+				<TextBlock Text="{Binding Name}"
+							HorizontalAlignment="Center"
+							TextWrapping="Wrap"/>
+			</StackPanel>
+		</DataTemplate>
+	</Application.DataTemplates>
 </Application>

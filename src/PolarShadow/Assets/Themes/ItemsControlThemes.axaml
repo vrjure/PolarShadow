@@ -1,64 +1,51 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:ps="https://github.com/PolarShadow">
     <!-- Add Resources Here -->
-	<ControlTheme TargetType="ItemsControl" x:Key="BaseTheme">
-		<Setter Property="Template">
-			<ControlTemplate>
-				<Border Background="{TemplateBinding Background}"
-						BorderBrush="{TemplateBinding BorderBrush}"
-						BorderThickness="{TemplateBinding BorderThickness}"
-						CornerRadius="{TemplateBinding CornerRadius}"
-						Padding="{TemplateBinding Padding}">
-					<ItemsPresenter Name="PART_ItemsPresenter"
-									ItemsPanel="{TemplateBinding ItemsPanel}"/>
-				</Border>
-			</ControlTemplate>
-		</Setter>
-	</ControlTheme>
 	
-	<ControlTheme TargetType="ItemsControl"  x:Key="Card" BasedOn="{StaticResource BaseTheme}">
+	<ControlTheme TargetType="ItemsControl"  x:Key="Card" BasedOn="{StaticResource {x:Type ItemsControl}}">
 		<Setter Property="ItemsPanel">
 			<ItemsPanelTemplate>
-				<WrapPanel/>
+				<UniformGrid Columns="{Binding $self.Bounds.Width, Converter={x:Static ps:RowColumnConverter.Instance}, ConverterParameter={StaticResource CardItemWidth}}"/>
 			</ItemsPanelTemplate>
 		</Setter>	
-		<Setter Property="ItemContainerTheme" Value="{StaticResource CardItemPresenter}"/>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource CardItem}"/>
+		<Setter Property="VerticalAlignment" Value="Top"/>
 	</ControlTheme>
 
-	<ControlTheme TargetType="ItemsControl" x:Key="Vertical" BasedOn="{StaticResource BaseTheme}">
+	<ControlTheme TargetType="ItemsControl" x:Key="Vertical" BasedOn="{StaticResource {x:Type ItemsControl}}">
 		<Setter Property="ItemsPanel">
 			<ItemsPanelTemplate>
 				<StackPanel Orientation="Vertical"/>
 			</ItemsPanelTemplate>
 		</Setter>
-		<Setter Property="ItemContainerTheme" Value="{StaticResource VerticalItemPresenter}"/>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource VerticalItem}"/>
 	</ControlTheme>
 
-	<ControlTheme TargetType="ItemsControl" x:Key="Horizontal" BasedOn="{StaticResource BaseTheme}">
+	<ControlTheme TargetType="ItemsControl" x:Key="Horizontal" BasedOn="{StaticResource {x:Type ItemsControl}}">
 		<Setter Property="ItemsPanel">
 			<ItemsPanelTemplate>
 				<StackPanel Orientation="Horizontal"/>
 			</ItemsPanelTemplate>
 		</Setter>
-		<Setter Property="ItemContainerTheme" Value="{StaticResource HorizontalItemPresenter}"/>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource HorizontalItem}"/>
 	</ControlTheme>
 
-	<ControlTheme TargetType="ContentPresenter" x:Key="CardItemPresenter">
-		<Setter Property="Width" Value="{StaticResource CardItemWidth}"/>
+	<ControlTheme TargetType="ContentPresenter" x:Key="CardItem">
 		<Setter Property="Height" Value="{StaticResource CardItemHeight}"/>
 		<Setter Property="CornerRadius" Value="{StaticResource CardItemCornerRadius}"/>
 		<Setter Property="BoxShadow" Value="0 0 15 0 LightGray"/>
 		<Setter Property="Margin" Value="8"/>
 	</ControlTheme>
 
-	<ControlTheme TargetType="ContentPresenter" x:Key="VerticalItemPresenter">
+	<ControlTheme TargetType="ContentPresenter" x:Key="VerticalItem">
 		<Setter Property="Height" Value="{StaticResource VerticalItemHeight}"/>
 		<Setter Property="HorizontalAlignment" Value="Stretch"/>
 		<Setter Property="BoxShadow" Value="0 0 15 0 LightGray"/>
 		<Setter Property="Margin" Value="8"/>
 	</ControlTheme>
 
-	<ControlTheme TargetType="ContentPresenter" x:Key="HorizontalItemPresenter">
+	<ControlTheme TargetType="ContentPresenter" x:Key="HorizontalItem">
 		<Setter Property="Margin" Value="8"/>
 	</ControlTheme>
 </ResourceDictionary>

@@ -39,24 +39,6 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _sites, value);
         }
 
-        private ISite _selectedSite;
-        public ISite SelectedSite
-        {
-            get => _selectedSite;
-            set => SetProperty(_selectedSite, value, val =>
-            {
-                _selectedSite = val;
-                OnSiteSelectorChanged();
-            });
-        }
-
-        private ISelectionModel _selection;
-        public ISelectionModel Selection
-        {
-            get => _selection;
-            set => SetProperty(ref _selection, value);
-        }
-
         private IAsyncRelayCommand _importCommand;
         public IAsyncRelayCommand ImportCommand => _importCommand ??= new AsyncRelayCommand(ImportSource);
 
@@ -94,21 +76,26 @@ namespace PolarShadow.ViewModels
             Sites = new ObservableCollection<ISite>(_polar.GetSites());
         }
 
-        private void OnSiteSelectorChanged()
+        private void ToSiteDetail(ISite site)
         {
-            if (SelectedSite == null)
+            if (site == null)
             {
                 return;
             }
 
-            var selectSite = SelectedSite;
             _nav.Navigate<BookSourceDetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>()
             {
-                {nameof(BookSourceDetailViewModel.Site), selectSite }
+                {nameof(BookSourceDetailViewModel.Site), site}
             }, true);
+        }
 
-            Selection?.Clear();
-            SelectedSite = null;
+        protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
+        {
+            if (e.SelectedItems.Count > 0)
+            {
+                ToSiteDetail(e.SelectedItems.First() as ISite);
+                SelectionModel.Deselect(e.SelectedIndexes.First());
+            }
         }
     }
 }

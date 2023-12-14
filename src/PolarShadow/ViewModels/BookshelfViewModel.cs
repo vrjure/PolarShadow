@@ -18,15 +18,12 @@ namespace PolarShadow.ViewModels
         private readonly INavigationService _nav;
         private readonly IMineResourceService _mineResourceService;
         private readonly INotificationManager _notify;
-        public BookshelfViewModel(INavigationService nav, IBufferCache cache, IMineResourceService mineResourceService, INotificationManager notify)
+        public BookshelfViewModel(INavigationService nav, IMineResourceService mineResourceService, INotificationManager notify)
         {
             _nav = nav;
-            Cache = cache;
             _mineResourceService = mineResourceService;
             _notify = notify;
         }
-
-        public IBufferCache Cache { get; }
 
         private ObservableCollection<ResourceModel> _mineResource;
         public ObservableCollection<ResourceModel> MineResource
@@ -38,8 +35,6 @@ namespace PolarShadow.ViewModels
         private IRelayCommand _searchCommand;
         public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(() => _nav.Navigate<SearchViewModel>(TopLayoutViewModel.NavigationName, canBack: true));
 
-        private IRelayCommand _itemClickCommand;
-        public IRelayCommand ItemClickCommand => _itemClickCommand ??= new RelayCommand<ResourceModel>(ToDetail);
         protected override async void OnLoad()
         {
             try
@@ -66,6 +61,15 @@ namespace PolarShadow.ViewModels
                 {nameof(DetailViewModel.Param_Link), res }
             }, true);
         }
-        
+
+        protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
+        {
+            if (e.SelectedItems.Count > 0)
+            {
+                ToDetail(e.SelectedItems.First() as ResourceModel);
+                SelectionModel.Deselect(e.SelectedIndexes.First());
+            }
+        }
+
     }
 }

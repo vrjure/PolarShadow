@@ -8,22 +8,25 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Controls.Converters
 {
-    public class PercentConverter : IValueConverter
+    public class RowColumnConverter : IValueConverter
     {
-        public static readonly PercentConverter Instance = new();
+        public static readonly RowColumnConverter Instance = new();
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!targetType.IsAssignableTo(typeof(double))) return value;
-            var dParameter = 1d;
-            if (parameter is string dp && double.TryParse(dp, out double dp1))
+            if (!targetType.IsAssignableTo(typeof(int)) || value == null) return 1;
+
+            var p = 1d;
+            if (parameter is string ps && double.TryParse(ps, out double dps))
             {
-                dParameter = dp1;
+                p = dps;
             }
             else
             {
-                dParameter = (double)parameter;
+                p = (double)parameter;
             }
-            return (double)value * dParameter;
+
+            var count = (int)((double)value / p);
+            return count == 0 ? 1 : count;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Controls
 {
-    public sealed class PanelAttached
+    public sealed partial class PanelAttached
     {
         static PanelAttached()
         {

@@ -34,9 +34,6 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _sites, value);
         }
 
-        private IRelayCommand _siteSelectedCommand;
-        public IRelayCommand SiteSelectedCommand => _siteSelectedCommand ??= new RelayCommand<ISite>(SiteSelectChanged);
-
         protected override void OnLoad()
         {
             try
@@ -61,6 +58,15 @@ namespace PolarShadow.ViewModels
             {
                 { nameof(DiscoverDetailViewModel.Param_Site), site }
             }, true);
+        }
+
+        protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
+        {
+            if (e.SelectedItems.Count > 0)
+            {
+                SiteSelectChanged(e.SelectedItems.First() as ISite);
+                SelectionModel.Deselect(e.SelectedIndexes.First());
+            }
         }
     }
 }
