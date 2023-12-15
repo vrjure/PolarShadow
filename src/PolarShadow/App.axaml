@@ -50,8 +50,8 @@
 					   HorizontalAlignment="Center"
 					   Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
 				<TextBlock Text="{Binding Name}"
-							TextWrapping="Wrap"
-							HorizontalAlignment="Center"/>
+						   TextWrapping="Wrap"
+						   HorizontalAlignment="Center"/>
 			</StackPanel>
 		</DataTemplate>
 

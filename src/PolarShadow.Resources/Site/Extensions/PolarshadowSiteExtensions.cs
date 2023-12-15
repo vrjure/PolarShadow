@@ -217,19 +217,13 @@ namespace PolarShadow.Resources
         }
 
 
-
-        public static ISiteRequestHandler CreateRequestHandler(this ISite site, IPolarShadow polar, string requestName)
+        public static IParameter CreateParameter(this ISite site, IPolarShadow polar, string requestName)
         {
-            if (!site.Requests.TryGetValue(requestName, out ISiteRequest request))
-            {
-                return null;
-
-            }
-
-            var siteItem = polar.GetItem<ISiteItem>();
-            var parameterItem = polar.GetItem<IParameterItem>();
+            site.Requests.TryGetValue(requestName, out ISiteRequest request);
 
             var parameters = new Parameters();
+
+            var parameterItem = polar.GetItem<IParameterItem>();
             if (parameterItem != null && parameterItem.Parameters?.Count > 0)
             {
                 parameters.Add(parameterItem.Parameters);
@@ -240,16 +234,10 @@ namespace PolarShadow.Resources
                 parameters.Add(site.Parameters);
             }
 
-            if (request.Parameters != null && request.Parameters.Count > 0)
+            if (request?.Parameters != null && request.Parameters.Count > 0)
             {
                 parameters.Add(request.Parameters);
             }
-
-            parameters.TryReadValue(SiteParams.UseWebView, out bool useWebView);
-
-            var requestHandler = useWebView ? siteItem.WebViewHandler : siteItem.HttpHandler;
-
-            if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
 
             var siteInfo = new KeyValueParameter
             {
@@ -259,6 +247,28 @@ namespace PolarShadow.Resources
             };
 
             parameters.Add(siteInfo);
+
+            return parameters;
+        }
+
+
+        public static ISiteRequestHandler CreateRequestHandler(this ISite site, IPolarShadow polar, string requestName)
+        {
+            if (!site.Requests.TryGetValue(requestName, out ISiteRequest request))
+            {
+                return null;
+
+            }
+
+            var parameters = CreateParameter(site, polar, requestName);
+
+            var siteItem = polar.GetItem<ISiteItem>();
+
+            parameters.TryReadValue(SiteParams.UseWebView, out bool useWebView);
+
+            var requestHandler = useWebView ? siteItem.WebViewHandler : siteItem.HttpHandler;
+
+            if (requestHandler == null) throw new InvalidOperationException("RequestHandler not be set");
 
             var writings = new List<IContentWriting>();
             foreach (var item in siteItem.EnumeratorRequestRules(requestName))
