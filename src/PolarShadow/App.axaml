@@ -44,41 +44,52 @@
     </Application.Styles>
 	<Application.DataTemplates>
 		<DataTemplate DataType="pss:ResourceModel">
-			<StackPanel Orientation="Vertical">
+			<Panel>
 				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
 					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
-					   HorizontalAlignment="Center"
-					   Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
-				<TextBlock Text="{Binding Name}"
-						   TextWrapping="Wrap"
-						   HorizontalAlignment="Center"/>
-			</StackPanel>
+					   ps:ImageAttached.PlaceholderSrc="avares://PolarShadow/Assets/images/item-background.jpg"
+					   Stretch="Fill"/>
+				<Border VerticalAlignment="Bottom"
+						Background="#9FFFFFFF">
+					<TextBlock Text="{Binding Name}"
+							   TextWrapping="NoWrap"
+							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
+							   HorizontalAlignment="Center"/>
+				</Border>
+
+			</Panel>
 		</DataTemplate>
 
 		<DataTemplate DataType="psr:Resource">
-			<StackPanel Orientation="Vertical">
+			<Panel>
 				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
-						ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
-						HorizontalAlignment="Center"
-						Height="{Binding $parent[0].Bounds.Height,Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
-				<TextBlock Text="{Binding Name}"
-						   TextWrapping="Wrap"
-						   HorizontalAlignment="Center"/>
-			</StackPanel>
+					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
+					   ps:ImageAttached.PlaceholderSrc="avares://PolarShadow/Assets/images/item-background.jpg"
+					   Stretch="Fill"/>
+				<Border VerticalAlignment="Bottom"
+						Background="#9FFFFFFF">
+					<TextBlock Text="{Binding Name}"
+							   TextWrapping="NoWrap"
+							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
+							   HorizontalAlignment="Center"/>
+				</Border>
+			</Panel>
 		</DataTemplate>
 
 		<DataTemplate DataType="psr:ResourceTree">
-			<StackPanel Orientation="Vertical">
-				<TextBlock Classes="icon"
-							Text="&#xEE4A;"
-							FontSize="80"
-							HorizontalAlignment="Center"
-							TextAlignment="Center"
-							Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
-				<TextBlock Text="{Binding Name}"
-							HorizontalAlignment="Center"
-							TextWrapping="Wrap"/>
-			</StackPanel>
+			<Panel>
+				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
+					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
+					   ps:ImageAttached.PlaceholderSrc="avares://PolarShadow/Assets/images/item-background.jpg"
+					   Stretch="Fill"/>
+				<Border VerticalAlignment="Bottom"
+						Background="#9FFFFFFF">
+					<TextBlock Text="{Binding Name}"
+							   TextWrapping="NoWrap"
+							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
+							   HorizontalAlignment="Center"/>
+				</Border>
+			</Panel>
 		</DataTemplate>
 	</Application.DataTemplates>
 </Application>

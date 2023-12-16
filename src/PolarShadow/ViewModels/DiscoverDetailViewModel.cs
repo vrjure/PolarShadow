@@ -46,21 +46,20 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _resourceList, value);
         }
 
-        private IRelayCommand _categorySelectedCommand;
-        public IRelayCommand CategorySelectedCommand => _categorySelectedCommand ??= new RelayCommand<Resource>(f => CategoryValue = f);
-
-        private Resource _categoryValue;
-        public Resource CategoryValue
+        private ISelectionModel _categorySelection;
+        public ISelectionModel CategorySelection
         {
-            get => _categoryValue;
-            set
-            {
-                if (SetProperty(ref _categoryValue, value))
+            get => _categorySelection;
+            set 
+            { 
+                if(SetProperty(ref _categorySelection, value))
                 {
-                    CategoryValueChanged();
+                    _categorySelection.SelectionChanged += CategorySelection_SelectionChanged;
                 }
             }
+
         }
+
 
         private bool _showLoadMore = false;
         public bool ShowLoadMore
@@ -72,6 +71,41 @@ namespace PolarShadow.ViewModels
         private IAsyncRelayCommand _loadMoreCommand;
         public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
 
+        protected override async void OnLoad()
+        {
+            if (Param_Site == null)
+            {
+                _notify.Show("Miss Parameter");
+                return;
+            }
+
+            if (_inCache)
+            {
+                _inCache = false;
+                return;
+            }
+
+            try
+            {
+                IsLoading = true;
+                var categories = await Param_Site.ExecuteAsync<ICollection<Resource>>(_polar, Requests.Categories, Cancellation.Token);
+                IsLoading = false;
+                if (categories == null)
+                {
+                    Categories?.Clear();
+                    HasData = false;
+                    return;
+                }
+
+                Categories = new ObservableCollection<Resource>(categories);
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                _notify.Show(ex);
+            }
+        }
+
         protected override void IsLoadingChanged()
         {
             if(_loading != null && !IsLoading)
@@ -79,13 +113,22 @@ namespace PolarShadow.ViewModels
                 _loading.TrySetResult();
             }
         }
-
-        private async void CategoryValueChanged()
+        private void CategorySelection_SelectionChanged(object sender, SelectionModelSelectionChangedEventArgs e)
         {
-            if (CategoryValue == null)
+            if (e.SelectedItems.Count > 0)
+            {
+                CategoryValueChanged(e.SelectedItems.First() as Resource);
+            }
+        }
+
+
+        private async void CategoryValueChanged(Resource category)
+        {
+            if (category == null)
             {
                 return;
             }
+
             if (IsLoading)
             {
                 _loading = new TaskCompletionSource();
@@ -101,9 +144,9 @@ namespace PolarShadow.ViewModels
                 _filter ??= new PageFilter();
                 _filter.Page = 1;
                 _filter.PageSize = 10;
-                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, CategoryValue.Request, builder =>
+                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, category.Request, builder =>
                 {
-                    builder.AddObjectValue(CategoryValue);
+                    builder.AddObjectValue(category);
                     builder.AddObjectValue(_filter);
                 }, Cancellation.Token);
                 if (resources == null || resources.Count == 0)
@@ -146,9 +189,10 @@ namespace PolarShadow.ViewModels
             try
             {
                 _filter.Page++;
-                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, CategoryValue.Request, builder =>
+                var categoryValue = CategorySelection.SelectedItems.First() as Resource;
+                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, categoryValue.Request, builder =>
                 {
-                    builder.AddObjectValue(CategoryValue);
+                    builder.AddObjectValue(categoryValue);
                     builder.AddObjectValue(_filter);
                 }, Cancellation.Token);
                 if (resources == null || resources.Count == 0)
@@ -179,41 +223,6 @@ namespace PolarShadow.ViewModels
             if (parameters.TryGetValue(nameof(Param_Site), out ISite site))
             {
                 Param_Site = site;
-            }
-        }
-
-        protected override async void OnLoad()
-        {
-            if (Param_Site == null)
-            {
-                _notify.Show("Miss Parameter");
-                return;
-            }
-
-            if (_inCache)
-            {
-                _inCache = false;
-                return;
-            }
-
-            try
-            {
-                IsLoading = true;
-                var categories = await Param_Site.ExecuteAsync<ICollection<Resource>>(_polar, Requests.Categories, Cancellation.Token);
-                IsLoading = false;
-                if (categories == null)
-                {
-                    Categories?.Clear();
-                    HasData = false;
-                    return;
-                }
-
-                Categories = new ObservableCollection<Resource>(categories);
-            }
-            catch (OperationCanceledException) { }
-            catch (Exception ex)
-            {
-                _notify.Show(ex);
             }
         }
 

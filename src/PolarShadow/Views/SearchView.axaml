@@ -14,9 +14,10 @@
 		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.CenterTitleBarContainer}">
 			<Grid ColumnDefinitions="16,*,16">
 				<ps:SearchBox Grid.Column="1"
-								SearchText="{Binding SearchText, Mode=TwoWay}"
-								SearchCommand="{Binding SearchCommand}"
-								ClearCommand="{Binding ClearCommand}"/>
+							  SearchText="{Binding SearchText, Mode=TwoWay}"
+							  SearchCommand="{Binding SearchCommand}"
+							  ClearCommand="{Binding ClearCommand}"
+							  MaxWidth="450"/>
 			</Grid>
 		</ps:ToolBarTemplate>
 	</ps:ToolBarAttached.ToolBar>

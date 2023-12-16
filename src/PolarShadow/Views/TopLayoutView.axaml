@@ -33,28 +33,35 @@
 						ps:NavigationManager.BackName="{x:Static ps:TopLayoutViewModel.NavigationName}">
 				</Button>
 				<!--Title-->
-				<StackPanel Orientation="Horizontal"
-							Background="{StaticResource TitleBarColor}"
-							Classes.left="{Binding !#backButton.Opacity}"
-							Classes.right="{Binding !!#backButton.Opacity}"
-							IsVisible="{Binding IsDesktop}">
-					<StackPanel.Styles>
-						<Style Selector="StackPanel.left">
-							<Setter Property="RenderTransform" Value="translateX(-33px)"/>
-						</Style>
-						<Style Selector="StackPanel.right">
-							<Setter Property="RenderTransform" Value="translateX(0px)"/>
-						</Style>
-					</StackPanel.Styles>
-					<StackPanel.Transitions>
-						<Transitions>
-							<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
-						</Transitions>
-					</StackPanel.Transitions>
-					<TextBlock Text="PolarShadow"
-								VerticalAlignment="Center">
-					</TextBlock>
-				</StackPanel>
+				<OnPlatform>
+					<OnPlatform.Default>
+						<StackPanel Orientation="Horizontal"
+									Background="{StaticResource TitleBarColor}"
+									Classes.left="{Binding !#backButton.Opacity}"
+									Classes.right="{Binding !!#backButton.Opacity}"
+									IsVisible="{Binding IsDesktop}">
+							<StackPanel.Styles>
+								<Style Selector="StackPanel.left">
+									<Setter Property="RenderTransform" Value="translateX(-33px)"/>
+								</Style>
+								<Style Selector="StackPanel.right">
+									<Setter Property="RenderTransform" Value="translateX(0px)"/>
+								</Style>
+							</StackPanel.Styles>
+							<StackPanel.Transitions>
+								<Transitions>
+									<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+								</Transitions>
+							</StackPanel.Transitions>
+							<TextBlock Text="PolarShadow"
+										VerticalAlignment="Center">
+							</TextBlock>
+						</StackPanel>
+					</OnPlatform.Default>
+					<OnPlatform.Android>
+						<Border/>
+					</OnPlatform.Android>
+				</OnPlatform>				
 			</StackPanel>
 			<!--CentenContainer-->
 			<TransitioningContentControl ps:ToolBarAttached.Name="{x:Static ps:TopLayoutViewModel.CenterTitleBarContainer}"

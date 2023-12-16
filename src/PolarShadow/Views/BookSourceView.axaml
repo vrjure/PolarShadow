@@ -23,30 +23,24 @@
 	<Grid>
 		<ListBox ItemsSource="{Binding Sites}"
 				 Margin="20"
-				 Background="Transparent"
-				 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
+				 Selection="{Binding SelectionModel, Mode=OneWayToSource}"
+				 Theme="{StaticResource Vertical}">
 
 			<ListBox.ItemTemplate>
 				<DataTemplate DataType="psr:ISite">
-					<Border BorderBrush="LightGray"
-							BorderThickness="1"
-							CornerRadius="5"
-							Height="45"
-							Padding="5">
-						<Grid>
-							<StackPanel Orientation="Horizontal"
-										VerticalAlignment="Center"
-										HorizontalAlignment="Left">
-								<TextBlock Text="{Binding Name}"/>
-								<TextBlock Text="{Binding Domain, StringFormat='({0})'}"/>
-							</StackPanel>
-							<TextBlock Text="&#xEA6E;"
-										FontFamily="{StaticResource remixIcon}"
-										HorizontalAlignment="Right"
-										VerticalAlignment="Center"
-										Classes="icon"/>
-						</Grid>
-					</Border>
+					<Grid ColumnDefinitions="*,auto">
+						<StackPanel Orientation="Horizontal"
+									VerticalAlignment="Center"
+									HorizontalAlignment="Left">
+							<TextBlock Text="{Binding Name}"/>
+							<TextBlock Text="{Binding Domain, StringFormat='({0})'}"/>
+						</StackPanel>
+						<TextBlock Text="&#xEA6E;"
+									HorizontalAlignment="Right"
+									VerticalAlignment="Center"
+									Classes="icon"
+								   Grid.Column="1"/>
+					</Grid>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>

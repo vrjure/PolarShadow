@@ -3,7 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using LibVLCSharp.Shared;
+using PolarShadow.Controls.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,12 +26,13 @@ namespace PolarShadow.Controls
         private Button _nextBtn;
         private Button _fullScreenBtn;
         private Slider _part_slider;
+        private Track _sliderTrack;
         private Border _part_root;
 
         static MediaPlayerController()
         {
-            MediaPlayerProperty.Changed.Subscribe(MediaPlayerPropertyChanged);
-            TimeProperty.Changed.Subscribe(TimePropertyChanged);
+            MediaPlayerProperty.Changed.AddClassHandler<MediaPlayerController>((o,e)=>o.MediaPlayerPropertyChanged(e));
+            TimeProperty.Changed.AddClassHandler<MediaPlayerController>((o, e) => o.TimePropertyChanged(e));
         }
 
 
@@ -99,22 +102,22 @@ namespace PolarShadow.Controls
             _nextBtn = e.NameScope.Get<Button>("Part_Next");
             _fullScreenBtn = e.NameScope.Get<Button>("Part_FullScreen");
             _part_slider = e.NameScope.Get<Slider>("Part_Slider");
-            _part_root = e.NameScope.Get<Border>("Part_Root");
+            _part_root = e.NameScope.Get<Border>("Part_Root");          
 
             _previousBtn.Click += PreviousBtn_Click;
             _nextBtn.Click += NextBtn_Click;
             _playBtn.Click += PlayBtn_Click;
             _fullScreenBtn.Click += FullScreenBtn_Click;
+            _part_slider.TemplateApplied += _part_slider_TemplateApplied;
+            _part_slider.PointerMoved += _part_slider_PointerMoved;
         }
 
-
-        private static void MediaPlayerPropertyChanged(AvaloniaPropertyChangedEventArgs<LibVLCSharp.Shared.MediaPlayer> arg)
+        private void MediaPlayerPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
             var controller = arg.Sender as MediaPlayerController;
 
-            if (arg.OldValue.HasValue && arg.OldValue.Value != null)
+            if (arg.OldValue is MediaPlayer old)
             {
-                var old = arg.OldValue.Value;
                 old.MediaChanged -= controller.MediaChanged;
                 old.Playing -= controller.Media_Playing;
                 old.Paused -= controller.Media_Paused;
@@ -122,10 +125,8 @@ namespace PolarShadow.Controls
                 old.TimeChanged -= controller.TimeChanged;
             }
 
-            if (arg.NewValue.HasValue && arg.NewValue.Value != null)
+            if (arg.NewValue is MediaPlayer newVal)
             {
-                var newVal = arg.NewValue.Value;
-
                 newVal.MediaChanged += controller.MediaChanged;
                 newVal.Playing += controller.Media_Playing;
                 newVal.Paused += controller.Media_Paused;
@@ -134,15 +135,15 @@ namespace PolarShadow.Controls
             }
         }
 
-        private static void TimePropertyChanged(AvaloniaPropertyChangedEventArgs<TimeSpan> arg)
+        private void TimePropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
             var controller = arg.Sender as MediaPlayerController;
-            if (controller == null || controller.MediaPlayer == null || !arg.NewValue.HasValue)
+            if (controller == null || controller.MediaPlayer == null || arg.NewValue is not TimeSpan)
             {
                 return;
             }
 
-            var newValue = arg.NewValue.Value;
+            var newValue = (TimeSpan)arg.NewValue;
             if (Math.Abs((newValue.TotalMilliseconds - controller.MediaPlayer.Time)) < _ignore.TotalMilliseconds)
             {
                 return;
@@ -207,6 +208,7 @@ namespace PolarShadow.Controls
             _nextBtn.Click -= NextBtn_Click;
             _playBtn.Click -= PlayBtn_Click;
             _fullScreenBtn.Click -= FullScreenBtn_Click;
+            _part_slider.PointerMoved -= _part_slider_PointerMoved;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -319,6 +321,24 @@ namespace PolarShadow.Controls
         private void FullScreenBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             FullScreen = !FullScreen;
+        }
+
+        private void _part_slider_TemplateApplied(object sender, TemplateAppliedEventArgs e)
+        {
+            _part_slider.TemplateApplied -= _part_slider_TemplateApplied;
+
+            _sliderTrack = e.NameScope.Find<Track>("PART_Track");
+        }
+
+        private void _part_slider_PointerMoved(object sender, PointerEventArgs e)
+        {
+            if (_sliderTrack == null)
+            {
+                return;
+            }
+
+            var value = _sliderTrack.ValueFromPoint(e.GetCurrentPoint(_sliderTrack).Position);
+            ToolTip.SetTip(_part_slider, TimeSpanToStringConverter.Instance.Convert(TimeSpanToDoubleConverter.Instance.ConvertBack(value, typeof(TimeSpan), default,default), typeof(string), default, default));
         }
     }
 }

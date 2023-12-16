@@ -17,13 +17,8 @@
 				<TabStrip ItemsSource="{Binding MenuItems}"
 						  HorizontalAlignment="Center"
 						  VerticalAlignment="Center"
+						  SelectedValue="{Binding SelectedValue, Mode=TwoWay}"
 						  x:Name="MenuStrip">
-					<Interaction.Behaviors>
-						<EventTriggerBehavior EventName="SelectionChanged" SourceObject="MenuStrip">
-							<InvokeCommandAction Command="{Binding MenuClickedCommand}"
-												 CommandParameter="{Binding #MenuStrip.SelectedValue}"/>
-						</EventTriggerBehavior>
-					</Interaction.Behaviors>
 					<TabStrip.ItemTemplate>
 						<DataTemplate DataType="ps:MenuIconItem">
 							<StackPanel x:Name="menuItem"

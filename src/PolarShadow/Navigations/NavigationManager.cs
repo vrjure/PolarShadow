@@ -22,8 +22,8 @@ namespace PolarShadow.Navigations
 
         static NavigationManager()
         {
-            ContainerNameProperty.Changed.Subscribe(ContainerNamePropertyChanged);
-            BackNameProperty.Changed.Subscribe(BackButtonNamePropertyChanged);
+            ContainerNameProperty.Changed.AddClassHandler<ContentControl>((o,e)=>ContainerNamePropertyChanged(e));
+            BackNameProperty.Changed.AddClassHandler<Control>((o,e)=>BackButtonNamePropertyChanged(e));
         }
 
         public static bool TryGetContainer(string containerName, out ContentControl container)
@@ -109,11 +109,11 @@ namespace PolarShadow.Navigations
             control.SetValue(BackNameProperty, value);
         }
 
-        private static void ContainerNamePropertyChanged(AvaloniaPropertyChangedEventArgs<string> args)
+        private static void ContainerNamePropertyChanged(AvaloniaPropertyChangedEventArgs args)
         {
-            if (Design.IsDesignMode || !args.NewValue.HasValue) return;
+            if (Design.IsDesignMode || args.NewValue is not string) return;
             var control = args.Sender as ContentControl;
-            var containerName = args.NewValue.Value;
+            var containerName = args.NewValue as string;
             if (_containers.ContainsKey(containerName))
             {
                 return;
@@ -148,10 +148,11 @@ namespace PolarShadow.Navigations
             }
         }
 
-        private static void BackButtonNamePropertyChanged(AvaloniaPropertyChangedEventArgs<string> arg)
+        private static void BackButtonNamePropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
-            if (Design.IsDesignMode || !arg.NewValue.HasValue) return;
-            if (!_backButtons.TryGetValue(arg.NewValue.Value, out Control backBtn))
+            if (Design.IsDesignMode || arg.NewValue is not string) return;
+            var value = arg.NewValue as string;
+            if (!_backButtons.TryGetValue(value, out Control backBtn))
             {
                 backBtn = arg.Sender as Control;
                 backBtn.AddHandler(Control.UnloadedEvent, backBtn_Unloaded);
@@ -164,7 +165,7 @@ namespace PolarShadow.Navigations
                     backBtn.AddHandler(Button.PointerReleasedEvent, BackBtn_PointerReleased);
                 }
                 backBtn.Opacity = 0;
-                _backButtons.Add(arg.NewValue.Value, backBtn);
+                _backButtons.Add(value, backBtn);
             }
 
             static void BackButtonClick(object sender)

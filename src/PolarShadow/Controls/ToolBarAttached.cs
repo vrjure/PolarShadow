@@ -17,8 +17,8 @@ namespace PolarShadow.Controls
         private static Dictionary<string, ContentControl> _containers = new Dictionary<string, ContentControl>(StringComparer.OrdinalIgnoreCase);
         static ToolBarAttached()
         {
-            NameProperty.Changed.Subscribe(NamePropertyChanged);
-            ToolBarProperty.Changed.Subscribe(ToolBarPropertyChanged);
+            NameProperty.Changed.AddClassHandler<ContentControl>((o, e)=>NamePropertyChanged(e));
+            ToolBarProperty.Changed.AddClassHandler<ContentControl>((o,e)=>ToolBarPropertyChanged(e));
         }
 
         public static readonly AttachedProperty<string> NameProperty = AvaloniaProperty.RegisterAttached<ToolBarAttached, ContentControl, string>("Name");
@@ -57,14 +57,15 @@ namespace PolarShadow.Controls
 
         }
 
-        private static void NamePropertyChanged(AvaloniaPropertyChangedEventArgs<string> arg)
+        private static void NamePropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
-            if (Design.IsDesignMode || !arg.NewValue.HasValue) return;
+            if (Design.IsDesignMode || arg.NewValue is not string) return;
 
-            if (!_containers.TryGetValue(arg.NewValue.Value, out ContentControl container))
+            var value = arg.NewValue as string;
+            if (!_containers.TryGetValue(value, out ContentControl container))
             {
                 container = arg.Sender as ContentControl;
-                _containers.Add(arg.NewValue.Value, container);
+                _containers.Add(value, container);
                 container.AddHandler(ContentControl.UnloadedEvent, Container_Unloaded);
             }
 
@@ -76,10 +77,10 @@ namespace PolarShadow.Controls
             }
         }
 
-        private static void ToolBarPropertyChanged(AvaloniaPropertyChangedEventArgs<IControlTemplate> arg)
+        private static void ToolBarPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
-            if (Design.IsDesignMode || !arg.NewValue.HasValue) return;
-            if (!arg.NewValue.HasValue || arg.NewValue.Value is not ToolBarTemplate template) return;
+            if (Design.IsDesignMode || arg.NewValue == null) return;
+            if (arg.NewValue is not ToolBarTemplate template) return;
 
             if (!_containers.TryGetValue(template.ToolBar, out ContentControl container)) return;
 

@@ -13,7 +13,7 @@ namespace PolarShadow.Controls.Converters
         public static readonly TimeSpanToStringConverter Instance = new();
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (targetType.IsAssignableTo(typeof(string)) && value is TimeSpan ts)
+            if (value is TimeSpan ts)
             {
                 if (parameter is string p && !string.IsNullOrEmpty(p))
                 {

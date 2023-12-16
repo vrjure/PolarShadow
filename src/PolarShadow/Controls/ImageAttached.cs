@@ -16,11 +16,12 @@ namespace PolarShadow.Controls
 {
     public class ImageAttached
     {
+        private static readonly Uri _defaultPlaceholderUri = new Uri("avares://PolarShadow/Assets/images/item-background.jpg");
         static ImageAttached()
         {
-            SrcProperty.Changed.Subscribe(SrcPropertyChanged);
+            SrcProperty.Changed.AddClassHandler<Image>((o, e) => SrcPropertyChanged(e));
         }
-        public static readonly AttachedProperty<Uri> SrcProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, Uri>("Source");
+        public static readonly AttachedProperty<Uri> SrcProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, Uri>("Source", _defaultPlaceholderUri);
         public static Uri GetSrc(Image image)
         {
             return image.GetValue(SrcProperty);
@@ -29,6 +30,18 @@ namespace PolarShadow.Controls
         {
             image.SetValue(SrcProperty, value);
         }
+
+
+        public static readonly AttachedProperty<Uri> PlaceholderSrcProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, Uri>("PlaceholderSrc");
+        public static Uri GetPlaceholderSrc(Image image)
+        {
+            return image.GetValue(PlaceholderSrcProperty);
+        }
+        public static void SetPlaceholderSrc(Image image, Uri value)
+        {
+            image.SetValue(PlaceholderSrcProperty, value);
+        }
+
 
         public static readonly AttachedProperty<IBufferCache> CacheProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, IBufferCache>("Cache");
         public static IBufferCache GetCache(Image image)
@@ -40,13 +53,14 @@ namespace PolarShadow.Controls
             image.SetValue(CacheProperty, value);
         }
 
+
         public static readonly AttachedProperty<IDictionary<string, string>> HeadersProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, IDictionary<string, string>>("Headers");
         public static IDictionary<string, string> GetHeaders(Image image) => image.GetValue(HeadersProperty);
         public static void SetHeaders(Image image, IDictionary<string, string> value) => image.SetValue(HeadersProperty, value);
 
-        private static void SrcPropertyChanged(AvaloniaPropertyChangedEventArgs<Uri> arg)
+        private static void SrcPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
-            if (Design.IsDesignMode || !arg.NewValue.HasValue) return;
+            if (Design.IsDesignMode) return;
             var image = arg.Sender as Image;
             
             if (!image.IsLoaded )
@@ -71,8 +85,16 @@ namespace PolarShadow.Controls
             var src = GetSrc(image);
             if (src == null)
             {
-                image.Source = null;
-                return;
+                var placeholderSrc = GetPlaceholderSrc(image);
+                if (placeholderSrc != null)
+                {
+                    src = placeholderSrc;
+                }
+                else
+                {
+                    image.Source = null;
+                    return;
+                }
             }
 
             if (src.Scheme == Uri.UriSchemeHttp || src.Scheme == Uri.UriSchemeHttps)

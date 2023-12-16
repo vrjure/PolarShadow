@@ -20,34 +20,161 @@
 		<Setter Property="CornerRadius" Value="{StaticResource CardItemCornerRadius}"/>
 		<Setter Property="Template">
 			<ControlTemplate>
-				<ContentPresenter Name="PART_ContentPresenter"
-								  Background="{TemplateBinding Background}"
-								  BorderBrush="{TemplateBinding BorderBrush}"
-								  BorderThickness="{TemplateBinding BorderThickness}"
-								  CornerRadius="{TemplateBinding CornerRadius}"
-								  ContentTemplate="{TemplateBinding ContentTemplate}"
-								  Content="{TemplateBinding Content}"
-								  FontWeight="{TemplateBinding FontWeight}"
-								  FontSize="{TemplateBinding FontSize}"
-								  Padding="{TemplateBinding Padding}"
-								  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-								  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
-								  BoxShadow="0 0 15 0 LightGray"
-								  Margin="8"/>
+				<Border CornerRadius="{TemplateBinding CornerRadius}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						Margin="8"
+						ClipToBounds="True">
+					<Panel>
+						<ContentPresenter Name="PART_ContentPresenter"
+										  ContentTemplate="{TemplateBinding ContentTemplate}"
+										  Content="{TemplateBinding Content}"
+										  FontWeight="{TemplateBinding FontWeight}"
+										  FontSize="{TemplateBinding FontSize}"
+										  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+										  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+										  Background="{TemplateBinding Background}"
+										  Padding="0"/>
+						<Border Name="PART_OverlayLayer">
+							
+						</Border>
+					</Panel>
+
+				</Border>
+							
 			</ControlTemplate>
 		</Setter>
 
 		<Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="Background" Value="{TemplateBinding Background}" />
+		</Style>
+
+
+		<Style Selector="^:pointerover /template/ Border#PART_OverlayLayer">
+			<OnFormFactor>
+				<OnFormFactor.Default>
+					<Setter Property="Background" Value="#5F000000" />
+				</OnFormFactor.Default>
+				<OnFormFactor.Mobile>
+					<Setter Property="Background" Value="{TemplateBinding Background}" />
+				</OnFormFactor.Mobile>
+			</OnFormFactor>
 		</Style>
 		
 		<Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
-			<Setter Property="Background" Value="Transparent" />
+			<Setter Property="Background" Value="{TemplateBinding Background}" />
 		</Style>
 
 		<Style Selector="^:selected">
 			<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
-				<Setter Property="Background" Value="Transparent" />
+				<Setter Property="Background" Value="{TemplateBinding Background}" />
+			</Style>
+		</Style>
+	</ControlTheme>
+
+	
+	
+	
+	
+	<ControlTheme TargetType="ListBox" x:Key="Card-Block" BasedOn="{StaticResource Card}">
+		<Setter Property="ItemsPanel">
+			<ItemsPanelTemplate>
+				<UniformGrid Columns="{Binding $self.Bounds.Width, Converter={x:Static ps:RowColumnConverter.Instance}, ConverterParameter=150}"/>
+			</ItemsPanelTemplate>
+		</Setter>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource CardItem-Block}"/>
+	</ControlTheme>
+
+	<ControlTheme TargetType="ListBoxItem" x:Key="CardItem-Block" BasedOn="{StaticResource CardItem}">
+		<Setter Property="Height" Value="150"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="BorderBrush" Value="LightGray"/>
+	</ControlTheme>
+
+	
+	
+	
+	<ControlTheme TargetType="ListBox" x:Key="Vertical" BasedOn="{StaticResource {x:Type ListBox}}">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="ItemContainerTheme" Value="{StaticResource VerticalItem}"/>
+	</ControlTheme>
+
+	<ControlTheme TargetType="ListBoxItem" x:Key="VerticalItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+		<Setter Property="Height" Value="45"/>
+		<Setter Property="BorderBrush" Value="LightGray"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="CornerRadius" Value="5"/>
+		<Setter Property="Margin" Value="0,8"/>
+		
+		<Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="{TemplateBinding Background}" />
+		</Style>
+
+		<Style Selector="^:selected">
+			<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+				<Setter Property="Background" Value="{TemplateBinding Background}" />
+			</Style>
+		</Style>
+	</ControlTheme>
+
+
+
+	<ControlTheme TargetType="ListBox" x:Key="Horizontal" BasedOn="{StaticResource {x:Type ListBox}}">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="ItemsPanel">
+			<ItemsPanelTemplate>
+				<VirtualizingStackPanel Orientation="Horizontal"/>
+			</ItemsPanelTemplate>
+		</Setter>
+	</ControlTheme>
+
+	<ControlTheme TargetType="ListBoxItem" x:Key="HorizontalItem-Selectable" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+		<Setter Property="CornerRadius" Value="5"/>
+		<Setter Property="Padding" Value="6,3,6,3"/>
+		<Setter Property="Margin" Value="2"/>
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border CornerRadius="{TemplateBinding CornerRadius}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						Margin="{TemplateBinding Margin}"
+						ClipToBounds="True">
+					<ContentPresenter Name="PART_ContentPresenter"
+									  ContentTemplate="{TemplateBinding ContentTemplate}"
+									  Content="{TemplateBinding Content}"
+									  FontWeight="{TemplateBinding FontWeight}"
+									  FontSize="{TemplateBinding FontSize}"
+									  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+									  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									  Background="{TemplateBinding Background}"
+									  Foreground="{TemplateBinding Foreground}"
+									  Padding="{TemplateBinding Padding}"/>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+		<OnFormFactor>
+			<OnFormFactor.Default>
+				<Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+					<Setter Property="Background" Value="#3F000000" />
+					<Setter Property="Foreground" Value="White" />
+				</Style>
+			</OnFormFactor.Default>
+			<OnFormFactor.Mobile>
+				<Style Selector="^:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+					<Setter Property="Background" Value="{TemplateBinding Background}" />
+				</Style>
+			</OnFormFactor.Mobile>
+		</OnFormFactor>
+		
+		
+		<Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="{TemplateBinding Background}" />
+		</Style>
+
+		<Style Selector="^:selected">
+			<Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+				<Setter Property="Background" Value="Red" />
+				<Setter Property="Foreground" Value="White" />
 			</Style>
 		</Style>
 	</ControlTheme>

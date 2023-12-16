@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,5 +32,7 @@ namespace PolarShadow.Services
         {
             _visualFactory = factory;
         }
+
+        public static TopLevel TopLevel => Ioc.Default.GetService<ITopLevelService>()?.GetTopLevel();
     }
 }

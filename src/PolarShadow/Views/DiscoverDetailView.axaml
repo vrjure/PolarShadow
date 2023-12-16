@@ -13,44 +13,28 @@
 	
 	<Grid RowDefinitions="auto,*">
 		<ScrollViewer HorizontalScrollBarVisibility="Auto"
-					  VerticalScrollBarVisibility="Disabled">
-			<ItemsControl ItemsSource="{Binding Categories}"
-						  Theme="{StaticResource Horizontal}">
+					  VerticalScrollBarVisibility="Disabled"
+					  Margin="6">
+			<ListBox ItemsSource="{Binding Categories}"
+				     Theme="{StaticResource Horizontal}"
+					 ItemContainerTheme="{StaticResource HorizontalItem-Selectable}"
+					 Selection="{Binding CategorySelection, Mode=OneWayToSource}"
+					 Margin="6">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="psr:Resource">
-						<RadioButton Content="{Binding Name}"
-									 Theme="{StaticResource ToggleButton}"
-									 GroupName="categoryItem"
-									 Command="{Binding $parent[UserControl].((ps:DiscoverDetailViewModel)DataContext).CategorySelectedCommand}"
-									 CommandParameter="{Binding}"/>
+						<TextBlock Text="{Binding Name}"/>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
-			</ItemsControl>
+			</ListBox>
 		</ScrollViewer>
 
 		<Grid Grid.Row="1">
 			<ScrollViewer>
 				<StackPanel Orientation="Vertical"
 							Spacing="10">
-					<ListBox Background="Transparent"
-							 ItemsSource="{Binding ResourceList}"
+					<ListBox ItemsSource="{Binding ResourceList}"
 							 Theme="{StaticResource Card}"
 							 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate DataType="psr:ResourceTree">
-								<StackPanel Orientation="Vertical">
-									<TextBlock Classes="icon"
-												Text="&#xEE4A;"
-												FontSize="80"
-												HorizontalAlignment="Center"
-												TextAlignment="Center"
-												Height="{Binding $parent[0].Bounds.Height, Converter={x:Static ps:PercentConverter.Instance}, ConverterParameter=0.8}"/>
-									<TextBlock Text="{Binding Name}"
-												HorizontalAlignment="Center"
-												TextWrapping="Wrap"/>
-								</StackPanel>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
 					</ListBox>
 					<PathIcon Classes.spin="{Binding IsLoading}"
 								IsVisible="{Binding IsLoading}"

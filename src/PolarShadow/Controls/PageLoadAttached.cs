@@ -14,7 +14,7 @@ namespace PolarShadow.Controls
     {
         static PageLoadAttached()
         {
-            RegisterLoadProperty.Changed.Subscribe(RegisterLoadPropertyChanged);
+            RegisterLoadProperty.Changed.AddClassHandler<ContentControl>((o,e)=>RegisterLoadPropertyChanged(e));
         }
 
         public static readonly AttachedProperty<bool> RegisterLoadProperty = AvaloniaProperty.RegisterAttached<PageLoadAttached, ContentControl, bool>("RegisterLoad");
@@ -28,15 +28,15 @@ namespace PolarShadow.Controls
             control.SetValue(RegisterLoadProperty, value);
         }
 
-        private static void RegisterLoadPropertyChanged(AvaloniaPropertyChangedEventArgs<bool> args)
+        private static void RegisterLoadPropertyChanged(AvaloniaPropertyChangedEventArgs args)
         {
             if (Design.IsDesignMode) return;
 
             var control = args.Sender as ContentControl;
 
-            if (args.NewValue.HasValue)
+            if (args.NewValue is bool value)
             {
-                if (args.NewValue.Value)
+                if (value)
                 {
                     control.AddHandler(ContentControl.LoadedEvent, ControlLoaded);
                     control.AddHandler(ContentControl.UnloadedEvent, ControlUnloaded);
