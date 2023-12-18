@@ -22,6 +22,7 @@
     <AvaloniaResource Remove="Assets\Themes\PathResources.axaml" />
     <AvaloniaResource Remove="Assets\Themes\RadioButtonThemes.axaml" />
     <AvaloniaResource Remove="Assets\Themes\ScrollViewThemes.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\SearchBoxThemes.axaml" />
     <AvaloniaResource Remove="Assets\Themes\SizeResources.axaml" />
     <AvaloniaResource Remove="Assets\Styles\ButtonStyles.axaml" />
     <AvaloniaResource Remove="Assets\Styles\PathIconStyles.axaml" />
@@ -75,6 +76,12 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\DetailView.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Themes\SearchBoxThemes.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
   </ItemGroup>
 
   <ItemGroup>

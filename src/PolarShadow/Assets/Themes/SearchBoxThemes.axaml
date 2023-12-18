@@ -1,0 +1,64 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:ps="https://github.com/PolarShadow">
+	<Design.PreviewWith>
+		<Border Padding="20"
+				Background="Black">
+			<ps:SearchBox/>
+		</Border>
+	</Design.PreviewWith>
+    <!-- Add Resources Here -->
+	<ControlTheme TargetType="ps:SearchBox" x:Key="{x:Type ps:SearchBox}">
+		<Setter Property="Height" Value="28"/>
+		<Setter Property="CornerRadius" Value="25"/>
+		<Setter Property="Background" Value="White"/>
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border Background="{TemplateBinding Background}"
+						MaxWidth="{TemplateBinding MaxWidth}"
+						MaxHeight="{TemplateBinding MaxHeight}"
+						Width="{TemplateBinding Width}"
+						Height="{TemplateBinding Height}"
+						CornerRadius="{TemplateBinding CornerRadius}"
+						ClipToBounds="True"
+						Padding="6,0">
+					<Grid ColumnDefinitions="auto,*,auto,auto">
+						<!--search icon-->
+						<TextBlock Classes="icon"
+								   Text="&#xF0D1;"
+								   VerticalAlignment="Center"
+								   Grid.Column="0">
+						</TextBlock>
+
+						<!--search button-->
+						<Button Theme="{StaticResource Icon}"
+								Content="&#xEA6E;"
+								VerticalAlignment="Center"
+								Command="{TemplateBinding SearchCommand}"
+								Grid.Column="3">
+
+						</Button>
+						<!--clear button-->
+						<Button Theme="{StaticResource Icon}"
+								Content="&#xEB98;"
+								VerticalAlignment="Center"
+								IsVisible="{Binding SearchText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+								Grid.Column="2"
+								Name="Part_ClearButton">
+
+						</Button>
+						<TextBox BorderThickness="0"
+								 VerticalAlignment="Center"
+								 Classes="nofocus"
+								 Margin="3,0,0,0"
+								 Text="{TemplateBinding SearchText, Mode=TwoWay}"
+								 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+								 Name="Part_TextBox"
+								 Grid.Column="1">
+						</TextBox>
+					</Grid>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+	</ControlTheme>
+</ResourceDictionary>

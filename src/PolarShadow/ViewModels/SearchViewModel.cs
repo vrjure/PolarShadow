@@ -60,9 +60,6 @@ namespace PolarShadow.ViewModels
         private IAsyncRelayCommand _searchCommand;
         public IAsyncRelayCommand SearchCommand => _searchCommand ??= new AsyncRelayCommand(Search);
 
-        private IRelayCommand _clearCommand;
-        public IRelayCommand ClearCommand => _clearCommand ??= new RelayCommand(() => { });
-
         private IAsyncRelayCommand _loadMoreCommand;
         public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
 
@@ -73,6 +70,8 @@ namespace PolarShadow.ViewModels
             _searchResult?.Clear();
             if (string.IsNullOrEmpty(SearchText))
             {
+                IsLoading = false;
+                ShowLoadMore = false;
                 return;
             }
             _searcHandler = _polar.CreateSearchHander<Resource>(SearchText);

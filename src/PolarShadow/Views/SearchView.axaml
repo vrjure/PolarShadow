@@ -16,7 +16,6 @@
 				<ps:SearchBox Grid.Column="1"
 							  SearchText="{Binding SearchText, Mode=TwoWay}"
 							  SearchCommand="{Binding SearchCommand}"
-							  ClearCommand="{Binding ClearCommand}"
 							  MaxWidth="450"/>
 			</Grid>
 		</ps:ToolBarTemplate>

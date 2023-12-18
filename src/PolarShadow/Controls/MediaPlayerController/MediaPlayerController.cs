@@ -22,10 +22,101 @@ namespace PolarShadow.Controls
         private Point _cursorPoint;
 
         private Button _previousBtn;
+        private Button PreviousBtn
+        {
+            get => _previousBtn;
+            set
+            {
+                if (_previousBtn != null)
+                {
+                    _previousBtn.Click -= PreviousBtn_Click;
+                }
+
+                _previousBtn = value;
+                if (_previousBtn != null)
+                {
+                    _previousBtn.Click += PreviousBtn_Click;
+                }
+            }
+        }
+
         private Button _playBtn;
+        private Button PlayBtn
+        {
+            get => _playBtn;
+            set
+            {
+                if (_playBtn != null)
+                {
+                    _playBtn.Click -= PlayBtn_Click;
+                }
+
+                _playBtn = value;
+                if (_playBtn != null)
+                {
+                    _playBtn.Click += PlayBtn_Click;
+                }
+            }
+        }
+
         private Button _nextBtn;
+        private Button NextBtn
+        {
+            get => _nextBtn;
+            set
+            {
+                if (_nextBtn != null)
+                {
+                    _nextBtn.Click -= NextBtn_Click;
+                }
+
+                _nextBtn = value;
+                if (_nextBtn != null)
+                {
+                    _nextBtn.Click += NextBtn_Click;
+                }
+            }
+        }
+
         private Button _fullScreenBtn;
+        private Button FullScreenBtn
+        {
+            get => _fullScreenBtn;
+            set
+            {
+                if (_fullScreenBtn != null)
+                {
+                    _fullScreenBtn.Click -= FullScreenBtn_Click;
+                }
+
+                _fullScreenBtn = value;
+                if (_fullScreenBtn != null)
+                {
+                    _fullScreenBtn.Click += FullScreenBtn_Click;
+                }
+            }
+        }
+
         private Slider _part_slider;
+        private Slider PartSlider
+        {
+            get => _part_slider;
+            set
+            {
+                if (_part_slider != null)
+                {
+                    _part_slider.PointerMoved -= _part_slider_PointerMoved;
+                    _part_slider.TemplateApplied -= _part_slider_TemplateApplied;
+                }
+
+                _part_slider = value;
+                if (_part_slider != null)
+                {
+                    _part_slider.PointerMoved += _part_slider_PointerMoved;
+                    _part_slider.TemplateApplied += _part_slider_TemplateApplied;
+                }
+            }
+        }
         private Track _sliderTrack;
         private Border _part_root;
 
@@ -97,19 +188,12 @@ namespace PolarShadow.Controls
         {
             base.OnApplyTemplate(e);
 
-            _previousBtn = e.NameScope.Get<Button>("Part_Previous");
-            _playBtn = e.NameScope.Get<Button>("Part_PlayPause");
-            _nextBtn = e.NameScope.Get<Button>("Part_Next");
-            _fullScreenBtn = e.NameScope.Get<Button>("Part_FullScreen");
-            _part_slider = e.NameScope.Get<Slider>("Part_Slider");
+            PreviousBtn = e.NameScope.Get<Button>("Part_Previous");
+            PlayBtn = e.NameScope.Get<Button>("Part_PlayPause");
+            NextBtn = e.NameScope.Get<Button>("Part_Next");
+            FullScreenBtn = e.NameScope.Get<Button>("Part_FullScreen");
+            PartSlider = e.NameScope.Get<Slider>("Part_Slider");
             _part_root = e.NameScope.Get<Border>("Part_Root");          
-
-            _previousBtn.Click += PreviousBtn_Click;
-            _nextBtn.Click += NextBtn_Click;
-            _playBtn.Click += PlayBtn_Click;
-            _fullScreenBtn.Click += FullScreenBtn_Click;
-            _part_slider.TemplateApplied += _part_slider_TemplateApplied;
-            _part_slider.PointerMoved += _part_slider_PointerMoved;
         }
 
         private void MediaPlayerPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
@@ -198,17 +282,6 @@ namespace PolarShadow.Controls
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
-        }
-
-        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            base.OnDetachedFromVisualTree(e);
-
-            _previousBtn.Click -= PreviousBtn_Click;
-            _nextBtn.Click -= NextBtn_Click;
-            _playBtn.Click -= PlayBtn_Click;
-            _fullScreenBtn.Click -= FullScreenBtn_Click;
-            _part_slider.PointerMoved -= _part_slider_PointerMoved;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

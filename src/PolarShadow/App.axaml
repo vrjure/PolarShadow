@@ -22,6 +22,7 @@
 				<ResourceInclude Source="/Assets/Themes/RadioButtonThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/MediaPlayerControllerThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ScrollViewThemes.axaml"/>
+				<ResourceInclude Source="/Assets/Themes/SearchBoxThemes.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
