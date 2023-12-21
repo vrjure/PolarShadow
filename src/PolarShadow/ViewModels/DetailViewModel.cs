@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls.Notifications;
+using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Aria2;
@@ -47,7 +48,20 @@ namespace PolarShadow.ViewModels
         public ResourceTreeNode Resource
         {
             get => _resource;
-            private set => SetProperty(ref _resource, value);
+            private set
+            {
+                if (SetProperty(ref _resource, value))
+                {
+                    SelectHeaderDefault();
+                }
+            }
+        }
+
+        private ISelectionModel _headerSelection;
+        public ISelectionModel HeaderSelection
+        {
+            get => _headerSelection;
+            set => SetProperty(ref _headerSelection, value);
         }
 
         private ICollection<IWebAnalysisSite> _webAnalysisSites;
@@ -86,7 +100,10 @@ namespace PolarShadow.ViewModels
 
         protected override async void OnLoad()
         {
-            await LoadingDeatil();
+            if (this.Resource == null)
+            {
+                await LoadingDeatil();
+            }
         }
 
         private async Task LoadingDeatil()
@@ -109,6 +126,13 @@ namespace PolarShadow.ViewModels
             }
         }
 
+        private void SelectHeaderDefault()
+        {
+            if (this.Resource?.Children?.Count > 0)
+            {
+                HeaderSelection.Select(0);
+            }
+        }
         private async Task LoadLocal(ResourceModel root)
         {
             var children = await _mineResourceService.GetRootChildrenAsync(root.Id);
@@ -368,10 +392,17 @@ namespace PolarShadow.ViewModels
                 _notify.Show("Invaild resource");
                 return;
             }
+
+            var episode = Param_Link?.Name;
+            if (SelectionModel.SelectedItem != null)
+            {
+                episode = (SelectionModel.SelectedItem as ResourceTreeNode).Name;
+            }
+
             _nav.Navigate<VideoPlayerViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {
                 {nameof(VideoPlayerViewModel.Param_Episode), videoSource },
-                {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{Param_Link?.Name}" }
+                {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{episode}" }
             }, true);
         }
     }

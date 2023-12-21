@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using LibVLCSharp.Shared;
 using PolarShadow.Controls.Converters;
 using System;
@@ -17,9 +18,12 @@ namespace PolarShadow.Controls
 {
     public class MediaPlayerController : ContentControl, IMediaPlayerController
     {
+        private readonly LibVLC _libVLc = Ioc.Default.GetService<LibVLC>();
+
         private static readonly TimeSpan _ignore = TimeSpan.FromSeconds(1);
         private long _lastTime = 0;
         private Point _cursorPoint;
+        private IDisposable _hideDisposable;
 
         private Button _previousBtn;
         private Button PreviousBtn
@@ -188,9 +192,9 @@ namespace PolarShadow.Controls
         {
             base.OnApplyTemplate(e);
 
-            PreviousBtn = e.NameScope.Get<Button>("Part_Previous");
+            //PreviousBtn = e.NameScope.Get<Button>("Part_Previous");
             PlayBtn = e.NameScope.Get<Button>("Part_PlayPause");
-            NextBtn = e.NameScope.Get<Button>("Part_Next");
+            //NextBtn = e.NameScope.Get<Button>("Part_Next");
             FullScreenBtn = e.NameScope.Get<Button>("Part_FullScreen");
             PartSlider = e.NameScope.Get<Slider>("Part_Slider");
             _part_root = e.NameScope.Get<Border>("Part_Root");          
@@ -328,8 +332,36 @@ namespace PolarShadow.Controls
             var dis = Point.Distance(_cursorPoint, current);
             if (dis > 10)
             {
-                _part_root.Cursor = Cursor.Default;
-                _part_root.Opacity = 1;
+                Show();
+            }
+        }
+
+        protected override void OnPointerExited(PointerEventArgs e)
+        {
+            base.OnPointerExited(e);
+
+            if (IsShow())
+            {
+                _hideDisposable = DispatcherTimer.RunOnce(() =>
+                {
+                    Hide();
+                }, TimeSpan.FromSeconds(5), DispatcherPriority.Default);
+            }
+        }
+
+        protected override void OnPointerEntered(PointerEventArgs e)
+        {
+            base.OnPointerEntered(e);
+
+            if (_hideDisposable != null)
+            {
+                _hideDisposable.Dispose();
+                _hideDisposable= null;
+            }
+
+            if (!IsShow())
+            {
+                Show();
             }
         }
 
@@ -338,20 +370,32 @@ namespace PolarShadow.Controls
             base.OnPointerPressed(e);
             if (_part_root == null) return;
 
-            if (_part_root.Opacity == 1)
+            if (IsShow())
             {
-                _part_root.Cursor = new Cursor(StandardCursorType.None);
-                _part_root.Opacity = 0;
+                Hide();
                 _cursorPoint = e.GetPosition(this);
             }
             else
             {
-                _part_root.Cursor = Cursor.Default;
-                _part_root.Opacity = 1;
+                Show();
                 _cursorPoint = e.GetPosition(this);
 
             }
         }
+
+        private void Hide()
+        {
+            _part_root.Cursor = new Cursor(StandardCursorType.None);
+            _part_root.Opacity = 0;
+        }
+
+        private void Show()
+        {
+            _part_root.Cursor = Cursor.Default;
+            _part_root.Opacity = 1;
+        }
+
+        private bool IsShow() => _part_root?.Opacity == 1;
 
         private void PreviousBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {

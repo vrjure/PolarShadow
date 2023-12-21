@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:ps="https://github.com/PolarShadow">
-    <!-- Add Resources Here -->
+	<!-- Add Resources Here -->
 	<ControlTheme TargetType="ListBox" x:Key="Card" BasedOn="{StaticResource {x:Type ListBox}}">
 		<Setter Property="ItemsPanel">
 			<ItemsPanelTemplate>
@@ -36,12 +36,12 @@
 										  Background="{TemplateBinding Background}"
 										  Padding="0"/>
 						<Border Name="PART_OverlayLayer">
-							
+
 						</Border>
 					</Panel>
 
 				</Border>
-							
+
 			</ControlTemplate>
 		</Setter>
 
@@ -60,7 +60,7 @@
 				</OnFormFactor.Mobile>
 			</OnFormFactor>
 		</Style>
-		
+
 		<Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="{TemplateBinding Background}" />
 		</Style>
@@ -72,10 +72,8 @@
 		</Style>
 	</ControlTheme>
 
-	
-	
-	
-	
+
+
 	<ControlTheme TargetType="ListBox" x:Key="Card-Block" BasedOn="{StaticResource Card}">
 		<Setter Property="ItemsPanel">
 			<ItemsPanelTemplate>
@@ -91,21 +89,19 @@
 		<Setter Property="BorderBrush" Value="LightGray"/>
 	</ControlTheme>
 
-	
-	
-	
+
+
 	<ControlTheme TargetType="ListBox" x:Key="Vertical" BasedOn="{StaticResource {x:Type ListBox}}">
 		<Setter Property="Background" Value="Transparent"/>
-		<Setter Property="ItemContainerTheme" Value="{StaticResource VerticalItem}"/>
 	</ControlTheme>
 
-	<ControlTheme TargetType="ListBoxItem" x:Key="VerticalItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+	<ControlTheme TargetType="ListBoxItem" x:Key="VerticalItem-Border" BasedOn="{StaticResource {x:Type ListBoxItem}}">
 		<Setter Property="Height" Value="45"/>
 		<Setter Property="BorderBrush" Value="LightGray"/>
 		<Setter Property="BorderThickness" Value="1"/>
 		<Setter Property="CornerRadius" Value="5"/>
 		<Setter Property="Margin" Value="0,8"/>
-		
+
 		<Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="{TemplateBinding Background}" />
 		</Style>
@@ -128,7 +124,7 @@
 		</Setter>
 	</ControlTheme>
 
-	<ControlTheme TargetType="ListBoxItem" x:Key="HorizontalItem-Selectable" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+	<ControlTheme TargetType="ListBoxItem" x:Key="SelectableItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
 		<Setter Property="CornerRadius" Value="5"/>
 		<Setter Property="Padding" Value="6,3,6,3"/>
 		<Setter Property="Margin" Value="2"/>
@@ -165,8 +161,8 @@
 				</Style>
 			</OnFormFactor.Mobile>
 		</OnFormFactor>
-		
-		
+
+
 		<Style Selector="^:pressed /template/ ContentPresenter#PART_ContentPresenter">
 			<Setter Property="Background" Value="{TemplateBinding Background}" />
 		</Style>

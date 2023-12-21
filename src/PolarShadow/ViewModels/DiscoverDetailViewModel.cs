@@ -22,7 +22,6 @@ namespace PolarShadow.ViewModels
 
         private PageFilter _filter;
         private TaskCompletionSource _loading;
-        private bool _inCache = false;
         public DiscoverDetailViewModel(INotificationManager notify, IPolarShadow polar, INavigationService nav)
         {
             _notify = notify;
@@ -79,9 +78,8 @@ namespace PolarShadow.ViewModels
                 return;
             }
 
-            if (_inCache)
+            if (Categories != null)
             {
-                _inCache = false;
                 return;
             }
 
@@ -232,8 +230,6 @@ namespace PolarShadow.ViewModels
             {
                 return;
             }
-
-            _inCache = true;
 
             _nav.Navigate<DetailViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
             {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Controls
 {
-    internal interface IMediaPlayerController
+    public interface IMediaPlayerController
     {
         string Title { get; set; }
         TimeSpan Length { get; }

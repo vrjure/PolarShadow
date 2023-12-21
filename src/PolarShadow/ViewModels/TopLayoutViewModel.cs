@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using LibVLCSharp.Shared;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
 using PolarShadow.Models;
@@ -68,6 +69,8 @@ namespace PolarShadow.ViewModels
                 //};
                 //await _polar.LoadAsync(dbSource, true);
 
+                InitLibVlc();
+
                 await Task.Run(() =>
                 {
                     using var db = _dbFactory.CreateDbContext();
@@ -80,7 +83,6 @@ namespace PolarShadow.ViewModels
 
                     _polar.Load(dbSource, true);
                 });
-
             }
             catch (Exception ex)
             {
@@ -90,6 +92,11 @@ namespace PolarShadow.ViewModels
             IsLoading = false;
             _nav.Navigate<MainViewModel>(NavigationName);
 
+        }
+
+        private void InitLibVlc()
+        {
+            Task.Run(() => Ioc.Default.GetService<LibVLC>());
         }
 
         protected override void OnUnload()

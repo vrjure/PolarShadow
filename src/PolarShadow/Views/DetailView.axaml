@@ -53,13 +53,18 @@
         <ScrollViewer>
             <StackPanel Orientation="Vertical"
                         Spacing="10">
-                <Image Width="{StaticResource CardItemWidth}"
-					   Height="{StaticResource CardItemHeight}"
-                       HorizontalAlignment="Center"
-                       ps:ImageAttached.Src="{Binding Resource.ImageSrc}"
-                       ps:ImageAttached.Cache="{Binding ImageCache}"
-					   ps:ImageAttached.Headers="{Binding Resource.ImageSrcHeaders}"/>
-                <SelectableTextBlock Text="{Binding Resource.Name}" 
+				<Border CornerRadius="8"
+						ClipToBounds="True"
+						HorizontalAlignment="Center">
+					<Image Width="{StaticResource CardItemWidth}"
+						   Height="{StaticResource CardItemHeight}"
+						   Stretch="Fill"
+						   ps:ImageAttached.Src="{Binding Resource.ImageSrc}"
+						   ps:ImageAttached.Cache="{Binding ImageCache}"
+						   ps:ImageAttached.Headers="{Binding Resource.ImageSrcHeaders}"/>
+				</Border>
+
+				<SelectableTextBlock Text="{Binding Resource.Name}" 
                                      HorizontalAlignment="Center"/>
                 <TextBlock Text="简介"
                            Classes="title"/>
@@ -69,48 +74,55 @@
                 <SelectableTextBlock Text="{Binding Resource.Site}"/>
                 <TextBlock Text="剧集"
                            Classes="title"/>
-                <ItemsControl ItemsSource="{Binding Resource.Children}">
-                    <ItemsControl.ItemTemplate>
+                <ListBox ItemsSource="{Binding Resource.Children}"
+						 Theme="{StaticResource Horizontal}"
+						 ItemContainerTheme="{StaticResource SelectableItem}"
+						 Name="EpisodeHeader"
+						 Selection="{Binding HeaderSelection, Mode=OneWayToSource}"
+						 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+						 ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
                         <DataTemplate DataType="pss:ResourceTreeNode">
-                            <StackPanel Orientation="Vertical"
-                                        Spacing="10">
-                                <TextBlock Text="{Binding Name}"/>
-                                <ItemsControl ItemsSource="{Binding Children}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate DataType="pss:ResourceTreeNode">
-                                            <Button Content="{Binding Name}"
-                                                    Margin="8">
-                                                <Button.Flyout>
-                                                    <Flyout>
-                                                        <ItemsControl ItemsSource="{Binding Children}">
-                                                            <ItemsControl.ItemTemplate>
-                                                                <DataTemplate>
-																	<Button Content="{Binding SrcType}"
-                                                                            MinWidth="80"
-                                                                            MinHeight="30"
-                                                                            VerticalContentAlignment="Center"
-                                                                            HorizontalContentAlignment="Center"
-                                                                            Command="{Binding $parent[UserControl].((ps:DetailViewModel)DataContext).LinkClickCommand}"
-                                                                            CommandParameter="{Binding}"/>
-                                                                </DataTemplate>
-                                                            </ItemsControl.ItemTemplate>
-                                                        </ItemsControl>
-                                                    </Flyout>
-                                                </Button.Flyout>
-                                            </Button>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
+                            <TextBlock Text="{Binding Name, Converter={x:Static ps:StringTrimConverter.Instance}}"/>
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-        </StackPanel>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+				
+				<ListBox ItemsSource="{Binding #EpisodeHeader.((pss:ResourceTreeNode)SelectedValue).Children}"
+						 Name="Episodes"
+						 ItemContainerTheme="{StaticResource SelectableItem}"
+						 Selection="{Binding SelectionModel, Mode=OneWayToSource}"
+						 Background="Transparent">
+					<ListBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel/>
+						</ItemsPanelTemplate>
+					</ListBox.ItemsPanel>
+					<ListBox.ItemTemplate>
+						<DataTemplate DataType="pss:ResourceTreeNode">
+							<TextBlock Text="{Binding Name}" TextWrapping="Wrap">
+								<FlyoutBase.AttachedFlyout>
+									<Flyout>
+										<ItemsControl ItemsSource="{Binding #Episodes.((pss:ResourceTreeNode)SelectedValue).Children}">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate>
+													<Button Content="{Binding SrcType}"
+															MinWidth="80"
+															MinHeight="30"
+															VerticalContentAlignment="Center"
+															HorizontalContentAlignment="Center"
+															Command="{Binding $parent[UserControl].((ps:DetailViewModel)DataContext).LinkClickCommand}"
+															CommandParameter="{Binding}"/>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+										</ItemsControl>
+									</Flyout>
+								</FlyoutBase.AttachedFlyout>
+							</TextBlock>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</StackPanel>
         </ScrollViewer>
 
         <Button Theme="{StaticResource Icon}"

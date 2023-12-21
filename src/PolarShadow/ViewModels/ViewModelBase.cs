@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls.Selection;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using PolarShadow.Models;
@@ -74,6 +75,7 @@ public class ViewModelBase : ObservableRecipient, INavigationNotify
 
     protected override void OnActivated()
     {
+        if (Design.IsDesignMode) return;
         System.Diagnostics.Trace.WriteLine($"{this.GetType().Name} load");
         if (_loaded) return;
         _loaded = true;
@@ -85,6 +87,8 @@ public class ViewModelBase : ObservableRecipient, INavigationNotify
 
     protected override void OnDeactivated()
     {
+        if (Design.IsDesignMode) return;
+
         System.Diagnostics.Trace.WriteLine($"{this.GetType().Name} unload");
         if (!_loaded) return;
         _loaded = false;

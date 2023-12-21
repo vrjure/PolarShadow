@@ -12,6 +12,7 @@
 
   
   <ItemGroup>
+    <AvaloniaResource Remove="Assets\Styles\ListBoxStyles.axaml" />
     <AvaloniaResource Remove="Assets\Styles\ScrollViewStyles.axaml" />
     <AvaloniaResource Remove="Assets\Themes\ButtonThemes.axaml" />
     <AvaloniaResource Remove="Assets\Themes\ColorResources.axaml" />
@@ -76,6 +77,12 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\DetailView.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Styles\ListBoxStyles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
   </ItemGroup>
 
   <ItemGroup>

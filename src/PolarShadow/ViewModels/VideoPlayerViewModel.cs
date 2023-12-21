@@ -134,7 +134,10 @@ namespace PolarShadow.ViewModels
             
             if (MediaPlayer == null)
             {
-                MediaPlayer = new MediaPlayer(_libVLC);
+                MediaPlayer = new MediaPlayer(_libVLC)
+                {
+                    NetworkCaching = 5000
+                };
             }
 
             try

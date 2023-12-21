@@ -17,7 +17,7 @@
 					  Margin="6">
 			<ListBox ItemsSource="{Binding Categories}"
 				     Theme="{StaticResource Horizontal}"
-					 ItemContainerTheme="{StaticResource HorizontalItem-Selectable}"
+					 ItemContainerTheme="{StaticResource SelectableItem}"
 					 Selection="{Binding CategorySelection, Mode=OneWayToSource}"
 					 Margin="6">
 				<ItemsControl.ItemTemplate>
