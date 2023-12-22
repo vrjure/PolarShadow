@@ -144,7 +144,8 @@
 									  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
 									  Background="{TemplateBinding Background}"
 									  Foreground="{TemplateBinding Foreground}"
-									  Padding="{TemplateBinding Padding}"/>
+									  Padding="{TemplateBinding Padding}"
+									  CornerRadius="{TemplateBinding CornerRadius}"/>
 				</Border>
 			</ControlTemplate>
 		</Setter>
@@ -173,5 +174,10 @@
 				<Setter Property="Foreground" Value="White" />
 			</Style>
 		</Style>
+	</ControlTheme>
+
+	<ControlTheme TargetType="ListBoxItem" x:Key="SelectableItemWithBorder" BasedOn="{StaticResource SelectableItem}">
+		<Setter Property="BorderBrush" Value="LightGray"/>
+		<Setter Property="BorderThickness" Value="1"/>
 	</ControlTheme>
 </ResourceDictionary>

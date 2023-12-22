@@ -90,7 +90,7 @@
 				
 				<ListBox ItemsSource="{Binding #EpisodeHeader.((pss:ResourceTreeNode)SelectedValue).Children}"
 						 Name="Episodes"
-						 ItemContainerTheme="{StaticResource SelectableItem}"
+						 ItemContainerTheme="{StaticResource SelectableItemWithBorder}"
 						 Selection="{Binding SelectionModel, Mode=OneWayToSource}"
 						 Background="Transparent">
 					<ListBox.ItemsPanel>
