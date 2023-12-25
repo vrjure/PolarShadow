@@ -14,6 +14,7 @@ namespace PolarShadow.Storage
         {
             services.AddSingleton<IMineResourceService, MineResourceService>();
             services.AddSingleton<ISiteService, SiteService>();
+            services.AddSingleton<IHistoryService, HistoryService>();
             return services;
         }
     }

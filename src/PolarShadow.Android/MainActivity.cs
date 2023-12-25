@@ -9,7 +9,7 @@ using Android.Views;
 namespace PolarShadow.Android;
 
 [Activity(
-    Label = "PolarShadow.Android",
+    Label = "PolarShadow",
     Theme = "@style/MyTheme.NoActionBar",
     Icon = "@drawable/icon",
     MainLauncher = true,

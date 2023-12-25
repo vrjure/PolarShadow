@@ -15,7 +15,7 @@ namespace PolarShadow.Controls
         {
             if (value is string val && targetType.IsAssignableTo(typeof(string)))
             {
-                return val.Trim('\n', '\r', ' ');
+                return val.Trim('\n', '\r', ' ', '\t');
             }
             return value;
         }

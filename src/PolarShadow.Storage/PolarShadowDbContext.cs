@@ -21,6 +21,7 @@ namespace PolarShadow.Storage
         public DbSet<RequestModel> Requests { get; set; }
         public DbSet<ResourceModel> Resources { get; set; }
         public DbSet<PreferenceEntity> Preferences { get; set; }
+        public DbSet<HistoryModel> Histories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +37,8 @@ namespace PolarShadow.Storage
                 f => JsonSerializer.Deserialize<IDictionary<string, string>>(f, JsonOption.DefaultSerializer));
 
             modelBuilder.Entity<PreferenceEntity>().HasKey(f => f.Key);
+
+            modelBuilder.Entity<HistoryModel>().HasKey(f => f.Id);
         }
     }
 }

@@ -52,12 +52,20 @@
 					   Stretch="Fill"/>
 				<Border VerticalAlignment="Bottom"
 						Background="#9FFFFFFF">
-					<TextBlock Text="{Binding Name}"
+					<TextBlock Text="{Binding Name, Converter={x:Static ps:StringTrimConverter.Instance}}"
 							   TextWrapping="NoWrap"
 							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
 							   HorizontalAlignment="Center"/>
 				</Border>
-
+				<Border VerticalAlignment="Top"
+						HorizontalAlignment="Right"
+						Background="#9FFFFFFF"
+						CornerRadius="5">
+					<TextBlock Text="{Binding Site}"
+							   TextWrapping="NoWrap"
+							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
+							   HorizontalAlignment="Center"/>
+				</Border>
 			</Panel>
 		</DataTemplate>
 
@@ -69,7 +77,16 @@
 					   Stretch="Fill"/>
 				<Border VerticalAlignment="Bottom"
 						Background="#9FFFFFFF">
-					<TextBlock Text="{Binding Name}"
+					<TextBlock Text="{Binding Name, Converter={x:Static ps:StringTrimConverter.Instance}}"
+							   TextWrapping="NoWrap"
+							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
+							   HorizontalAlignment="Center"/>
+				</Border>
+				<Border VerticalAlignment="Top"
+						HorizontalAlignment="Right"
+						Background="#9FFFFFFF"
+						CornerRadius="5">
+					<TextBlock Text="{Binding Site}"
 							   TextWrapping="NoWrap"
 							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
 							   HorizontalAlignment="Center"/>
@@ -85,7 +102,16 @@
 					   Stretch="Fill"/>
 				<Border VerticalAlignment="Bottom"
 						Background="#9FFFFFFF">
-					<TextBlock Text="{Binding Name}"
+					<TextBlock Text="{Binding Name, Converter={x:Static ps:StringTrimConverter.Instance}}"
+							   TextWrapping="NoWrap"
+							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
+							   HorizontalAlignment="Center"/>
+				</Border>
+				<Border VerticalAlignment="Top"
+						HorizontalAlignment="Right"
+						Background="#9FFFFFFF"
+						CornerRadius="5">
+					<TextBlock Text="{Binding Site}"
 							   TextWrapping="NoWrap"
 							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
 							   HorizontalAlignment="Center"/>

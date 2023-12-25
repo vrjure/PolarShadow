@@ -12,7 +12,7 @@ namespace PolarShadow.Services
         /// </summary>
         /// <param name="resourceName"></param>
         /// <returns></returns>
-        Task<ResourceModel> GetRootResourceAsync(string resourceName);
+        Task<ResourceModel> GetRootResourceAsync(string resourceName, string site);
         /// <summary>
         /// 所有的根节点资源
         /// </summary>

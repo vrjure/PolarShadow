@@ -26,11 +26,12 @@ namespace PolarShadow.ViewModels
         private readonly IBufferCache _bufferCache;
         private readonly IPreference _preference;
         private readonly INavigationService _nav;
+        private readonly IHistoryService _hisService;
 
         private ResourceModel _rootResourceInDb;
-        private ResourceTreeNode _selectedWenAnalysisResource;
+        private ResourceTreeNode _selectedWebAnalysisResource;
         
-        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav)
+        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService)
         {
             _polar = polar;
             _notify = notify;
@@ -38,6 +39,7 @@ namespace PolarShadow.ViewModels
             _bufferCache = bufferCache;
             _preference = preference;
             _nav = nav;
+            _hisService = hisService;
         }
 
         public ILink Param_Link { get; set; }
@@ -78,6 +80,13 @@ namespace PolarShadow.ViewModels
             private set => SetProperty(ref _isSave, value);
         }
 
+        private HistoryModel _history;
+        public HistoryModel History
+        {
+            get => _history;
+            set => SetProperty(ref _history, value);
+        }
+
         private IAsyncRelayCommand _refreshCommand;
         public IAsyncRelayCommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadOnline);
 
@@ -104,6 +113,10 @@ namespace PolarShadow.ViewModels
             {
                 await LoadingDeatil();
             }
+            else
+            {
+                History = await _hisService.GetByResourceIdAsync(this.Resource.Id);
+            }
         }
 
         private async Task LoadingDeatil()
@@ -114,15 +127,18 @@ namespace PolarShadow.ViewModels
                 return;
             }
 
-            _rootResourceInDb = await _mineResourceService.GetRootResourceAsync(Param_Link.Name);
+            _rootResourceInDb = await _mineResourceService.GetRootResourceAsync(Param_Link.Name, Param_Link.Site);
             if (_rootResourceInDb != null)
             {
                 IsSaved = true;
                 await LoadLocal(_rootResourceInDb);
+
+                History = await _hisService.GetByResourceIdAsync(_rootResourceInDb.Id);
             }
             else
             {
                 await LoadOnline();
+                History = null;
             }
         }
 
@@ -256,14 +272,14 @@ namespace PolarShadow.ViewModels
                         break;
                     case LinkType.HtmlSource:
                         var url = await TryAnalysisVideoUrl(node);
-                        ToPlayVideo(url);
+                        await ToPlayVideo(url);
                         break;
                     case LinkType.WebAnalysisSource:
-                        _selectedWenAnalysisResource = node;
+                        _selectedWebAnalysisResource = node;
                         WebAnalysisSites = _polar.GetWebAnalysisSites().ToList();
                         break;
                     default:
-                        _notify.Show($"Not support type:{node.SrcType}");
+                        _notify.Show($"Not support type:{node.SrcType}"); 
                         break;
                 }
             }
@@ -276,7 +292,7 @@ namespace PolarShadow.ViewModels
 
         private async Task WebAnalysisSelected(IWebAnalysisSite site)
         {
-            if (_selectedWenAnalysisResource == null)
+            if (_selectedWebAnalysisResource == null)
             {
                 _notify.Show("No resource selected");
                 return;
@@ -287,10 +303,10 @@ namespace PolarShadow.ViewModels
             {
                 var result = await site.ExecuteAsync<ILink>(_polar, Requests.Video, builder =>
                 {
-                    builder.AddObjectValue(_selectedWenAnalysisResource);
+                    builder.AddObjectValue(_selectedWebAnalysisResource);
                 }, Cancellation.Token);
 
-                ToPlayVideo(result);
+                await ToPlayVideo(result);
             }
             catch (OperationCanceledException) { }
             catch (Exception ex)
@@ -385,7 +401,7 @@ namespace PolarShadow.ViewModels
             return null;
         }
 
-        private void ToPlayVideo(ILink videoSource)
+        private async Task ToPlayVideo(ILink videoSource)
         {
             if (videoSource == null || string.IsNullOrEmpty(videoSource.Src))
             {
@@ -404,6 +420,36 @@ namespace PolarShadow.ViewModels
                 {nameof(VideoPlayerViewModel.Param_Episode), videoSource },
                 {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{episode}" }
             }, true);
+
+            var second = HeaderSelection.SelectedItem as ResourceTreeNode;
+            var third = SelectionModel.SelectedItem as ResourceTreeNode;
+
+            await TryUpdateHistory(this.Resource, second, third);
+        }
+
+        private async Task TryUpdateHistory(ResourceTreeNode root, ResourceTreeNode second, ResourceTreeNode third)
+        {
+            if (root == null || second == null || third == null)
+            {
+                return;
+            }
+
+            var his = History;
+            var desc = $"{root.Name}-{second.Name}-{third.Name}";
+            if (his == null)
+            {
+                his = new HistoryModel
+                {
+                    ResourceId = root.Id,
+                    ProgressDesc = desc
+                };
+            }
+            else
+            {
+                his.ProgressDesc = desc;
+            }
+
+            await _hisService.AddOrUpdateAsync(his);
         }
     }
 }
