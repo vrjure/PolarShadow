@@ -72,5 +72,9 @@ namespace PolarShadow.Core
             (byte)'u', (byte)'r', (byte)'l', (byte)'E', (byte)'n', (byte)'c', (byte)'o', (byte)'d',(byte)'e'
         };
 
+        public static ReadOnlySpan<byte> TrimChars => new byte[]
+        {
+            (byte)'T',(byte)'r',(byte)'i',(byte)'m'
+        };
     }
 }

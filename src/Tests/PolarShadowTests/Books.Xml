@@ -10,7 +10,11 @@
        <price>8.99</price>
      </book>
      <book genre="novel">
-       <title>The Confidence Man</title>
+       <title>
+		   
+		   The Confidence Man  
+	   
+	   </title>
        <author>
          <first-name>Herman</first-name>
          <last-name>Melville</last-name>

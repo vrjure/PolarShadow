@@ -151,6 +151,10 @@ namespace PolarShadow.Core
             {
                return HttpUtility.UrlEncode(value);
             }
+            else if (NameSlotConstants.TrimChars.SequenceEqual(format))
+            {
+                return TrimValue(value);
+            }
 
             var formatStr = Encoding.UTF8.GetString(format);
             if (NameSlotConstants.NumberFormatCommonChars.IndexOf(format[0]) >= 0)
@@ -242,6 +246,11 @@ namespace PolarShadow.Core
             }
 
             return value[indexArray[0]..indexArray[1]];
+        }
+
+        private static string TrimValue(string value)
+        {
+            return value?.Trim('\r', '\n', '\t','\f', '\v', ' ');
         }
     }
 }
