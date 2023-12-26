@@ -105,6 +105,7 @@ namespace Avalonia.NativeControls.Android
                 MediaPlayer = this.MediaPlayer
             };
             _platformView.Click += _platformView_Click;
+            _platformView.KeepScreenOn = true;
 
             if (OverlayContent != null)
             {
