@@ -31,21 +31,34 @@ namespace PolarShadow.Controls
             content.SetValue(NameProperty, value);
         }
 
-        public static readonly AttachedProperty<IControlTemplate> ToolBarProperty = AvaloniaProperty.RegisterAttached<ToolBarAttached, ContentControl, IControlTemplate>("ToolBar");
-        public static IControlTemplate GetToolBar(ContentControl page)
+        public static readonly AttachedProperty<ICollection<IControlTemplate>> ToolBarProperty = AvaloniaProperty.RegisterAttached<ToolBarAttached, ContentControl, ICollection<IControlTemplate>>("ToolBar");
+        public static ICollection<IControlTemplate> GetToolBar(ContentControl page)
         {
+            var templates = page.GetValue(ToolBarProperty);
+            if (templates == null)
+            {
+                SetToolBar(page, new List<IControlTemplate>());
+            }
+
             return page.GetValue(ToolBarProperty);
         }
-        public static void SetToolBar(ContentControl page, IControlTemplate value)
+        public static void SetToolBar(ContentControl page, ICollection<IControlTemplate> value)
         {
             page.SetValue(ToolBarProperty, value);
         }
 
         public static void TryLoad(ContentControl page)
         {
-            var toolBarTemplate = GetToolBar(page);
+            var templates = GetToolBar(page);
+            foreach (var template in templates)
+            {
+                TryLoadToolBar(template as ToolBarTemplate, page);
+            }
+        }
 
-            if (toolBarTemplate is not ToolBarTemplate template) return;
+        private static void TryLoadToolBar(ToolBarTemplate template, ContentControl page)
+        {
+            if (template == null) return;
 
             if (!_containers.TryGetValue(template.ToolBar, out ContentControl parent)) return;
 
@@ -54,7 +67,24 @@ namespace PolarShadow.Controls
 
             result.Result.DataContext = page.DataContext;
             parent.Content = result.Result;
+        }
 
+        public static void TryUnload(ContentControl page)
+        {
+            var templates = GetToolBar(page);
+            foreach (var template in templates)
+            {
+                TryUnloadToolBar(template as ToolBarTemplate);
+            }
+        }
+
+        private static void TryUnloadToolBar(ToolBarTemplate template)
+        {
+            if (template == null) return;
+            if (!_containers.TryGetValue(template.ToolBar, out ContentControl parent)) return;
+            if (parent.Content is Control child) child.DataContext = null;
+
+            parent.Content = null;
         }
 
         private static void NamePropertyChanged(AvaloniaPropertyChangedEventArgs arg)
@@ -80,13 +110,10 @@ namespace PolarShadow.Controls
         private static void ToolBarPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
             if (Design.IsDesignMode || arg.NewValue == null) return;
-            if (arg.NewValue is not ToolBarTemplate template) return;
 
-            if (!_containers.TryGetValue(template.ToolBar, out ContentControl container)) return;
-
-            var toolBarTemplate = arg.Sender as ContentControl;
-            toolBarTemplate.AddHandler(ContentControl.UnloadedEvent, ToolBarTemplate_Unloaded);
-            toolBarTemplate.AddHandler(ContentControl.LoadedEvent, toolBarTemplate_Loaded);
+            var page = arg.Sender as ContentControl;
+            page.AddHandler(ContentControl.UnloadedEvent, ToolBarTemplate_Unloaded);
+            page.AddHandler(ContentControl.LoadedEvent, toolBarTemplate_Loaded);
 
             static void toolBarTemplate_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
             {
@@ -99,11 +126,7 @@ namespace PolarShadow.Controls
             {
                 var control = sender as ContentControl;
 
-                if (GetToolBar(control) is not ToolBarTemplate template) return;
-                if (!_containers.TryGetValue(template.ToolBar, out ContentControl parent)) return;
-                if (parent.Content is Control child) child.DataContext = null;
-
-                parent.Content = null;
+                TryUnload(control);
             }
         }
     }

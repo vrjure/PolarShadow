@@ -16,9 +16,14 @@ namespace PolarShadow
         public const string Categories = "categories";
         public const string Video = "video";
 
-        public static ISearchHandler<TLink> CreateSearchHander<TLink>(this IPolarShadow polar, string searchText) where TLink : class, ILink
+        public static ISearchHandler<TLink> CreateSearchHandler<TLink>(this IPolarShadow polar, string searchText) where TLink : class, ILink
         {
             return new SearchBatchHandler<TLink>(polar, Search, searchText);
+        }
+
+        public static ISearchHandler<TLink> CreateSearchHandler<TLink>(this IPolarShadow polar, string searchText, IEnumerable<ISite> sites) where TLink : class, ILink
+        {
+            return new SearchBatchHandler<TLink>(polar,sites, Search, searchText);
         }
 
         public static async Task<ResourceTree> GetDetailAsync(this IPolarShadow polar, ISite site, ILink link, CancellationToken cancellation = default)

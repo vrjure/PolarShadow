@@ -22,17 +22,15 @@
 	<UserControl.Resources>
 		<x:Double x:Key="headerTextWidth">100</x:Double>
 	</UserControl.Resources>
-	<DockPanel Margin="16"
-			   MaxWidth="800">
+	<StackPanel Margin="16"
+			    MaxWidth="800"
+				Spacing="16">
+		<!--Aria2-->
 		<TextBlock Text="Aria2"
-				   Classes="title"
-				   DockPanel.Dock="Top"/>
+				   Classes="title"/>
 		<Rectangle Height="2" 
-				   Fill="Red"
-				   DockPanel.Dock="Top"
-				   Margin="0,16,0,0"/>
-		<DockPanel DockPanel.Dock="Top"
-				   Margin="0,16,0,0">
+				   Fill="Red"/>
+		<DockPanel>
 			<TextBlock Text="RPC"
 					   Width="{StaticResource headerTextWidth}"
 					   VerticalAlignment="Center"
@@ -40,8 +38,7 @@
 			<TextBox VerticalAlignment="Center"
 					 Text="{Binding RPC, Mode=TwoWay}"/>
 		</DockPanel>
-		<DockPanel DockPanel.Dock="Top"
-				   Margin="0,16,0,0">
+		<DockPanel>
 			<TextBlock Text="Download Path"
 					   Width="{StaticResource headerTextWidth}"
 					   VerticalAlignment="Center"
@@ -54,6 +51,6 @@
 			<TextBox VerticalAlignment="Center"
 					 Text="{Binding DownloadPath, Mode=TwoWay}"/>
 		</DockPanel>
-		<Border/>
-	</DockPanel>
+		
+	</StackPanel>
 </UserControl>

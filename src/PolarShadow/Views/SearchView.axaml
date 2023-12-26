@@ -19,8 +19,27 @@
 							  MaxWidth="450"/>
 			</Grid>
 		</ps:ToolBarTemplate>
+		
+		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+			<Button Theme="{StaticResource Icon}"
+					Content="&#xED22;">
+				<Button.Flyout>
+					<Flyout Opened="Flyout_Opened"
+							Closing="Flyout_Closing">
+						<ListBox Theme="{StaticResource Vertical}"
+								 ItemContainerTheme="{StaticResource SelectableItem}"
+								 ScrollViewer.VerticalScrollBarVisibility="Auto"
+								 ItemsSource="{Binding AvailableSites}"
+								 Selection="{Binding SiteFilterSelection, Mode=OneWayToSource}"
+								 SelectionMode="Multiple,Toggle">
+						</ListBox>
+					</Flyout>
+				</Button.Flyout>
+			</Button>
+		</ps:ToolBarTemplate>
 	</ps:ToolBarAttached.ToolBar>
-
+	
+	
 	<Grid Margin="8">
 		<ScrollViewer>
 			<StackPanel Orientation="Vertical">

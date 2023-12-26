@@ -38,8 +38,8 @@ namespace PolarShadow.Controls
             {
                 if (value)
                 {
-                    control.AddHandler(ContentControl.LoadedEvent, ControlLoaded);
                     control.AddHandler(ContentControl.UnloadedEvent, ControlUnloaded);
+                    control.AddHandler(ContentControl.LoadedEvent, ControlLoaded);
                 }
                 else
                 {
@@ -55,6 +55,8 @@ namespace PolarShadow.Controls
                 {
                     or.IsActive = true;
                 }
+
+                //ToolBarAttached.TryLoad(ctrl);
             }
 
             static void ControlUnloaded(object sender, RoutedEventArgs args)
@@ -64,6 +66,8 @@ namespace PolarShadow.Controls
                 {
                     or.IsActive = false;
                 }
+
+                //ToolBarAttached.TryUnload(ctrl);
             }
         }
     }

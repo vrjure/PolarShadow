@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls.Notifications;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Cache;
@@ -20,6 +21,8 @@ namespace PolarShadow.ViewModels
         private readonly INotificationManager _notify;
         private readonly INavigationService _nav;
         private readonly IBufferCache _bufferCache;
+
+        private ISearchHandler<Resource> _searcHandler;
         public SearchViewModel(IPolarShadow polar, INotificationManager notify, INavigationService nav, IBufferCache bufferCache)
         {
             _polar = polar;
@@ -43,11 +46,53 @@ namespace PolarShadow.ViewModels
             }
         }
 
+        private ObservableCollection<Resource> _originResult;
         private ObservableCollection<Resource> _searchResult;
         public ObservableCollection<Resource> SearchResult
         {
             get => _searchResult;
             set => SetProperty(ref _searchResult, value);
+        }
+
+        private ObservableCollection<string> _availableSites;
+        public ObservableCollection<string> AvailableSites
+        {
+            get => _availableSites;
+            set => SetProperty(ref _availableSites, value);
+        }
+
+        private ISelectionModel _siteFilterSelection;
+        public ISelectionModel SiteFilterSelection
+        {
+            get => _siteFilterSelection;
+            set => SetProperty(ref _siteFilterSelection, value);
+        }
+
+        private IReadOnlyList<int> _selectedSiteFilters;
+        public IReadOnlyList<int> SelectedSiteFilters
+        {
+            get => _selectedSiteFilters;
+            set
+            {
+                var newVal = value;
+                var oldVal = _selectedSiteFilters;
+                var isChanged = false;
+
+                if (newVal?.Count != oldVal?.Count)
+                {
+                    isChanged = true;
+                }
+                else if (newVal != null && oldVal != null && newVal.Except(oldVal).Count() > 0)
+                {
+                    isChanged = true;
+                }
+
+                _selectedSiteFilters = newVal;
+                if (isChanged)
+                {
+                    OnSiteFilterChanged();
+                }
+            }
         }
 
         private bool _showLoadMore = false;
@@ -64,7 +109,44 @@ namespace PolarShadow.ViewModels
         public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
 
 
-        private ISearchHandler<Resource> _searcHandler;
+        protected override void OnLoad()
+        {
+            AvailableSites = new ObservableCollection<string>(_polar.GetSites().Where(f => f.HasRequest(Requests.Search)).Select(f => f.Name));
+        }
+
+        private void OnSiteFilterChanged()
+        {
+            var sites = GetFilterSites();
+            if (sites != null)
+            {
+                if (_originResult?.Count > 0)
+                {
+                    SearchResult = new ObservableCollection<Resource>(_originResult.Where(f => sites.Any(o => o.Name == f.Site)));
+                }
+            }
+            else
+            {
+                SearchResult = _originResult;
+            }
+
+            ShowLoadMore = false;
+        }
+
+        private IEnumerable<ISite> GetFilterSites()
+        {
+            if (SelectedSiteFilters?.Count > 0)
+            {
+                HashSet<string> siteNames = new HashSet<string>();
+                foreach (var item in SelectedSiteFilters)
+                {
+                    siteNames.Add(AvailableSites[item]);
+                }
+                return _polar.GetSites().Where(f => siteNames.Contains(f.Name));
+            }
+
+            return null;
+        }
+
         private async Task Search()
         {
             _searchResult?.Clear();
@@ -74,7 +156,15 @@ namespace PolarShadow.ViewModels
                 ShowLoadMore = false;
                 return;
             }
-            _searcHandler = _polar.CreateSearchHander<Resource>(SearchText);
+            var sites = GetFilterSites();
+            if (sites != null)
+            {               
+                _searcHandler = _polar.CreateSearchHandler<Resource>(SearchText, sites);
+            }
+            else
+            {
+                _searcHandler = _polar.CreateSearchHandler<Resource>(SearchText);
+            }
 
             await LoadMore();
         }
@@ -94,8 +184,8 @@ namespace PolarShadow.ViewModels
                 }
 
                 if (SearchResult == null)
-                {
-                    SearchResult = new ObservableCollection<Resource>(result);
+                {    
+                     SearchResult = new ObservableCollection<Resource>(result);
                 }
                 else
                 {
@@ -104,6 +194,9 @@ namespace PolarShadow.ViewModels
                         SearchResult.Add(item);
                     }
                 }
+
+                _originResult = SearchResult;
+
                 ShowLoadMore = true;
             }
             catch (OperationCanceledException) { }
