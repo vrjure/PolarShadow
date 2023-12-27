@@ -12,7 +12,7 @@ namespace PolarShadow.Cache
     {
         private readonly IMemoryCache _memoryCache;
         private readonly IFileCache _fileCache;
-        private readonly TimeSpan _slidingExpiration = TimeSpan.FromMinutes(5);
+        private readonly TimeSpan _slidingExpiration = TimeSpan.FromMinutes(1);
 
         public BufferCache(IMemoryCache memoryCache, IFileCache fileCache)
         {
@@ -104,13 +104,13 @@ namespace PolarShadow.Cache
             switch (location)
             {
                 case BufferLocation.Memory:
-                    _memoryCache.Set(key, buffer);
+                    SetMemoryBuffer(key, buffer);
                     break;
                 case BufferLocation.File:
                     await _fileCache.SetAsync(key, buffer);
                     break;
                 case BufferLocation.Both:
-                    _memoryCache.Set(key, buffer);
+                    SetMemoryBuffer(key, buffer);
                     await _fileCache.SetAsync(key, buffer);
                     break;
             }
@@ -118,7 +118,7 @@ namespace PolarShadow.Cache
 
         private void SetMemoryBuffer(string key, byte[] buffer)
         {
-            _memoryCache.Set(key, buffer, new MemoryCacheEntryOptions { SlidingExpiration = _slidingExpiration });
+            _memoryCache.Set(key, buffer, new MemoryCacheEntryOptions { SlidingExpiration = _slidingExpiration});
         }
 
         public static string SHA(string url)

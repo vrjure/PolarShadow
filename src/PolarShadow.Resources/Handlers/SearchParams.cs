@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PolarShadow.Resources
 {
-    internal sealed class SearchParams
+    public sealed class SearchParams
     {
         public const string CanPage = "canPage";
         public const string StartPage = "startPage";

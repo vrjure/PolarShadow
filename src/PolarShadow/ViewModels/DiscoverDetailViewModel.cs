@@ -186,13 +186,29 @@ namespace PolarShadow.ViewModels
             ShowLoadMore = false;
             try
             {
-                _filter.Page++;
                 var categoryValue = CategorySelection.SelectedItems.First() as Resource;
-                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, categoryValue.Request, builder =>
+
+                var handler = Param_Site.CreateRequestHandler(_polar, categoryValue.Request);
+
+                var canPage = true;
+                if(handler.TryGetParameter(SearchParams.CanPage, out bool val))
+                {
+                    canPage = val;
+                }
+
+                if (!canPage) 
+                {
+                    ShowLoadMore = false;
+                    return;
+                }
+
+                _filter.Page++;
+                var resources = await handler.ExecuteAsync<ICollection<ResourceTree>>(builder =>
                 {
                     builder.AddObjectValue(categoryValue);
                     builder.AddObjectValue(_filter);
                 }, Cancellation.Token);
+
                 if (resources == null || resources.Count == 0)
                 {
                     ShowLoadMore = false;
