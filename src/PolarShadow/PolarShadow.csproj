@@ -34,6 +34,12 @@
 
   
   <ItemGroup>
+    <AvaloniaXaml Remove="Assets\Platforms\Desktop\Sizes.axaml" />
+    <AvaloniaXaml Remove="Assets\Platforms\Mobile\Sizes.axaml" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
     <None Remove="Assets\Fonts\remixicon.ttf" />
     <None Remove="Assets\Fonts\SegoeFluentIcons.ttf" />
     <None Remove="Assets\images\item-background.jpg" />

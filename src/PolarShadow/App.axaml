@@ -23,6 +23,19 @@
 				<ResourceInclude Source="/Assets/Themes/MediaPlayerControllerThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ScrollViewThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/SearchBoxThemes.axaml"/>
+
+				<OnFormFactor>
+					<OnFormFactor.Default>
+						<ResourceDictionary>
+							<ResourceDictionary.MergedDictionaries>
+								<ResourceInclude Source="/Assets/Platforms/Desktop/Sizes.axaml"/>
+							</ResourceDictionary.MergedDictionaries>
+						</ResourceDictionary>
+					</OnFormFactor.Default>
+					<OnFormFactor.Mobile>
+						<ResourceInclude Source="/Assets/Platforms/Mobile/Sizes.axaml"/>
+					</OnFormFactor.Mobile>
+				</OnFormFactor>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>
