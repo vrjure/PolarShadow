@@ -8,6 +8,7 @@ namespace PolarShadow.Services
     {
         public virtual string Name { get; set; }
         public virtual string Domain { get; set; }
+        public virtual string Ico { get;set; }
         public virtual string Parameters { get; set; }
     }
 }

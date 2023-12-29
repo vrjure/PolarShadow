@@ -113,6 +113,8 @@ namespace PolarShadow.Cache
                     SetMemoryBuffer(key, buffer);
                     await _fileCache.SetAsync(key, buffer);
                     break;
+                default:
+                    break;
             }
         }
 

@@ -14,14 +14,22 @@ namespace PolarShadow
     internal class HttpCachingHandler : DelegatingHandler
     {
         private readonly IBufferCache _cache;
-        public HttpCachingHandler(IBufferCache memoryCache) :this(memoryCache, new HttpClientHandler())
+        private readonly BufferLocation _location;
+        public HttpCachingHandler(IBufferCache memoryCache) :this(memoryCache, BufferLocation.Memory, new HttpClientHandler())
         {
 
         }
-        public HttpCachingHandler(IBufferCache memoryCache, HttpMessageHandler httpMessageHandler)
+
+        public HttpCachingHandler(IBufferCache memoryCache, BufferLocation location) : this(memoryCache, location, new HttpClientHandler())
+        {
+
+        }
+
+        public HttpCachingHandler(IBufferCache memoryCache, BufferLocation location, HttpMessageHandler httpMessageHandler)
         {
             _cache = memoryCache;
             InnerHandler = httpMessageHandler;
+            _location = location;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -30,9 +38,16 @@ namespace PolarShadow
 
             if (_cache.ContainsKey(key))
             {
+                var content = await _cache.GetAsync(key);
+
+                if (!_cache.ContainsKey(key, BufferLocation.Memory))
+                {
+                    _cache.Set(key, content, BufferLocation.Memory);
+                }
+
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
                 {
-                    Content = new ByteArrayContent(await _cache.GetAsync(key))
+                    Content = new ByteArrayContent(content)
                 };
             }
 
@@ -42,7 +57,7 @@ namespace PolarShadow
             return response;
 
             var data = await response.Content.ReadAsByteArrayAsync();
-            await _cache.SetAsync(key, data, BufferLocation.Memory);
+            await _cache.SetAsync(key, data, _location);
             return response;
         }
     }

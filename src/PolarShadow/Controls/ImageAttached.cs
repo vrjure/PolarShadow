@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Caching.Memory;
 using PolarShadow.Cache;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -51,6 +53,16 @@ namespace PolarShadow.Controls
         public static void SetCache(Image image, IBufferCache value)
         {
             image.SetValue(CacheProperty, value);
+        }
+
+        public static readonly AttachedProperty<BufferLocation> CacheLocationProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, BufferLocation>("CacheLocation", BufferLocation.None);
+        public static BufferLocation GetCacheLoaction(Image image)
+        {
+            return image.GetValue(CacheLocationProperty);
+        }
+        public static void SetCacheLocation(Image image, BufferLocation location)
+        {
+            image.SetValue(CacheLocationProperty, location);
         }
 
 
@@ -101,20 +113,25 @@ namespace PolarShadow.Controls
             {
                 var cache = GetCache(image);
                 var headers = GetHeaders(image);
-                image.Source = await LoadFromWebAsync(src, cache, headers);
+                var cacheLoc = GetCacheLoaction(image);
+                image.Source = await LoadFromWebAsync(src, cache, cacheLoc, headers);
             }
             else
             {
-                image.Source = new Bitmap(AssetLoader.Open(src));
+                image.Source = TryGetImage(AssetLoader.Open(src), src);
             }
         }
 
-        private static async Task<Bitmap> LoadFromWebAsync(Uri uri, IBufferCache cache = null, IDictionary<string, string> headers = null)
+        private static async Task<Bitmap> LoadFromWebAsync(Uri uri, IBufferCache cache = null, BufferLocation cacheLocation = BufferLocation.Memory, IDictionary<string, string> headers = null)
         {
             cache ??= Ioc.Default.GetService<IBufferCache>();
+            if (cacheLocation == BufferLocation.None)
+            {
+                cacheLocation = BufferLocation.Memory;
+            }
             using var httpClient = cache switch
             {
-                not null => new HttpClient(new HttpCachingHandler(cache)),
+                not null => new HttpClient(new HttpCachingHandler(cache, cacheLocation)),
                 _ => new HttpClient()
             };
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.62");
@@ -139,13 +156,38 @@ namespace PolarShadow.Controls
                 using var response = await httpClient.GetAsync(uri);
                 response.EnsureSuccessStatusCode();
 
-                return new Bitmap(await response.Content.ReadAsStreamAsync());
+                return TryGetImage(await response.Content.ReadAsStreamAsync(), uri);
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Trace.WriteLine($"Downloading image error '{uri}' : {ex.Message}");
             }
             return null;
+        }
+
+        private static Bitmap TryGetImage(Stream stream, Uri uri) => TryGetImage(stream, uri.ToString().EndsWith(".ico", StringComparison.OrdinalIgnoreCase));
+
+        private static Bitmap TryGetImage(Stream stream, bool isIco)
+        {
+            try
+            {
+                if (isIco)
+                {
+                    var ico = new Ico(stream);
+                    return new Bitmap(ico.GetStream(ico.Count - 1));
+                }
+                else
+                {
+                    return new Bitmap(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine($"Try get image error:{ex.Message}");
+            }
+
+            return null;
+
         }
     }
 }

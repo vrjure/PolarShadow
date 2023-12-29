@@ -50,6 +50,7 @@ namespace PolarShadow.Storage
                 jsonWriter.WriteStartObject();
                 jsonWriter.WriteString("name", item.Site.Name);
                 jsonWriter.WriteString("domain", item.Site.Domain);
+                jsonWriter.WriteString("ico", item.Site.Ico);
                 if (!string.IsNullOrEmpty(item.Site.Parameters))
                 {
                     jsonWriter.WritePropertyName("parameters");

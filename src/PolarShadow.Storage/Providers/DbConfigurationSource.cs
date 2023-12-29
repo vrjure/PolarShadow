@@ -59,9 +59,15 @@ namespace PolarShadow.Storage
                 var siteName = siteElement.GetString();
                 var domain = string.Empty;
                 var parameters = string.Empty;
+                var ico = string.Empty;
                 if (site.TryGetProperty("domain", out JsonElement domainElement) && domainElement.ValueKind == JsonValueKind.String)
                 {
                     domain = domainElement.GetString();
+                }
+
+                if (site.TryGetProperty("ico", out JsonElement icoElement) && domainElement.ValueKind == JsonValueKind.String)
+                {
+                    ico = icoElement.GetString();
                 }
 
                 if (site.TryGetProperty("parameters", out JsonElement parameterElement) && parameterElement.ValueKind == JsonValueKind.Object)
@@ -75,6 +81,7 @@ namespace PolarShadow.Storage
                     {
                         Name = siteName,
                         Domain = domain,
+                        Ico = ico,
                         Parameters = parameters
                     }
                 });

@@ -18,6 +18,7 @@ namespace PolarShadow.Cache
 
     public enum BufferLocation
     {
+        None,
         Memory,
         File,
         Both
