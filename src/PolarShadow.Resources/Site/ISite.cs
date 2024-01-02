@@ -14,7 +14,7 @@ namespace PolarShadow.Resources
     {
         string Name { get; }
         string Domain { get; }
-        string Ico { get; set; }
+        string Icon { get; set; }
         IKeyValueParameter Parameters { get; }
         IReadOnlyDictionary<string, ISiteRequest> Requests { get; }
     }

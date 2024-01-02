@@ -65,7 +65,7 @@ namespace PolarShadow.Storage
                     domain = domainElement.GetString();
                 }
 
-                if (site.TryGetProperty("ico", out JsonElement icoElement) && domainElement.ValueKind == JsonValueKind.String)
+                if (site.TryGetProperty("icon", out JsonElement icoElement) && domainElement.ValueKind == JsonValueKind.String)
                 {
                     ico = icoElement.GetString();
                 }

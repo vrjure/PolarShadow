@@ -21,7 +21,7 @@
 							  Margin="6">
 							<Image HorizontalAlignment="Center"
 								   VerticalAlignment="Center"
-								   ps:ImageAttached.Src="{Binding Ico}"
+								   ps:ImageAttached.Src="{Binding Icon}"
 								   ps:ImageAttached.CacheLocation="File"
 								   ps:ImageAttached.PlaceholderSrc="/Assets/book-fill.png"/>
 							<TextBlock Text="{Binding Name}"

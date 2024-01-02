@@ -20,7 +20,8 @@
 			<Border Background="{StaticResource TitleBarColor}"
 					IsHitTestVisible="False"
 					Height="{StaticResource TitleBarHeight}"
-					Grid.ColumnSpan="3"/>
+					Grid.ColumnSpan="3"
+					/>
 			<!--left-->
 			<StackPanel Orientation="Horizontal"
 						Spacing="10"
