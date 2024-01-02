@@ -40,11 +40,6 @@ namespace PolarShadow
             {
                 var content = await _cache.GetAsync(key);
 
-                if (!_cache.ContainsKey(key, BufferLocation.Memory))
-                {
-                    _cache.Set(key, content, BufferLocation.Memory);
-                }
-
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
                 {
                     Content = new ByteArrayContent(content)

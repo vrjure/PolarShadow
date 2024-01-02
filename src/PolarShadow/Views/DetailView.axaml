@@ -60,8 +60,8 @@
 						   Height="{StaticResource CardItemHeight}"
 						   Stretch="Fill"
 						   ps:ImageAttached.Src="{Binding Resource.ImageSrc}"
-						   ps:ImageAttached.Cache="{Binding ImageCache}"
-						   ps:ImageAttached.Headers="{Binding Resource.ImageSrcHeaders}"/>
+						   ps:ImageAttached.Headers="{Binding Resource.ImageSrcHeaders}"
+						   ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.jpg"/>
 				</Border>
 
 				<SelectableTextBlock Text="{Binding Resource.Name}" 

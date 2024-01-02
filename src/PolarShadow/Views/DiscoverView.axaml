@@ -22,7 +22,8 @@
 							<Image HorizontalAlignment="Center"
 								   VerticalAlignment="Center"
 								   ps:ImageAttached.Src="{Binding Ico}"
-								   ps:ImageAttached.CacheLocation="File"/>
+								   ps:ImageAttached.CacheLocation="File"
+								   ps:ImageAttached.PlaceholderSrc="/Assets/book-fill.png"/>
 							<TextBlock Text="{Binding Name}"
 									   HorizontalAlignment="Center"
 									   Grid.Row="1"/>

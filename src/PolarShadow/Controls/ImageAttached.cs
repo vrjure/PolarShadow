@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
+using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -18,12 +19,12 @@ namespace PolarShadow.Controls
 {
     public class ImageAttached
     {
-        private static readonly Uri _defaultPlaceholderUri = new Uri("avares://PolarShadow/Assets/images/item-background.jpg");
         static ImageAttached()
         {
             SrcProperty.Changed.AddClassHandler<Image>((o, e) => SrcPropertyChanged(e));
+            Image.LoadedEvent.AddClassHandler<Image>(ImageLoad);
         }
-        public static readonly AttachedProperty<Uri> SrcProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, Uri>("Source", _defaultPlaceholderUri);
+        public static readonly AttachedProperty<Uri> SrcProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, Uri>("Source");
         public static Uri GetSrc(Image image)
         {
             return image.GetValue(SrcProperty);
@@ -43,6 +44,7 @@ namespace PolarShadow.Controls
         {
             image.SetValue(PlaceholderSrcProperty, value);
         }
+
 
 
         public static readonly AttachedProperty<IBufferCache> CacheProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, IBufferCache>("Cache");
@@ -70,56 +72,71 @@ namespace PolarShadow.Controls
         public static IDictionary<string, string> GetHeaders(Image image) => image.GetValue(HeadersProperty);
         public static void SetHeaders(Image image, IDictionary<string, string> value) => image.SetValue(HeadersProperty, value);
 
+        private static void ImageLoad(Image image, RoutedEventArgs e)
+        {
+            if (Design.IsDesignMode) return;
+            if (image.Source != null)
+            {
+                return;
+            }
+            ApplySource(image);
+        }
+
         private static void SrcPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
             if (Design.IsDesignMode) return;
             var image = arg.Sender as Image;
-            
-            if (!image.IsLoaded )
-            {
-                image.Loaded += Image_Loaded;
-            }
-            else
+
+            if (image.IsLoaded)
             {
                 ApplySource(image);
             }
         }
 
-        private static void Image_Loaded(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            var image = sender as Image;
-            image.Loaded -= Image_Loaded;
-            ApplySource(image);
-        }
-
         private static async void ApplySource(Image image)
         {
             var src = GetSrc(image);
-            if (src == null)
+            if (src != null)
+            {
+                await LoadImage(image, src);
+            }
+
+            if (image.Source == null)
             {
                 var placeholderSrc = GetPlaceholderSrc(image);
                 if (placeholderSrc != null)
                 {
-                    src = placeholderSrc;
+                    await LoadImage(image, placeholderSrc);
+                }
+            }
+        }
+
+        private static async Task LoadImage(Image image, Uri src)
+        {
+            try
+            {
+                if (src.IsAbsoluteUri && (src.Scheme == Uri.UriSchemeHttp || src.Scheme == Uri.UriSchemeHttps))
+                {
+                    var cache = GetCache(image);
+                    var headers = GetHeaders(image);
+                    var cacheLoc = GetCacheLoaction(image);
+                    image.Source = await LoadFromWebAsync(src, cache, cacheLoc, headers);
                 }
                 else
                 {
-                    image.Source = null;
-                    return;
+                    if (!src.IsAbsoluteUri)
+                    {
+                        src = new Uri(new Uri("avares://PolarShadow"), src);
+                    }
+
+                    image.Source = TryGetImage(AssetLoader.Open(src), src);
                 }
             }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine($"Load image error: {ex.Message}");
+            }
 
-            if (src.Scheme == Uri.UriSchemeHttp || src.Scheme == Uri.UriSchemeHttps)
-            {
-                var cache = GetCache(image);
-                var headers = GetHeaders(image);
-                var cacheLoc = GetCacheLoaction(image);
-                image.Source = await LoadFromWebAsync(src, cache, cacheLoc, headers);
-            }
-            else
-            {
-                image.Source = TryGetImage(AssetLoader.Open(src), src);
-            }
         }
 
         private static async Task<Bitmap> LoadFromWebAsync(Uri uri, IBufferCache cache = null, BufferLocation cacheLocation = BufferLocation.Memory, IDictionary<string, string> headers = null)
@@ -160,6 +177,7 @@ namespace PolarShadow.Controls
             }
             catch (Exception ex)
             {
+                cache.Remove(BufferCache.SHA(uri.ToString()));
                 System.Diagnostics.Trace.WriteLine($"Downloading image error '{uri}' : {ex.Message}");
             }
             return null;
@@ -169,25 +187,15 @@ namespace PolarShadow.Controls
 
         private static Bitmap TryGetImage(Stream stream, bool isIco)
         {
-            try
+            if (isIco)
             {
-                if (isIco)
-                {
-                    var ico = new Ico(stream);
-                    return new Bitmap(ico.GetStream(ico.Count - 1));
-                }
-                else
-                {
-                    return new Bitmap(stream);
-                }
+                var ico = new Ico(stream);
+                return new Bitmap(ico.GetStream(ico.Count - 1));
             }
-            catch (Exception ex)
+            else
             {
-                System.Diagnostics.Trace.WriteLine($"Try get image error:{ex.Message}");
+                return new Bitmap(stream);
             }
-
-            return null;
-
         }
     }
 }

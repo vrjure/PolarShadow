@@ -44,8 +44,6 @@ namespace PolarShadow.ViewModels
 
         public ILink Param_Link { get; set; }
 
-        public IBufferCache ImageCache => _bufferCache;
-
         private ResourceTreeNode _resource;
         public ResourceTreeNode Resource
         {

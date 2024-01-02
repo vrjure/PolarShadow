@@ -61,7 +61,7 @@
 			<Panel>
 				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
 					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
-					   ps:ImageAttached.PlaceholderSrc="avares://PolarShadow/Assets/images/item-background.jpg"
+					   ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.jpg"
 					   Stretch="Fill"/>
 				<Border VerticalAlignment="Bottom"
 						Background="#9FFFFFFF">
@@ -86,7 +86,7 @@
 			<Panel>
 				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
 					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
-					   ps:ImageAttached.PlaceholderSrc="avares://PolarShadow/Assets/images/item-background.jpg"
+					   ps:ImageAttached.PlaceholderSrc="Assets/images/item-background.jpg"
 					   Stretch="Fill"/>
 				<Border VerticalAlignment="Bottom"
 						Background="#9FFFFFFF">
@@ -111,7 +111,7 @@
 			<Panel>
 				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
 					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
-					   ps:ImageAttached.PlaceholderSrc="avares://PolarShadow/Assets/images/item-background.jpg"
+					   ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.jpg"
 					   Stretch="Fill"/>
 				<Border VerticalAlignment="Bottom"
 						Background="#9FFFFFFF">

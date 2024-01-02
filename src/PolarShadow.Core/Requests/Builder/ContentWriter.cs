@@ -137,6 +137,15 @@ namespace PolarShadow.Core
                         {
                             BuildInArrayTemplate(writer, pathTemplate, parameter);
                         }
+                        else if (pathTemplate.ValueKind == JsonValueKind.String)//find template in parameter
+                        {
+                            var templateName = pathTemplate.GetString();
+                            if (parameter.TryReadValue("templates", out JsonElement templates)
+                                && templates.TryGetProperty(templateName, out JsonElement namedTemplate))
+                            {
+                                BuildArrayTemplate(writer, path, namedTemplate, parameter);
+                            }
+                        }
                     }
                     else
                     {
