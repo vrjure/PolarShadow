@@ -5,7 +5,9 @@ using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Cache;
 using PolarShadow.Core;
 using PolarShadow.Navigations;
+using PolarShadow.Options;
 using PolarShadow.Resources;
+using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,14 +23,16 @@ namespace PolarShadow.ViewModels
         private readonly INotificationManager _notify;
         private readonly INavigationService _nav;
         private readonly IBufferCache _bufferCache;
+        private readonly IPreference _preference;
 
         private ISearchHandler<Resource> _searcHandler;
-        public SearchViewModel(IPolarShadow polar, INotificationManager notify, INavigationService nav, IBufferCache bufferCache)
+        public SearchViewModel(IPolarShadow polar, INotificationManager notify, INavigationService nav, IBufferCache bufferCache, IPreference preference)
         {
             _polar = polar;
             _notify = notify;
             _nav = nav;
             _bufferCache = bufferCache;
+            _preference = preference;
         }
 
         public IBufferCache ImageCache => _bufferCache;
@@ -156,14 +160,16 @@ namespace PolarShadow.ViewModels
                 ShowLoadMore = false;
                 return;
             }
+
+            var taskCount = await _preference.GetAsync(PreferenceOption.SearchTaskCount, 3);
             var sites = GetFilterSites();
             if (sites != null)
             {               
-                _searcHandler = _polar.CreateSearchHandler<Resource>(SearchText, sites);
+                _searcHandler = _polar.CreateSearchHandler<Resource>(SearchText, sites, taskCount);
             }
             else
             {
-                _searcHandler = _polar.CreateSearchHandler<Resource>(SearchText);
+                _searcHandler = _polar.CreateSearchHandler<Resource>(SearchText, taskCount);
             }
 
             await LoadMore();

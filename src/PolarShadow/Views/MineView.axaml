@@ -22,35 +22,51 @@
 	<UserControl.Resources>
 		<x:Double x:Key="headerTextWidth">100</x:Double>
 	</UserControl.Resources>
+	<UserControl.Styles>
+		<Style Selector="TextBlock.header">
+			<Setter Property="Width" Value="{StaticResource headerTextWidth}"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+		</Style>
+		<Style Selector="Rectangle.line">
+			<Setter Property="Height" Value="2"/>
+			<Setter Property="Fill" Value="Red"/>
+		</Style>
+	</UserControl.Styles>
 	<StackPanel Margin="16"
 			    MaxWidth="800"
 				Spacing="16">
 		<!--Aria2-->
 		<TextBlock Text="Aria2"
 				   Classes="title"/>
-		<Rectangle Height="2" 
-				   Fill="Red"/>
+		<Rectangle Classes="line"/>
 		<DockPanel>
-			<TextBlock Text="RPC"
-					   Width="{StaticResource headerTextWidth}"
-					   VerticalAlignment="Center"
-					   TextWrapping="Wrap"/>
+			<TextBlock Text="RPC" Classes="header"/>
 			<TextBox VerticalAlignment="Center"
-					 Text="{Binding RPC, Mode=TwoWay}"/>
+					 Text="{Binding RPC.Value, Mode=TwoWay}"/>
 		</DockPanel>
 		<DockPanel>
-			<TextBlock Text="Download Path"
-					   Width="{StaticResource headerTextWidth}"
-					   VerticalAlignment="Center"
-					   TextWrapping="Wrap"/>
+			<TextBlock Text="Download Path" Classes="header"/>
 			<Button Content="&#xEF76;"
 					Theme="{StaticResource Icon}"
 					DockPanel.Dock="Right"
 					VerticalAlignment="Center"
 					Command="{Binding PickDownloadPathCommand}"/>
 			<TextBox VerticalAlignment="Center"
-					 Text="{Binding DownloadPath, Mode=TwoWay}"/>
+					 Text="{Binding DownloadPath.Value, Mode=TwoWay}"/>
 		</DockPanel>
 		
+		<!--Search-->
+		<TextBlock Text="Search"
+				   Classes="title"/>
+		<Rectangle Classes="line"/>
+		<DockPanel>
+			<TextBlock Text="搜索线程数" Classes="header"/>
+			<NumericUpDown VerticalAlignment="Center"
+						   Value="{Binding SearchTaskCount.Value, Mode=TwoWay}"
+						   Minimum="1"
+						   Maximum="10"
+						   FormatString="N0"/>
+		</DockPanel>
 	</StackPanel>
 </UserControl>

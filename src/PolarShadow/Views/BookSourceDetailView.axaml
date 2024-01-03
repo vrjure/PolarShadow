@@ -8,23 +8,30 @@
 			 x:DataType="ps:BookSourceDetailViewModel"
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True">
-	<Grid RowDefinitions="auto,*"
-		  Margin="20">
-		<StackPanel Orientation="Vertical"				
-					Spacing="10">
-			<TextBlock Text="Name" Classes="title" />
+	<ScrollViewer>
+		<StackPanel Orientation="Vertical"
+			Spacing="10" Margin="20">
+			<TextBlock Text="名称" Classes="title" />
 			<TextBlock Text="{Binding Site.Name}"/>
-			<TextBlock Text="Domain" Classes="title" Margin="0,5,0,0"/>
+			<TextBlock Text="域名" Classes="title"/>
 			<TextBlock Text="{Binding Site.Domain}"/>
+			<TextBlock Text="图标" Classes="title"/>
+			<TextBlock Text="{Binding Site.Icon}"/>
+			<TextBlock Text="参数" Classes="title"/>
+			<TextBox Text="{Binding FormatParameter}"
+						BorderBrush="LightGray"
+						BorderThickness="1"
+						Padding="5"
+						IsReadOnly="True"/>
+			<TextBlock Text="请求" Classes="title"/>
 			<TabStrip ItemsSource="{Binding Site.Requests.Keys}"
-					  SelectedValue="{Binding SelectedRequest, Mode=TwoWay}"/>
+						SelectedValue="{Binding SelectedRequest, Mode=TwoWay}"/>
+			<TextBox Text="{Binding FormatedRequest}"
+				BorderBrush="LightGray"
+				BorderThickness="1"
+				Grid.Row="1"
+				Padding="5"
+				IsReadOnly="True"/>
 		</StackPanel>
-
-		<TextBox Text="{Binding FormatedRequest}"
-				 BorderBrush="LightGray"
-				 BorderThickness="1"
-				 Grid.Row="1"
-				 Padding="5"/>
-	</Grid>
-	
+	</ScrollViewer>
 </UserControl> 

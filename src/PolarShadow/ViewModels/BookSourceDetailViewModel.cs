@@ -33,6 +33,13 @@ namespace PolarShadow.ViewModels
             }
         }
 
+        private string _formatParameter;
+        public string FormatParameter
+        {
+            get => _formatParameter;
+            set => SetProperty(ref _formatParameter, value);
+        }
+
         private string _formatedRequest;
         public string FormatedRequest
         {
@@ -42,7 +49,11 @@ namespace PolarShadow.ViewModels
 
         public void ApplyParameter(IDictionary<string, object> parameters)
         {
-            if(parameters.TryGetValue(nameof(Site), out ISite value)) Site = value;
+            if (parameters.TryGetValue(nameof(Site), out ISite value))
+            {
+                Site = value;
+                FormatParameter = Site.GetParameterJson(JsonOption.FormatWriteOption);
+            }
         }
 
         private void OnReqeustSelected()

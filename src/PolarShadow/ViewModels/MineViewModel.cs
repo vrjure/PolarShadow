@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PolarShadow.Options;
+using PolarShadow.Models;
 
 namespace PolarShadow.ViewModels
 {
@@ -22,18 +23,25 @@ namespace PolarShadow.ViewModels
             _preference = preference;
         }
 
-        private string _rpc;
-        public string RPC
+        private ChangeValue<string> _rpc;
+        public ChangeValue<string> RPC
         {
             get => _rpc;
             set => SetProperty(ref _rpc, value);
         }
 
-        private string _downloadPath;
-        public string DownloadPath
+        private ChangeValue<string> _downloadPath;
+        public ChangeValue<string> DownloadPath
         {
             get => _downloadPath;
             set => SetProperty(ref _downloadPath, value);
+        }
+
+        private ChangeValue<int> _searchTaskCount;
+        public ChangeValue<int> SearchTaskCount
+        {
+            get => _searchTaskCount;
+            set => SetProperty(ref _searchTaskCount, value);
         }
 
         private IAsyncRelayCommand _pickDownloadPathCommand;
@@ -51,21 +59,28 @@ namespace PolarShadow.ViewModels
 
             if (folders == null || folders.Count == 0) return;
 
-            DownloadPath = folders.First().Path.AbsolutePath;
+            DownloadPath.Value = folders.First().Path.AbsolutePath;
         }
 
         protected override async void OnLoad()
         {
-            RPC = await _preference.GetAsync(PreferenceOption.RPC, "");
-            DownloadPath = await _preference.GetAsync(PreferenceOption.DownloadPath, "");
+            RPC = new ChangeValue<string>(await _preference.GetAsync(PreferenceOption.RPC, ""));
+            DownloadPath = new ChangeValue<string>(await _preference.GetAsync(PreferenceOption.DownloadPath, ""));
+            SearchTaskCount = new ChangeValue<int>(await _preference.GetAsync(PreferenceOption.SearchTaskCount, 3));
         }
 
         private async Task SaveAsync()
         {
             try
             {
-                await _preference.SetAsync(PreferenceOption.RPC, RPC);
-                await _preference.SetAsync(PreferenceOption.DownloadPath, DownloadPath);
+                if(RPC.IsChange)
+                    await _preference.SetAsync(PreferenceOption.RPC, RPC.Value);
+
+                if(DownloadPath.IsChange)
+                    await _preference.SetAsync(PreferenceOption.DownloadPath, DownloadPath.Value);
+
+                if (SearchTaskCount.IsChange)
+                    await _preference.SetAsync(PreferenceOption.SearchTaskCount, SearchTaskCount.Value);
 
                 _notify.ShowSuccess();
             }

@@ -42,6 +42,18 @@ namespace PolarShadow.Resources
             return site.Requests.TryGetValue(requestName, out request);
         }
 
+        public static string GetParameterJson(this ISite site, JsonWriterOptions options = default)
+        {
+            using var ms = new MemoryStream();
+            using var jsonWriter = new Utf8JsonWriter(ms, options);
+            site.Parameters?.WriteTo(jsonWriter);
+            jsonWriter.Flush();
+            ms.Seek(0, SeekOrigin.Begin);
+
+            using var sr = new StreamReader(ms);
+            return sr.ReadToEnd();
+        }
+
         public static string GetRequestJson(this ISiteRequest request, JsonWriterOptions options = default)
         {
             using var ms = new MemoryStream();

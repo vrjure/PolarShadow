@@ -33,7 +33,7 @@
     <Grid Margin="10"
 		  x:Name="part_container">
 		<FlyoutBase.AttachedFlyout>
-			<Flyout Placement="Center">
+			<Flyout Placement="Bottom">
 				<ItemsControl ItemsSource="{Binding WebAnalysisSites}">
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
