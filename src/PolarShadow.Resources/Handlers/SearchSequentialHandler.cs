@@ -22,7 +22,7 @@ namespace PolarShadow.Resources
             _polar = polar;
             _requestName = requestName;
             _searchText = searchText;
-            _sites = polar.GetSites(f => f.Equals(requestName)).GetEnumerator();
+            _sites = polar.GetVideoSites(f => f.Equals(requestName)).GetEnumerator();
         }
 
         public async Task<ICollection<TLink>> SearchNextAsync(CancellationToken cancellation = default)

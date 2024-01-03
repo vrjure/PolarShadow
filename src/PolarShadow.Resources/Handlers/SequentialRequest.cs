@@ -19,7 +19,7 @@ namespace PolarShadow.Resources
         protected string RequestName;
         protected int Index = -1;
         private readonly IPolarShadow _polar;
-        public SequentialRequest(IPolarShadow polar, string requestName):this(polar, polar.GetSites(f=>f.HasRequest(requestName)), requestName)
+        public SequentialRequest(IPolarShadow polar, string requestName):this(polar, polar.GetVideoSites(f=>f.HasRequest(requestName)), requestName)
         {
 
         }

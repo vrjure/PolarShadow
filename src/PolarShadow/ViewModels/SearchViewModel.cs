@@ -115,7 +115,7 @@ namespace PolarShadow.ViewModels
 
         protected override void OnLoad()
         {
-            AvailableSites = new ObservableCollection<string>(_polar.GetSites().Where(f => f.HasRequest(Requests.Search)).Select(f => f.Name));
+            AvailableSites = new ObservableCollection<string>(_polar.GetVideoSites().Where(f => f.HasRequest(Requests.Search)).Select(f => f.Name));
         }
 
         private void OnSiteFilterChanged()
@@ -145,7 +145,7 @@ namespace PolarShadow.ViewModels
                 {
                     siteNames.Add(AvailableSites[item]);
                 }
-                return _polar.GetSites().Where(f => siteNames.Contains(f.Name));
+                return _polar.GetVideoSites().Where(f => siteNames.Contains(f.Name));
             }
 
             return null;

@@ -9,8 +9,9 @@ namespace PolarShadow.Core
 {
     public interface IPolarShadowBuilder
     {
-        IPolarShadowBuilder Add(IPolarShadowItemBuilder builder);
-        IEnumerable<IPolarShadowItemBuilder> ItemBuilders { get; }
+        IPolarShadowBuilder AddItemBuilder<T>(IPolarShadowItemBuilder itemBuilderCreator) where T : IPolarShadowItemBuilder;
+        IPolarShadowBuilder AddItemName<T>(string name) where T : IPolarShadowItemBuilder;
+        bool TryGetItemBuilder<T>(out T itemBuilder) where T : IPolarShadowItemBuilder;
         IPolarShadow Build();
     }
 }

@@ -9,35 +9,58 @@ namespace PolarShadow.Resources
 {
     public static class PolarShadowExtensions
     {
-        public static IEnumerable<ISite> GetSites(this IPolarShadow polarShadow)
+        public static IEnumerable<ISite> GetSites(this IPolarShadow polar)
         {
-            var item = polarShadow.GetItem<ISiteItem>();
-            if (item == null)
+            var items = polar.GetItems<ISiteItem>();
+            foreach (var item in items)
             {
-                return Enumerable.Empty<ISite>();
+                foreach (var site in item.Sites)
+                {
+                    yield return site;
+                }
             }
-
-            return item.Sites;
         }
 
-        public static IEnumerable<ISite> GetSites(this IPolarShadow polarShadow, Func<ISite, bool> predicate)
+        public static IEnumerable<ISite> GetSites(this IPolarShadow polar, string itemName)
         {
-            return GetSites(polarShadow).Where(f => predicate(f));
+            return polar.GetItem<ISiteItem>(itemName)?.Sites;
         }
+
 
         public static bool TryGetSite(this IPolarShadow polarShadow, string siteName, out ISite site)
         {
             site = null;
-            var item = polarShadow.GetItem<ISiteItem>();
+            var items = polarShadow.GetItems<ISiteItem>();
+            if (items == null) return false;
+
+            foreach (var siteItem in items)
+            {
+                if (siteItem.TryGetSite(siteName, out site))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TryGetSite(this IPolarShadow polar, string itemName, string siteName, out ISite site)
+        {
+            site = null;
+            var item = polar.GetItem<ISiteItem>(itemName);
             if (item == null) return false;
 
             return item.TryGetSite(siteName, out site);
         }
 
-        public static IEnumerable<IWebAnalysisSite> GetWebAnalysisSites(this IPolarShadow polarShadow)
+        public static IEnumerable<ISite> GetVideoSites(this IPolarShadow polarShadow) => polarShadow.GetSites(PolarShadowItems.VideoSites);
+
+        public static IEnumerable<ISite> GetVideoSites(this IPolarShadow polarShadow, Func<ISite, bool> predicate)
         {
-            return polarShadow.GetItem<IWebAnalysisItem>()?.Sites;
+            return GetVideoSites(polarShadow).Where(f => predicate(f));
         }
+
+        public static IEnumerable<ISite> GetWebAnalysisSites(this IPolarShadow polarShadow) => polarShadow.GetSites(PolarShadowItems.WebAnalysisSites);
 
         public static ISiteRequestHandler CreateSiteRequestHandler(this IPolarShadow polar, ISite site, string requestName)
         {

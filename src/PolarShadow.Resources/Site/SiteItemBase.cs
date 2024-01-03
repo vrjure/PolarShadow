@@ -15,6 +15,13 @@ namespace PolarShadow.Resources
         private readonly ICollection<RequestRule> _requestRules;
         private readonly Dictionary<string, TSite> _sites = new Dictionary<string, TSite>(StringComparer.OrdinalIgnoreCase);
 
+        static SiteItemBase()
+        {
+            JsonOption.DefaultSerializer.Converters.Add(new TypeMappingConverter<ISite, SiteDefault>());
+            JsonOption.DefaultSerializer.Converters.Add(new TypeMappingConverter<ILink, Link>());
+            JsonOption.DefaultSerializer.Converters.Add(new TypeMappingConverter<ISiteRequest, SiteRequest>());
+        }
+
         public SiteItemBase(IRequestHandler httpHandler, IRequestHandler webViewHandler, IEnumerable<RequestRule> requestRules)
         {
             _httpHandler = httpHandler;

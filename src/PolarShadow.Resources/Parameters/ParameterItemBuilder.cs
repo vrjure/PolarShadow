@@ -5,11 +5,11 @@ using System.Text;
 
 namespace PolarShadow.Resources
 {
-    internal class ParameterItemBuilder : IPolarShadowItemBuilder
+    internal class ParameterItemBuilder : IParameterItemBuilder
     {
-        public IPolarShadowItem Build(IPolarShadowBuilder builder)
+        public IPolarShadowItem Build(string name, IPolarShadowBuilder builder)
         {
-            return new ParameterItem();
+            return new ParameterItem(name);
         }
     }
 }

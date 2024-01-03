@@ -23,14 +23,12 @@ namespace PolarShadow.ViewModels
         private readonly IStorageService _storage;
         private readonly INotificationManager _notification;
         private readonly INavigationService _nav;
-        private readonly IDbContextFactory<PolarShadowDbContext> _dbFactory;
-        public BookSourceViewModel(IPolarShadow polar, IStorageService storage, INotificationManager notification, INavigationService nav, IDbContextFactory<PolarShadowDbContext> dbFactory)
+        public BookSourceViewModel(IPolarShadow polar, IStorageService storage, INotificationManager notification, INavigationService nav)
         {
             _polar = polar;
             _storage = storage;
             _notification = notification;
             _nav = nav;
-            _dbFactory = dbFactory;
         }
         private ObservableCollection<ISite> _sites;
         public ObservableCollection<ISite> Sites
@@ -58,10 +56,7 @@ namespace PolarShadow.ViewModels
 
                 Reflesh();
 
-                await _polar.SaveToAsync(new DbConfigurationSource
-                {
-                    DbContextFactroy = _dbFactory
-                });
+                _polar.Save();
 
                 _notification.ShowSuccess();
             }
@@ -73,7 +68,7 @@ namespace PolarShadow.ViewModels
 
         private void Reflesh()
         {
-            Sites = new ObservableCollection<ISite>(_polar.GetSites());
+            Sites = new ObservableCollection<ISite>(_polar.GetVideoSites());
         }
 
         private void ToSiteDetail(ISite site)

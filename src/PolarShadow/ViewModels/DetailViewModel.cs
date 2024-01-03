@@ -64,8 +64,8 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _headerSelection, value);
         }
 
-        private ICollection<IWebAnalysisSite> _webAnalysisSites;
-        public ICollection<IWebAnalysisSite> WebAnalysisSites
+        private ICollection<ISite> _webAnalysisSites;
+        public ICollection<ISite> WebAnalysisSites
         {
             get => _webAnalysisSites;
             private set => SetProperty(ref _webAnalysisSites, value);
@@ -95,7 +95,7 @@ namespace PolarShadow.ViewModels
         public IAsyncRelayCommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(LinkClick);
 
         private IAsyncRelayCommand _webAnalysisSelectedCommand;
-        public IAsyncRelayCommand WebAnalysisSelectedCommand => _webAnalysisSelectedCommand ??= new AsyncRelayCommand<IWebAnalysisSite>(WebAnalysisSelected);
+        public IAsyncRelayCommand WebAnalysisSelectedCommand => _webAnalysisSelectedCommand ??= new AsyncRelayCommand<ISite>(WebAnalysisSelected);
 
         public void ApplyParameter(IDictionary<string, object> parameters)
         {
@@ -288,7 +288,7 @@ namespace PolarShadow.ViewModels
 
         }
 
-        private async Task WebAnalysisSelected(IWebAnalysisSite site)
+        private async Task WebAnalysisSelected(ISite site)
         {
             if (_selectedWebAnalysisResource == null)
             {

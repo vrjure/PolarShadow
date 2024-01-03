@@ -14,15 +14,10 @@ namespace PolarShadow.Core
         private readonly IPolarShadowBuilder _builder;
         private readonly ICollection<IPolarShadowItem> _items;
 
-        public PolarShadowDefault(IPolarShadowBuilder builder)
+        public PolarShadowDefault(IPolarShadowBuilder builder, IEnumerable<IPolarShadowItem> items)
         {
             _builder = builder;
-
-            _items = new List<IPolarShadowItem>();
-            foreach (var b in builder.ItemBuilders)
-            {
-                _items.Add(b.Build(builder));
-            }
+            _items = new List<IPolarShadowItem>(items);
         }
 
         public IEnumerable<IPolarShadowItem> Items => _items;

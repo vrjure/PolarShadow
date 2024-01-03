@@ -18,7 +18,7 @@ namespace PolarShadow.Resources
         private IEnumerator<ISite> _sites;
         private readonly ICollection<Task> _tasks;
 
-        public SearchBatchHandler(IPolarShadow polar, string requestName, string searchText, int maxTaskCount = 3) : this(polar, polar.GetSites(f=>f.HasRequest(requestName)), requestName, searchText, maxTaskCount)
+        public SearchBatchHandler(IPolarShadow polar, string requestName, string searchText, int maxTaskCount = 3) : this(polar, polar.GetVideoSites(f=>f.HasRequest(requestName)), requestName, searchText, maxTaskCount)
         {
 
         }

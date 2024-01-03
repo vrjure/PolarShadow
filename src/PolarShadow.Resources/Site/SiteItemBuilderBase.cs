@@ -11,6 +11,6 @@ namespace PolarShadow.Resources
         public IRequestHandler HttpHandler { get; set; }
         public ICollection<RequestRule> RequestRules { get; } = new List<RequestRule>();
 
-        public abstract IPolarShadowItem Build(IPolarShadowBuilder builder);
+        public abstract IPolarShadowItem Build(string name, IPolarShadowBuilder builder);
     }
 }

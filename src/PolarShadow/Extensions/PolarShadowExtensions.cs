@@ -30,13 +30,13 @@ namespace PolarShadow
             }
         }
 
-        public static void Load(this IPolarShadow polarShadow)
+        public static void Load(this IPolarShadow polarShadow, bool reload = false)
         {
             if (!File.Exists(App.ConfigFile))
             {
                 return;
             }
-            polarShadow.Load(new JsonFileSource() { Path = App.ConfigFile });
+            polarShadow.Load(new JsonFileSource() { Path = App.ConfigFile }, reload);
         }
     }
 }

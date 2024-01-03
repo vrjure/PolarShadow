@@ -13,7 +13,6 @@ namespace PolarShadow.Storage
         public static IServiceCollection RegisterStorageService(this IServiceCollection services)
         {
             services.AddSingleton<IMineResourceService, MineResourceService>();
-            services.AddSingleton<ISiteService, SiteService>();
             services.AddSingleton<IHistoryService, HistoryService>();
             return services;
         }

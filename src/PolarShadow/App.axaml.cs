@@ -128,18 +128,14 @@ public partial class App : Application
         var webViewHandler = new WebViewHandler();
         service.AddSingleton<IWebViewRequestHandler>(webViewHandler);
         var builder = new PolarShadowBuilder();
-        var polarShadow = builder.ConfigureAllSupported()
-            .ConfigureSiteItem(f =>
+        var polarShadow = builder.AddSupported()
+            .ConfigureItem<ISiteItemBuilder>(f =>
             {
                 f.WebViewHandler = webViewHandler;
                 f.RequestRules.Add(new RequestRule(Requests.Detail) { Writings = new List<IContentWriting>{ new DetailContentWriting() }});
                 f.RequestRules.Add(new RequestRule(Requests.Detail) { NextRequst = Requests.Detail });
                 f.RequestRules.Add(new RequestRule(Requests.Search) { NextRequst = Requests.Detail });
                 f.RequestRules.Add(new RequestRule("category_*") { NextRequst = Requests.Detail });
-            })
-            .ConfigureWebAnalysis(f =>
-            {
-                f.WebViewHandler = webViewHandler;
             }).Build();
         service.AddSingleton(polarShadow);
     }

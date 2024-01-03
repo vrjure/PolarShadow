@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
@@ -141,7 +142,7 @@ namespace PolarShadow.Resources
             {
                 if (string.IsNullOrEmpty(link.FromRequest)) throw new ArgumentException("[FromRequest] must be set when [Requst] is not set", nameof(ILink.FromRequest));
 
-                var siteItem = polar.GetItem<ISiteItem>();
+                var siteItem = polar.GetItem<ISiteItem>(PolarShadowItems.VideoSites);
                 foreach (var item in siteItem.EnumeratorRequestRules(link.FromRequest))
                 {
                     if (string.IsNullOrEmpty(item.NextRequst))
@@ -235,7 +236,7 @@ namespace PolarShadow.Resources
 
             var parameters = new Parameters();
 
-            var parameterItem = polar.GetItem<IParameterItem>();
+            var parameterItem = polar.GetItem<IParameterItem>(PolarShadowItems.Parameters);
             if (parameterItem != null && parameterItem.Parameters?.Count > 0)
             {
                 parameters.Add(parameterItem.Parameters);
@@ -274,7 +275,7 @@ namespace PolarShadow.Resources
 
             var parameters = CreateParameter(site, polar, requestName);
 
-            var siteItem = polar.GetItem<ISiteItem>();
+            var siteItem = polar.GetItems<ISiteItem>().First();
 
             parameters.TryReadValue(SiteParams.UseWebView, out bool useWebView);
 

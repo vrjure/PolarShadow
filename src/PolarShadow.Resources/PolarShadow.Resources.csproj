@@ -10,8 +10,4 @@
     <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="WebAnalysis\Extensions\" />
-  </ItemGroup>
-
 </Project>

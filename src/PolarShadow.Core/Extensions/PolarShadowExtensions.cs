@@ -43,9 +43,14 @@ namespace PolarShadow.Core
             return polarShadow;
         }
 
-        public static T GetItem<T>(this IPolarShadow polarShadow) where T : IPolarShadowItem
+        public static IEnumerable<T> GetItems<T>(this IPolarShadow polarShadow) where T : IPolarShadowItem
         {
-            return polarShadow.Items.Where(f => f is T).Cast<T>().FirstOrDefault();
+            return polarShadow.Items.Where(f => f is T).Cast<T>();
+        }
+
+        public static T GetItem<T>(this IPolarShadow polarShadow, string itemName) where T : IPolarShadowItem
+        {
+            return polarShadow.Items.Where(f => f.Name == itemName).Cast<T>().FirstOrDefault();
         }
     }
 }

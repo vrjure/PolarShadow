@@ -5,8 +5,7 @@ using System.Text;
 
 namespace PolarShadow.Resources
 {
-    public interface IWebAnalysisItem : ISiteItem<IWebAnalysisSite>
+    public interface IParameterItemBuilder : IPolarShadowItemBuilder
     {
-        
     }
 }

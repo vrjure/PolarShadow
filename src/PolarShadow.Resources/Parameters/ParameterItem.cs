@@ -8,9 +8,14 @@ namespace PolarShadow.Resources
 {
     internal class ParameterItem : IParameterItem
     {
+        public ParameterItem(string name)
+        {
+            this.Name = name;
+        }
+
         public IKeyValueParameter Parameters { get; set; }
 
-        public string Name => "parameters";
+        public string Name { get; }
 
         public void Load(IPolarShadowProvider provider, bool reload = false)
         {

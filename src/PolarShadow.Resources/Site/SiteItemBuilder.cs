@@ -11,9 +11,9 @@ namespace PolarShadow.Resources
 {
     internal sealed class SiteItemBuilder : SiteItemBuilderBase, ISiteItemBuilder
     {   
-        public override IPolarShadowItem Build(IPolarShadowBuilder builder)
+        public override IPolarShadowItem Build(string name, IPolarShadowBuilder builder)
         {
-            return new SiteItem(HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, RequestRules);
+            return new SiteItem(name, HttpHandler ?? new HttpClientRequestHandler(), WebViewHandler, RequestRules);
         }
     }
 }

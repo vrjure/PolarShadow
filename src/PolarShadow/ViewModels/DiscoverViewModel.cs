@@ -38,7 +38,7 @@ namespace PolarShadow.ViewModels
         {
             try
             {
-                var sites = _polar.GetSites(f => f.HasRequest(Requests.Categories));
+                var sites = _polar.GetVideoSites(f => f.HasRequest(Requests.Categories));
                 Sites = new ObservableCollection<ISite>(sites);
             }
             catch (Exception ex)
