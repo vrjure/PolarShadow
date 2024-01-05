@@ -105,6 +105,11 @@ namespace PolarShadow.ViewModels
             }
         }
 
+        public ICollection<ISite> UpdateWebAnalysisSites()
+        {
+            return WebAnalysisSites = _polar.GetWebAnalysisSites().ToList();
+        }
+
         protected override async void OnLoad()
         {
             if (this.Resource == null)
@@ -274,9 +279,9 @@ namespace PolarShadow.ViewModels
                         break;
                     case LinkType.WebAnalysisSource:
                         _selectedWebAnalysisResource = node;
-                        WebAnalysisSites = _polar.GetWebAnalysisSites().ToList();
                         break;
                     default:
+                        _selectedWebAnalysisResource = null;
                         _notify.Show($"Not support type:{node.SrcType}"); 
                         break;
                 }

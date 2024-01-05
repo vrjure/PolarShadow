@@ -7,6 +7,6 @@ namespace PolarShadow.Core
 {
     public interface IContentWriter
     {
-        void Write(Utf8JsonWriter writer, JsonElement template, IParameter parameter);
+        void Build(Utf8JsonWriter writer, JsonElement template, IParameter parameter);
     }
 }

@@ -7,5 +7,6 @@ namespace PolarShadow.Resources
 {
     public interface IParameterItemBuilder : IPolarShadowItemBuilder
     {
+        IKeyValueParameter PrefabParameters { get; set; }
     }
 }

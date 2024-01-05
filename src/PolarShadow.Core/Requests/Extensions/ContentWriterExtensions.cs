@@ -11,10 +11,10 @@ namespace PolarShadow.Core
         /// <summary>
         /// 构建模板内容
         /// </summary>
-        public static void Write(this IContentWriter writer, Stream output, JsonElement tempate, IParameter parameter)
+        public static void Build(this IContentWriter writer, Stream output, JsonElement tempate, IParameter parameter)
         {
             using var jsonWriter = new Utf8JsonWriter(output, JsonOption.DefaultWriteOption);
-            writer.Write(jsonWriter, tempate, parameter);
+            writer.Build(jsonWriter, tempate, parameter);
             jsonWriter.Flush();
         }
     }

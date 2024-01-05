@@ -97,7 +97,7 @@ namespace PolarShadow.Handlers
                 }
 
                 var doc = new HtmlDocument();
-                doc.LoadHtml(Regex.Unescape(Regex.Unescape(result).Trim('"')));
+                doc.LoadHtml(Regex.Unescape(result.Trim('"')));
 
                 if (_sniff == Sniff.None)
                 {

@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Platform;
+using System.Text.Json;
 
 namespace PolarShadow;
 
@@ -136,6 +137,15 @@ public partial class App : Application
                 f.RequestRules.Add(new RequestRule(Requests.Detail) { NextRequst = Requests.Detail });
                 f.RequestRules.Add(new RequestRule(Requests.Search) { NextRequst = Requests.Detail });
                 f.RequestRules.Add(new RequestRule("category_*") { NextRequst = Requests.Detail });
+            })
+            .ConfigureItem<IParameterItemBuilder>(f =>
+            {
+                using var stream = AssetLoader.Open(new Uri("avares://PolarShadow/Assets/PrefabParams.json"));
+                using var doc = JsonDocument.Parse(stream);
+                f.PrefabParameters = new KeyValueParameter
+                {
+                    doc.RootElement.Clone()
+                };
             }).Build();
         service.AddSingleton(polarShadow);
     }

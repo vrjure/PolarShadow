@@ -8,12 +8,56 @@ namespace PolarShadow.Resources
 {
     internal class ParameterItem : IParameterItem
     {
-        public ParameterItem(string name)
+        private readonly IKeyValueParameter _prefabParams;
+        private readonly IKeyValueParameter _combineParams;
+        public ParameterItem(string name, IKeyValueParameter prefabParams = null)
         {
             this.Name = name;
+            _prefabParams = prefabParams;
+            if (_prefabParams?.Count > 0)
+            {
+                _combineParams = new KeyValueParameter();
+                foreach (var item in _prefabParams)
+                {
+                    _combineParams.Add(item.Key, item.Value);
+                }
+            }
         }
 
-        public IKeyValueParameter Parameters { get; set; }
+        private IKeyValueParameter _parameters;
+        public IKeyValueParameter Parameters
+        {
+            get
+            {
+                if (_prefabParams?.Count > 0)
+                {
+                    return _combineParams;
+                }
+                else
+                {
+                    return _parameters;
+                }
+            }
+            set
+            {
+                _parameters = value;
+                if (_prefabParams?.Count > 0)
+                {
+                    _combineParams.Clear();
+                    foreach (var item in _prefabParams)
+                    {
+                        _combineParams.Add(item.Key, item.Value);
+                    }
+                    if (_parameters?.Count > 0)
+                    {
+                        foreach (var item in _parameters)
+                        {
+                            _combineParams.Add(item.Key, item.Value);
+                        }
+                    }
+                }
+            }
+        }
 
         public string Name { get; }
 
@@ -21,7 +65,7 @@ namespace PolarShadow.Resources
         {
             if (reload)
             {
-                Parameters?.Clear();
+                _parameters?.Clear();
             }
 
             if (!provider.Root.TryGetProperty(Name, out JsonElement value) || value.ValueKind != JsonValueKind.Object)
@@ -48,14 +92,14 @@ namespace PolarShadow.Resources
 
         public void WriteTo(Utf8JsonWriter writer)
         {
-            JsonSerializer.Serialize(writer, this.Parameters, JsonOption.DefaultSerializer);
+            JsonSerializer.Serialize(writer, _parameters, JsonOption.DefaultSerializer);
         }
 
         private void BuildItem(JsonElement value)
         {
             var parameters = JsonSerializer.Deserialize<IKeyValueParameter>(value, JsonOption.DefaultSerializer);
 
-            if (this.Parameters == null)
+            if (_parameters == null)
             {
                 this.Parameters = parameters;
                 return;
@@ -63,8 +107,10 @@ namespace PolarShadow.Resources
 
             foreach (var item in parameters)
             {
-                this.Parameters[item.Key] = item.Value;
+                _parameters[item.Key] = item.Value;
             }
+
+            this.Parameters = _parameters;
         }
     }
 }

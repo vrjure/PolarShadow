@@ -23,7 +23,27 @@ namespace PolarShadow.Core
         protected virtual bool BeforeWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter) => false;
         protected virtual void AfterWriteProperty(Utf8JsonWriter writer, JsonProperty property, IParameter parameter) { }
 
-        public virtual void Write(Utf8JsonWriter writer, JsonElement template, IParameter parameter)
+        public virtual void Build(Utf8JsonWriter writer, JsonElement template, IParameter parameter)
+        {
+            if (template.ValueKind == JsonValueKind.String)
+            {
+                Write(writer, template.GetString(), parameter);
+            }
+            else
+            {
+                Write(writer, template, parameter);
+            }
+        }
+
+        private void Write(Utf8JsonWriter writer, string templateName, IParameter parameter)
+        {
+            if(parameter.TryReadValue(templateName, out JsonElement template))
+            {
+                Write(writer, template, parameter);
+            }
+        }
+
+        private void Write(Utf8JsonWriter writer, JsonElement template, IParameter parameter)
         {
             switch (template.ValueKind)
             {
@@ -140,8 +160,7 @@ namespace PolarShadow.Core
                         else if (pathTemplate.ValueKind == JsonValueKind.String)//find template in parameter
                         {
                             var templateName = pathTemplate.GetString();
-                            if (parameter.TryReadValue("templates", out JsonElement templates)
-                                && templates.TryGetProperty(templateName, out JsonElement namedTemplate))
+                            if (parameter.TryReadValue(templateName, out JsonElement namedTemplate))
                             {
                                 BuildArrayTemplate(writer, path, namedTemplate, parameter);
                             }

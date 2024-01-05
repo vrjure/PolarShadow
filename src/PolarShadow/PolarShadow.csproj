@@ -44,6 +44,7 @@
     <None Remove="Assets\Fonts\SegoeFluentIcons.ttf" />
     <None Remove="Assets\images\book-fill.png" />
     <None Remove="Assets\images\item-background.jpg" />
+    <None Remove="Assets\PrefabParams.json" />
   </ItemGroup>
 
   <ItemGroup>

@@ -45,7 +45,7 @@ namespace PolarShadow.Resources
 
             _writings = _writingCollection?.Select(f => TryGetClone(f)).ToList();
 
-            this.Write(output, _request.Response.Template.Value, p);
+            this.Build(output, _request.Response.Template.Value, p);
 
 #if DEBUG
             try

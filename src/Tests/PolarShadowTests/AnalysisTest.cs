@@ -66,7 +66,7 @@ namespace PolarShadowTests
 
             Console.WriteLine("body:");
             using var ms = new MemoryStream();
-            new ContentWriter().Write(ms, body, kvp);
+            new ContentWriter().Build(ms, body, kvp);
             using var sr = new StreamReader(ms);
             Console.WriteLine(sr.ReadToEnd());
 
@@ -82,7 +82,7 @@ namespace PolarShadowTests
             var response = doc.RootElement.GetProperty("response2");
             var responseContent = response.GetProperty("content");
             using var ms2 = new MemoryStream();
-            new ContentWriter().Write(ms2, responseContent, ps);
+            new ContentWriter().Build(ms2, responseContent, ps);
             using var sr2 = new StreamReader(ms2);
             Console.WriteLine("response2:");
             Console.WriteLine(sr2.ReadToEnd());

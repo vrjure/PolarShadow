@@ -46,7 +46,7 @@ namespace PolarShadow.Core
             using var ms = new MemoryStream();
             if (request.Request.Body.HasValue)
             {
-                this.Write(ms, request.Request.Body.Value, parameter);
+                this.Build(ms, request.Request.Body.Value, parameter);
                 ms.Seek(0, SeekOrigin.Begin);
                 requestMsg.Content = new StreamContent(ms);
             }
