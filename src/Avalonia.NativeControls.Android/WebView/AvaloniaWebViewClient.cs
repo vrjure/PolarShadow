@@ -23,9 +23,10 @@ namespace Avalonia.NativeControls.Android
             PageFinished?.Invoke(view, new WebViewNavigatedArgs(200));
         }
 
-        public override void OnLoadResource(global::Android.Webkit.WebView view, string url)
+        public override WebResourceResponse ShouldInterceptRequest(global::Android.Webkit.WebView view, IWebResourceRequest request)
         {
-            LoadResource?.Invoke(view,url);
+            LoadResource?.Invoke(view, request.Url.ToString());
+            return base.ShouldInterceptRequest(view, request);
         }
 
     }

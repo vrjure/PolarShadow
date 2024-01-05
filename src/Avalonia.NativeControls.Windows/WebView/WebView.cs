@@ -107,6 +107,8 @@ namespace Avalonia.NativeControls.Windows
             _controller = await _environment.CreateCoreWebView2ControllerAsync(handle, _environment.CreateCoreWebView2ControllerOptions());
             _controller.CoreWebView2.NavigationStarting += CoreWebView2_NavigationStarting;
             _controller.CoreWebView2.NavigationCompleted += CoreWebView2_NavigationCompleted;
+
+            //requests in iframe is not be got
             _controller.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
             //_controller.CoreWebView2.WebResourceResponseReceived += CoreWebView2_WebResourceResponseReceived;
             _controller.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All, CoreWebView2WebResourceRequestSourceKinds.All);
