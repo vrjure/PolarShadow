@@ -8,25 +8,43 @@
              x:Class="PolarShadow.Views.DiscoverDetailView"
 			 x:DataType="ps:DiscoverDetailViewModel"
 			 x:CompileBindings="True"
-			 Padding="8"
-			 ps:PageLoadAttached.RegisterLoad="True">
+			 ps:PageLoadAttached.RegisterLoad="True"
+			 Padding="8">
 	
 	<Grid RowDefinitions="auto,*">
-		<ScrollViewer HorizontalScrollBarVisibility="Auto"
-					  VerticalScrollBarVisibility="Disabled"
-					  Margin="6">
-			<ListBox ItemsSource="{Binding Categories}"
-				     Theme="{StaticResource Horizontal}"
+		<Expander Width="{Binding $parent.Bounds.Width}"
+				  IsExpanded="{Binding !!#part_categories.((psr:ResourceTree)SelectedValue).Children.Count}"
+				  Theme="{StaticResource MExpander}">
+			<Expander.Header>
+				<ListBox ItemsSource="{Binding Categories}"
+						 Theme="{StaticResource Horizontal}"
+						 ItemContainerTheme="{StaticResource SelectableItem}"
+						 Selection="{Binding CategorySelection, Mode=OneWayToSource}"
+						 Padding="6"
+						 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+						 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+						 Name="part_categories">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="psr:ResourceTree">
+							<TextBlock Text="{Binding Name}"/>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ListBox>
+			</Expander.Header>
+			<ListBox ItemsSource="{Binding #part_categories.((psr:ResourceTree)SelectedValue).Children}"
+					 Theme="{StaticResource Wrap}"
 					 ItemContainerTheme="{StaticResource SelectableItem}"
-					 Selection="{Binding CategorySelection, Mode=OneWayToSource}"
-					 Margin="6">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate DataType="psr:Resource">
+					 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+					 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+					 Padding="6"
+					 Selection="{Binding CategoryChildrenSelection, Mode=OneWayToSource}">
+				<ListBox.ItemTemplate>
+					<DataTemplate DataType="psr:ResourceTree">
 						<TextBlock Text="{Binding Name}"/>
 					</DataTemplate>
-				</ItemsControl.ItemTemplate>
+				</ListBox.ItemTemplate>
 			</ListBox>
-		</ScrollViewer>
+		</Expander>
 
 		<Grid Grid.Row="1">
 			<ScrollViewer>

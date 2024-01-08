@@ -22,7 +22,28 @@ namespace PolarShadow.Resources
             set { _linkType = value; }  
         }
 
-        public string Name { get; set; }
+        private string _name;
+        public string Name
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_name))
+                {
+                    return _name;
+                }
+                if (SrcType != LinkType.None)
+                {
+                    return SrcType.ToString();
+                }
+                if (!string.IsNullOrEmpty(Src))
+                {
+                    return Src;
+                }
+
+                return default;
+            }
+            set => _name = value;
+        }
 
         public string Site { get; set; }
 

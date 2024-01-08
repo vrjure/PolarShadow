@@ -88,8 +88,8 @@ namespace PolarShadow.ViewModels
         {
             if (e.SelectedItems.Count > 0)
             {
-                ToSiteDetail(e.SelectedItems.First() as ISite);
-                SelectionModel.Deselect(e.SelectedIndexes.First());
+                ToSiteDetail(e.SelectedItems[0] as ISite);
+                SelectionModel.Deselect(e.SelectedIndexes[0]);
             }
         }
     }

@@ -31,8 +31,8 @@ namespace PolarShadow.ViewModels
 
         public ISite Param_Site { get; set; }
 
-        private ObservableCollection<Resource> _categories;
-        public ObservableCollection<Resource> Categories
+        private ObservableCollection<ResourceTree> _categories;
+        public ObservableCollection<ResourceTree> Categories
         {
             get => _categories;
             set => SetProperty(ref _categories, value);
@@ -56,8 +56,22 @@ namespace PolarShadow.ViewModels
                     _categorySelection.SelectionChanged += CategorySelection_SelectionChanged;
                 }
             }
-
         }
+
+        private ISelectionModel _categoryChildrenSelection;
+        public ISelectionModel CategoryChildrenSelection
+        {
+            get => _categoryChildrenSelection;
+            set
+            {
+                if (SetProperty(ref _categoryChildrenSelection, value))
+                {
+                    _categoryChildrenSelection.SelectionChanged += CategorySelection_SelectionChanged;
+                }
+            }
+        }
+
+        private ResourceTree _currentCategory;
 
 
         private bool _showLoadMore = false;
@@ -86,7 +100,7 @@ namespace PolarShadow.ViewModels
             try
             {
                 IsLoading = true;
-                var categories = await Param_Site.ExecuteAsync<ICollection<Resource>>(_polar, Requests.Categories, Cancellation.Token);
+                var categories = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, Requests.Categories, Cancellation.Token);
                 IsLoading = false;
                 if (categories == null)
                 {
@@ -95,7 +109,7 @@ namespace PolarShadow.ViewModels
                     return;
                 }
 
-                Categories = new ObservableCollection<Resource>(categories);
+                Categories = new ObservableCollection<ResourceTree>(categories);
             }
             catch (OperationCanceledException) { }
             catch (Exception ex)
@@ -115,14 +129,19 @@ namespace PolarShadow.ViewModels
         {
             if (e.SelectedItems.Count > 0)
             {
-                CategoryValueChanged(e.SelectedItems.First() as Resource);
+                CategoryValueChanged(e.SelectedItems[0] as ResourceTree);
+
+                if (sender == CategorySelection && _currentCategory != null && CategoryChildrenSelection != null)
+                {
+                    CategoryChildrenSelection.SelectedItem = _currentCategory;
+                }
             }
         }
 
 
-        private async void CategoryValueChanged(Resource category)
+        private async void CategoryValueChanged(ResourceTree category)
         {
-            if (category == null)
+            if (category == null || string.IsNullOrEmpty(category.Src) || _currentCategory == category)
             {
                 return;
             }
@@ -147,6 +166,9 @@ namespace PolarShadow.ViewModels
                     builder.AddObjectValue(category);
                     builder.AddObjectValue(_filter);
                 }, Cancellation.Token);
+
+                _currentCategory = category;
+
                 if (resources == null || resources.Count == 0)
                 {
                     HasData = false;
@@ -186,7 +208,11 @@ namespace PolarShadow.ViewModels
             ShowLoadMore = false;
             try
             {
-                var categoryValue = CategorySelection.SelectedItems.First() as Resource;
+                if (_currentCategory == null)
+                {
+                    return;
+                }
+                var categoryValue = _currentCategory;
 
                 var handler = Param_Site.CreateRequestHandler(_polar, categoryValue.Request);
 
@@ -256,10 +282,10 @@ namespace PolarShadow.ViewModels
 
         protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
         {
-            if (e.SelectedItems.Count> 0)
+            if (e.SelectedItems.Count > 0)
             {
-                ResourceSelected(e.SelectedItems.First() as ResourceTree);
-                SelectionModel.Deselect(e.SelectedIndexes.First());
+                ResourceSelected(e.SelectedItems[0] as ResourceTree);
+                SelectionModel.Deselect(e.SelectedIndexes[0]);
             }
         }
     }

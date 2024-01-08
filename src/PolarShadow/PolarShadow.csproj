@@ -16,6 +16,7 @@
     <AvaloniaResource Remove="Assets\Styles\ScrollViewStyles.axaml" />
     <AvaloniaResource Remove="Assets\Themes\ButtonThemes.axaml" />
     <AvaloniaResource Remove="Assets\Themes\ColorResources.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\ExpanderThemes.axaml" />
     <AvaloniaResource Remove="Assets\Themes\FontResources.axaml" />
     <AvaloniaResource Remove="Assets\Themes\ItemsControlThemes.axaml" />
     <AvaloniaResource Remove="Assets\Themes\ListBoxThemes.axaml" />
@@ -85,6 +86,12 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\DetailView.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Themes\ExpanderThemes.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
   </ItemGroup>
 
   <ItemGroup>

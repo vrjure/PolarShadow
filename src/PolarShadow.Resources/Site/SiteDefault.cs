@@ -15,7 +15,12 @@ namespace PolarShadow.Resources
         [JsonRequired]
         public string Name { get; set; }
         public string Domain { get; set; }
-        public string Title { get; set; }
+        private string _title;
+        public string Title
+        {
+            get => string.IsNullOrEmpty(_title) ? Name : _title;
+            set => _title = value;
+        }
         public string Icon { get; set; }
         public IKeyValueParameter Parameters { get; set; }
         public IReadOnlyDictionary<string, ISiteRequest> Requests { get; set; }

@@ -29,7 +29,6 @@ namespace PolarShadow.ViewModels
         private readonly IHistoryService _hisService;
 
         private ResourceModel _rootResourceInDb;
-        private ResourceTreeNode _selectedWebAnalysisResource;
         
         public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService)
         {
@@ -85,6 +84,13 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _history, value);
         }
 
+        private ICollection<ResourceTreeNode> _flyoutOptions;
+        public ICollection<ResourceTreeNode> FlyoutOptions
+        {
+            get => _flyoutOptions;
+            set => SetProperty(ref _flyoutOptions, value);
+        }
+
         private IAsyncRelayCommand _refreshCommand;
         public IAsyncRelayCommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadOnline);
 
@@ -93,9 +99,6 @@ namespace PolarShadow.ViewModels
 
         private IAsyncRelayCommand _linkClickCommand;
         public IAsyncRelayCommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(LinkClick);
-
-        private IAsyncRelayCommand _webAnalysisSelectedCommand;
-        public IAsyncRelayCommand WebAnalysisSelectedCommand => _webAnalysisSelectedCommand ??= new AsyncRelayCommand<ISite>(WebAnalysisSelected);
 
         public void ApplyParameter(IDictionary<string, object> parameters)
         {
@@ -264,10 +267,31 @@ namespace PolarShadow.ViewModels
 
         }
 
+        protected override async void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
+        {
+            if (e.SelectedItems.Count > 0)
+            {
+                var resource = e.SelectedItems[0] as ResourceTreeNode;
+                if (string.IsNullOrEmpty(resource.Src))
+                {
+                    FlyoutOptions = resource.Children;
+                }
+                else
+                {
+                    await LinkClick(resource);
+                }
+            }
+        }
+
         private async Task LinkClick(ResourceTreeNode node)
         {
             try
             {
+                if (string.IsNullOrEmpty(node?.Src))
+                {
+                    _notify.Show($"Invalid Src");
+                    return;
+                }
                 switch (node.SrcType)
                 {
                     case LinkType.Magnet:
@@ -278,10 +302,15 @@ namespace PolarShadow.ViewModels
                         await ToPlayVideo(url);
                         break;
                     case LinkType.WebAnalysisSource:
-                        _selectedWebAnalysisResource = node;
+                        FlyoutOptions = _polar.GetWebAnalysisSites().Select(f => new ResourceTreeNode
+                        {
+                            Name = f.Title,
+                            Src = node.Src,
+                            SrcType = LinkType.HtmlSource,
+                            Site = f.Name
+                        }).ToList();
                         break;
                     default:
-                        _selectedWebAnalysisResource = null;
                         _notify.Show($"Not support type:{node.SrcType}"); 
                         break;
                 }
@@ -289,36 +318,6 @@ namespace PolarShadow.ViewModels
             catch (Exception ex)
             {
                 _notify.Show(ex);
-            }
-
-        }
-
-        private async Task WebAnalysisSelected(ISite site)
-        {
-            if (_selectedWebAnalysisResource == null)
-            {
-                _notify.Show("No resource selected");
-                return;
-            }
-
-            IsLoading = true;
-            try
-            {
-                var result = await site.ExecuteAsync<ILink>(_polar, Requests.Video, builder =>
-                {
-                    builder.AddObjectValue(_selectedWebAnalysisResource);
-                }, Cancellation.Token);
-
-                await ToPlayVideo(result);
-            }
-            catch (OperationCanceledException) { }
-            catch (Exception ex)
-            {
-                _notify.Show(ex);
-            }
-            finally
-            {
-                IsLoading = false;
             }
 
         }

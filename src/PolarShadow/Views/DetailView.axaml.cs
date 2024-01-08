@@ -1,6 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Avalonia.Markup.Xaml;
+using PolarShadow.Resources;
+using PolarShadow.Services;
 using PolarShadow.ViewModels;
 using System.Linq;
 
@@ -11,12 +14,12 @@ namespace PolarShadow.Views
         public DetailView()
         {
             InitializeComponent();
-            Episodes.Selection.SelectionChanged += Selection_SelectionChanged;
         }
 
         public DetailView(DetailViewModel vm) : this()
         {
             this.DataContext = vm;
+            VM.PropertyChanged += VM_PropertyChanged;
         }
 
         public DetailViewModel VM => (DetailViewModel)this.DataContext;
@@ -31,28 +34,24 @@ namespace PolarShadow.Views
         {
             base.OnUnloaded(e);
             if (Design.IsDesignMode) return;
+
+            VM.PropertyChanged -= VM_PropertyChanged;
         }
 
-        private void Selection_SelectionChanged(object sender, Avalonia.Controls.Selection.SelectionModelSelectionChangedEventArgs e)
+        private void VM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.SelectedItems.Count > 0)
+            if (e.PropertyName != nameof(VM.FlyoutOptions))
             {
-                var container = Episodes.ContainerFromIndex(e.SelectedIndexes.First());
+                return;
+            }
+
+            if (VM?.FlyoutOptions?.Count > 0 && VM.SelectionModel?.SelectedItem != null)
+            {
+                var container = Episodes.ContainerFromIndex(VM.SelectionModel.SelectedIndex);
                 if (container != null)
                 {
                     FlyoutBase.ShowAttachedFlyout((container as ListBoxItem).Presenter.Child);
                 }
-            }
-        }
-
-        private void Button_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            var ctl = sender as Control;
-
-            VM.UpdateWebAnalysisSites();
-            if (ctl.Parent != null && VM.WebAnalysisSites?.Count > 0)
-            {
-                FlyoutBase.ShowAttachedFlyout(ctl.Parent as Control);
             }
         }
     }
