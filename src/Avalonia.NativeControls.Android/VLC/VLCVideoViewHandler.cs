@@ -4,23 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.NativeControls.Android
+namespace Avalonia.Controls.Android
 {
-    internal class VideoViewHandler : ViewHandler<Avalonia.NativeControls.VideoView, Avalonia.NativeControls.Android.VideoView>, IVLCHandler
+    internal class VLCVideoViewHandler : ViewHandler<Avalonia.Controls.VideoView, Avalonia.Controls.Android.VLCVideoView>, IVideoViewHandler
     {
-        IVLCPlatformView IVLCHandler.PlatformView => this.PlatformView;
+        IPlatformVideoView IVideoViewHandler.PlatformView => this.PlatformView;
 
         protected override IPlatformView OnCreatePlatformView()
         {
-            return new VideoView(VirtualView);
+            return new VLCVideoView(VirtualView);
         }
 
-        protected override void ConnectHandler(VideoView platformView)
+        protected override void ConnectHandler(VLCVideoView platformView)
         {
             platformView.PlatformClick += PlatformView_PlatformClick;
         }
 
-        protected override void DisconnectHandler(VideoView platformView)
+        protected override void DisconnectHandler(VLCVideoView platformView)
         {
             platformView.PlatformClick -= PlatformView_PlatformClick;
         }

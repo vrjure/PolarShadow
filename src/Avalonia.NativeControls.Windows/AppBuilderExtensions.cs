@@ -1,16 +1,17 @@
-﻿using Avalonia.NativeControls;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Avalonia.Controls;
 
-namespace Avalonia.NativeControls.Windows
+namespace Avalonia.Controls.Windows
 {
     public static class AppBuilderExtensions
     {
         public static AppBuilder UseNativeControls(this AppBuilder appBuilder)
         {
-            NativeControlHandlers.AddHandler<IVLCHandler, VideoViewHandler>();
-            NativeControlHandlers.AddHandler<IWebViewHandler, WebViewHandler>();
+            NativeControls.AddHandler<IVideoViewHandler, VLCVideoViewHandler>();
+            NativeControls.AddHandler<IWebViewHandler, WebViewHandler>();
             return appBuilder;
         }
     }

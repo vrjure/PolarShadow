@@ -1,53 +1,28 @@
-﻿using Android.Content;
-using Android.Graphics.Drawables;
-using Android.Views;
+﻿using Android.Views;
 using Android.Widget;
 using Avalonia.Android;
-using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Platform;
-using Java.Util;
-using LibVLCSharp.Platforms.Android;
 using LibVLCSharp.Shared;
-using Org.Videolan.Libvlc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Avalonia.NativeControls.Android
+namespace Avalonia.Controls.Android
 {
-    internal class VideoView : PlatformView, IVLCPlatformView
+    internal class VLCVideoView : PlatformView, IPlatformVideoView
     {
         private AvaloniaView _overlayLayer;// new well be cause memoryleak? not sure. so try use static.
         private LibVLCSharp.Platforms.Android.VideoView _platformView;
 
         private readonly IVirtualView _virtualView;
-        public VideoView(IVirtualView virtualView)
+        public VLCVideoView(IVirtualView virtualView)
         {
             _virtualView = virtualView;
         }
 
-        private MediaPlayer _mediaPlayer;
-        public MediaPlayer MediaPlayer
-        {
-            get => _mediaPlayer;
-            set
-            {
-                if (ReferenceEquals(_mediaPlayer, value))
-                {
-                    return;
-                }
-                
-                _mediaPlayer = value;
+        public IVideoViewController Controller { get; set; }
 
-                if (_mediaPlayer != null && _platformView != null)
-                {
-                    _platformView.MediaPlayer = _mediaPlayer;
-                }
-            }
-        }
+
+        public MediaPlayer MediaPlayer => (Controller as VLController)?.MediaPlayer;
 
         private object _overlayContent;
         public object OverlayContent
@@ -95,6 +70,7 @@ namespace Avalonia.NativeControls.Android
 
         private TopLevel _topLevel => _topLevelCache ??= TopLevel.GetTopLevel(_virtualView as Visual);
         private TopLevel _overLayerTopLevel => TopLevel.GetTopLevel(_overlayContent as Visual);
+
 
         protected override IPlatformHandle OnCreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {

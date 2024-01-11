@@ -4,8 +4,6 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using LibVLCSharp.Shared;
 using PolarShadow.Controls.Converters;
 using System;
 using System.Collections.Generic;
@@ -18,8 +16,6 @@ namespace PolarShadow.Controls
 {
     public class MediaPlayerController : ContentControl, IMediaPlayerController
     {
-        private readonly LibVLC _libVLc = Ioc.Default.GetService<LibVLC>();
-
         private static readonly TimeSpan _ignore = TimeSpan.FromSeconds(1);
         private long _lastTime = 0;
         private Point _cursorPoint;
@@ -126,17 +122,17 @@ namespace PolarShadow.Controls
 
         static MediaPlayerController()
         {
-            MediaPlayerProperty.Changed.AddClassHandler<MediaPlayerController>((o,e)=>o.MediaPlayerPropertyChanged(e));
+            ControllerProperty.Changed.AddClassHandler<MediaPlayerController>((o,e)=>o.ControllerPropertyChanged(e));
             TimeProperty.Changed.AddClassHandler<MediaPlayerController>((o, e) => o.TimePropertyChanged(e));
         }
 
-
-        public static readonly StyledProperty<LibVLCSharp.Shared.MediaPlayer> MediaPlayerProperty = AvaloniaProperty.Register<MediaPlayerController, LibVLCSharp.Shared.MediaPlayer>(nameof(MediaPlayer));
-        public LibVLCSharp.Shared.MediaPlayer MediaPlayer
+        public static readonly StyledProperty<IVideoViewController> ControllerProperty = AvaloniaProperty.Register<MediaPlayerController, IVideoViewController>(nameof(Controller));
+        public IVideoViewController Controller
         {
-            get => GetValue(MediaPlayerProperty);
-            set => SetValue(MediaPlayerProperty, value);
+            get => GetValue(ControllerProperty);
+            set => SetValue(ControllerProperty, value);
         }
+
 
         public static readonly StyledProperty<string> TitleProperty = AvaloniaProperty.Register<MediaPlayerController, string>(nameof(Title));
         public string Title
@@ -200,22 +196,20 @@ namespace PolarShadow.Controls
             _part_root = e.NameScope.Get<Border>("Part_Root");          
         }
 
-        private void MediaPlayerPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
+        private void ControllerPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
             var controller = arg.Sender as MediaPlayerController;
 
-            if (arg.OldValue is MediaPlayer old)
+            if (arg.OldValue is IVideoViewController old)
             {
-                old.MediaChanged -= controller.MediaChanged;
                 old.Playing -= controller.Media_Playing;
                 old.Paused -= controller.Media_Paused;
                 old.LengthChanged -= controller.LengthChanged;
                 old.TimeChanged -= controller.TimeChanged;
             }
 
-            if (arg.NewValue is MediaPlayer newVal)
+            if (arg.NewValue is IVideoViewController newVal)
             {
-                newVal.MediaChanged += controller.MediaChanged;
                 newVal.Playing += controller.Media_Playing;
                 newVal.Paused += controller.Media_Paused;
                 newVal.LengthChanged += controller.LengthChanged;
@@ -226,26 +220,26 @@ namespace PolarShadow.Controls
         private void TimePropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
             var controller = arg.Sender as MediaPlayerController;
-            if (controller == null || controller.MediaPlayer == null || arg.NewValue is not TimeSpan)
+            if (controller == null || controller.Controller == null || arg.NewValue is not TimeSpan)
             {
                 return;
             }
 
             var newValue = (TimeSpan)arg.NewValue;
-            if (Math.Abs((newValue.TotalMilliseconds - controller.MediaPlayer.Time)) < _ignore.TotalMilliseconds)
+            if (Math.Abs(newValue.TotalMilliseconds - controller.Controller.Time.TotalMilliseconds) < _ignore.TotalMilliseconds)
             {
                 return;
             }
-            controller.MediaPlayer.Time = (long)newValue.TotalMilliseconds;
+            controller.Controller.Time = TimeSpan.FromMilliseconds((long)newValue.TotalMilliseconds);
         }
 
-        private void TimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
+        private void TimeChanged(object sender, TimeSpan e)
         {
-            if (Math.Abs(e.Time - _lastTime) < _ignore.TotalMilliseconds)
+            if (Math.Abs(e.TotalMilliseconds - _lastTime) < _ignore.TotalMilliseconds)
             {
                 return;
             }
-            _lastTime = e.Time / 1000 * 1000;
+            _lastTime = (long)e.TotalMilliseconds / 1000 * 1000;
 
             Dispatcher.UIThread.Post(() =>
             {
@@ -253,9 +247,9 @@ namespace PolarShadow.Controls
             });
         }
 
-        private void LengthChanged(object sender, MediaPlayerLengthChangedEventArgs e)
+        private void LengthChanged(object sender, TimeSpan e)
         {
-            var length = e.Length > 0 ? e.Length : 0;
+            var length = e.TotalMilliseconds > 0 ? e.TotalMilliseconds : 0;
             Dispatcher.UIThread.Post(() =>
             {
                 this.Length = TimeSpan.FromMilliseconds(length);
@@ -276,11 +270,6 @@ namespace PolarShadow.Controls
             {
                 IsPlaying = false;
             });
-        }
-
-        private void MediaChanged(object sender, LibVLCSharp.Shared.MediaPlayerMediaChangedEventArgs e)
-        {
-            
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
@@ -418,20 +407,17 @@ namespace PolarShadow.Controls
 
         private void PlayBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            if (MediaPlayer == null)
+            if (Controller == null)
             {
                 return;
             }
-            if (MediaPlayer.IsPlaying)
+            if (Controller.IsPlaying)
             {
-                if (MediaPlayer.CanPause)
-                {
-                    MediaPlayer.Pause();
-                }
+                Controller.Pause();
             }
             else
             {
-                MediaPlayer.Play();
+                Controller.Play();
             }
         }
 

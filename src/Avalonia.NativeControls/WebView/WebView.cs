@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.NativeControls
+namespace Avalonia.Controls
 {
     public class WebView : VirtualView, IWebViewVirtualView
     {
-        public WebView() : base(NativeControlHandlers.GetHandler<IWebViewHandler>())
+        public WebView() : base(NativeControls.GetHandler<IWebViewHandler>())
         {
             
         }

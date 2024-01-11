@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.NativeControls
+namespace Avalonia.Controls
 {
     public interface IVideoView
     {
-        MediaPlayer MediaPlayer { get; set; }
+        IVideoViewController Controller { get; set; }
         bool FullScreen { get; set; }
+
         event EventHandler PlatformClick;
     }
 }

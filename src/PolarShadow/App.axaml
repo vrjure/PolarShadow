@@ -21,6 +21,7 @@
 				<ResourceInclude Source="/Assets/Themes/ButtonThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/RadioButtonThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/MediaPlayerControllerThemes.axaml"/>
+				<ResourceInclude Source="/Assets/Themes/PSPlayerThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ScrollViewThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/SearchBoxThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ExpanderThemes.axaml"/>

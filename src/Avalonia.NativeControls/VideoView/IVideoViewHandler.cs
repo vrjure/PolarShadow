@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Avalonia.Controls
 {
-    public interface IWebViewHandler : IViewHandler
+    public interface IVideoViewHandler : IViewHandler
     {
-        new IWebViewPlatformView PlatformView { get; }
+        new IPlatformVideoView PlatformView { get; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Avalonia;
-using Avalonia.NativeControls.Windows;
+using Avalonia.Controls.Windows;
 
 namespace PolarShadow.Desktop;
 
@@ -20,6 +20,9 @@ class Program
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
-            .UseNativeControls();
+            .AfterSetup(builder =>
+            {
+                builder.UseNativeControls();
+            });
 
 }

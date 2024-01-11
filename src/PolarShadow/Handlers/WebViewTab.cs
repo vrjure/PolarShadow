@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using Avalonia.Controls;
-using Avalonia.NativeControls;
 using System.Linq;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;

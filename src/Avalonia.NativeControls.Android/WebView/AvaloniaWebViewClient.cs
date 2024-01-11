@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.NativeControls.Android
+namespace Avalonia.Controls.Android
 {
     internal class AvaloniaWebViewClient : WebViewClient
     {

@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.NativeControls.Android
+namespace Avalonia.Controls.Android
 {
     public static class AppBuilderExtensions
     {
         public static AppBuilder UseNativeControls(this AppBuilder appBuilder)
         {
-            NativeControlHandlers.AddHandler<IVLCHandler, VideoViewHandler>();
-            NativeControlHandlers.AddHandler<IWebViewHandler, WebViewHandler>();
+            NativeControls.AddHandler<IVideoViewHandler, VLCVideoViewHandler>();
+            NativeControls.AddHandler<IWebViewHandler, WebViewHandler>();
             return appBuilder;
         }
     }

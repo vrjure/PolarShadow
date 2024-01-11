@@ -10,23 +10,8 @@
 			 ps:PageLoadAttached.RegisterLoad="True"
 			 Background="Black">
 	<Border Padding="{Binding Padding}">
-		<OnPlatform>
-			<OnPlatform.Default>
-				<ps:VideoView MediaPlayer="{Binding MediaPlayer}" FullScreen="{Binding FullScreen}">
-					<ps:MediaPlayerController MediaPlayer="{Binding MediaPlayer}"
-								  Title="{Binding Title}"
-								  FullScreen="{Binding FullScreen, Mode=TwoWay}"/>
-				</ps:VideoView>
-			</OnPlatform.Default>
-			<OnPlatform.Android>
-				<ps:MediaPlayerController MediaPlayer="{Binding MediaPlayer}"
-										  Title="{Binding Title}"
-										  FullScreen="{Binding FullScreen, Mode=TwoWay}"
-										  x:Name="Part_Controller">
-					<ps:VideoView x:Name="Part_VideoView" MediaPlayer="{Binding MediaPlayer}" FullScreen="{Binding FullScreen}"/>
-				</ps:MediaPlayerController>
-			</OnPlatform.Android>
-		</OnPlatform>
-			
+		<ps:PSPlayer Controller="{Binding Controller, Mode=OneWayToSource}"
+					 FullScreen="{Binding FullScreen, Mode=TwoWay}"
+					 Title="{Binding Title}"/>
 	</Border>
 </UserControl>

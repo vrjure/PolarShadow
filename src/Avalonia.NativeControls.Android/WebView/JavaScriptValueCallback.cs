@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.NativeControls.Android
+namespace Avalonia.Controls.Android
 {
     internal class JavaScriptValueCallback : Java.Lang.Object, IValueCallback
     {

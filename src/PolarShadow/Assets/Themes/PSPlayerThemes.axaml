@@ -1,0 +1,33 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:ps="https://github.com/PolarShadow">
+    <!-- Add Resources Here -->
+	<ControlTheme TargetType="ps:PSPlayer" x:Key="{x:Type ps:PSPlayer}">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border>
+					<OnPlatform>
+						<OnPlatform.Default>
+							<ps:VideoView FullScreen="{TemplateBinding FullScreen}"
+										  Controller="{Binding Controller, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWayToSource}">
+								<!--on overlay layer-->
+								<!--binding to datacontext-->
+								<ps:MediaPlayerController Title="{Binding Title}"
+														  FullScreen="{Binding FullScreen, Mode=TwoWay}"
+														  Controller="{Binding Controller}"/>
+							</ps:VideoView>
+						</OnPlatform.Default>
+						<OnPlatform.Android>
+							<ps:MediaPlayerController Title="{TemplateBinding Title}"
+													  FullScreen="{Binding FullScreen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+													  Controller="{TemplateBinding Controller}">
+								<ps:VideoView FullScreen="{TemplateBinding FullScreen}"
+											  Controller="{Binding Controller, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWayToSource}"/>
+							</ps:MediaPlayerController>
+						</OnPlatform.Android>
+					</OnPlatform>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+	</ControlTheme>
+</ResourceDictionary>

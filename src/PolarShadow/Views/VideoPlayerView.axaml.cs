@@ -21,32 +21,32 @@ namespace PolarShadow.Views
         {
             base.OnLoaded(e);
 
-            if (OperatingSystem.IsAndroid())
-            {
-                Part_VideoView.PlatformClick += Part_VideoView_PlatformClick;
-            }
+            //if (OperatingSystem.IsAndroid())
+            //{
+            //    Part_VideoView.PlatformClick += Part_VideoView_PlatformClick;
+            //}
         }
 
         protected override void OnUnloaded(RoutedEventArgs e)
         {
             base.OnUnloaded(e);
 
-            if (OperatingSystem.IsAndroid())
-            {
-                Part_VideoView.PlatformClick -= Part_VideoView_PlatformClick;
-            }
+            //if (OperatingSystem.IsAndroid())
+            //{
+            //    Part_VideoView.PlatformClick -= Part_VideoView_PlatformClick;
+            //}
         }
 
         private void Part_VideoView_PlatformClick(object sender, System.EventArgs e)
         {
-            if(Part_Controller.Opacity == 1)
-            {
-                Part_Controller.Opacity = 0;
-            }
-            else
-            {
-                Part_Controller.Opacity = 1;
-            }
+            //if(Part_Controller.Opacity == 1)
+            //{
+            //    Part_Controller.Opacity = 0;
+            //}
+            //else
+            //{
+            //    Part_Controller.Opacity = 1;
+            //}
         }
     }
 }

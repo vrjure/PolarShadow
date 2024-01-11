@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Avalonia.NativeControls
+namespace Avalonia.Controls
 {
     public interface IVirtualView
     {

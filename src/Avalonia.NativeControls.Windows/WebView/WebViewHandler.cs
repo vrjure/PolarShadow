@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.NativeControls.Windows
+namespace Avalonia.Controls.Windows
 {
-    internal class WebViewHandler : ViewHandler<Avalonia.NativeControls.WebView, WebView>, IWebViewHandler
+    internal class WebViewHandler : ViewHandler<Avalonia.Controls.WebView, WebView>, IWebViewHandler
     {
         IWebViewPlatformView IWebViewHandler.PlatformView => base.PlatformView as IWebViewPlatformView;
 
@@ -31,21 +31,21 @@ namespace Avalonia.NativeControls.Windows
 
         private void PlatformView_Navigated(object sender, WebViewNavigatedArgs e)
         {
-            e.RoutedEvent = NativeControls.WebView.NavigatedEvent;
+            e.RoutedEvent = Avalonia.Controls.WebView.NavigatedEvent;
             e.Source = VirtualView;
             VirtualView.RaiseEvent(e);
         }
 
         private void PlatformView_Navigating(object sender, WebViewNavigatingArgs e)
         {
-            e.RoutedEvent = NativeControls.WebView.NavigatingEvent;
+            e.RoutedEvent = Avalonia.Controls.WebView.NavigatingEvent;
             e.Source = VirtualView;
             VirtualView.RaiseEvent(e);
         }
 
         private void PlatformView_LoadResource(object sender, WebViewLoadResourceArgs e)
         {
-            e.RoutedEvent = NativeControls.WebView.LoadResourceEvent;
+            e.RoutedEvent = Avalonia.Controls.WebView.LoadResourceEvent;
             e.Source = VirtualView;
             VirtualView.RaiseEvent(e);
         }

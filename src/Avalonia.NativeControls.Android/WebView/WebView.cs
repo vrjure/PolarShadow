@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AndroidWebView = Android.Webkit.WebView;
 
-namespace Avalonia.NativeControls.Android
+namespace Avalonia.Controls.Android
 {
     internal class WebView : PlatformView, IWebViewPlatformView
     {

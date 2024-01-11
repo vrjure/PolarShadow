@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalonia.NativeControls
+namespace Avalonia.Controls
 {
     public abstract class PlatformView : IPlatformView
     {

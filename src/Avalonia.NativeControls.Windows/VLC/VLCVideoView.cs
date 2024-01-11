@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using Avalonia.Platform;
 using Avalonia.Rendering;
 using Avalonia.VisualTree;
@@ -10,16 +9,16 @@ using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Avalonia.NativeControls.Windows
+namespace Avalonia.Controls.Windows
 {
-    internal class VideoView : PlatformView, IVLCPlatformView
+    internal class VLCVideoView : PlatformView, IPlatformVideoView
     {
         private Window _floatingContent;
         private bool _isAttached;
 
         private readonly IVirtualView VirtualView;
 
-        public VideoView(IVirtualView virtualView)
+        public VLCVideoView(IVirtualView virtualView)
         {
             this.VirtualView = virtualView;
 
@@ -34,25 +33,9 @@ namespace Avalonia.NativeControls.Windows
         private Rect Bounds => VirtualView.AsHost().Bounds;
         private bool IsEffectivelyVisible => VirtualView.AsHost().IsEffectivelyVisible;
 
-        private MediaPlayer _mediaPlayer;
-        public MediaPlayer MediaPlayer
-        {
-            get => _mediaPlayer;
-            set
-            {
-                if (ReferenceEquals(_mediaPlayer, value))
-                {
-                    return;
-                }
+        public IVideoViewController Controller { get; set; }
 
-                _mediaPlayer = value;
-
-                if (_mediaPlayer != null && Handle != null)
-                {
-                    _mediaPlayer.Hwnd = Handle.Handle;
-                }
-            }
-        }
+        private MediaPlayer MediaPlayer => (Controller as VLController)?.MediaPlayer;
 
         private object _overlayContent;
         public object OverlayContent
@@ -95,6 +78,7 @@ namespace Avalonia.NativeControls.Windows
 
         private TopLevel _topLevel => TopLevel.GetTopLevel(VirtualView as Visual);
 
+
         protected override IPlatformHandle OnCreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {
             if (this.MediaPlayer == null)
@@ -120,6 +104,7 @@ namespace Avalonia.NativeControls.Windows
             }
 
             MediaPlayer.Hwnd = IntPtr.Zero;
+            Controller?.Dispose();
         }
 
         private void InitializeNativeOverlay()

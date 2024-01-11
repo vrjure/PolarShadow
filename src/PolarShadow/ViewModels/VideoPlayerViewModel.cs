@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
@@ -20,13 +21,11 @@ namespace PolarShadow.ViewModels
         private static readonly Thickness FullSceenPadding = new Thickness(0);
         private static readonly Thickness NormalScreenPadding = new Thickness(1, 0, 2, 1);
 
-        private readonly LibVLC _libVLC;
         private readonly INotificationManager _notify;
         private readonly ITopLevelService _topLevel;
         private readonly IPolarShadow _polar;
-        public VideoPlayerViewModel(LibVLC libVLC, INotificationManager notify, ITopLevelService topLevel, IPolarShadow polar)
+        public VideoPlayerViewModel(INotificationManager notify, ITopLevelService topLevel, IPolarShadow polar)
         {
-            _libVLC = libVLC;
             _notify = notify;
             _topLevel = topLevel;
             _polar = polar;
@@ -35,11 +34,11 @@ namespace PolarShadow.ViewModels
         public ILink Param_Episode { get; set; }
         public string Param_Title { get; set; }
 
-        private MediaPlayer _mediaPlayer;
-        public MediaPlayer MediaPlayer
+        private IVideoViewController _controller;
+        public IVideoViewController Controller
         {
-            get => _mediaPlayer;
-            set => SetProperty(ref _mediaPlayer, value);
+            get => _controller;
+            set => SetProperty(ref _controller, value);
         }
 
         private string _title;
@@ -131,18 +130,10 @@ namespace PolarShadow.ViewModels
                 _notify.Show("No resource");
                 return;
             }
-            
-            if (MediaPlayer == null)
-            {
-                MediaPlayer = new MediaPlayer(_libVLC)
-                {
-                    NetworkCaching = 5000
-                };
-            }
 
             try
             {
-                MediaPlayer.Play(new Media(_libVLC, new Uri(videoUrl.Src)));
+                Controller?.Play(new Uri(videoUrl.Src));
             }
             catch (Exception ex)
             {
@@ -159,8 +150,8 @@ namespace PolarShadow.ViewModels
                     FullScreen = false; 
                 }
 
-                var mp = MediaPlayer;
-                MediaPlayer = null;
+                var mp = Controller;
+                Controller = null;
                 if (mp == null)
                 {
                     return;
@@ -168,7 +159,6 @@ namespace PolarShadow.ViewModels
                 Task.Run(() =>
                 {
                     mp.Stop();
-                    mp.Dispose();
                 });
             }
             catch { }

@@ -18,7 +18,6 @@ using PolarShadow.Cache;
 using PolarShadow.Resources;
 using System.Text;
 using PolarShadow.Handlers;
-using Avalonia.NativeControls;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Avalonia.Markup.Xaml.Styling;
@@ -35,10 +34,11 @@ public partial class App : Application
     public static string CacheFolder => Path.Combine(AppDataFolder, "cache");
     public static string PreferenceFolder => Path.Combine(AppDataFolder, "preference");
 
+    public IServiceCollection ServiceCollection = new ServiceCollection();
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        NativeControlHandlers.Initialize();
     }
 
     public override void RegisterServices()
@@ -49,6 +49,11 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        var service = ServiceCollection.BuildServiceProvider();
+
+        Ioc.Default.ConfigureServices(service);
+        NativeControls.Initialize(service);
+
         var topLevelService = Ioc.Default.GetRequiredService<ITopLevelService>();
         var nav = Ioc.Default.GetRequiredService<INavigationService>();
 
@@ -73,7 +78,7 @@ public partial class App : Application
 
     private void ConfigureService()
     {
-        var service = new ServiceCollection();
+        var service = ServiceCollection;
 
         RegisterView(service);
 
@@ -85,11 +90,7 @@ public partial class App : Application
 
         RegisterCache(service);
 
-        RegisterVLC(service);
-
-        var services = service.BuildServiceProvider();
-
-        Ioc.Default.ConfigureServices(services);
+        RegisterNativeControls(service);
     }
 
     private void RegisterUtilities(IServiceCollection service)
@@ -171,8 +172,8 @@ public partial class App : Application
         }
     }
 
-    private void RegisterVLC(IServiceCollection service)
+    private void RegisterNativeControls(IServiceCollection service)
     {
-        service.AddLibVLC();
+        NativeControls.ConfigureService(service);
     }
 }

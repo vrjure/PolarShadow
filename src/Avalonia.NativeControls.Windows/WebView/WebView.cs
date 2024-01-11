@@ -10,7 +10,7 @@ using System.Drawing;
 using Avalonia.Controls;
 using System.Net;
 
-namespace Avalonia.NativeControls.Windows
+namespace Avalonia.Controls.Windows
 {
     internal class WebView : PlatformView, IWebViewPlatformView
     {
@@ -147,7 +147,7 @@ namespace Avalonia.NativeControls.Windows
             return await _controller.CoreWebView2.ExecuteScriptAsync(script);
         }
 
-        private void WebView_SizeChanged(object sender, Controls.SizeChangedEventArgs e)
+        private void WebView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SetSize();
         }
