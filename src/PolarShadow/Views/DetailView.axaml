@@ -72,7 +72,8 @@
 			   Classes.fullScreen="{Binding FullScreen}">
 			<ps:PSPlayer Controller="{Binding Controller, Mode=OneWayToSource}"
 						 FullScreen="{Binding FullScreen, Mode=TwoWay}"
-						 Title="{Binding Title}"/>
+						 Title="{Binding Title}"
+						 PlayerMode="{Binding PlayerMode}"/>
 		</Panel>
 
 		<Grid x:Name="part_desc"

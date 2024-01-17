@@ -14,13 +14,17 @@
 								<!--binding to datacontext-->
 								<ps:MediaPlayerController Title="{Binding Title}"
 														  FullScreen="{Binding FullScreen, Mode=TwoWay}"
-														  Controller="{Binding Controller}"/>
+														  Controller="{Binding Controller}"
+														  PlayerMode="{Binding PlayerMode}"
+														  x:Name="Part_MediaController"/>
 							</ps:VideoView>
 						</OnPlatform.Default>
 						<OnPlatform.Android>
 							<ps:MediaPlayerController Title="{TemplateBinding Title}"
 													  FullScreen="{Binding FullScreen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-													  Controller="{TemplateBinding Controller}">
+													  Controller="{TemplateBinding Controller}"
+													  PlayerMode="{TemplateBinding PlayerMode}"
+													  x:Name="Part_MediaController">
 								<ps:VideoView FullScreen="{TemplateBinding FullScreen}"
 											  Controller="{Binding Controller, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWayToSource}"/>
 							</ps:MediaPlayerController>

@@ -11,25 +11,37 @@ namespace PolarShadow.Controls
 {
     public class PSPlayer : TemplatedControl
     {
-        public static readonly StyledProperty<IVideoViewController> ControllerProperty = AvaloniaProperty.Register<PSPlayer, IVideoViewController>(nameof(Controller));
+        public static readonly DirectProperty<PSPlayer, IVideoViewController> ControllerProperty = MediaPlayerController.ControllerProperty.AddOwner<PSPlayer>(s=>s.Controller, (s, v) => s.Controller = v);
+        private IVideoViewController _controller;
         public IVideoViewController Controller
         {
-            get => GetValue(ControllerProperty);
-            set => SetValue(ControllerProperty, value);
+            get => _controller;
+            set => SetAndRaise(ControllerProperty, ref _controller, value);
         }
 
-        public static readonly StyledProperty<string> TitleProperty = AvaloniaProperty.Register<MediaPlayerController, string>(nameof(Title));
+        public static readonly DirectProperty<PSPlayer, string> TitleProperty = MediaPlayerController.TitleProperty.AddOwner<PSPlayer>(s => s.Title, (s, v)=> s.Title = v);
+        private string _title;
         public string Title
         {
-            get => GetValue(TitleProperty);
-            set => SetValue(TitleProperty, value);
+            get => _title;
+            set => SetAndRaise(TitleProperty, ref _title, value);
         }
 
-        public static readonly StyledProperty<bool> FullScreenProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(FullScreen));
+        public static readonly DirectProperty<PSPlayer, bool> FullScreenProperty = MediaPlayerController.FullScreenProperty.AddOwner<PSPlayer>(s=> s.FullScreen, (s, v)=> s.FullScreen = v);
+        private bool _fullScreen;
         public bool FullScreen
         {
-            get => GetValue(FullScreenProperty);
-            set => SetValue(FullScreenProperty, value);
+            get => _fullScreen;
+            set => SetAndRaise(FullScreenProperty, ref _fullScreen, value);
+        }
+
+        public static readonly DirectProperty<PSPlayer, MediaPlayerMode> PlayerModeProperty = MediaPlayerController.PlayerModeProperty.AddOwner<PSPlayer>(s => s.PlayerMode, (s, v) => s.PlayerMode = v);
+
+        private MediaPlayerMode _playerMode;
+        public MediaPlayerMode PlayerMode
+        {
+            get => _playerMode;
+            set => SetAndRaise(PlayerModeProperty, ref _playerMode, value);
         }
     }
 }

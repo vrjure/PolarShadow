@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Aria2;
 using PolarShadow.Cache;
+using PolarShadow.Controls;
 using PolarShadow.Core;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
@@ -105,10 +106,12 @@ namespace PolarShadow.ViewModels
                     if (_fullScreen)
                     {
                         SetFullScreen();
+                        PlayerMode = MediaPlayerMode.Normal;
                     }
                     else
                     {
                         ExitFullScreen();
+                        PlayerMode = MediaPlayerMode.Simple;
                     }
                 }
             }
@@ -126,6 +129,13 @@ namespace PolarShadow.ViewModels
         {
             get => _title;
             set => SetProperty(ref _title, value);
+        }
+
+        private MediaPlayerMode _playerMode = MediaPlayerMode.Simple;
+        public MediaPlayerMode PlayerMode
+        {
+            get => _playerMode;
+            set => SetProperty(ref _playerMode, value);
         }
 
         private IAsyncRelayCommand _refreshCommand;
@@ -170,7 +180,7 @@ namespace PolarShadow.ViewModels
                 {
                     FullScreen = false;
                 }
-                Controller.Stop();
+                Controller?.Stop();
 
             }
             catch { }

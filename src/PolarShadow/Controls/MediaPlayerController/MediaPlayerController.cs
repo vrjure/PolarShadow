@@ -14,7 +14,7 @@ using System.Windows.Input;
 
 namespace PolarShadow.Controls
 {
-    public class MediaPlayerController : ContentControl, IMediaPlayerController
+    public partial class MediaPlayerController : ContentControl, IMediaPlayerController
     {
         private static readonly TimeSpan _ignore = TimeSpan.FromSeconds(1);
         private long _lastTime = 0;
@@ -78,6 +78,20 @@ namespace PolarShadow.Controls
             }
         }
 
+        private TextBlock _timeText;
+        private TextBlock TimeText
+        {
+            get => _timeText;
+            set => _timeText = value;
+        }
+
+        private TextBlock _lengthText;
+        private TextBlock LengthText
+        {
+            get => _lengthText;
+            set => _lengthText = value;
+        }
+
         private Button _fullScreenBtn;
         private Button FullScreenBtn
         {
@@ -124,21 +138,24 @@ namespace PolarShadow.Controls
         {
             ControllerProperty.Changed.AddClassHandler<MediaPlayerController>((o,e)=>o.ControllerPropertyChanged(e));
             TimeProperty.Changed.AddClassHandler<MediaPlayerController>((o, e) => o.TimePropertyChanged(e));
+            PlayerModeProperty.Changed.AddClassHandler<MediaPlayerController>((s, e) => s.PlayerModePropertyChanged(e));
         }
 
-        public static readonly StyledProperty<IVideoViewController> ControllerProperty = AvaloniaProperty.Register<MediaPlayerController, IVideoViewController>(nameof(Controller));
+        public static readonly DirectProperty<MediaPlayerController, IVideoViewController> ControllerProperty = VideoView.ControllerProperty.AddOwner<MediaPlayerController>(s=> s.Controller, (s, v) =>s.Controller = v);
+        private IVideoViewController _controller;
         public IVideoViewController Controller
         {
-            get => GetValue(ControllerProperty);
-            set => SetValue(ControllerProperty, value);
+            get => _controller;
+            set => SetAndRaise(ControllerProperty, ref _controller, value);
         }
 
 
-        public static readonly StyledProperty<string> TitleProperty = AvaloniaProperty.Register<MediaPlayerController, string>(nameof(Title));
+        public static readonly DirectProperty<MediaPlayerController, string> TitleProperty = AvaloniaProperty.RegisterDirect<MediaPlayerController, string>(nameof(Title),s => s.Title, (s, v) => s.Title = v);
+        private string _title;
         public string Title
         {
-            get => GetValue(TitleProperty);
-            set => SetValue(TitleProperty, value);
+            get => _title;
+            set => SetAndRaise(TitleProperty, ref _title, value);
         }
 
         public static readonly StyledProperty<TimeSpan> LengthProperty = AvaloniaProperty.Register<MediaPlayerController, TimeSpan>(nameof(Length));
@@ -162,11 +179,12 @@ namespace PolarShadow.Controls
             private set => SetValue(IsPlayingProperty, value);
         }
 
-        public static readonly StyledProperty<bool> FullScreenProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(FullScreen));
+        public static readonly DirectProperty<MediaPlayerController, bool> FullScreenProperty = AvaloniaProperty.RegisterDirect<MediaPlayerController, bool>(nameof(FullScreen), s => s.FullScreen, (s, v) => s.FullScreen = v);
+        private bool _fullScreen;
         public bool FullScreen
         {
-            get => GetValue(FullScreenProperty);
-            set => SetValue(FullScreenProperty, value);
+            get => _fullScreen;
+            set => SetAndRaise(FullScreenProperty, ref _fullScreen, value);
         }
 
 
@@ -184,16 +202,38 @@ namespace PolarShadow.Controls
             set => SetValue(NextCommandProperty, value);
         }
 
+        public static readonly DirectProperty<MediaPlayerController, MediaPlayerMode> PlayerModeProperty = AvaloniaProperty.RegisterDirect<MediaPlayerController, MediaPlayerMode>(nameof(PlayerMode), s => s.PlayerMode, (s, v) => s.PlayerMode = v);
+        private MediaPlayerMode _playerMode;
+        public MediaPlayerMode PlayerMode
+        {
+            get => _playerMode;             
+            set => SetAndRaise(PlayerModeProperty, ref _playerMode, value);
+        }
+
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
 
-            //PreviousBtn = e.NameScope.Get<Button>("Part_Previous");
+            PreviousBtn = e.NameScope.Get<Button>("Part_Previous");
             PlayBtn = e.NameScope.Get<Button>("Part_PlayPause");
-            //NextBtn = e.NameScope.Get<Button>("Part_Next");
+            NextBtn = e.NameScope.Get<Button>("Part_Next");
             FullScreenBtn = e.NameScope.Get<Button>("Part_FullScreen");
             PartSlider = e.NameScope.Get<Slider>("Part_Slider");
-            _part_root = e.NameScope.Get<Border>("Part_Root");          
+            _part_root = e.NameScope.Get<Border>("Part_Root");
+            TimeText = e.NameScope.Get<TextBlock>("Part_Time");
+            LengthText = e.NameScope.Get<TextBlock>("Part_Length");
+
+            SetPlayMode(PlayerMode);
+        }
+
+        private void PlayerModePropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        {
+            if (!IsLoaded)
+            {
+                return;
+            }
+            var mode = e.GetNewValue<MediaPlayerMode>();
+            SetPlayMode(mode);
         }
 
         private void ControllerPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
@@ -270,11 +310,6 @@ namespace PolarShadow.Controls
             {
                 IsPlaying = false;
             });
-        }
-
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            base.OnAttachedToVisualTree(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

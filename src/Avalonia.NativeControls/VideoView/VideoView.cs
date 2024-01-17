@@ -14,17 +14,32 @@ namespace Avalonia.Controls
 
         public static readonly DirectProperty<VideoView, bool> FullScreenProperty = AvaloniaProperty.RegisterDirect<VideoView, bool>(nameof(FullScreen), o => o.FullScreen, (o, v) => o.FullScreen = v);
 
+        private bool _fullSceen;
         public bool FullScreen
         {
-            get => this.Handler.PlatformView.FullScreen;
-            set => this.Handler.PlatformView.FullScreen = value;
+            get => _fullSceen;
+            set
+            {
+                if(SetAndRaise(FullScreenProperty, ref _fullSceen, value))
+                {
+                    this.Handler.PlatformView.FullScreen = _fullSceen;
+                }
+            }
         }
 
         public static readonly DirectProperty<VideoView, IVideoViewController> ControllerProperty = AvaloniaProperty.RegisterDirect<VideoView, IVideoViewController>(nameof(Controller), o => o.Controller, (o, v) => o.Controller = v, defaultBindingMode : Data.BindingMode.OneWayToSource);
+
+        private IVideoViewController _controller;
         public IVideoViewController Controller
         {
-            get => this.Handler.PlatformView.Controller;
-            set => this.Handler.PlatformView.Controller = value;
+            get => _controller;
+            set
+            {
+                if(SetAndRaise(ControllerProperty, ref _controller, value))
+                {
+                    this.Handler.PlatformView.Controller = _controller;
+                }
+            }
         }
 
         public event EventHandler PlatformClick;

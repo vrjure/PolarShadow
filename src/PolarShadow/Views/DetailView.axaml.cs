@@ -60,8 +60,7 @@ namespace PolarShadow.Views
         protected override void OnSizeChanged(SizeChangedEventArgs e)
         {
             base.OnSizeChanged(e);
-
-            if (e.NewSize.Width < 640)
+            if (e.NewSize.Width < 1000)
             {
                 part_root.Classes.Remove(_layout_horizontal);
                 if (!part_root.Classes.Contains(_layout_vertical))
@@ -72,6 +71,7 @@ namespace PolarShadow.Views
                     if (part_desc.Parent == null)
                     {
                         part_bottom.Children.Insert(0, part_desc);
+                        VM.PlayerMode = Controls.MediaPlayerMode.Min;
                     }
                 }
             }
@@ -86,6 +86,7 @@ namespace PolarShadow.Views
                     if (part_desc.Parent == null)
                     {
                         part_root.Children.Add(part_desc);
+                        VM.PlayerMode = Controls.MediaPlayerMode.Simple;
                     }
                 }
             }
