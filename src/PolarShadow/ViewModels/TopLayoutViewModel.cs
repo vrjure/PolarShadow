@@ -107,6 +107,14 @@ namespace PolarShadow.ViewModels
         void IRecipient<FullScreenState>.Receive(FullScreenState message)
         {
             ShowTitleBar = !message.IsFullScreen;
+            if (message.IsFullScreen)
+            {
+                _topLevel.FullScreen();
+            }
+            else
+            {
+                _topLevel.ExitFullScreen();
+            }
         }
 
         private void App_BackRequested(object sender, Avalonia.Interactivity.RoutedEventArgs e)

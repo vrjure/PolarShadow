@@ -18,11 +18,13 @@ namespace Avalonia.Controls.Android
         protected override void ConnectHandler(VLCVideoView platformView)
         {
             platformView.PlatformClick += PlatformView_PlatformClick;
+            platformView.Controller = new VLController();
         }
 
         protected override void DisconnectHandler(VLCVideoView platformView)
         {
             platformView.PlatformClick -= PlatformView_PlatformClick;
+            platformView.Controller?.Dispose();
         }
 
         private void PlatformView_PlatformClick(object sender, EventArgs e)

@@ -25,11 +25,12 @@ namespace Avalonia.Controls.Windows
             this.VirtualView.AsHost().AttachedToVisualTree += VirtualView_AttachedToVisualTree;
             this.VirtualView.AsHost().DetachedFromVisualTree += VirtualView_DetachedFromVisualTree;
             this.VirtualView.AsHost().DetachedFromLogicalTree += VirtualView_DetachedFromLogicalTree;
+            this.VirtualView.AsHost().LayoutUpdated += VirtualView_LayoutUpdated;
             this.VirtualView.AsHost().SizeChanged += VirtualView_SizeChanged;
-           
         }
 
-        private IRenderRoot VisualRoot => VirtualView.AsHost().GetVisualRoot();
+        private IRenderRoot _visualRoot;
+        private IRenderRoot VisualRoot => _visualRoot ??= VirtualView.AsHost().GetVisualRoot();
         private Rect Bounds => VirtualView.AsHost().Bounds;
         private bool IsEffectivelyVisible => VirtualView.AsHost().IsEffectivelyVisible;
 
@@ -58,22 +59,7 @@ namespace Avalonia.Controls.Windows
         public bool FullScreen
         {
             get => _fullScreen;
-            set
-            {
-                if (_fullScreen == value)
-                {
-                    return;
-                }
-                _fullScreen = value;
-                if (_fullScreen)
-                {
-                    (_topLevel as Window).WindowState = WindowState.FullScreen;
-                }
-                else
-                {
-                    (_topLevel as Window).WindowState = WindowState.Normal;
-                }
-            }
+            set => _fullScreen = value;
         }
 
         private TopLevel _topLevel => TopLevel.GetTopLevel(VirtualView as Visual);
@@ -96,7 +82,12 @@ namespace Avalonia.Controls.Windows
             this.VirtualView.AsHost().AttachedToVisualTree -= VirtualView_AttachedToVisualTree;
             this.VirtualView.AsHost().DetachedFromVisualTree -= VirtualView_DetachedFromVisualTree;
             this.VirtualView.AsHost().DetachedFromLogicalTree -= VirtualView_DetachedFromLogicalTree;
+            this.VirtualView.AsHost().LayoutUpdated -= VirtualView_LayoutUpdated;
             this.VirtualView.AsHost().SizeChanged -= VirtualView_SizeChanged;
+            if (VisualRoot is Window root)
+            {
+                root.PositionChanged -= Window_PositionChanged;
+            }
 
             if (MediaPlayer == null)
             {
@@ -104,7 +95,6 @@ namespace Avalonia.Controls.Windows
             }
 
             MediaPlayer.Hwnd = IntPtr.Zero;
-            Controller?.Dispose();
         }
 
         private void InitializeNativeOverlay()
@@ -155,11 +145,15 @@ namespace Avalonia.Controls.Windows
         {
             if (_floatingContent == null) return;
 
-            _floatingContent.Width = Bounds.Width;
-            _floatingContent.Height = Bounds.Height;
+            if (_floatingContent.Width != Bounds.Width
+                || _floatingContent.Height != Bounds.Height)
+            {
+                _floatingContent.Width = Bounds.Width;
+                _floatingContent.Height = Bounds.Height;
 
-            _floatingContent.MaxWidth = Bounds.Width;
-            _floatingContent.MaxHeight = Bounds.Height;
+                _floatingContent.MaxWidth = Bounds.Width;
+                _floatingContent.MaxHeight = Bounds.Height;
+            }
 
             PixelPoint newPosition;
             if (VisualRoot is Window root && root.WindowState == WindowState.FullScreen)
@@ -170,7 +164,6 @@ namespace Avalonia.Controls.Windows
             {
                 newPosition = VirtualView.AsHost().PointToScreen(this.Bounds.Position);
             }
-
             if (newPosition != _floatingContent.Position)
             {
                 _floatingContent.Position = newPosition;
@@ -188,6 +181,14 @@ namespace Avalonia.Controls.Windows
             else
             {
                 _floatingContent.Hide();
+            }
+        }
+
+        private void VirtualView_LayoutUpdated(object sender, EventArgs e)
+        {
+            if (!this.VirtualView.AsHost().IsLoaded)
+            {
+                UpdateOverlayPosition();
             }
         }
 

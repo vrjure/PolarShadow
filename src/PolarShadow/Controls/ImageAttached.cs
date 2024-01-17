@@ -177,8 +177,8 @@ namespace PolarShadow.Controls
             }
             catch (Exception ex)
             {
-                cache.Remove(BufferCache.SHA(uri.ToString()));
                 System.Diagnostics.Trace.WriteLine($"Downloading image error '{uri}' : {ex.Message}");
+                cache.Remove(BufferCache.SHA(uri.ToString()));
             }
             return null;
         }

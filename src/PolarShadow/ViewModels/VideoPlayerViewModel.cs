@@ -156,10 +156,8 @@ namespace PolarShadow.ViewModels
                 {
                     return;
                 }
-                Task.Run(() =>
-                {
-                    mp.Stop();
-                });
+                mp.Stop();
+
             }
             catch { }
 

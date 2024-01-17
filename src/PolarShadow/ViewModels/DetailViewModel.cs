@@ -1,10 +1,13 @@
-﻿using Avalonia.Controls.Notifications;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Aria2;
 using PolarShadow.Cache;
 using PolarShadow.Core;
+using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Options;
 using PolarShadow.Resources;
@@ -91,6 +94,40 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _flyoutOptions, value);
         }
 
+        private bool _fullScreen;
+        public bool FullScreen
+        {
+            get => _fullScreen;
+            set
+            {
+                if(SetProperty(ref _fullScreen, value))
+                {
+                    if (_fullScreen)
+                    {
+                        SetFullScreen();
+                    }
+                    else
+                    {
+                        ExitFullScreen();
+                    }
+                }
+            }
+        }
+
+        private IVideoViewController _controller;
+        public IVideoViewController Controller
+        {
+            get => _controller;
+            set => SetProperty(ref _controller, value);
+        }
+
+        private string _title;
+        public string Title
+        {
+            get => _title;
+            set => SetProperty(ref _title, value);
+        }
+
         private IAsyncRelayCommand _refreshCommand;
         public IAsyncRelayCommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadOnline);
 
@@ -123,6 +160,20 @@ namespace PolarShadow.ViewModels
             {
                 History = await _hisService.GetByResourceIdAsync(this.Resource.Id);
             }
+        }
+
+        protected override void OnUnload()
+        {
+            try
+            {
+                if (FullScreen)
+                {
+                    FullScreen = false;
+                }
+                Controller.Stop();
+
+            }
+            catch { }
         }
 
         private async Task LoadingDeatil()
@@ -274,7 +325,7 @@ namespace PolarShadow.ViewModels
                 var resource = e.SelectedItems[0] as ResourceTreeNode;
                 if (string.IsNullOrEmpty(resource.Src))
                 {
-                    FlyoutOptions = resource.Children;
+                    FlyoutOptions = resource.Children.ToList();
                 }
                 else
                 {
@@ -417,11 +468,15 @@ namespace PolarShadow.ViewModels
                 episode = (SelectionModel.SelectedItem as ResourceTreeNode).Name;
             }
 
-            _nav.Navigate<VideoPlayerViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
-            {
-                {nameof(VideoPlayerViewModel.Param_Episode), videoSource },
-                {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{episode}" }
-            }, true);
+            Title = $"{this.Resource.Name}-{episode}";
+
+            Controller?.Play(new Uri(videoSource.Src));
+
+            //_nav.Navigate<VideoPlayerViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
+            //{
+            //    {nameof(VideoPlayerViewModel.Param_Episode), videoSource },
+            //    {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{episode}" }
+            //}, true);
 
             var second = HeaderSelection.SelectedItem as ResourceTreeNode;
             var third = SelectionModel.SelectedItem as ResourceTreeNode;
@@ -452,6 +507,20 @@ namespace PolarShadow.ViewModels
             }
 
             await _hisService.AddOrUpdateAsync(his);
+
+            this.History = his;
+        }
+
+        private void SetFullScreen()
+        {
+            Messenger.Send(FullScreenState.FullScreen);
+            //_topLevel.FullScreen();
+        }
+
+        private void ExitFullScreen()
+        {
+            Messenger.Send(FullScreenState.Normal);
+            //_topLevel.ExitFullScreen();
         }
     }
 }

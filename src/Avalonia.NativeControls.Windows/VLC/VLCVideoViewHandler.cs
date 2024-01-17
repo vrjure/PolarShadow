@@ -22,5 +22,10 @@ namespace Avalonia.Controls.Windows
         {
             platformView.Controller = new VLController();
         }
+
+        protected override void DisconnectHandler(VLCVideoView platformView)
+        {
+            platformView.Controller?.Dispose();
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace PolarShadow.Cache
 {
     internal class FileEntry : IFileEntry
     {
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         private readonly string _path;
         private int _disposed;
         public FileEntry(string path)
@@ -38,7 +38,7 @@ namespace PolarShadow.Cache
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.Message);
             }
         }
 
@@ -59,7 +59,7 @@ namespace PolarShadow.Cache
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.Message);
             }
             return null;
         }
@@ -84,7 +84,7 @@ namespace PolarShadow.Cache
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.Message);
             }
         }
 
@@ -105,7 +105,7 @@ namespace PolarShadow.Cache
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.Message);
             }
             return null;
         }

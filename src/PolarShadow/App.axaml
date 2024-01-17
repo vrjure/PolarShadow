@@ -25,6 +25,7 @@
 				<ResourceInclude Source="/Assets/Themes/ScrollViewThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/SearchBoxThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ExpanderThemes.axaml"/>
+				<ResourceInclude Source="/Assets/Themes/ScrollBarThemes.axaml"/>
 
 				<OnFormFactor>
 					<OnFormFactor.Default>

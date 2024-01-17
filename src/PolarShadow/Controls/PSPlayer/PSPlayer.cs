@@ -11,11 +11,6 @@ namespace PolarShadow.Controls
 {
     public class PSPlayer : TemplatedControl
     {
-        static PSPlayer()
-        {
-            ControllerProperty.Changed.AddClassHandler<PSPlayer>((s, e) => s.ControllerChanged(e));
-        }
-
         public static readonly StyledProperty<IVideoViewController> ControllerProperty = AvaloniaProperty.Register<PSPlayer, IVideoViewController>(nameof(Controller));
         public IVideoViewController Controller
         {
@@ -35,11 +30,6 @@ namespace PolarShadow.Controls
         {
             get => GetValue(FullScreenProperty);
             set => SetValue(FullScreenProperty, value);
-        }
-
-        private void ControllerChanged(AvaloniaPropertyChangedEventArgs e)
-        {
-            System.Diagnostics.Trace.WriteLine("PSPlayer: controller changed");
         }
     }
 }

@@ -90,12 +90,12 @@ namespace Avalonia.Controls
         {
             lock(_lock)
             {
+                _disposed = true;
                 if (_mediaPlayer != null)
                 {
                     _mediaPlayer.Dispose();
                     _mediaPlayer = null;
                 }
-                _disposed = true;
             }
 
         }
