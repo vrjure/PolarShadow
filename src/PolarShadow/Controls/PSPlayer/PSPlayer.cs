@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace PolarShadow.Controls
 {
@@ -42,6 +43,22 @@ namespace PolarShadow.Controls
         {
             get => _playerMode;
             set => SetAndRaise(PlayerModeProperty, ref _playerMode, value);
+        }
+
+        public static readonly DirectProperty<PSPlayer, ICommand> PreviousCommandProperty = MediaPlayerController.PreviousCommandProperty.AddOwner<PSPlayer>(s => s.PreviousCommand, (s, v) => s.PreviousCommand = v);
+        private ICommand _previousCommand;
+        public ICommand PreviousCommand
+        {
+            get => _previousCommand;
+            set => SetAndRaise(PreviousCommandProperty, ref _previousCommand, value);
+        }
+
+        public static readonly DirectProperty<PSPlayer, ICommand> NextCommandProperty = MediaPlayerController.PreviousCommandProperty.AddOwner<PSPlayer>(s => s.NextCommand, (s, v) => s.NextCommand = v);
+        private ICommand _nextCommand;
+        public ICommand NextCommand
+        {
+            get => _nextCommand;
+            set => SetAndRaise(NextCommandProperty, ref _nextCommand, value);
         }
     }
 }

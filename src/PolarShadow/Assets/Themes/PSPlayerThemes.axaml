@@ -12,10 +12,13 @@
 										  Controller="{Binding Controller, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWayToSource}">
 								<!--on overlay layer-->
 								<!--binding to datacontext-->
+								<!--datacontext should has these properties-->
 								<ps:MediaPlayerController Title="{Binding Title}"
 														  FullScreen="{Binding FullScreen, Mode=TwoWay}"
 														  Controller="{Binding Controller}"
 														  PlayerMode="{Binding PlayerMode}"
+														  PreviousCommand="{Binding PreviousCommand}"
+														  NextCommand="{Binding NextCommand}"
 														  x:Name="Part_MediaController"/>
 							</ps:VideoView>
 						</OnPlatform.Default>
@@ -24,6 +27,8 @@
 													  FullScreen="{Binding FullScreen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
 													  Controller="{TemplateBinding Controller}"
 													  PlayerMode="{TemplateBinding PlayerMode}"
+													  PreviousCommand="{TemplateBinding PreviousCommand}"
+													  NextCommand="{TemplateBinding NextCommand}"
 													  x:Name="Part_MediaController">
 								<ps:VideoView FullScreen="{TemplateBinding FullScreen}"
 											  Controller="{Binding Controller, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWayToSource}"/>

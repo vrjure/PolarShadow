@@ -34,6 +34,7 @@ namespace PolarShadow.Storage
             modelBuilder.Entity<PreferenceEntity>().HasKey(f => f.Key);
 
             modelBuilder.Entity<HistoryModel>().HasKey(f => f.Id);
+            modelBuilder.Entity<HistoryModel>().HasIndex(f => f.ResourceName);
         }
     }
 }

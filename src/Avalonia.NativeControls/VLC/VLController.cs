@@ -26,20 +26,31 @@ namespace Avalonia.Controls
                         _mediaPlayer.Playing += MediaPlayer_Playing;
                         _mediaPlayer.Paused += MediaPlayer_Paused;
                     }
+
+                    if (_disposed)
+                    {
+                        _mediaPlayer = null;
+                    }
+                    return _mediaPlayer;
                 }
-                return _mediaPlayer;
             }
         }
 
-        public TimeSpan Length => TimeSpan.FromMilliseconds(MediaPlayer.Length);
+        public TimeSpan Length => TimeSpan.FromMilliseconds(MediaPlayer?.Length ?? 0);
 
         public TimeSpan Time
         {
-            get => TimeSpan.FromMilliseconds(MediaPlayer.Time);
-            set => MediaPlayer.Time = (long)value.TotalMilliseconds;
+            get => TimeSpan.FromMilliseconds(MediaPlayer?.Time ?? 0);
+            set
+            {
+                if (MediaPlayer != null)
+                {
+                    MediaPlayer.Time = (long)value.TotalMilliseconds;
+                }
+            }
         }
 
-        public bool IsPlaying => MediaPlayer.IsPlaying;
+        public bool IsPlaying => MediaPlayer?.IsPlaying ?? false;
 
         public event EventHandler<TimeSpan> LengthChanged;
         public event EventHandler<TimeSpan> TimeChanged;
@@ -48,22 +59,22 @@ namespace Avalonia.Controls
 
         public void Stop()
         {
-            MediaPlayer.Stop();
+            MediaPlayer?.Stop();
         }
 
         public void Pause()
         {
-            MediaPlayer.Pause();
+            MediaPlayer?.Pause();
         }
 
         public void Play()
         {
-            MediaPlayer.Play();
+            MediaPlayer?.Play();
         }
 
         public void Play(Uri uri)
         {
-            MediaPlayer.Play(new LibVLCSharp.Shared.Media(NativeControls.GetHandler<LibVLC>(), uri));
+            MediaPlayer?.Play(new LibVLCSharp.Shared.Media(NativeControls.GetHandler<LibVLC>(), uri));
         }
 
         private void MediaPlayer_Paused(object sender, EventArgs e)

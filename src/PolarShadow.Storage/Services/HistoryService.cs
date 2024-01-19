@@ -35,10 +35,10 @@ namespace PolarShadow.Storage
             return await context.Histories.FirstOrDefaultAsync(f => f.Id == id);
         }
 
-        public async Task<HistoryModel> GetByResourceIdAsync(int resourceId)
+        public async Task<HistoryModel> GetByResourceNameAsync(string reourceName)
         {
             using var context = _contextFactory.CreateDbContext();
-            return await context.Histories.FirstOrDefaultAsync(f => f.ResourceId == resourceId);
+            return await context.Histories.FirstOrDefaultAsync(f=> f.ResourceName == reourceName);
         }
 
         public async Task<ICollection<HistoryModel>> GetListPageAsync(int page, int pageSize, string filter = null)

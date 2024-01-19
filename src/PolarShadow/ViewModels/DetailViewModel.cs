@@ -1,12 +1,8 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Notifications;
-using Avalonia.Controls.Selection;
-using CommunityToolkit.Mvvm.Input;
+﻿using Avalonia.Controls.Notifications;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Aria2;
 using PolarShadow.Cache;
-using PolarShadow.Controls;
 using PolarShadow.Core;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
@@ -15,14 +11,12 @@ using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PolarShadow.ViewModels
 {
-    public class DetailViewModel : ViewModelBase, IParameterObtain
+    public partial class DetailViewModel : ViewModelBase, IParameterObtain
     {
         private readonly IPolarShadow _polar;
         private readonly INotificationManager _notify;
@@ -33,7 +27,8 @@ namespace PolarShadow.ViewModels
         private readonly IHistoryService _hisService;
 
         private ResourceModel _rootResourceInDb;
-        
+        private TimeSpan _currentProgress;
+
         public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService)
         {
             _polar = polar;
@@ -45,107 +40,7 @@ namespace PolarShadow.ViewModels
             _hisService = hisService;
         }
 
-        public ILink Param_Link { get; set; }
-
-        private ResourceTreeNode _resource;
-        public ResourceTreeNode Resource
-        {
-            get => _resource;
-            private set
-            {
-                if (SetProperty(ref _resource, value))
-                {
-                    SelectHeaderDefault();
-                }
-            }
-        }
-
-        private ISelectionModel _headerSelection;
-        public ISelectionModel HeaderSelection
-        {
-            get => _headerSelection;
-            set => SetProperty(ref _headerSelection, value);
-        }
-
-        private ICollection<ISite> _webAnalysisSites;
-        public ICollection<ISite> WebAnalysisSites
-        {
-            get => _webAnalysisSites;
-            private set => SetProperty(ref _webAnalysisSites, value);
-        }
-
-        private bool _isSave;
-        public bool IsSaved
-        {
-            get => _isSave;
-            private set => SetProperty(ref _isSave, value);
-        }
-
-        private HistoryModel _history;
-        public HistoryModel History
-        {
-            get => _history;
-            set => SetProperty(ref _history, value);
-        }
-
-        private ICollection<ResourceTreeNode> _flyoutOptions;
-        public ICollection<ResourceTreeNode> FlyoutOptions
-        {
-            get => _flyoutOptions;
-            set => SetProperty(ref _flyoutOptions, value);
-        }
-
-        private bool _fullScreen;
-        public bool FullScreen
-        {
-            get => _fullScreen;
-            set
-            {
-                if(SetProperty(ref _fullScreen, value))
-                {
-                    if (_fullScreen)
-                    {
-                        SetFullScreen();
-                        PlayerMode = MediaPlayerMode.Normal;
-                    }
-                    else
-                    {
-                        ExitFullScreen();
-                        PlayerMode = MediaPlayerMode.Simple;
-                    }
-                }
-            }
-        }
-
-        private IVideoViewController _controller;
-        public IVideoViewController Controller
-        {
-            get => _controller;
-            set => SetProperty(ref _controller, value);
-        }
-
-        private string _title;
-        public string Title
-        {
-            get => _title;
-            set => SetProperty(ref _title, value);
-        }
-
-        private MediaPlayerMode _playerMode = MediaPlayerMode.Simple;
-        public MediaPlayerMode PlayerMode
-        {
-            get => _playerMode;
-            set => SetProperty(ref _playerMode, value);
-        }
-
-        private IAsyncRelayCommand _refreshCommand;
-        public IAsyncRelayCommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadOnline);
-
-        private IAsyncRelayCommand _resourceOperateCommand;
-        public IAsyncRelayCommand ResourceOperateCommand => _resourceOperateCommand ??= new AsyncRelayCommand(ResourceOperate);
-
-        private IAsyncRelayCommand _linkClickCommand;
-        public IAsyncRelayCommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(LinkClick);
+        public ILink Param_Link { get; set; }   
 
         public void ApplyParameter(IDictionary<string, object> parameters)
         {
@@ -155,35 +50,35 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        public ICollection<ISite> UpdateWebAnalysisSites()
-        {
-            return WebAnalysisSites = _polar.GetWebAnalysisSites().ToList();
-        }
-
         protected override async void OnLoad()
         {
             if (this.Resource == null)
             {
                 await LoadingDeatil();
             }
-            else
+        }
+
+        protected override async void OnUnload()
+        {
+            if (FullScreen)
             {
-                History = await _hisService.GetByResourceIdAsync(this.Resource.Id);
+                FullScreen = false;
+            }
+
+            try
+            {
+                await TryUpdateHistory();
+            }
+            catch (Exception ex)
+            {
+                _notify.Show(ex);
             }
         }
 
-        protected override void OnUnload()
-        {
-            try
-            {
-                if (FullScreen)
-                {
-                    FullScreen = false;
-                }
-                Controller?.Stop();
 
-            }
-            catch { }
+        private void _controller_TimeChanged(object sender, TimeSpan e)
+        {
+            _currentProgress = e;
         }
 
         private async Task LoadingDeatil()
@@ -200,22 +95,38 @@ namespace PolarShadow.ViewModels
                 IsSaved = true;
                 await LoadLocal(_rootResourceInDb);
 
-                History = await _hisService.GetByResourceIdAsync(_rootResourceInDb.Id);
             }
             else
             {
                 await LoadOnline();
-                History = null;
+            }
+
+            DetectSource();
+
+            History = await _hisService.GetByResourceNameAsync(Param_Link.Name);
+
+        }
+
+        private void DetectSource()
+        {
+            if (this.Resource == null || this.Resource.Children?.Count == 0 || this.Resource.Children.First().Children?.Count == 0) return;
+            
+            var first = this.Resource.Children.First().Children.First();
+            if (string.IsNullOrEmpty(first.Src) && first.Children?.Count == 1)
+            {
+                first = first.Children.First();
+            }
+
+            if (first.SrcType == LinkType.WebAnalysisSource)
+            {
+                WebAnalysisSites = _polar.GetWebAnalysisSites().ToList();
+            }
+            else
+            {
+                WebAnalysisSites = null;
             }
         }
 
-        private void SelectHeaderDefault()
-        {
-            if (this.Resource?.Children?.Count > 0)
-            {
-                HeaderSelection.Select(0);
-            }
-        }
         private async Task LoadLocal(ResourceModel root)
         {
             var children = await _mineResourceService.GetRootChildrenAsync(root.Id);
@@ -328,19 +239,30 @@ namespace PolarShadow.ViewModels
 
         }
 
-        protected override async void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
+        private void PlayPrevious()
         {
-            if (e.SelectedItems.Count > 0)
+            if (SelectionModel == null)
             {
-                var resource = e.SelectedItems[0] as ResourceTreeNode;
-                if (string.IsNullOrEmpty(resource.Src))
-                {
-                    FlyoutOptions = resource.Children.ToList();
-                }
-                else
-                {
-                    await LinkClick(resource);
-                }
+                return;
+            }
+            var count = (SelectionModel.Source as ICollection<ResourceTreeNode>)?.Count;
+            if (SelectionModel.SelectedIndex > 0 && count > 0)
+            {
+                SelectionModel.Select(SelectionModel.SelectedIndex - 1);
+            }
+        }
+
+        private void PlayNext()
+        {
+            if (SelectionModel == null)
+            {
+                return;
+            }
+
+            var count = (SelectionModel.Source as ICollection<ResourceTreeNode>)?.Count;
+            if (SelectionModel.SelectedIndex < count)
+            {
+                SelectionModel.Select(SelectionModel.SelectedIndex + 1);
             }
         }
 
@@ -363,16 +285,12 @@ namespace PolarShadow.ViewModels
                         await ToPlayVideo(url);
                         break;
                     case LinkType.WebAnalysisSource:
-                        FlyoutOptions = _polar.GetWebAnalysisSites().Select(f => new ResourceTreeNode
-                        {
-                            Name = f.Title,
-                            Src = node.Src,
-                            SrcType = LinkType.HtmlSource,
-                            Site = f.Name
-                        }).ToList();
+                        break;
+                    case LinkType.Video:
+                        await ToPlayVideo(node);
                         break;
                     default:
-                        _notify.Show($"Not support type:{node.SrcType}"); 
+                        _notify.Show($"Not support type:{node.SrcType}");
                         break;
                 }
             }
@@ -428,6 +346,15 @@ namespace PolarShadow.ViewModels
         {
             try
             {
+                if (IsLoading)
+                {
+                    Cancellation.Cancel();
+                }
+                if (Controller?.IsPlaying == true)
+                {
+                    Controller.Stop();
+                }
+
                 IsLoading = true;
 
                 if (site == null && !_polar.TryGetSite(link.Site, out site))
@@ -488,6 +415,11 @@ namespace PolarShadow.ViewModels
             //    {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{episode}" }
             //}, true);
 
+            await TryUpdateHistory();
+        }
+
+        private async Task TryUpdateHistory()
+        {
             var second = HeaderSelection.SelectedItem as ResourceTreeNode;
             var third = SelectionModel.SelectedItem as ResourceTreeNode;
 
@@ -507,13 +439,15 @@ namespace PolarShadow.ViewModels
             {
                 his = new HistoryModel
                 {
-                    ResourceId = root.Id,
-                    ProgressDesc = desc
+                    ResourceName = root.Name,
+                    ProgressDesc = desc,
+                    Progress = (long)_currentProgress.TotalMilliseconds
                 };
             }
             else
             {
                 his.ProgressDesc = desc;
+                his.Progress = (long)_currentProgress.TotalMilliseconds;
             }
 
             await _hisService.AddOrUpdateAsync(his);

@@ -188,18 +188,20 @@ namespace PolarShadow.Controls
         }
 
 
-        public static readonly StyledProperty<ICommand> PreviousCommandProperty = AvaloniaProperty.Register<MediaPlayerController, ICommand>(nameof(PreviousCommand));
+        public static readonly DirectProperty<MediaPlayerController, ICommand> PreviousCommandProperty = AvaloniaProperty.RegisterDirect<MediaPlayerController, ICommand>(nameof(PreviousCommand), s => s.PreviousCommand, (s, v) => s.PreviousCommand = v);
+        private ICommand _previousCommand;
         public ICommand PreviousCommand
         {
-            get => GetValue(PreviousCommandProperty);
-            set => SetValue(PreviousCommandProperty, value);
+            get => _previousCommand;
+            set => SetAndRaise(PreviousCommandProperty, ref _previousCommand, value);
         }
 
-        public static readonly StyledProperty<ICommand> NextCommandProperty = AvaloniaProperty.Register<MediaPlayerController, ICommand>(nameof(NextCommand));
+        public static readonly DirectProperty<MediaPlayerController, ICommand> NextCommandProperty = AvaloniaProperty.RegisterDirect<MediaPlayerController, ICommand>(nameof(NextCommand), s => s.NextCommand, (s, v) => s.NextCommand = v);
+        private ICommand _nextCommand;
         public ICommand NextCommand
         {
-            get => GetValue(NextCommandProperty);
-            set => SetValue(NextCommandProperty, value);
+            get => _nextCommand;
+            set => SetAndRaise(NextCommandProperty, ref _nextCommand, value);
         }
 
         public static readonly DirectProperty<MediaPlayerController, MediaPlayerMode> PlayerModeProperty = AvaloniaProperty.RegisterDirect<MediaPlayerController, MediaPlayerMode>(nameof(PlayerMode), s => s.PlayerMode, (s, v) => s.PlayerMode = v);

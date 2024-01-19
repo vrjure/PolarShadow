@@ -42,12 +42,12 @@ namespace PolarShadow.Views
 
         private void VM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != nameof(VM.FlyoutOptions))
+            if (e.PropertyName != nameof(VM.SourceOptions))
             {
                 return;
             }
 
-            if (VM?.FlyoutOptions?.Count > 0 && VM.SelectionModel?.SelectedItem != null)
+            if (VM?.SourceOptions?.Count > 0 && VM.SelectionModel?.SelectedItem != null)
             {
                 var container = Episodes.ContainerFromIndex(VM.SelectionModel.SelectedIndex);
                 if (container != null)
@@ -60,6 +60,9 @@ namespace PolarShadow.Views
         protected override void OnSizeChanged(SizeChangedEventArgs e)
         {
             base.OnSizeChanged(e);
+
+            if (Design.IsDesignMode) return;
+
             if (e.NewSize.Width < 1000)
             {
                 part_root.Classes.Remove(_layout_horizontal);

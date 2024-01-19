@@ -27,7 +27,7 @@ namespace Avalonia.Controls
             }
         }
 
-        public static readonly DirectProperty<VideoView, IVideoViewController> ControllerProperty = AvaloniaProperty.RegisterDirect<VideoView, IVideoViewController>(nameof(Controller), o => o.Controller, (o, v) => o.Controller = v, defaultBindingMode : Data.BindingMode.OneWayToSource);
+        public static readonly DirectProperty<VideoView, IVideoViewController> ControllerProperty = AvaloniaProperty.RegisterDirect<VideoView, IVideoViewController>(nameof(Controller), o => o.Controller, (o, v) => o.Controller = v);
 
         private IVideoViewController _controller;
         public IVideoViewController Controller

@@ -9,6 +9,6 @@
         Title="PolarShadow"
 		ExtendClientAreaToDecorationsHint="True"
 		ExtendClientAreaChromeHints="Default"
-		ExtendClientAreaTitleBarHeightHint="40"
+		ExtendClientAreaTitleBarHeightHint="-1"
 		ps:NavigationManager.ContainerName="{x:Static ps:MainWindowViewModel.NavigationName}">
 </Window>

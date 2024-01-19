@@ -20,12 +20,12 @@ namespace Avalonia.Controls.Windows
 
         protected override void ConnectHandler(VLCVideoView platformView)
         {
-            platformView.Controller = new VLController();
+            VirtualView.Controller = new VLController();
         }
 
         protected override void DisconnectHandler(VLCVideoView platformView)
         {
-            platformView.Controller?.Dispose();
+            VirtualView.Controller?.Dispose();
         }
     }
 }

@@ -46,7 +46,7 @@
 
 		<Style Selector="Panel#part_player.fullScreen">
 			<Setter Property="Grid.ColumnSpan" Value="2"/>
-			<Setter Property="Grid.RowSpan" Value="2"/>
+			<Setter Property="Grid.RowSpan" Value="3"/>
 			<Setter Property="Margin" Value="0"/>
 		</Style>
 
@@ -58,35 +58,25 @@
 		</Style>
 	</UserControl.Styles>
 	
-    <Grid RowDefinitions="*,1.5*"
+    <Grid RowDefinitions="*,1.5*,auto"
 		  ColumnDefinitions="*,*"
 		  Classes="layout_horizontal"
 		  Classes.fullScreen="{Binding FullScreen}"
 		  Classes.normalScreen="{Binding !FullScreen}"
 		  x:Name="part_root">
 
-		<Panel Grid.Row="0"
-			   Grid.Column="0"
-			   x:Name="part_player"
-			   Background="Black"
-			   Classes.fullScreen="{Binding FullScreen}">
-			<ps:PSPlayer Controller="{Binding Controller, Mode=OneWayToSource}"
-						 FullScreen="{Binding FullScreen, Mode=TwoWay}"
-						 Title="{Binding Title}"
-						 PlayerMode="{Binding PlayerMode}"/>
-		</Panel>
-
 		<Grid x:Name="part_desc"
 			  Grid.Row="0"
 			  Grid.Column="1"
-			  RowDefinitions="*,*"
-			  ColumnDefinitions="auto,*">
+			  ColumnDefinitions="*,auto">
 			<Border CornerRadius="8"
 					ClipToBounds="True"
 					VerticalAlignment="Top"
 					HorizontalAlignment="Center"
 					DockPanel.Dock="Left"
-					Margin="0,0,10,10">
+					Margin="10,0,10,10"
+					Grid.Column="1"
+					Grid.Row="0">
 				<Image Width="{StaticResource CardItemMinWidth}"
 					   Height="{StaticResource CardItemMinHeight}"
 						Stretch="Fill"
@@ -94,35 +84,38 @@
 						ps:ImageAttached.Headers="{Binding Resource.ImageSrcHeaders}"
 						ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.jpg"/>
 			</Border>
-			<StackPanel Grid.Column="1">
-				<StackPanel Orientation="Horizontal"
-							Spacing="10"
-							DockPanel.Dock="Top">
+			<StackPanel Spacing="10">
+				<DockPanel>
 					<TextBlock Text="名称:"
-							   Classes="title"/>
-					<SelectableTextBlock Text="{Binding Resource.Name}"/>
-				</StackPanel>
+							   Classes="title"
+							   DockPanel.Dock="Left"/>
+					<SelectableTextBlock Text="{Binding Resource.Name}"
+										 TextWrapping="Wrap"
+										 Margin="10,0,0,0"/>
+				</DockPanel>
 
-				<StackPanel Orientation="Horizontal"
-							Spacing="10"
-							DockPanel.Dock="Top">
+				<DockPanel>
 					<TextBlock Text="来源:"
 							   Classes="title"/>
-					<SelectableTextBlock Text="{Binding Resource.Site}"/>
-				</StackPanel>
+					<SelectableTextBlock Text="{Binding Resource.Site}"
+										 TextWrapping="Wrap"
+										 Margin="10,0,0,0"/>
+				</DockPanel>
+				<DockPanel
+						   Grid.Column="0"
+						   Grid.ColumnSpan="2">
+					<TextBlock Text="简介:"
+							   Classes="title"
+							   DockPanel.Dock="Left"/>
+					<TextBlock Text="{Binding Resource.Description}"
+							   TextWrapping="Wrap"
+							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
+							   Margin="10,0,0,0"
+							   MaxLines="14">
+					</TextBlock>
+				</DockPanel>
 			</StackPanel>
-			<DockPanel Grid.Row="1"
-					   Grid.Column="0"
-						Grid.ColumnSpan="2">
-				<TextBlock Text="简介:"
-						   Classes="title"
-						   DockPanel.Dock="Left"/>
-				<TextBlock Text="{Binding Resource.Description}"
-						   TextWrapping="Wrap"
-						   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
-						   Margin="10,0,0,0"
-						   MaxLines="14"/>
-			</DockPanel>
+
 		</Grid>
 
 		<ScrollViewer HorizontalScrollBarVisibility="Disabled"
@@ -139,10 +132,10 @@
 							 ItemContainerTheme="{StaticResource SelectableItem}"
 							 Name="EpisodeHeader"
 							 Selection="{Binding HeaderSelection, Mode=OneWayToSource}"
+							 SelectionMode="AlwaysSelected"
 							 ScrollViewer.VerticalScrollBarVisibility="Disabled"
 							 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-							 Padding="0,0,0,12"
-							 DockPanel.Dock="Top">
+							 Padding="0,0,0,12">
 						<ListBox.ItemTemplate>
 							<DataTemplate DataType="pss:ResourceTreeNode">
 								<TextBlock Text="{Binding Name}"/>
@@ -151,8 +144,7 @@
 					</ListBox>
 
 					<Border Background="LightYellow"
-							IsVisible="{Binding !!History}"
-							DockPanel.Dock="Top">
+							IsVisible="{Binding History, Converter={x:Static ObjectConverters.IsNotNull}}">
 						<TextBlock Text="{Binding History.ProgressDesc, StringFormat='上次观看到[{0}]'}"
 								   HorizontalAlignment="Center"
 								   VerticalAlignment="Center"
@@ -179,50 +171,93 @@
 										TextWrapping="Wrap"
 										MinWidth="80"
 										TextAlignment="Center">
-								<FlyoutBase.AttachedFlyout>
-									<Flyout>
-										<ItemsControl ItemsSource="{Binding $parent[UserControl].((ps:DetailViewModel)DataContext).FlyoutOptions}">
-											<ItemsControl.ItemTemplate>
-												<DataTemplate DataType="pss:ResourceTreeNode">
-													<Border>
-														<Button Content="{Binding Name}"
-																MinWidth="80"
-																MinHeight="30"
-																VerticalContentAlignment="Center"
-																HorizontalContentAlignment="Center"
-																Command="{Binding $parent[UserControl].((ps:DetailViewModel)DataContext).LinkClickCommand}"
-																CommandParameter="{Binding}"/>
-													</Border>
-												</DataTemplate>
-											</ItemsControl.ItemTemplate>
-										</ItemsControl>
-									</Flyout>
-								</FlyoutBase.AttachedFlyout>
 							</TextBlock>
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
 			</StackPanel>
 		</ScrollViewer>
-
-
-        <Button Theme="{StaticResource Icon}"
-                Content="&#xF064;"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Margin="20"
-                Command="{Binding RefreshCommand}"
-				Grid.RowSpan="2"
+		
+		<Button Theme="{StaticResource Icon}"
+				Content="&#xF064;"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Bottom"
+				Margin="20"
+				Command="{Binding RefreshCommand}"
+				Grid.Row="1"
 				Grid.ColumnSpan="2"/>
 		
-        <Border IsVisible="{Binding IsLoading}" 
-				Background="Transparent"
-				Grid.RowSpan="2"
-				Grid.ColumnSpan="2">
-            <PathIcon Data="{StaticResource loader2}"
-                      Classes.spin="{Binding IsLoading}"
-                      Height="30"
-                      Width="30"/>
-        </Border>
+		<Border Grid.Row="2"
+				Grid.ColumnSpan="2"
+				BorderThickness="1,1,1,0"
+				BorderBrush="LightGray">
+			<StackPanel
+					Spacing="10">
+				<DockPanel IsVisible="{Binding !!SourceOptions?.Count}">
+					<TextBlock Text="源:"
+							   DockPanel.Dock="Left"
+							   VerticalAlignment="Center"/>
+					<ListBox ItemsSource="{Binding SourceOptions}"
+							 Theme="{StaticResource Horizontal}"
+							 ItemContainerTheme="{StaticResource SelectableItem}"
+							 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+							 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+							 Selection="{Binding SourceSelection, Mode=OneWayToSource}">
+						<ListBox.ItemTemplate>
+							<DataTemplate DataType="pss:ResourceTreeNode">
+								<TextBlock Text="{Binding Name}"
+										   MinWidth="80"
+										   TextAlignment="Center"/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</DockPanel>
+				<DockPanel IsVisible="{Binding !!WebAnalysisSites?.Count}">
+					<TextBlock Text="解析:"
+							   DockPanel.Dock="Left"
+							   VerticalAlignment="Center"/>
+					<ListBox ItemsSource="{Binding WebAnalysisSites}"
+							 Theme="{StaticResource Horizontal}"
+							 ItemContainerTheme="{StaticResource SelectableItem}"
+							 ScrollViewer.VerticalScrollBarVisibility="Disabled"
+							 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+							 Selection="{Binding AnalysisSelection, Mode=OneWayToSource}"
+							 SelectionMode="AlwaysSelected">
+						<ListBox.ItemTemplate>
+							<DataTemplate DataType="psr:ISite">
+								<TextBlock Text="{Binding Title}"
+										   MinWidth="80"
+										   TextAlignment="Center"/>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
+				</DockPanel>
+			</StackPanel>
+		</Border>
+
+		<Panel Grid.Row="0"
+			   Grid.Column="0"
+			   x:Name="part_player"
+			   Background="Black"
+			   Classes.fullScreen="{Binding FullScreen}">
+			<ps:PSPlayer Controller="{Binding Controller, Mode=OneWayToSource}"
+						 FullScreen="{Binding FullScreen, Mode=TwoWay}"
+						 Title="{Binding Title}"
+						 PlayerMode="{Binding PlayerMode}"
+						 IsVisible="{Binding !IsLoading}"
+						 NextCommand="{Binding NextCommand}"
+						 PreviousCommand="{Binding PreviousCommand}"/>
+
+			<Border IsVisible="{Binding IsLoading}"
+					Background="Transparent"
+					Grid.RowSpan="2"
+					Grid.ColumnSpan="2">
+				<PathIcon Data="{StaticResource loader2}"
+						  Classes.spin="{Binding IsLoading}"
+						  Height="30"
+						  Width="30"
+						  Foreground="White"/>
+			</Border>
+		</Panel>
 	</Grid>
 </UserControl>
