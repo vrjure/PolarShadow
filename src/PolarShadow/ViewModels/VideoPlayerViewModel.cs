@@ -103,7 +103,7 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        protected override  void OnLoad()
+        protected override  async void OnLoad()
         {
             ShowPrevious = false;
             ShowNext = false;
@@ -133,7 +133,7 @@ namespace PolarShadow.ViewModels
 
             try
             {
-                Controller?.Play(new Uri(videoUrl.Src));
+                await Controller?.PlayAsync(new Uri(videoUrl.Src));
             }
             catch (Exception ex)
             {
@@ -141,7 +141,7 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        protected override void OnUnload()
+        protected override async void OnUnload()
         {
             try
             {
@@ -156,7 +156,7 @@ namespace PolarShadow.ViewModels
                 {
                     return;
                 }
-                mp.Stop();
+                await mp.StopAsync();
 
             }
             catch { }

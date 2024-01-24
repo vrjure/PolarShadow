@@ -10,8 +10,6 @@
 			 ps:PageLoadAttached.RegisterLoad="True"
 			 Background="Black">
 	<Border Padding="{Binding Padding}">
-		<ps:PSPlayer Controller="{Binding Controller, Mode=OneWayToSource}"
-					 FullScreen="{Binding FullScreen, Mode=TwoWay}"
-					 Title="{Binding Title}"/>
+		<ps:PSPlayer />
 	</Border>
 </UserControl>

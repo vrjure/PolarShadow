@@ -99,62 +99,29 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _webAnalysisSites, value);
         }
 
-        private bool _fullScreen;
-        public bool FullScreen
+        private IMediaController _mediaController;
+        public IMediaController MediaController
         {
-            get => _fullScreen;
+            get => _mediaController;
             set
             {
-                if (SetProperty(ref _fullScreen, value))
+                var c = _mediaController;
+                if(SetProperty(ref _mediaController, value))
                 {
-                    if (_fullScreen)
+                    if (c != null)
                     {
-                        SetFullScreen();
-                        PlayerMode = MediaPlayerMode.Normal;
+                        c.Controller.TimeChanged -= _controller_TimeChanged;
                     }
-                    else
+
+                    if (_mediaController != null)
                     {
-                        ExitFullScreen();
-                        PlayerMode = MediaPlayerMode.Simple;
+                        _mediaController.Controller.TimeChanged += _controller_TimeChanged;
+                        _mediaController.PreviousClick += Controller_PreviousClick;
+                        _mediaController.NextClick += Controller_NextClick;
+                        _mediaController.PropertyChanged += MediaController_PropertyChanged;
                     }
                 }
             }
-        }
-
-        private IVideoViewController _controller;
-        public IVideoViewController Controller
-        {
-            get => _controller;
-            set
-            {
-                var cache = _controller;
-                if (SetProperty(ref _controller, value))
-                {
-                    if (cache != null)
-                    {
-                        cache.TimeChanged -= _controller_TimeChanged;
-                    }
-                    if (_controller != null)
-                    {
-                        _controller.TimeChanged += _controller_TimeChanged;
-                    }
-                }
-            }
-
-        }
-
-        private string _title;
-        public string Title
-        {
-            get => _title;
-            set => SetProperty(ref _title, value);
-        }
-
-        private MediaPlayerMode _playerMode = MediaPlayerMode.Simple;
-        public MediaPlayerMode PlayerMode
-        {
-            get => _playerMode;
-            set => SetProperty(ref _playerMode, value);
         }
 
         private IAsyncRelayCommand _refreshCommand;
@@ -165,10 +132,5 @@ namespace PolarShadow.ViewModels
 
         private IAsyncRelayCommand _linkClickCommand;
         public IAsyncRelayCommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(LinkClick);
-
-        private IRelayCommand _previousCommand;
-        public IRelayCommand PreviousCommand => _previousCommand ??= new RelayCommand(PlayPrevious);
-        private IRelayCommand _nextCommand;
-        public IRelayCommand NextCommand => _nextCommand ??= new RelayCommand(PlayNext);
     }
 }

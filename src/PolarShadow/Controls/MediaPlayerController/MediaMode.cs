@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Controls
 {
-    public enum MediaPlayerMode
+    public enum MediaMode
     {
         Normal,
         Simple,

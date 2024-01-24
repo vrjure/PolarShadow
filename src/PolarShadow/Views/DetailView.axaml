@@ -61,8 +61,8 @@
     <Grid RowDefinitions="*,1.5*,auto"
 		  ColumnDefinitions="*,*"
 		  Classes="layout_horizontal"
-		  Classes.fullScreen="{Binding FullScreen}"
-		  Classes.normalScreen="{Binding !FullScreen}"
+		  Classes.fullScreen="{Binding MediaController.FullScreen}"
+		  Classes.normalScreen="{Binding !MediaController.FullScreen}"
 		  x:Name="part_root">
 
 		<Grid x:Name="part_desc"
@@ -84,7 +84,8 @@
 						ps:ImageAttached.Headers="{Binding Resource.ImageSrcHeaders}"
 						ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.jpg"/>
 			</Border>
-			<StackPanel Spacing="10">
+			<StackPanel Spacing="10"
+						ClipToBounds="True">
 				<DockPanel>
 					<TextBlock Text="名称:"
 							   Classes="title"
@@ -186,14 +187,25 @@
 				Command="{Binding RefreshCommand}"
 				Grid.Row="1"
 				Grid.ColumnSpan="2"/>
+
+		<Border IsVisible="{Binding IsLoading}"
+				Grid.Row="1"
+				Grid.ColumnSpan="2"
+				Background="Transparent">
+			<PathIcon Data="{StaticResource loader2}"
+					  Classes.spin="{Binding IsLoading}"
+					  Height="30"
+					  Width="30"
+					  Foreground="Black"/>
+		</Border>
 		
 		<Border Grid.Row="2"
 				Grid.ColumnSpan="2"
-				BorderThickness="1,1,1,0"
-				BorderBrush="LightGray">
+				Background="LightGray">
 			<StackPanel
 					Spacing="10">
-				<DockPanel IsVisible="{Binding !!SourceOptions?.Count}">
+				<DockPanel IsVisible="{Binding !!SourceOptions?.Count}"
+						   Margin="5,5,5,0">
 					<TextBlock Text="源:"
 							   DockPanel.Dock="Left"
 							   VerticalAlignment="Center"/>
@@ -212,7 +224,8 @@
 						</ListBox.ItemTemplate>
 					</ListBox>
 				</DockPanel>
-				<DockPanel IsVisible="{Binding !!WebAnalysisSites?.Count}">
+				<DockPanel IsVisible="{Binding !!WebAnalysisSites?.Count}"
+						   Margin="5,5,5,0">
 					<TextBlock Text="解析:"
 							   DockPanel.Dock="Left"
 							   VerticalAlignment="Center"/>
@@ -239,25 +252,8 @@
 			   Grid.Column="0"
 			   x:Name="part_player"
 			   Background="Black"
-			   Classes.fullScreen="{Binding FullScreen}">
-			<ps:PSPlayer Controller="{Binding Controller, Mode=OneWayToSource}"
-						 FullScreen="{Binding FullScreen, Mode=TwoWay}"
-						 Title="{Binding Title}"
-						 PlayerMode="{Binding PlayerMode}"
-						 IsVisible="{Binding !IsLoading}"
-						 NextCommand="{Binding NextCommand}"
-						 PreviousCommand="{Binding PreviousCommand}"/>
-
-			<Border IsVisible="{Binding IsLoading}"
-					Background="Transparent"
-					Grid.RowSpan="2"
-					Grid.ColumnSpan="2">
-				<PathIcon Data="{StaticResource loader2}"
-						  Classes.spin="{Binding IsLoading}"
-						  Height="30"
-						  Width="30"
-						  Foreground="White"/>
-			</Border>
+			   Classes.fullScreen="{Binding MediaController.FullScreen}">
+			<ps:PSPlayer MediaController="{Binding MediaController, Mode=OneWayToSource}" />
 		</Panel>
 	</Grid>
 </UserControl>

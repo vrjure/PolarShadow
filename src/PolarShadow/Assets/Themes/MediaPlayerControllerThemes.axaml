@@ -11,7 +11,8 @@
 	<ControlTheme TargetType="ps:MediaPlayerController" x:Key="{x:Type ps:MediaPlayerController}">
 		<Setter Property="Template">
 			<ControlTemplate>
-				<Border Background="Transparent"
+				<Panel>
+					<Border Background="Transparent"
 						Padding="{TemplateBinding Padding}"
 						Margin="{TemplateBinding Margin}"
 						BorderBrush="{TemplateBinding BorderBrush}"
@@ -20,124 +21,157 @@
 						IsVisible="{TemplateBinding IsVisible}"
 						Opacity="{TemplateBinding Opacity}"
 						x:Name="Part_Root">
-					<Border.Transitions>
-						<Transitions>
-							<DoubleTransition Property="Opacity" Duration="0:0:0.5" />
-						</Transitions>
-					</Border.Transitions>
-					
-					<Grid RowDefinitions="auto,*,auto">
-						<OnPlatform>
-							<OnPlatform.Default>
-								<ContentPresenter Grid.RowSpan="3"
-												  VerticalContentAlignment="Stretch"
-												  HorizontalContentAlignment="Stretch"
-												  Content="{TemplateBinding Content}"
-												  ContentTemplate="{TemplateBinding ContentTemplate}"/>
-							</OnPlatform.Default>
-							<OnPlatform.Android>
-								<ContentPresenter Grid.Row="1"
-												  VerticalContentAlignment="Stretch"
-												  HorizontalContentAlignment="Stretch"
-												  Content="{TemplateBinding Content}"
-												  ContentTemplate="{TemplateBinding ContentTemplate}"/>
-							</OnPlatform.Android>
-						</OnPlatform>
-						<Grid ColumnDefinitions="*,*"
-							  Background="#8F000000"
-							  x:Name="Part_Top">
-							<!--top left-->
-							<StackPanel Orientation="Horizontal"
-										Spacing="16"
-										VerticalAlignment="Center"
-										Margin="8,8,0,0">
-								<TextBlock Text="{TemplateBinding Title}"
-										   Foreground="White"/>
-							</StackPanel>
-						</Grid>
-						
-						<Grid Grid.Row="2"
-							  RowDefinitions="*"
-							  Background="#8F000000"
-							  x:Name="Part_Bottom">
-							<!--bar-->
-							<Grid Margin="16,8"
-								  ColumnDefinitions="auto,*,auto,auto,auto">
+						<Border.Transitions>
+							<Transitions>
+								<DoubleTransition Property="Opacity" Duration="0:0:0.5" />
+							</Transitions>
+						</Border.Transitions>
+
+						<Grid RowDefinitions="auto,*,auto">
+							<OnPlatform>
+								<OnPlatform.Default>
+									<ContentPresenter Grid.RowSpan="3"
+													  VerticalContentAlignment="Stretch"
+													  HorizontalContentAlignment="Stretch"
+													  Content="{TemplateBinding Content}"
+													  ContentTemplate="{TemplateBinding ContentTemplate}"/>
+								</OnPlatform.Default>
+								<OnPlatform.Android>
+									<ContentPresenter Grid.Row="1"
+													  VerticalContentAlignment="Stretch"
+													  HorizontalContentAlignment="Stretch"
+													  Content="{TemplateBinding Content}"
+													  ContentTemplate="{TemplateBinding ContentTemplate}"/>
+								</OnPlatform.Android>
+							</OnPlatform>
+							<Grid ColumnDefinitions="*,*"
+								  Background="#8F000000"
+								  x:Name="Part_Top">
+								<!--top left-->
 								<StackPanel Orientation="Horizontal"
 											Spacing="16"
-											DockPanel.Dock="Left"
-											Margin="-8,0,0,0"
-											VerticalAlignment="Center">
-									<Button Theme="{DynamicResource Icon}"
-											Content="&#xF13F;"
-											Foreground="White"
-											VerticalContentAlignment="Center"
-											x:Name="Part_Previous"/>
-									<Button Theme="{DynamicResource Icon}"
-											FontSize="32"
-											Foreground="White"
-											VerticalContentAlignment="Center"
-											Classes.play="{Binding !IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
-											Classes.pause="{Binding IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
-											x:Name="Part_PlayPause">
-										<Button.Styles>
-											<Style Selector="Button.play">
-												<Setter Property="Content" Value="&#xF00A;"/>
-											</Style>
-											<Style Selector="Button.pause">
-												<Setter Property="Content" Value="&#xEFD7;"/>
-											</Style>
-										</Button.Styles>
-									</Button>
-									<Button Theme="{DynamicResource Icon}"
-											Content="&#xF143;"
-											Foreground="White"
-											VerticalContentAlignment="Center"
-											x:Name="Part_Next"/>
-								</StackPanel>
-								<Slider Margin="8,0"
-										x:Name="Part_Slider"
-										Padding="8,0"
-										Grid.Column="1"
-										VerticalAlignment="Center"
-										Maximum="{TemplateBinding Length, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
-										Minimum="0"
-										Value="{Binding Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}, Mode=TwoWay}">
-								</Slider>
-								<TextBlock Text="{TemplateBinding Time, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
-											Grid.Column="2"
 											VerticalAlignment="Center"
-											Foreground="White"
-											x:Name="Part_Time"/>
-								<TextBlock Text="{Binding Length, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToStringConverter.Instance}, StringFormat='/{0}'}"
-											Grid.Column="3"
-											VerticalAlignment="Center"
-											Foreground="White"
-											x:Name="Part_Length"/>
-								<StackPanel Grid.Column="4"
-											VerticalAlignment="Center"
-											Margin="8,0,0,0">
-									<Button Theme="{DynamicResource Icon}"
-											VerticalAlignment="Center"
-											VerticalContentAlignment="Center"
-											Foreground="White"
-											Classes.fullScreen="{Binding !FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
-											Classes.exitFullScreen="{Binding FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
-											x:Name="Part_FullScreen">
-										<Button.Styles>
-											<Style Selector="Button.fullScreen">
-												<Setter Property="Content" Value="&#xED9B;"/>
-											</Style>
-											<Style Selector="Button.exitFullScreen">
-												<Setter Property="Content" Value="&#xED99;"/>
-											</Style>
-										</Button.Styles>
-									</Button>
+											Margin="8,8,0,0">
+									<TextBlock Text="{Binding MediaController.Title, RelativeSource={RelativeSource TemplatedParent}}"
+											   Foreground="White"/>
 								</StackPanel>
 							</Grid>
+
+							<Grid Grid.Row="2"
+								  RowDefinitions="*"
+								  Background="#8F000000"
+								  x:Name="Part_Bottom">
+								<!--bar-->
+								<Grid Margin="16,8"
+									  ColumnDefinitions="auto,*,auto,auto,auto">
+									<StackPanel Orientation="Horizontal"
+												Spacing="16"
+												DockPanel.Dock="Left"
+												Margin="-8,0,0,0"
+												VerticalAlignment="Center">
+										<Button Theme="{DynamicResource Icon}"
+												Content="&#xF13F;"
+												Foreground="White"
+												VerticalContentAlignment="Center"
+												x:Name="Part_Previous"/>
+										<Button Theme="{DynamicResource Icon}"
+												FontSize="32"
+												Foreground="White"
+												VerticalContentAlignment="Center"
+												Classes.play="{Binding !MediaController.Controller.IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
+												Classes.pause="{Binding MediaController.Controller.IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
+												x:Name="Part_PlayPause">
+											<Button.Styles>
+												<Style Selector="Button.play">
+													<Setter Property="Content" Value="&#xF00A;"/>
+												</Style>
+												<Style Selector="Button.pause">
+													<Setter Property="Content" Value="&#xEFD7;"/>
+												</Style>
+											</Button.Styles>
+										</Button>
+										<Button Theme="{DynamicResource Icon}"
+												Content="&#xF143;"
+												Foreground="White"
+												VerticalContentAlignment="Center"
+												x:Name="Part_Next"/>
+									</StackPanel>
+									<Slider Margin="8,0"
+											x:Name="Part_Slider"
+											Padding="8,0"
+											Grid.Column="1"
+											VerticalAlignment="Center"
+											Maximum="{Binding MediaController.Controller.Length, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
+											Minimum="0"
+											Value="{Binding MediaController.Controller.Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}, Mode=TwoWay}">
+									</Slider>
+									<TextBlock Text="{Binding MediaController.Controller.Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
+												Grid.Column="2"
+												VerticalAlignment="Center"
+												Foreground="White"
+												x:Name="Part_Time"/>
+									<TextBlock Text="{Binding MediaController.Controller.Length, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToStringConverter.Instance}, StringFormat='/{0}'}"
+												Grid.Column="3"
+												VerticalAlignment="Center"
+												Foreground="White"
+												x:Name="Part_Length"/>
+									<StackPanel Grid.Column="4"
+												VerticalAlignment="Center"
+												Margin="8,0,0,0">
+										<Button Theme="{DynamicResource Icon}"
+												VerticalAlignment="Center"
+												VerticalContentAlignment="Center"
+												Foreground="White"
+												Classes.fullScreen="{Binding !MediaController.FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
+												Classes.exitFullScreen="{Binding MediaController.FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
+												x:Name="Part_FullScreen">
+											<Button.Styles>
+												<Style Selector="Button.fullScreen">
+													<Setter Property="Content" Value="&#xED9B;"/>
+												</Style>
+												<Style Selector="Button.exitFullScreen">
+													<Setter Property="Content" Value="&#xED99;"/>
+												</Style>
+											</Button.Styles>
+										</Button>
+									</StackPanel>
+								</Grid>
+							</Grid>
 						</Grid>
-					</Grid>
-				</Border>
+					</Border>
+
+					<Border IsVisible="{Binding MediaController.IsLoading,RelativeSource={RelativeSource TemplatedParent}}"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center">
+						<PathIcon Data="{StaticResource loader2}"
+								  Classes.spin="{Binding MediaController.IsLoading,RelativeSource={RelativeSource TemplatedParent}}"
+								  Height="30"
+								  Width="30"
+								  Foreground="White"/>
+					</Border>
+
+					<Border x:Name="part_tip"
+							Grid.Row="1"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center"
+							Background="Black"
+							Padding="5"
+							CornerRadius="5"
+							Opacity="0">
+						<Border.Styles>
+							<Style Selector="Border[Opacity=0]">
+								<Setter Property="IsVisible" Value="False"/>
+							</Style>
+						</Border.Styles>
+						<Border.Transitions>
+							<Transitions>
+								<DoubleTransition Property="Opacity" Duration="0:0:0.5" />
+							</Transitions>
+						</Border.Transitions>
+						<TextBlock Foreground="White"
+								   x:Name="part_tip_text"/>
+					</Border>
+				</Panel>			
 			</ControlTemplate>
 		</Setter>
 

@@ -8,30 +8,16 @@
 				<Border>
 					<OnPlatform>
 						<OnPlatform.Default>
-							<ps:VideoView FullScreen="{TemplateBinding FullScreen}"
-										  Controller="{Binding Controller, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWayToSource}">
+							<ps:VideoView x:Name="Part_VideoView">
 								<!--on overlay layer-->
 								<!--binding to datacontext-->
 								<!--datacontext should has these properties-->
-								<ps:MediaPlayerController Title="{Binding Title}"
-														  FullScreen="{Binding FullScreen, Mode=TwoWay}"
-														  Controller="{Binding Controller}"
-														  PlayerMode="{Binding PlayerMode}"
-														  PreviousCommand="{Binding PreviousCommand}"
-														  NextCommand="{Binding NextCommand}"
-														  x:Name="Part_MediaController"/>
+								<ps:MediaPlayerController x:Name="Part_MediaController"/>
 							</ps:VideoView>
 						</OnPlatform.Default>
 						<OnPlatform.Android>
-							<ps:MediaPlayerController Title="{TemplateBinding Title}"
-													  FullScreen="{Binding FullScreen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-													  Controller="{TemplateBinding Controller}"
-													  PlayerMode="{TemplateBinding PlayerMode}"
-													  PreviousCommand="{TemplateBinding PreviousCommand}"
-													  NextCommand="{TemplateBinding NextCommand}"
-													  x:Name="Part_MediaController">
-								<ps:VideoView FullScreen="{TemplateBinding FullScreen}"
-											  Controller="{Binding Controller, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWayToSource}"/>
+							<ps:MediaPlayerController x:Name="Part_MediaController">
+								<ps:VideoView x:Name="Part_VideoView"/>
 							</ps:MediaPlayerController>
 						</OnPlatform.Android>
 					</OnPlatform>

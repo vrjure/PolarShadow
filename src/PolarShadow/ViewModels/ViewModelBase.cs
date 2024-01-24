@@ -139,4 +139,15 @@ public class ViewModelBase : ObservableRecipient, INavigationNotify
     {
         OnSelectionChanged(e);
     }
+
+    protected Task WhenTaskCompleted(Func<bool> task, int millisecondsDelay = 100)
+    {
+        return Task.Run(async () =>
+        {
+            while (!task())
+            {
+                await Task.Delay(millisecondsDelay);
+            }
+        });
+    }
 }

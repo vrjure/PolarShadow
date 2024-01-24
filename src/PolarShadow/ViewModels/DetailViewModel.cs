@@ -1,8 +1,10 @@
 ﻿using Avalonia.Controls.Notifications;
+using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Aria2;
 using PolarShadow.Cache;
+using PolarShadow.Controls;
 using PolarShadow.Core;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
@@ -60,9 +62,9 @@ namespace PolarShadow.ViewModels
 
         protected override async void OnUnload()
         {
-            if (FullScreen)
+            if (MediaController.FullScreen)
             {
-                FullScreen = false;
+                MediaController.FullScreen = false;
             }
 
             try
@@ -239,20 +241,24 @@ namespace PolarShadow.ViewModels
 
         }
 
-        private void PlayPrevious()
+        private void MediaController_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (SelectionModel == null)
+            if (e.PropertyName.Equals(nameof(IMediaController.FullScreen)))
             {
-                return;
-            }
-            var count = (SelectionModel.Source as ICollection<ResourceTreeNode>)?.Count;
-            if (SelectionModel.SelectedIndex > 0 && count > 0)
-            {
-                SelectionModel.Select(SelectionModel.SelectedIndex - 1);
+                if (MediaController.FullScreen)
+                {
+                    SetFullScreen();
+                    MediaController.MediaMode = MediaMode.Normal;
+                }
+                else
+                {
+                    ExitFullScreen();
+                    MediaController.MediaMode = MediaMode.Simple;
+                }
             }
         }
 
-        private void PlayNext()
+        private void Controller_NextClick(object sender, EventArgs e)
         {
             if (SelectionModel == null)
             {
@@ -263,6 +269,19 @@ namespace PolarShadow.ViewModels
             if (SelectionModel.SelectedIndex < count)
             {
                 SelectionModel.Select(SelectionModel.SelectedIndex + 1);
+            }
+        }
+
+        private void Controller_PreviousClick(object sender, EventArgs e)
+        {
+            if (SelectionModel == null)
+            {
+                return;
+            }
+            var count = (SelectionModel.Source as ICollection<ResourceTreeNode>)?.Count;
+            if (SelectionModel.SelectedIndex > 0 && count > 0)
+            {
+                SelectionModel.Select(SelectionModel.SelectedIndex - 1);
             }
         }
 
@@ -346,16 +365,18 @@ namespace PolarShadow.ViewModels
         {
             try
             {
-                if (IsLoading)
+                if (MediaController.IsLoading)
                 {
                     Cancellation.Cancel();
-                }
-                if (Controller?.IsPlaying == true)
-                {
-                    Controller.Stop();
+                    await WhenTaskCompleted(() => MediaController.IsLoading);
                 }
 
-                IsLoading = true;
+                MediaController.IsLoading = true;
+
+                if (MediaController.Controller?.IsPlaying == true)
+                {
+                    await MediaController.Controller.StopAsync();
+                }
 
                 if (site == null && !_polar.TryGetSite(link.Site, out site))
                 {
@@ -386,7 +407,7 @@ namespace PolarShadow.ViewModels
             }
             finally
             {
-                IsLoading = false;
+                MediaController.IsLoading = false;
             }
             return null;
         }
@@ -395,7 +416,6 @@ namespace PolarShadow.ViewModels
         {
             if (videoSource == null || string.IsNullOrEmpty(videoSource.Src))
             {
-                _notify.Show("Invaild resource");
                 return;
             }
 
@@ -405,17 +425,17 @@ namespace PolarShadow.ViewModels
                 episode = (SelectionModel.SelectedItem as ResourceTreeNode).Name;
             }
 
-            Title = $"{this.Resource.Name}-{episode}";
-
-            Controller?.Play(new Uri(videoSource.Src));
-
-            //_nav.Navigate<VideoPlayerViewModel>(TopLayoutViewModel.NavigationName, new Dictionary<string, object>
-            //{
-            //    {nameof(VideoPlayerViewModel.Param_Episode), videoSource },
-            //    {nameof(VideoPlayerViewModel.Param_Title), $"{this.Resource.Name}-{episode}" }
-            //}, true);
+            MediaController.Title = $"{this.Resource.Name}-{episode}";
 
             await TryUpdateHistory();
+
+            await MediaController.Controller?.PlayAsync(new Uri(videoSource.Src));
+
+            //if (History != null && History.Progress > 0)
+            //{
+            //    Controller.Time = TimeSpan.FromMilliseconds(History.Progress);
+            //}
+
         }
 
         private async Task TryUpdateHistory()
@@ -452,6 +472,7 @@ namespace PolarShadow.ViewModels
 
             await _hisService.AddOrUpdateAsync(his);
 
+            this.History = null;
             this.History = his;
         }
 

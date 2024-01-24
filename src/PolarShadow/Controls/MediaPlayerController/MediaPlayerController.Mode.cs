@@ -8,17 +8,17 @@ namespace PolarShadow.Controls
 {
     public partial class MediaPlayerController
     {
-        private void SetPlayMode(MediaPlayerMode mode)
+        private void SetPlayMode(MediaMode mode)
         {
             switch (mode)
             {
-                case MediaPlayerMode.Normal:
+                case MediaMode.Normal:
                     NormalMode();
                     break;
-                case MediaPlayerMode.Simple:
+                case MediaMode.Simple:
                     SimpleMode();
                     break;
-                case MediaPlayerMode.Min:
+                case MediaMode.Min:
                     MinMode();
                     break;
                 default:

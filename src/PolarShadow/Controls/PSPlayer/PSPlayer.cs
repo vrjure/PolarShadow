@@ -1,6 +1,9 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Selection;
+using PolarShadow.Core;
+using PolarShadow.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,53 +15,36 @@ namespace PolarShadow.Controls
 {
     public class PSPlayer : TemplatedControl
     {
-        public static readonly DirectProperty<PSPlayer, IVideoViewController> ControllerProperty = MediaPlayerController.ControllerProperty.AddOwner<PSPlayer>(s=>s.Controller, (s, v) => s.Controller = v);
-        private IVideoViewController _controller;
-        public IVideoViewController Controller
+
+        private MediaPlayerController _mediaController;
+        private MediaPlayerController Part_MediaController
         {
-            get => _controller;
-            set => SetAndRaise(ControllerProperty, ref _controller, value);
+            get => _mediaController;
+            set => _mediaController = value;
         }
 
-        public static readonly DirectProperty<PSPlayer, string> TitleProperty = MediaPlayerController.TitleProperty.AddOwner<PSPlayer>(s => s.Title, (s, v)=> s.Title = v);
-        private string _title;
-        public string Title
+        private VideoView _videoView;
+        private VideoView Part_VideoView
         {
-            get => _title;
-            set => SetAndRaise(TitleProperty, ref _title, value);
+            get => _videoView; 
+            set => _videoView = value;
         }
 
-        public static readonly DirectProperty<PSPlayer, bool> FullScreenProperty = MediaPlayerController.FullScreenProperty.AddOwner<PSPlayer>(s=> s.FullScreen, (s, v)=> s.FullScreen = v);
-        private bool _fullScreen;
-        public bool FullScreen
+        public static readonly StyledProperty<IMediaController> MediaControllerProperty = AvaloniaProperty.Register<PSPlayer, IMediaController>(nameof(MediaController));
+        public IMediaController MediaController
         {
-            get => _fullScreen;
-            set => SetAndRaise(FullScreenProperty, ref _fullScreen, value);
+            get => GetValue(MediaControllerProperty);
+            set => SetValue(MediaControllerProperty, value);
         }
 
-        public static readonly DirectProperty<PSPlayer, MediaPlayerMode> PlayerModeProperty = MediaPlayerController.PlayerModeProperty.AddOwner<PSPlayer>(s => s.PlayerMode, (s, v) => s.PlayerMode = v);
-
-        private MediaPlayerMode _playerMode;
-        public MediaPlayerMode PlayerMode
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            get => _playerMode;
-            set => SetAndRaise(PlayerModeProperty, ref _playerMode, value);
-        }
+            base.OnApplyTemplate(e);
+            Part_MediaController = e.NameScope.Find<MediaPlayerController>("Part_MediaController");
+            Part_VideoView = e.NameScope.Find<VideoView>("Part_VideoView");
 
-        public static readonly DirectProperty<PSPlayer, ICommand> PreviousCommandProperty = MediaPlayerController.PreviousCommandProperty.AddOwner<PSPlayer>(s => s.PreviousCommand, (s, v) => s.PreviousCommand = v);
-        private ICommand _previousCommand;
-        public ICommand PreviousCommand
-        {
-            get => _previousCommand;
-            set => SetAndRaise(PreviousCommandProperty, ref _previousCommand, value);
-        }
-
-        public static readonly DirectProperty<PSPlayer, ICommand> NextCommandProperty = MediaPlayerController.PreviousCommandProperty.AddOwner<PSPlayer>(s => s.NextCommand, (s, v) => s.NextCommand = v);
-        private ICommand _nextCommand;
-        public ICommand NextCommand
-        {
-            get => _nextCommand;
-            set => SetAndRaise(NextCommandProperty, ref _nextCommand, value);
+            Part_MediaController.MediaController ??= new MediaController() { Controller = Part_VideoView.Controller };
+            MediaController = Part_MediaController.MediaController;
         }
     }
 }
