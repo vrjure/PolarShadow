@@ -27,11 +27,12 @@ namespace PolarShadow.ViewModels
         private readonly IPreference _preference;
         private readonly INavigationService _nav;
         private readonly IHistoryService _hisService;
+        private readonly ITopLevelService _topLevelService;
 
         private ResourceModel _rootResourceInDb;
         private TimeSpan _currentProgress;
 
-        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService)
+        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService, ITopLevelService toplevelService)
         {
             _polar = polar;
             _notify = notify;
@@ -40,6 +41,7 @@ namespace PolarShadow.ViewModels
             _preference = preference;
             _nav = nav;
             _hisService = hisService;
+            _topLevelService = toplevelService;
         }
 
         public ILink Param_Link { get; set; }   
@@ -54,6 +56,7 @@ namespace PolarShadow.ViewModels
 
         protected override async void OnLoad()
         {
+            _topLevelService.PropertyChanged += _TopLevelService_PropertyChanged;
             if (this.Resource == null)
             {
                 await LoadingDeatil();
@@ -62,6 +65,7 @@ namespace PolarShadow.ViewModels
 
         protected override async void OnUnload()
         {
+            _topLevelService.PropertyChanged -= _TopLevelService_PropertyChanged;
             if (MediaController.FullScreen)
             {
                 MediaController.FullScreen = false;
@@ -241,20 +245,27 @@ namespace PolarShadow.ViewModels
 
         }
 
-        private void MediaController_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void _TopLevelService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals(nameof(IMediaController.FullScreen)))
+            if (e.PropertyName.Equals(nameof(ITopLevelService.FullScreen)))
             {
-                if (MediaController.FullScreen)
+                MediaController.FullScreen = _topLevelService.FullScreen;
+                if (_topLevelService.FullScreen)
                 {
-                    SetFullScreen();
                     MediaController.MediaMode = MediaMode.Normal;
                 }
                 else
                 {
-                    ExitFullScreen();
                     MediaController.MediaMode = MediaMode.Simple;
                 }
+            }
+        }
+
+        private void MediaController_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals(nameof(IMediaController.FullScreen)))
+            {
+                _topLevelService.FullScreen = MediaController.FullScreen;
             }
         }
 
@@ -474,18 +485,6 @@ namespace PolarShadow.ViewModels
 
             this.History = null;
             this.History = his;
-        }
-
-        private void SetFullScreen()
-        {
-            Messenger.Send(FullScreenState.FullScreen);
-            //_topLevel.FullScreen();
-        }
-
-        private void ExitFullScreen()
-        {
-            Messenger.Send(FullScreenState.Normal);
-            //_topLevel.ExitFullScreen();
         }
     }
 }

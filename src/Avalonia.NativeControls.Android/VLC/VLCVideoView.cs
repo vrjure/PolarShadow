@@ -112,6 +112,29 @@ namespace Avalonia.Controls.Android
             return new AndroidViewControlHandle(_platformView);
         }
 
+        protected override void DestroyControl()
+        {
+            _platformView.MediaPlayer = null;
+
+            if (_overLayerTopLevel != null)
+            {
+                _overLayerTopLevel.BackRequested -= _overLayerTopLevel_BackRequested;
+
+                var type = _overLayerTopLevel.PlatformImpl.GetType();
+                var closedPro = type.GetProperty("Closed", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+                var closed = (Action)closedPro?.GetValue(_overLayerTopLevel.PlatformImpl);
+                closed?.Invoke();
+                _overLayerTopLevel.PlatformImpl.Dispose();
+            }
+
+            if (_overlayLayer != null)
+            {
+                _overlayLayer.Dispose();
+                _overlayLayer = null;
+            }
+
+        }
+
         private void _overLayerTopLevel_BackRequested(object sender, Interactivity.RoutedEventArgs e)
         {
             e.Handled = true;
@@ -132,26 +155,6 @@ namespace Avalonia.Controls.Android
             else
             {
                 _overlayLayer.Visibility = ViewStates.Visible;
-            }
-        }
-
-        protected override void DestroyControl()
-        {
-            if (_overLayerTopLevel != null)
-            {
-                _overLayerTopLevel.BackRequested -= _overLayerTopLevel_BackRequested;
-
-                var type = _overLayerTopLevel.PlatformImpl.GetType();
-                var closedPro = type.GetProperty("Closed", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-                var closed = (Action)closedPro?.GetValue(_overLayerTopLevel.PlatformImpl);
-                closed?.Invoke();
-                _overLayerTopLevel.PlatformImpl.Dispose();
-            }
-
-            if (_overlayLayer != null)
-            {
-                _overlayLayer.Dispose();
-                _overlayLayer = null;
             }
         }
 

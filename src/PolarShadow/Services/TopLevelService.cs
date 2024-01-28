@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Services
 {
-    internal class TopLevelService : ITopLevelService
+    internal class TopLevelService : ObservableObject, ITopLevelService
     {
         private TopLevel _topLevel;
         private Func<Visual> _visualFactory;
@@ -34,5 +35,55 @@ namespace PolarShadow.Services
         }
 
         public static TopLevel TopLevel => Ioc.Default.GetService<ITopLevelService>()?.GetTopLevel();
+
+        private bool _fullScreen = false;
+        public bool FullScreen
+        {
+            get => _fullScreen;
+            set
+            {
+                if (SetProperty(ref _fullScreen, value))
+                {
+                    if (OperatingSystem.IsWindows())
+                    {
+                        if (value)
+                        {
+                            (TopLevel as Window).WindowState = WindowState.FullScreen;
+                        }
+                        else
+                        {
+                            (TopLevel as Window).WindowState = WindowState.Normal;
+                        }
+                    }
+                    else if (OperatingSystem.IsAndroid())
+                    {
+                        if (value)
+                        {
+                            TopLevel.InsetsManager.DisplayEdgeToEdge = true;
+                            TopLevel.InsetsManager.IsSystemBarVisible = false;
+                        }
+                        else
+                        {
+                            TopLevel.InsetsManager.DisplayEdgeToEdge = false;
+                            TopLevel.InsetsManager.IsSystemBarVisible = true;
+                        }
+                    }
+                }
+               
+            }
+        }
+
+        private static bool GetFullScreenState()
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                return (TopLevel as Window).WindowState == WindowState.FullScreen;
+            }
+            else if (OperatingSystem.IsAndroid())
+            {
+                return TopLevel.InsetsManager.DisplayEdgeToEdge == true;
+            }
+            return false;
+        }
     }
 }

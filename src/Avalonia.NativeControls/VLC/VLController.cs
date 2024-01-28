@@ -14,40 +14,25 @@ namespace Avalonia.Controls
 {
     public class VLController : ObservableObject, IVideoViewController
     {
-        private object _lock = new object();
         private bool _disposed;
         private MediaPlayer _mediaPlayer;
         private static readonly TimeSpan _ignore = TimeSpan.FromSeconds(1);
-
-        public MediaPlayer MediaPlayer
+        public VLController()
         {
-            get
-            {
-                lock (_lock)
-                {
-                    if (_mediaPlayer == null && !_disposed)
-                    {
-                        _mediaPlayer = new MediaPlayer(NativeControls.GetHandler<LibVLC>());
-                        _mediaPlayer.LengthChanged += MediaPlayer_LengthChanged;
-                        _mediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
-                        _mediaPlayer.Playing += MediaPlayer_Playing;
-                        _mediaPlayer.Paused += MediaPlayer_Paused;
-                        _mediaPlayer.Stopped += MediaPlayer_Stopped;
-                        _mediaPlayer.Buffering += MediaPlayer_Buffering;
-                        _mediaPlayer.VolumeChanged += MediaPlayer_VolumeChanged;
-                        _mediaPlayer.MediaChanged += MediaPlayer_MediaChanged;
-                        _mediaPlayer.EndReached += MediaPlayer_EndReached;
-                        _mediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
-                    }
-
-                    if (_disposed)
-                    {
-                        _mediaPlayer = null;
-                    }
-                    return _mediaPlayer;
-                }
-            }
+            _mediaPlayer = new MediaPlayer(NativeControls.GetHandler<LibVLC>());
+            _mediaPlayer.LengthChanged += MediaPlayer_LengthChanged;
+            _mediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
+            _mediaPlayer.Playing += MediaPlayer_Playing;
+            _mediaPlayer.Paused += MediaPlayer_Paused;
+            _mediaPlayer.Stopped += MediaPlayer_Stopped;
+            _mediaPlayer.Buffering += MediaPlayer_Buffering;
+            //_mediaPlayer.VolumeChanged += MediaPlayer_VolumeChanged;//problem on android; cause crash when stop or disposed.
+            _mediaPlayer.MediaChanged += MediaPlayer_MediaChanged;
+            _mediaPlayer.EndReached += MediaPlayer_EndReached;
+            _mediaPlayer.EncounteredError += MediaPlayer_EncounteredError;
         }
+
+        public MediaPlayer MediaPlayer => _mediaPlayer;
 
         private TimeSpan _length;
         public TimeSpan Length
@@ -123,12 +108,32 @@ namespace Avalonia.Controls
         public event EventHandler Ended;
         public event EventHandler MediaChanged;
 
+
+        public void Play()
+        {
+            MediaPlayer?.Play();
+        }
+
+        public void Play(Uri uri)
+        {
+            MediaPlayer?.Play(new LibVLCSharp.Shared.Media(NativeControls.GetHandler<LibVLC>(), uri));
+        }
+
+        public void Pause()
+        {
+            MediaPlayer?.Pause();
+        }
+
+        public void Stop()
+        {
+            MediaPlayer?.Stop();
+        }
+
         public Task StopAsync()
         {
             return Task.Run(() =>
             {
                 MediaPlayer?.Stop();
-                MediaPlayer.Media = null;
             });
         }
 
@@ -210,21 +215,18 @@ namespace Avalonia.Controls
             }
         }
 
-        public void Dispose()
+        public async void Dispose()
         {
-            lock(_lock)
+            if (_disposed) return;
+            _disposed = true;
+            MediaPlayer cache = _mediaPlayer;
+            _mediaPlayer = null;
+            if (cache != null)
             {
-                _disposed = true;
-                if (_mediaPlayer != null)
+                await Task.Run(() =>
                 {
-                    var cache = _mediaPlayer;
-                    _mediaPlayer = null;
-                    Task.Run(() =>
-                    {
-                        cache.Hwnd = 0;
-                        cache.Dispose();
-                    });
-                }
+                    cache.Dispose();
+                });
             }
 
         }

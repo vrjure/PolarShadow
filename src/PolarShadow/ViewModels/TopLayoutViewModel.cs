@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.ViewModels
 {
-    public class TopLayoutViewModel : ViewModelBase, IRecipient<LoadingState>, IRecipient<FullScreenState>
+    public class TopLayoutViewModel : ViewModelBase, IRecipient<LoadingState>
     {
         public static string NavigationName = "TopLayoutContent";
         public static string RightTitleBarContainer = "RightTitleBarContianer";
@@ -54,6 +54,7 @@ namespace PolarShadow.ViewModels
         protected override async void OnLoad()
         {
             _topLevel.GetTopLevel().BackRequested += App_BackRequested;
+            _topLevel.PropertyChanged += TopLevel_PropertyChanged;
             IsDesktop = OperatingSystem.IsWindows();
 
             IsLoading = true;
@@ -97,6 +98,7 @@ namespace PolarShadow.ViewModels
         protected override void OnUnload()
         {
             _topLevel.GetTopLevel().BackRequested -= App_BackRequested;
+            _topLevel.PropertyChanged -= TopLevel_PropertyChanged;
         }
 
         void IRecipient<LoadingState>.Receive(LoadingState message)
@@ -104,25 +106,27 @@ namespace PolarShadow.ViewModels
             IsLoading = message.IsLoading;
         }
 
-        void IRecipient<FullScreenState>.Receive(FullScreenState message)
-        {
-            ShowTitleBar = !message.IsFullScreen;
-            if (message.IsFullScreen)
-            {
-                _topLevel.FullScreen();
-            }
-            else
-            {
-                _topLevel.ExitFullScreen();
-            }
-        }
-
         private void App_BackRequested(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {           
             if (_nav.CanBack(NavigationName))
             {
-                _nav.Back(NavigationName);
+                if (_topLevel.FullScreen)
+                {
+                    _topLevel.FullScreen = false;
+                }
+                else
+                {
+                    _nav.Back(NavigationName);
+                }
                 e.Handled = true;
+            }
+        }
+
+        private void TopLevel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals(nameof(ITopLevelService.FullScreen)))
+            {
+                ShowTitleBar = !_topLevel.FullScreen;
             }
         }
     }

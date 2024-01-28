@@ -27,7 +27,19 @@ namespace PolarShadow.Controls
         private VideoView Part_VideoView
         {
             get => _videoView; 
-            set => _videoView = value;
+            set
+            {
+                if (_videoView!= null)
+                {
+                    _videoView.PlatformClick -= VideoView_PlatformClick;
+                }
+
+                _videoView = value;
+                if (_videoView != null)
+                {
+                    _videoView.PlatformClick += VideoView_PlatformClick;
+                }
+            }
         }
 
         public static readonly StyledProperty<IMediaController> MediaControllerProperty = AvaloniaProperty.Register<PSPlayer, IMediaController>(nameof(MediaController));
@@ -45,6 +57,11 @@ namespace PolarShadow.Controls
 
             Part_MediaController.MediaController ??= new MediaController() { Controller = Part_VideoView.Controller };
             MediaController = Part_MediaController.MediaController;
+        }
+
+        private void VideoView_PlatformClick(object sender, EventArgs e)
+        {
+            Part_MediaController.OnPressed();
         }
     }
 }

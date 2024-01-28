@@ -318,6 +318,21 @@ namespace PolarShadow.Controls
             }
         }
 
+        public void OnPressed()
+        {
+            if (_part_root == null) return;
+
+            if (IsShow())
+            {
+                Hide();
+            }
+            else
+            {
+                Show();
+
+            }
+        }
+
         private void Hide()
         {
             _part_root.Cursor = new Cursor(StandardCursorType.None);

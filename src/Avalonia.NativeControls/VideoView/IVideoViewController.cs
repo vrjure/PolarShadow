@@ -13,9 +13,13 @@ namespace Avalonia.Controls
         TimeSpan Time { get; set; }
         bool IsPlaying { get; }
 
+        void Play();
         Task PlayAsync();
+        void Play(Uri uri);
         Task PlayAsync(Uri uri);
+        void Pause();
         Task PauseAsync();
+        void Stop();
         Task StopAsync();
 
         event EventHandler<TimeSpan> LengthChanged;
