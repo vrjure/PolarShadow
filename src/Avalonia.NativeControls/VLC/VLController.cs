@@ -73,10 +73,8 @@ namespace Avalonia.Controls
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
-                        if(SetProperty(ref _time, value))
-                        {
-                            TryToSeekTime(_time, value);
-                        }
+                        var old = _time;
+                        SetProperty(ref _time, value);
                     });
                 }
             }
@@ -172,8 +170,12 @@ namespace Avalonia.Controls
 
         private void MediaPlayer_TimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
         {
-            Time = TimeSpan.FromMilliseconds(e.Time);
-            this.TimeChanged?.Invoke(this, Time);
+            var c = e.Time / 1000 * 1000;
+            if (Math.Abs(c - (long)_time.TotalMilliseconds) >= 1000)
+            {
+                Time = TimeSpan.FromMilliseconds(c);
+                this.TimeChanged?.Invoke(this, Time);
+            }  
         }
 
         private void MediaPlayer_LengthChanged(object sender, MediaPlayerLengthChangedEventArgs e)
@@ -209,7 +211,7 @@ namespace Avalonia.Controls
 
         private void TryToSeekTime(TimeSpan old, TimeSpan newVal)
         {
-            if (Math.Abs(newVal.TotalMilliseconds - old.TotalMilliseconds) >= _ignore.TotalMilliseconds)
+            if (Math.Abs(newVal.TotalMilliseconds - old.TotalMilliseconds) > _ignore.TotalMilliseconds)
             {
                 MediaPlayer.Time = (long)newVal.TotalMilliseconds;
             }

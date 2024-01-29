@@ -18,7 +18,6 @@ namespace PolarShadow.Controls
     public partial class MediaPlayerController : ContentControl
     {
         private static readonly TimeSpan _ignore = TimeSpan.FromSeconds(1);
-        private long _lastTime = 0;
         private Point _cursorPoint;
         private IDisposable _hideDisposable;
 
