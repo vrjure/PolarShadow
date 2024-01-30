@@ -3,5 +3,40 @@
     <!-- Add Resources Here -->
 	<ControlTheme TargetType="Expander" x:Key="MExpander" BasedOn="{StaticResource {x:Type Expander}}">
 		<Setter Property="Padding" Value="0" />
+		<Setter Property="Template">
+			<ControlTemplate>
+				<DockPanel MinWidth="{TemplateBinding MinWidth}"
+						   MaxWidth="{TemplateBinding MaxWidth}">
+					<Border DockPanel.Dock="Top"
+							Background="{DynamicResource ExpanderHeaderBackground}"
+							BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+							BorderThickness="{DynamicResource ExpanderHeaderBorderThickness}">
+						<ContentPresenter x:Name="ExpanderHeader"
+										  MinHeight="{TemplateBinding MinHeight}"
+										  CornerRadius="{TemplateBinding CornerRadius}"
+										  IsEnabled="{TemplateBinding IsEnabled}"
+										  Content="{TemplateBinding Header}"
+										  ContentTemplate="{TemplateBinding HeaderTemplate}"/>
+					</Border>
+
+					<Border x:Name="ExpanderContent"
+							IsVisible="{TemplateBinding IsExpanded, Mode=TwoWay}"
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							MinHeight="{TemplateBinding MinHeight}"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"
+							Padding="{TemplateBinding Padding}">
+						<ContentPresenter x:Name="PART_ContentPresenter"
+										  Content="{TemplateBinding Content}"
+										  ContentTemplate="{TemplateBinding ContentTemplate}"
+										  Foreground="{TemplateBinding Foreground}"
+										  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+										  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+					</Border>
+				</DockPanel>
+			</ControlTemplate>
+		</Setter>
 	</ControlTheme>
 </ResourceDictionary>
