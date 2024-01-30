@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using System;
 
 namespace Avalonia.Controls
 {
@@ -7,7 +8,7 @@ namespace Avalonia.Controls
     /// </summary>
     public class VideoView : VirtualView, IVideoView
     {
-        public VideoView() : base(NativeControls.GetHandler<IVideoViewHandler>())
+        public VideoView() : base(Ioc.Default.GetRequiredService<IVideoViewHandler>())
         {
 
         }

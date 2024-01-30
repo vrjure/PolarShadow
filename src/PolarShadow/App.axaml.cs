@@ -52,7 +52,6 @@ public partial class App : Application
         var service = ServiceCollection.BuildServiceProvider();
 
         Ioc.Default.ConfigureServices(service);
-        NativeControls.Initialize(service);
 
         var topLevelService = Ioc.Default.GetRequiredService<ITopLevelService>();
         var nav = Ioc.Default.GetRequiredService<INavigationService>();
@@ -175,5 +174,10 @@ public partial class App : Application
     private void RegisterNativeControls(IServiceCollection service)
     {
         NativeControls.ConfigureService(service);
+
+        service.AddWebViewOptions(new WebViewOptions
+        {
+            UserDataFolder = Path.Combine(AppDataFolder, "webview")
+        });
     }
 }

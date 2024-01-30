@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Avalonia.Controls
 {
     public class WebView : VirtualView, IWebViewVirtualView
     {
-        public WebView() : base(NativeControls.GetHandler<IWebViewHandler>())
+        public WebView() : base(Ioc.Default.GetRequiredService<IWebViewHandler>())
         {
             
         }

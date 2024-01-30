@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using Avalonia.Controls;
 using System.Net;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Avalonia.Controls.Windows
 {
@@ -91,7 +92,13 @@ namespace Avalonia.Controls.Windows
 
         private static async void CreateEnvironment()
         {
-            _createWebViewTask = CoreWebView2Environment.CreateAsync();
+            string userDataFolder = null;
+            var options = Ioc.Default.GetService<WebViewOptions>();
+            if (!string.IsNullOrEmpty(options?.UserDataFolder))
+            {
+                userDataFolder = options.UserDataFolder;
+            }
+            _createWebViewTask = CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
             _environment = await _createWebViewTask;
         }
 

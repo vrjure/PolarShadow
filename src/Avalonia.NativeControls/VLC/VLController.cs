@@ -1,5 +1,6 @@
 ﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using LibVLCSharp.Shared;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Avalonia.Controls
         private static readonly TimeSpan _ignore = TimeSpan.FromSeconds(1);
         public VLController()
         {
-            _mediaPlayer = new MediaPlayer(NativeControls.GetHandler<LibVLC>());
+            _mediaPlayer = new MediaPlayer(Ioc.Default.GetRequiredService<LibVLC>());
             _mediaPlayer.LengthChanged += MediaPlayer_LengthChanged;
             _mediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
             _mediaPlayer.Playing += MediaPlayer_Playing;
@@ -114,7 +115,7 @@ namespace Avalonia.Controls
 
         public void Play(Uri uri)
         {
-            MediaPlayer?.Play(new LibVLCSharp.Shared.Media(NativeControls.GetHandler<LibVLC>(), uri));
+            MediaPlayer?.Play(new LibVLCSharp.Shared.Media(Ioc.Default.GetRequiredService<LibVLC>(), uri));
         }
 
         public void Pause()
@@ -147,7 +148,7 @@ namespace Avalonia.Controls
 
         public Task PlayAsync(Uri uri)
         {
-            return Task.Run(() => MediaPlayer?.Play(new LibVLCSharp.Shared.Media(NativeControls.GetHandler<LibVLC>(), uri)));
+            return Task.Run(() => MediaPlayer?.Play(new LibVLCSharp.Shared.Media(Ioc.Default.GetRequiredService<LibVLC>(), uri)));
         }
 
         private void MediaPlayer_Paused(object sender, EventArgs e)

@@ -15,5 +15,10 @@ namespace Avalonia.Controls
                 return new LibVLC(options);
             });
         }
+
+        public static IServiceCollection AddWebViewOptions(this IServiceCollection service, WebViewOptions options)
+        {
+            return service.AddSingleton(options);
+        }
     }
 }
