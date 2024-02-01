@@ -17,7 +17,7 @@ namespace PolarShadow.Handlers
         private readonly WebView _webView;
         private TaskCompletionSource<string> _tcs;
         private TaskCompletionSource _sniffTask;
-        private static TimeSpan _timeout = TimeSpan.FromSeconds(15);
+        private static TimeSpan _timeout = TimeSpan.FromSeconds(60);
         private Sniff _sniff;
         private ICollection<string> _sniffUrls = new List<string>();
 
