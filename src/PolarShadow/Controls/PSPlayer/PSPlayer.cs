@@ -42,6 +42,11 @@ namespace PolarShadow.Controls
             }
         }
 
+        static PSPlayer()
+        {
+            MediaControllerProperty.Changed.AddClassHandler<PSPlayer>((s, e) => s.MediaControllerPropertyChanged(e));
+        }
+
         public static readonly StyledProperty<IMediaController> MediaControllerProperty = AvaloniaProperty.Register<PSPlayer, IMediaController>(nameof(MediaController));
         public IMediaController MediaController
         {
@@ -62,6 +67,30 @@ namespace PolarShadow.Controls
         private void VideoView_PlatformClick(object sender, EventArgs e)
         {
             Part_MediaController.OnPressed();
+        }
+
+
+        private void MediaControllerPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        {
+            var old = e.GetOldValue<IMediaController>();
+            if (old != null)
+            {
+                old.PropertyChanged -= MediaController_PropertyChanged;
+            }
+
+            var newVal = e.GetNewValue<IMediaController>();
+            if (newVal != null)
+            {
+                newVal.PropertyChanged += MediaController_PropertyChanged;
+            }
+        }
+
+        private void MediaController_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals(nameof(IMediaController.FullScreen)))
+            {
+                Part_VideoView.FullScreen = MediaController.FullScreen;
+            }
         }
     }
 }

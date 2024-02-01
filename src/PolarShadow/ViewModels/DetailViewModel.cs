@@ -59,7 +59,7 @@ namespace PolarShadow.ViewModels
             _topLevelService.PropertyChanged += _TopLevelService_PropertyChanged;
             if (this.Resource == null)
             {
-                await LoadingDeatil();
+                await LoadingDetail();
             }
         }
 
@@ -87,7 +87,7 @@ namespace PolarShadow.ViewModels
             _currentProgress = e;
         }
 
-        private async Task LoadingDeatil()
+        private async Task LoadingDetail()
         {
             if (Param_Link == null)
             {

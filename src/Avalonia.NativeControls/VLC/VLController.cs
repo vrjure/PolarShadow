@@ -74,7 +74,6 @@ namespace Avalonia.Controls
                 {
                     Dispatcher.UIThread.Post(() =>
                     {
-                        var old = _time;
                         SetProperty(ref _time, value);
                     });
                 }

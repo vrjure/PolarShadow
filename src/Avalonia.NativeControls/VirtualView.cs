@@ -48,8 +48,8 @@ namespace Avalonia.Controls
 
         protected override void DestroyNativeControlCore(IPlatformHandle control)
         {
-            this.Handler?.DisconnectHandler();
             this.Handler?.PlatformView?.DestroyControl(control);
+            this.Handler?.DisconnectHandler();
             base.DestroyNativeControlCore(control);
         }
 

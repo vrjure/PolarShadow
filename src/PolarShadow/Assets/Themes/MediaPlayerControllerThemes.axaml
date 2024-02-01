@@ -11,8 +11,8 @@
 	<ControlTheme TargetType="ps:MediaPlayerController" x:Key="{x:Type ps:MediaPlayerController}">
 		<Setter Property="Template">
 			<ControlTemplate>
-				<Panel>
-					<Border Background="Transparent"
+				<Panel Background="Transparent">
+					<Border
 						Padding="{TemplateBinding Padding}"
 						Margin="{TemplateBinding Margin}"
 						BorderBrush="{TemplateBinding BorderBrush}"
@@ -26,6 +26,15 @@
 								<DoubleTransition Property="Opacity" Duration="0:0:0.5" />
 							</Transitions>
 						</Border.Transitions>
+
+						<Border.Styles>
+							<Style Selector="Border[Opacity=0] > Grid > Grid#Part_Top">
+								<Setter Property="IsVisible" Value="False"/>
+							</Style>
+							<Style Selector="Border[Opacity=0] > Grid > Grid#Part_Bottom">
+								<Setter Property="IsVisible" Value="False"/>
+							</Style>
+						</Border.Styles>
 
 						<Grid RowDefinitions="auto,*,auto">
 							<OnPlatform>

@@ -1,4 +1,5 @@
-﻿using Android.Views;
+﻿using Android.Content;
+using Android.Views;
 using Android.Widget;
 using Avalonia.Android;
 using Avalonia.Media;
@@ -12,6 +13,7 @@ namespace Avalonia.Controls.Android
     {
         private AvaloniaView _overlayLayer;// new well be cause memoryleak? not sure. so try use static.
         private LibVLCSharp.Platforms.Android.VideoView _platformView;
+        private Context _context;
 
         private readonly IVirtualView _virtualView;
         public VLCVideoView(IVirtualView virtualView)
@@ -30,6 +32,10 @@ namespace Avalonia.Controls.Android
             get => _overlayContent;
             set
             {
+                if (_overlayContent == value)
+                {
+                    return;
+                }
                 _overlayContent = value;
                 if (_overlayContent is Visual ctl)
                 {
@@ -74,7 +80,7 @@ namespace Avalonia.Controls.Android
 
         protected override IPlatformHandle OnCreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {
-            var context = (parent as AndroidViewControlHandle)?.View.Context ?? global::Android.App.Application.Context;
+            var context = _context = (parent as AndroidViewControlHandle)?.View.Context ?? global::Android.App.Application.Context;
 
             _platformView = new LibVLCSharp.Platforms.Android.VideoView(context)
             {
@@ -90,8 +96,7 @@ namespace Avalonia.Controls.Android
                 _overlayLayer = new AvaloniaView(context);
                 _overlayLayer.Content = new Border
                 {
-                    Child = OverlayContent as Control,
-                    Background = Brushes.Black
+                    Child = OverlayContent as Control
                 };
 
                 if (_overLayerTopLevel != null)
@@ -116,16 +121,18 @@ namespace Avalonia.Controls.Android
         {
             _platformView.MediaPlayer = null;
 
-            if (_overLayerTopLevel != null)
-            {
-                _overLayerTopLevel.BackRequested -= _overLayerTopLevel_BackRequested;
+            //not work now
+            //var overLayerTopLevel = _overLayerTopLevel;
+            //if (overLayerTopLevel != null)
+            //{
+            //    overLayerTopLevel.BackRequested -= _overLayerTopLevel_BackRequested;
 
-                var type = _overLayerTopLevel.PlatformImpl.GetType();
-                var closedPro = type.GetProperty("Closed", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-                var closed = (Action)closedPro?.GetValue(_overLayerTopLevel.PlatformImpl);
-                closed?.Invoke();
-                _overLayerTopLevel.PlatformImpl.Dispose();
-            }
+            //    var type = overLayerTopLevel.PlatformImpl.GetType();
+            //    var closedPro = type.GetProperty("Closed", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+            //    var closed = (Action)closedPro?.GetValue(overLayerTopLevel.PlatformImpl);
+            //    closed?.Invoke();
+            //    overLayerTopLevel.PlatformImpl?.Dispose();
+            //}
 
             if (_overlayLayer != null)
             {
@@ -170,6 +177,11 @@ namespace Avalonia.Controls.Android
                 _overLayerTopLevel.InsetsManager.IsSystemBarVisible = false;
                 _overLayerTopLevel.InsetsManager.DisplayEdgeToEdge = true;
             }
+
+            if (_context is AvaloniaMainActivity activity)
+            {
+                activity.RequestedOrientation = global::Android.Content.PM.ScreenOrientation.SensorLandscape;
+            }
         }
 
         private void ExitFullScreen()
@@ -183,6 +195,11 @@ namespace Avalonia.Controls.Android
             {
                 _overLayerTopLevel.InsetsManager.IsSystemBarVisible = true;
                 _overLayerTopLevel.InsetsManager.DisplayEdgeToEdge = false;
+            }
+
+            if (_context is AvaloniaMainActivity activity)
+            {
+                activity.RequestedOrientation = global::Android.Content.PM.ScreenOrientation.Unspecified;
             }
         }
 
