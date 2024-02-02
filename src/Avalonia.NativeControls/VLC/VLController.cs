@@ -125,6 +125,7 @@ namespace Avalonia.Controls
         public void Stop()
         {
             MediaPlayer?.Stop();
+            MediaPlayer.Media = null;
         }
 
         public Task StopAsync()
@@ -132,6 +133,8 @@ namespace Avalonia.Controls
             return Task.Run(() =>
             {
                 MediaPlayer?.Stop();
+                MediaPlayer.Media = null;
+
             });
         }
 

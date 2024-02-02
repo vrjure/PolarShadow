@@ -30,6 +30,7 @@
 
 		<Style Selector="^:pressed /template/ ContentPresenter">
 			<Setter Property="Foreground" Value="Red"/>
+			<Setter Property="Background" Value="Transparent"/>
 		</Style>
 		<Style Selector="^:disabled /template/ ContentPresenter">
 			<Setter Property="Background" Value="Transparent"/>

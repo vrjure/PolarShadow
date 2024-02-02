@@ -74,7 +74,6 @@ namespace PolarShadow.Views
                     if (part_desc.Parent == null)
                     {
                         part_bottom.Children.Insert(0, part_desc);
-                        VM.MediaController.MediaMode = Controls.MediaMode.Min;
                     }
                 }
             }
@@ -89,7 +88,6 @@ namespace PolarShadow.Views
                     if (part_desc.Parent == null)
                     {
                         part_root.Children.Add(part_desc);
-                        VM.MediaController.MediaMode = Controls.MediaMode.Simple;
                     }
                 }
             }

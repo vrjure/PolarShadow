@@ -394,5 +394,24 @@ namespace PolarShadow.Controls
             var value = _sliderTrack.ValueFromPoint(e.GetCurrentPoint(_sliderTrack).Position);
             ToolTip.SetTip(_part_slider, TimeSpanToStringConverter.Instance.Convert(TimeSpanToDoubleConverter.Instance.ConvertBack(value, typeof(TimeSpan), default,default), typeof(string), default, default));
         }
+
+
+        protected override void OnSizeChanged(SizeChangedEventArgs e)
+        {
+            base.OnSizeChanged(e);
+            if (this.MediaController == null) return;
+            if(e.NewSize.Width < 500)
+            {
+                this.MediaController.MediaMode = MediaMode.Min;
+            }
+            else if (e.NewSize.Width >= 500 && e.NewSize.Width < 1000)
+            {
+                this.MediaController.MediaMode = MediaMode.Simple;
+            }
+            else
+            {
+                this.MediaController.MediaMode = MediaMode.Normal;
+            }
+        }
     }
 }

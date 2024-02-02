@@ -250,14 +250,6 @@ namespace PolarShadow.ViewModels
             if (e.PropertyName.Equals(nameof(ITopLevelService.FullScreen)))
             {
                 MediaController.FullScreen = _topLevelService.FullScreen;
-                if (_topLevelService.FullScreen)
-                {
-                    MediaController.MediaMode = MediaMode.Normal;
-                }
-                else
-                {
-                    MediaController.MediaMode = MediaMode.Simple;
-                }
             }
         }
 
