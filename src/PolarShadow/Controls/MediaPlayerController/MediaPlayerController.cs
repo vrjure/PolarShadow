@@ -131,6 +131,7 @@ namespace PolarShadow.Controls
 
         private Track _sliderTrack;
         private Border _part_root;
+        private Panel _part_root_panel;
 
         private Border _part_tip;
         private TextBlock _part_tip_text;
@@ -148,7 +149,7 @@ namespace PolarShadow.Controls
             }
             else if (OperatingSystem.IsAndroid())
             {
-                VirtualView.NativePointerPressedEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnNativePointerPressed(e));
+                VirtualView.NativePointerReleasedEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnNativePointerReleased(e));
             }
         }
 
@@ -178,6 +179,7 @@ namespace PolarShadow.Controls
             LengthText = e.NameScope.Get<TextBlock>("Part_Length");
             _part_tip_text = e.NameScope.Get<TextBlock>("part_tip_text");
             _part_tip = e.NameScope.Get<Border>("part_tip");
+            _part_root_panel = e.NameScope.Get<Panel>("Part_Root_Panel");
 
             SetPlayMode(MediaMode.Simple);
         }
@@ -254,17 +256,17 @@ namespace PolarShadow.Controls
 
         private void Hide()
         {
-            _part_root.Cursor = new Cursor(StandardCursorType.None);
+            _part_root_panel.Cursor = new Cursor(StandardCursorType.None);
             _part_root.Opacity = 0;
         }
 
         private void Show()
         {
-            _part_root.Cursor = Cursor.Default;
+            _part_root_panel.Cursor = Cursor.Default;
             _part_root.Opacity = 1;
         }
 
-        private bool IsShow() => _part_root?.Opacity == 1;
+        private bool IsShow() => _part_root?.Opacity != 0;
 
         private void PreviousBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
@@ -329,7 +331,7 @@ namespace PolarShadow.Controls
             {
                 this.MediaController.MediaMode = MediaMode.Min;
             }
-            else if (e.NewSize.Width >= 500 && e.NewSize.Width < 1000)
+            else if (e.NewSize.Width >= 500 && e.NewSize.Width < 800)
             {
                 this.MediaController.MediaMode = MediaMode.Simple;
             }

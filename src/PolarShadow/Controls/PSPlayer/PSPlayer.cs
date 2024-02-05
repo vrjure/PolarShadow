@@ -27,19 +27,7 @@ namespace PolarShadow.Controls
         private VideoView Part_VideoView
         {
             get => _videoView; 
-            set
-            {
-                if (_videoView!= null)
-                {
-                    _videoView.PlatformClick -= VideoView_PlatformClick;
-                }
-
-                _videoView = value;
-                if (_videoView != null)
-                {
-                    _videoView.PlatformClick += VideoView_PlatformClick;
-                }
-            }
+            set => _videoView = value;
         }
 
         static PSPlayer()
@@ -62,11 +50,6 @@ namespace PolarShadow.Controls
 
             Part_MediaController.MediaController ??= new MediaController() { Controller = Part_VideoView.Controller };
             MediaController = Part_MediaController.MediaController;
-        }
-
-        private void VideoView_PlatformClick(object sender, EventArgs e)
-        {
-            Part_MediaController.OnPressed();
         }
 
 

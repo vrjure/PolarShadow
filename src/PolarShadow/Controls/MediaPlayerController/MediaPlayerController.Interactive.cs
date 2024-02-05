@@ -13,6 +13,9 @@ namespace PolarShadow.Controls
     public partial class MediaPlayerController
     {
         private static Point _zero = new Point(0, 0);
+        private static int _pointerActiveStartDistance = 30;
+        private static int _autoHideDelaySec = 5;
+
         private Point _cursorPoint;
         private bool _isScrolling;
         private int _scrollChangeTime;
@@ -70,34 +73,26 @@ namespace PolarShadow.Controls
             }
             var current = e.GetPosition(this);
             var dis = Point.Distance(_cursorPoint, current);
-            if (dis > 10)
+            if (dis > _pointerActiveStartDistance)
             {
-                Show();
+                if (!IsShow())
+                {
+                    ShowAndAutoHide();
+                }
             }
         }
 
         protected override void OnPointerExited(PointerEventArgs e)
         {
             base.OnPointerExited(e);
-
-            if (IsShow())
-            {
-                _hideDisposable = DispatcherTimer.RunOnce(() =>
-                {
-                    Hide();
-                }, TimeSpan.FromSeconds(5), DispatcherPriority.Default);
-            }
+            AutoHide();
         }
 
         protected override void OnPointerEntered(PointerEventArgs e)
         {
             base.OnPointerEntered(e);
 
-            if (_hideDisposable != null)
-            {
-                _hideDisposable.Dispose();
-                _hideDisposable = null;
-            }
+            CancelAutoHide();
 
             if (!IsShow())
             {
@@ -108,28 +103,12 @@ namespace PolarShadow.Controls
         protected override void OnPointerPressed(PointerPressedEventArgs e)
         {
             base.OnPointerPressed(e);
-            OnPressed(e.GetPosition(this));
-        }
-
-        private void OnPressed(Point point)
-        {
-            if (_part_root == null) return;
-
-            if (IsShow())
-            {
-                Hide();
-                _cursorPoint = point;
-            }
-            else
-            {
-                Show();
-                _cursorPoint = point;
-            }
         }
 
         protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
             base.OnPointerReleased(e);
+            OnReleased(e.GetPosition(this));
         }
 
         private void OnHolding(HoldingRoutedEventArgs e)
@@ -148,7 +127,7 @@ namespace PolarShadow.Controls
                 MediaController.Controller.Speed = 1;
             }
 
-            System.Diagnostics.Trace.WriteLine($"Play speed: {MediaController.Controller.Speed}");
+            //System.Diagnostics.Trace.WriteLine($"Play speed: {MediaController.Controller.Speed}");
         }
 
         private void OnScroll(ScrollGestureEventArgs e)
@@ -157,7 +136,7 @@ namespace PolarShadow.Controls
             {
                 return;
             }
-            System.Diagnostics.Trace.WriteLine($"Scroll: {e.Delta}");
+            //System.Diagnostics.Trace.WriteLine($"Scroll: {e.Delta}");
 
             if (_isScrolling)
             {
@@ -174,19 +153,61 @@ namespace PolarShadow.Controls
         {
             if (MediaController?.Controller == null) return;
             _isScrolling = false;
-            System.Diagnostics.Trace.WriteLine($"Scroll change: {_scrollChangeTime}");
+            //System.Diagnostics.Trace.WriteLine($"Scroll change: {_scrollChangeTime}");
 
             if (Math.Abs(_scrollChangeTime) <= 1)
             {
                 return;
             }
 
-            MediaController.Controller.Time = TimeSpan.FromSeconds(_scrollChangeTime);
+            MediaController.Controller.Time += TimeSpan.FromSeconds(_scrollChangeTime);
+            AutoHide();
         }
 
-        private void OnNativePointerPressed(NativePointerPointEventArgs e)
+        private void OnNativePointerReleased(NativePointerPointEventArgs e)
         {
-            OnPressed(e.Point);
+            OnReleased(e.Point);
+        }
+
+        private void OnReleased(Point point)
+        {
+            if (_part_root == null) return;
+
+            if (IsShow())
+            {
+                Hide();
+                _cursorPoint = point;
+            }
+            else
+            {
+                _cursorPoint = point;
+                ShowAndAutoHide();
+            }
+        }
+
+        private void ShowAndAutoHide()
+        {
+            Show();
+            AutoHide();
+        }
+
+        private void AutoHide()
+        {
+            CancelAutoHide();
+
+            if (IsShow())
+            {
+                _hideDisposable = DispatcherTimer.RunOnce(Hide, TimeSpan.FromSeconds(_autoHideDelaySec));
+            }        
+        }
+
+        private void CancelAutoHide()
+        {
+            if (_hideDisposable != null)
+            {
+                _hideDisposable.Dispose();
+                _hideDisposable = null;
+            }
         }
     }
 }

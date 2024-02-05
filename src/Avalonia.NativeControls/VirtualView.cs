@@ -158,15 +158,13 @@ namespace Avalonia.Controls
 
         private void OnNativePointerReleasedInternal(NativePointerPointEventArgs e)
         {
-            e.RoutedEvent = NativePointerReleasedEvent;
-            this.RaiseEvent(e);
-
             _pressed = false;
 
             if (_holding)
             {
                 _holding = false;
                 this.RaiseEvent(new HoldingRoutedEventArgs(HoldingState.Completed, e.Point, e.Type));
+                e.Handled = true;
             }
             else
             {
@@ -178,18 +176,23 @@ namespace Avalonia.Controls
             {
                 _scrolling = false;
                 this.RaiseEvent(new ScrollGestureEndedEventArgs(e.Id));
+                e.Handled = true;
+            }
+
+            if (!e.Handled)
+            {
+                e.RoutedEvent = NativePointerReleasedEvent;
+                this.RaiseEvent(e);
             }
         }
 
         private void OnNativePointerMovedInternal(NativePointerPointEventArgs e)
         {
-            e.RoutedEvent = NativePointerMovedEvent;
-            this.RaiseEvent(e);
-
             if (_holding)
             {
                 _holding = false;
                 this.RaiseEvent(new HoldingRoutedEventArgs(HoldingState.Cancelled, e.Point, e.Type));
+                e.Handled = true;
             }
             else
             {
@@ -212,6 +215,13 @@ namespace Avalonia.Controls
                 var delta = _lastScrollPoint - e.Point;
                 _lastScrollPoint = e.Point;
                 this.RaiseEvent(new ScrollGestureEventArgs(e.Id, delta));
+                e.Handled = true;
+            }
+
+            if (!e.Handled)
+            {
+                e.RoutedEvent = NativePointerMovedEvent;
+                this.RaiseEvent(e);
             }
         }
     }

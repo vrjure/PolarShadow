@@ -12,14 +12,15 @@
 		<Setter Property="Template">
 			<ControlTemplate>
 				<Panel Background="Transparent"
-					   Focusable="True">
+					   Focusable="True"
+					   IsVisible="{TemplateBinding IsVisible}"
+					   Margin="{TemplateBinding Margin}"
+					   x:Name="Part_Root_Panel">
 					<Border
 						Padding="{TemplateBinding Padding}"
-						Margin="{TemplateBinding Margin}"
 						BorderBrush="{TemplateBinding BorderBrush}"
 						BorderThickness="{TemplateBinding BorderThickness}"
 						CornerRadius="{TemplateBinding CornerRadius}"
-						IsVisible="{TemplateBinding IsVisible}"
 						Opacity="{TemplateBinding Opacity}"
 						x:Name="Part_Root">
 						<Border.Transitions>
