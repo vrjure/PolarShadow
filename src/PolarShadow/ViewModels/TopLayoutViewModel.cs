@@ -60,16 +60,6 @@ namespace PolarShadow.ViewModels
             IsLoading = true;
             try
             {
-                // async 方法貌似会阻塞线程，动画不会播放？？
-                //using var db = _dbFactory.CreateDbContext();
-                //await db.Database.EnsureCreatedAsync();
-
-                //var dbSource = new DbConfigurationSource()
-                //{
-                //    DbCreater = () => _dbFactory.CreateDbContext()
-                //};
-                //await _polar.LoadAsync(dbSource, true);
-
                 InitLibVlc();
 
                 await Task.Run(() =>
@@ -97,7 +87,10 @@ namespace PolarShadow.ViewModels
 
         protected override void OnUnload()
         {
-            _topLevel.GetTopLevel().BackRequested -= App_BackRequested;
+            if (_topLevel.GetTopLevel() != null)
+            {
+                _topLevel.GetTopLevel().BackRequested -= App_BackRequested;
+            }
             _topLevel.PropertyChanged -= TopLevel_PropertyChanged;
         }
 

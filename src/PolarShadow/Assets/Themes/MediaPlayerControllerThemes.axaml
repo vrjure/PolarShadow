@@ -11,7 +11,8 @@
 	<ControlTheme TargetType="ps:MediaPlayerController" x:Key="{x:Type ps:MediaPlayerController}">
 		<Setter Property="Template">
 			<ControlTemplate>
-				<Panel Background="Transparent">
+				<Panel Background="Transparent"
+					   Focusable="True">
 					<Border
 						Padding="{TemplateBinding Padding}"
 						Margin="{TemplateBinding Margin}"
@@ -112,6 +113,7 @@
 											VerticalAlignment="Center"
 											Maximum="{Binding MediaController.Controller.Length, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
 											Minimum="0"
+											SmallChange="5"
 											Value="{Binding MediaController.Controller.Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}, Mode=TwoWay}">
 									</Slider>
 									<TextBlock Text="{Binding MediaController.Controller.Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
@@ -160,7 +162,6 @@
 					</Border>
 
 					<Border x:Name="part_tip"
-							Grid.Row="1"
 							HorizontalAlignment="Center"
 							VerticalAlignment="Center"
 							Background="Black"

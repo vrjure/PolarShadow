@@ -1,5 +1,7 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using Avalonia.Input;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
+using System.Diagnostics;
 
 namespace Avalonia.Controls
 {
@@ -51,5 +53,10 @@ namespace Avalonia.Controls
         }
 
         public new IVideoViewHandler Handler => base.Handler as IVideoViewHandler;
+
+        protected override void OnPointerPressed(PointerPressedEventArgs e)
+        {
+            base.OnPointerPressed(e);
+        }
     }
 }

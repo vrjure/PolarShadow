@@ -121,7 +121,7 @@ namespace Avalonia.Controls.Windows
                     ShowInTaskbar = false,
                     Opacity = 1,
                     ZIndex = int.MaxValue,
-                    DataContext = VirtualView.AsHost().DataContext
+                    DataContext = VirtualView.AsHost().DataContext,
                 };
 
                 if (OverlayContent != null)

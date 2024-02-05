@@ -97,6 +97,19 @@ namespace Avalonia.Controls
             }
         }
 
+        private float _speed;
+        public float Speed
+        {
+            get => _speed = MediaPlayer?.Rate ?? 1;
+            set 
+            {
+                if(SetProperty(ref _speed, value))
+                {
+                    MediaPlayer?.SetRate(_speed);
+                }
+            }
+        }
+
         public event EventHandler<TimeSpan> LengthChanged;
         public event EventHandler<TimeSpan> TimeChanged;
         public event EventHandler Playing;
@@ -105,6 +118,7 @@ namespace Avalonia.Controls
         public event EventHandler Error;
         public event EventHandler Ended;
         public event EventHandler MediaChanged;
+        public event EventHandler<float> Buffering;
 
 
         public void Play()
@@ -190,6 +204,7 @@ namespace Avalonia.Controls
         private void MediaPlayer_Buffering(object sender, MediaPlayerBufferingEventArgs e)
         {
             System.Diagnostics.Trace.WriteLine(e.Cache);
+            this.Buffering?.Invoke(this, e.Cache);
         }
 
         private void MediaPlayer_VolumeChanged(object sender, MediaPlayerVolumeChangedEventArgs e)

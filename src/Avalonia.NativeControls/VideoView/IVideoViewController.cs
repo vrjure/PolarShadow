@@ -12,6 +12,7 @@ namespace Avalonia.Controls
         TimeSpan Length { get; }
         TimeSpan Time { get; set; }
         bool IsPlaying { get; }
+        float Speed { get; set; }
 
         void Play();
         Task PlayAsync();
@@ -30,5 +31,6 @@ namespace Avalonia.Controls
         event EventHandler Error;
         event EventHandler Ended;
         event EventHandler MediaChanged;
+        event EventHandler<float> Buffering;
     }
 }

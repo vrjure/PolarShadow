@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Input.GestureRecognizers;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -17,10 +18,6 @@ namespace PolarShadow.Controls
 {
     public partial class MediaPlayerController : ContentControl
     {
-        private static readonly TimeSpan _ignore = TimeSpan.FromSeconds(1);
-        private Point _cursorPoint;
-        private IDisposable _hideDisposable;
-
         private Button _previousBtn;
         private Button PreviousBtn
         {
@@ -131,6 +128,7 @@ namespace PolarShadow.Controls
                 }
             }
         }
+
         private Track _sliderTrack;
         private Border _part_root;
 
@@ -140,6 +138,23 @@ namespace PolarShadow.Controls
         static MediaPlayerController()
         {
             MediaControllerProperty.Changed.AddClassHandler<MediaPlayerController>((o,e)=>o.MediaControllerPropertyChanged(e));
+            HoldingEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnHolding(e));
+            Gestures.ScrollGestureEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnScroll(e));
+            Gestures.ScrollGestureEndedEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnScrollEnd(e));
+
+            if (OperatingSystem.IsWindows())
+            {
+                
+            }
+            else if (OperatingSystem.IsAndroid())
+            {
+                VirtualView.NativePointerPressedEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnNativePointerPressed(e));
+            }
+        }
+
+        public MediaPlayerController()
+        {
+            this.GestureRecognizers.Add(new ScrollGestureRecognizer() { CanHorizontallyScroll = true, CanVerticallyScroll = true });
         }
 
         public static readonly StyledProperty<IMediaController> MediaControllerProperty = AvaloniaProperty.Register<MediaPlayerController, IMediaController>(nameof(MediaController));
@@ -222,101 +237,6 @@ namespace PolarShadow.Controls
             }
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
-
-            if (e.Handled || e.KeyModifiers != KeyModifiers.None || _part_slider == null) return;
-
-            var target = MediaController.Controller.Time;
-            var handled = false;
-            switch (e.Key)
-            {
-                case Key.Left:
-                    target = target - TimeSpan.FromSeconds(_part_slider.SmallChange);
-                    handled = true;
-                    break;
-                case Key.Right:
-                    target = target + TimeSpan.FromSeconds(_part_slider.SmallChange);
-                    handled = true;
-                    break;
-            }
-
-            e.Handled = handled;
-            if (target < TimeSpan.Zero)
-            {
-                target = TimeSpan.Zero;
-            }
-            else if (target > MediaController.Controller.Length)
-            {
-                target = MediaController.Controller.Length;
-            }
-
-            MediaController.Controller.Time = target;
-        }
-
-        protected override void OnPointerMoved(PointerEventArgs e)
-        {
-            base.OnPointerMoved(e);
-            if (_part_root == null || _cursorPoint == new Point(0,0))
-            {
-                return;
-            }
-            var current = e.GetPosition(this);
-            var dis = Point.Distance(_cursorPoint, current);
-            if (dis > 10)
-            {
-                Show();
-            }
-        }
-
-        protected override void OnPointerExited(PointerEventArgs e)
-        {
-            base.OnPointerExited(e);
-
-            if (IsShow())
-            {
-                _hideDisposable = DispatcherTimer.RunOnce(() =>
-                {
-                    Hide();
-                }, TimeSpan.FromSeconds(5), DispatcherPriority.Default);
-            }
-        }
-
-        protected override void OnPointerEntered(PointerEventArgs e)
-        {
-            base.OnPointerEntered(e);
-
-            if (_hideDisposable != null)
-            {
-                _hideDisposable.Dispose();
-                _hideDisposable= null;
-            }
-
-            if (!IsShow())
-            {
-                Show();
-            }
-        }
-
-        protected override void OnPointerPressed(PointerPressedEventArgs e)
-        {
-            base.OnPointerPressed(e);
-            if (_part_root == null) return;
-
-            if (IsShow())
-            {
-                Hide();
-                _cursorPoint = e.GetPosition(this);
-            }
-            else
-            {
-                Show();
-                _cursorPoint = e.GetPosition(this);
-
-            }
-        }
-
         public void OnPressed()
         {
             if (_part_root == null) return;
@@ -356,7 +276,12 @@ namespace PolarShadow.Controls
             (MediaController as MediaController)?.OnNextClick();
         }
 
-        private async void PlayBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void PlayBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            PlayPause();
+        }
+
+        private async void PlayPause()
         {
             if (MediaController?.Controller == null)
             {

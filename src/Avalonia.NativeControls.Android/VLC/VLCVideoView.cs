@@ -14,6 +14,7 @@ namespace Avalonia.Controls.Android
         private AvaloniaView _overlayLayer;// new well be cause memoryleak? not sure. so try use static.
         private LibVLCSharp.Platforms.Android.VideoView _platformView;
         private Context _context;
+        private PlatformEventHandler _platformEventHandler;
 
         private readonly IVirtualView _virtualView;
         public VLCVideoView(IVirtualView virtualView)
@@ -88,39 +89,41 @@ namespace Avalonia.Controls.Android
             };
             _platformView.Click += _platformView_Click;
             _platformView.KeepScreenOn = true;
+            _platformEventHandler = new PlatformEventHandler(_platformView, _virtualView as INativeInteraction);
 
-            if (OverlayContent != null)
-            {
-                //TODO AvaloniaView can not transparent, but maybe it's not impossible, waitting... maybe?
-                //see https://github.com/AvaloniaUI/Avalonia/issues/10807
-                _overlayLayer = new AvaloniaView(context);
-                _overlayLayer.Content = new Border
-                {
-                    Child = OverlayContent as Control
-                };
+            //if (OverlayContent != null)
+            //{
+            //    //TODO AvaloniaView can not transparent, but maybe it's not impossible, waitting... maybe?
+            //    //see https://github.com/AvaloniaUI/Avalonia/issues/10807
+            //    _overlayLayer = new AvaloniaView(context);
+            //    _overlayLayer.Content = new Border
+            //    {
+            //        Child = OverlayContent as Control
+            //    };
 
-                if (_overLayerTopLevel != null)
-                {
-                    _overLayerTopLevel.BackRequested += _overLayerTopLevel_BackRequested;
-                }
+            //    if (_overLayerTopLevel != null)
+            //    {
+            //        _overLayerTopLevel.BackRequested += _overLayerTopLevel_BackRequested;
+            //    }
 
 
-                var container = new RelativeLayout(context);
-                container.AddView(_platformView);
-                var lp = new RelativeLayout.LayoutParams(WindowManagerLayoutParams.MatchParent, 120);
-                lp.AddRule(LayoutRules.AlignParentBottom);
-                container.AddView(_overlayLayer, lp);
+            //    var container = new RelativeLayout(context);
+            //    container.AddView(_platformView);
+            //    var lp = new RelativeLayout.LayoutParams(WindowManagerLayoutParams.MatchParent, 120);
+            //    lp.AddRule(LayoutRules.AlignParentBottom);
+            //    container.AddView(_overlayLayer, lp);
 
-                return new AndroidViewControlHandle(container);
-            }
+            //    return new AndroidViewControlHandle(container);
+            //}
 
             return new AndroidViewControlHandle(_platformView);
         }
 
         protected override void DestroyControl()
         {
-            _platformView.MediaPlayer = null;
-
+            _platformEventHandler?.Dispose();
+            //_platformView.MediaPlayer = null;
+            //_platformView.Click -= _platformView_Click;
             //not work now
             //var overLayerTopLevel = _overLayerTopLevel;
             //if (overLayerTopLevel != null)
@@ -134,17 +137,22 @@ namespace Avalonia.Controls.Android
             //    overLayerTopLevel.PlatformImpl?.Dispose();
             //}
 
-            if (_overlayLayer != null)
-            {
-                _overlayLayer.Dispose();
-                _overlayLayer = null;
-            }
+            //if (_overlayLayer != null)
+            //{
+            //    _overlayLayer.Dispose();
+            //    _overlayLayer = null;
+            //}
 
         }
 
         private void _overLayerTopLevel_BackRequested(object sender, Interactivity.RoutedEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void _platformView_GenericMotion(object sender, View.GenericMotionEventArgs e)
+        {
+            
         }
 
         private void _platformView_Click(object sender, EventArgs e)
