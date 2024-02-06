@@ -8,7 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using PolarShadow.Core;
 
-namespace PolarShadow.Services
+namespace PolarShadow.Essentials
 {
     internal class DbPreference : IPreference
     {

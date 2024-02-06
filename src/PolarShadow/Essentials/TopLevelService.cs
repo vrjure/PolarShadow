@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Services
+namespace PolarShadow.Essentials
 {
     internal class TopLevelService : ObservableObject, ITopLevelService
     {

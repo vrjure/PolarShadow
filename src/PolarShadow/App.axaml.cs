@@ -9,7 +9,7 @@ using PolarShadow.ViewModels;
 using PolarShadow.Views;
 using System;
 using PolarShadow.Navigations;
-using PolarShadow.Services;
+using PolarShadow.Essentials;
 using Avalonia.Controls.Notifications;
 using PolarShadow.Storage;
 using Microsoft.EntityFrameworkCore;
