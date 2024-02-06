@@ -4,6 +4,7 @@ using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
+using PolarShadow.Essentials;
 using PolarShadow.Navigations;
 using PolarShadow.Resources;
 using PolarShadow.Services;

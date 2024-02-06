@@ -22,7 +22,7 @@ class Program
             .LogToTrace()
             .AfterSetup(builder =>
             {
-                builder.UseNativeControls();
+                builder.UseNativeControls((builder.Instance as App).ServiceCollection);
             });
 
 }

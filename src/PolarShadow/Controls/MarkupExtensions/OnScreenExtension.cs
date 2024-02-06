@@ -1,5 +1,6 @@
 ﻿using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Metadata;
+using PolarShadow.Essentials;
 using PolarShadow.Services;
 using System;
 using System.Collections.Generic;

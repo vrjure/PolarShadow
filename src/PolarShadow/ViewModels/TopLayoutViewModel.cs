@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
+using PolarShadow.Essentials;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Services;

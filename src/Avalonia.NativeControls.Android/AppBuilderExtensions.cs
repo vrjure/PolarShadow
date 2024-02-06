@@ -9,10 +9,10 @@ namespace Avalonia.Controls.Android
 {
     public static class AppBuilderExtensions
     {
-        public static AppBuilder UseNativeControls(this AppBuilder appBuilder)
+        public static AppBuilder UseNativeControls(this AppBuilder appBuilder, IServiceCollection services)
         {
-            NativeControls.AddHandler<IVideoViewHandler, VLCVideoViewHandler>();
-            NativeControls.AddHandler<IWebViewHandler, WebViewHandler>();
+            services.AddTransient<IVideoViewHandler, VLCVideoViewHandler>();
+            services.AddTransient<IWebViewHandler, WebViewHandler>();
             return appBuilder;
         }
     }

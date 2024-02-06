@@ -6,6 +6,7 @@ using Avalonia.Android;
 using Avalonia.NativeControls.Android;
 using Android.Views;
 using Avalonia.Controls.Android;
+using Avalonia.Dialogs;
 
 namespace PolarShadow.Android;
 
@@ -23,7 +24,9 @@ public class MainActivity : AvaloniaMainActivity<App>
             .WithInterFont()
             .AfterSetup(builder =>
             {
-                builder.UseNativeControls();
+                var services = (builder.Instance as App).ServiceCollection;
+                builder.UseNativeControls(services);
+                builder.UseEssentials(services, this);
             });
     }
 }

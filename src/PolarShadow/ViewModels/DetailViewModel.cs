@@ -6,6 +6,7 @@ using PolarShadow.Aria2;
 using PolarShadow.Cache;
 using PolarShadow.Controls;
 using PolarShadow.Core;
+using PolarShadow.Essentials;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
 using PolarShadow.Options;

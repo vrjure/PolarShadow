@@ -4,6 +4,7 @@ using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Cache;
 using PolarShadow.Core;
+using PolarShadow.Essentials;
 using PolarShadow.Navigations;
 using PolarShadow.Options;
 using PolarShadow.Resources;

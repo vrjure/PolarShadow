@@ -173,8 +173,7 @@ public partial class App : Application
 
     private void RegisterNativeControls(IServiceCollection service)
     {
-        NativeControls.ConfigureService(service);
-
+        service.AddLibVLC();
         service.AddWebViewOptions(new WebViewOptions
         {
             UserDataFolder = Path.Combine(AppDataFolder, "webview")

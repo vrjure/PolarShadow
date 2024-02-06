@@ -18,7 +18,12 @@ namespace PolarShadow.Controls
 
         private Point _cursorPoint;
         private bool _isScrolling;
-        private int _scrollChangeTime;
+        private int _scrollChangedX;
+        private bool? _scrollHorizontal;
+        private Rect _leftRect;
+        private bool _pressedOnLeft;
+        private double _volumeDelta;
+        private double _brightnessDelta;
 
         private IDisposable _hideDisposable;
 
@@ -140,12 +145,65 @@ namespace PolarShadow.Controls
 
             if (_isScrolling)
             {
-                _scrollChangeTime -= (int)e.Delta.X;
+                if (!_scrollHorizontal.HasValue)
+                {
+                    if (Math.Abs(e.Delta.X) > Math.Abs(e.Delta.Y))
+                    {
+                        _scrollHorizontal = true;
+                    }
+                    else
+                    {
+                        _scrollHorizontal = false;
+                    }
+                }
+
+                if (_scrollHorizontal == true)
+                {
+                    OnHorizontalScroll(e);
+                }
+                else
+                {
+                    OnVerticalScroll(e);
+                }
             }
             else
             {
-                _scrollChangeTime = 0;
+                _scrollChangedX = 0;
+                _scrollHorizontal = null;
                 _isScrolling = true;
+            }
+        }
+
+        private void OnHorizontalScroll(ScrollGestureEventArgs e)
+        {
+            _scrollChangedX -= (int)Math.Round(e.Delta.X);
+        }
+
+        private void OnVerticalScroll(ScrollGestureEventArgs e)
+        {
+            if (MediaController?.FullScreen == true)
+            {
+                if (_deviceService != null)
+                {
+                    if (_pressedOnLeft)
+                    {
+                        _brightnessDelta += e.Delta.Y;
+                        if (Math.Abs(_brightnessDelta) >= 1)
+                        {
+                            _deviceService.Brightness += (int)_brightnessDelta;
+                            _brightnessDelta = 0;
+                        }
+                    }
+                    else
+                    {
+                        _volumeDelta += e.Delta.Y;
+                        if (Math.Abs(_volumeDelta) >= 1)
+                        {
+                            _deviceService.Volume += (int)_volumeDelta;
+                            _volumeDelta = 0;
+                        }
+                    }
+                }
             }
         }
 
@@ -155,13 +213,29 @@ namespace PolarShadow.Controls
             _isScrolling = false;
             //System.Diagnostics.Trace.WriteLine($"Scroll change: {_scrollChangeTime}");
 
-            if (Math.Abs(_scrollChangeTime) <= 1)
+            if (_scrollHorizontal == true)
             {
-                return;
+                if (Math.Abs(_scrollChangedX) <= 1)
+                {
+                    return;
+                }
+
+                MediaController.Controller.Time += TimeSpan.FromSeconds(_scrollChangedX);
             }
 
-            MediaController.Controller.Time += TimeSpan.FromSeconds(_scrollChangeTime);
             AutoHide();
+        }
+
+        private void OnNativePointerPressed(NativePointerPointEventArgs e)
+        {
+            if (_leftRect.ContainsExclusive(e.Point))
+            {
+                _pressedOnLeft = true;
+            }
+            else
+            {
+                _pressedOnLeft = false;
+            }
         }
 
         private void OnNativePointerReleased(NativePointerPointEventArgs e)

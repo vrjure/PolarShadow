@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PolarShadow.Options;
 using PolarShadow.Models;
+using PolarShadow.Essentials;
 
 namespace PolarShadow.ViewModels
 {

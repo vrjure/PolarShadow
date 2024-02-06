@@ -6,7 +6,9 @@ using Avalonia.Input.GestureRecognizers;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using PolarShadow.Controls.Converters;
+using PolarShadow.Essentials;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -136,6 +138,8 @@ namespace PolarShadow.Controls
         private Border _part_tip;
         private TextBlock _part_tip_text;
 
+        private readonly IDeviceService _deviceService;
+
         static MediaPlayerController()
         {
             MediaControllerProperty.Changed.AddClassHandler<MediaPlayerController>((o,e)=>o.MediaControllerPropertyChanged(e));
@@ -150,12 +154,15 @@ namespace PolarShadow.Controls
             else if (OperatingSystem.IsAndroid())
             {
                 VirtualView.NativePointerReleasedEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnNativePointerReleased(e));
+                VirtualView.NativePointerPressedEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnNativePointerPressed(e));
             }
         }
 
         public MediaPlayerController()
         {
             this.GestureRecognizers.Add(new ScrollGestureRecognizer() { CanHorizontallyScroll = true, CanVerticallyScroll = true });
+
+            _deviceService = Ioc.Default.GetService<IDeviceService>();
         }
 
         public static readonly StyledProperty<IMediaController> MediaControllerProperty = AvaloniaProperty.Register<MediaPlayerController, IMediaController>(nameof(MediaController));
@@ -191,14 +198,12 @@ namespace PolarShadow.Controls
             if (arg.OldValue is IMediaController old && old.Controller != null)
             {
                 old.Controller.Error -= controller.Media_Error;
-
                 old.PropertyChanged -= ControllerPropertyChanged;
             }
 
             if (arg.NewValue is IMediaController newVal && newVal.Controller != null)
             {
                 newVal.Controller.Error += controller.Media_Error;
-
                 newVal.PropertyChanged += ControllerPropertyChanged;
             }
         }
@@ -215,6 +220,13 @@ namespace PolarShadow.Controls
             else if (e.PropertyName.Equals(nameof(IMediaController.MediaMode)))
             {
                 SetPlayMode(MediaController.MediaMode);
+            }
+            else if (e.PropertyName.Equals(nameof(IMediaController.FullScreen)))
+            {
+                if (!MediaController.FullScreen && _deviceService != null)
+                {
+                    _deviceService.Brightness = _deviceService.SystemBrightness;
+                }
             }
         }
 
@@ -327,6 +339,10 @@ namespace PolarShadow.Controls
         {
             base.OnSizeChanged(e);
             if (this.MediaController == null) return;
+
+            var halfWidth = e.NewSize.Width / 2;
+            _leftRect = new Rect(0, 0, halfWidth, e.NewSize.Height);
+
             if(e.NewSize.Width < 500)
             {
                 this.MediaController.MediaMode = MediaMode.Min;
