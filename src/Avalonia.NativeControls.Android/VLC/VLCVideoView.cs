@@ -83,13 +83,13 @@ namespace Avalonia.Controls.Android
         {
             var context = _context = (parent as AndroidViewControlHandle)?.View.Context ?? global::Android.App.Application.Context;
 
-            _platformView = new LibVLCSharp.Platforms.Android.VideoView(context)
+            _platformView = new AVideoView(context)
             {
                 MediaPlayer = this.MediaPlayer
             };
             _platformView.KeepScreenOn = true;
             _platformEventHandler = new PlatformEventHandler(_platformView, _virtualView as INativeInteraction);
-
+            
             //if (OverlayContent != null)
             //{
             //    //TODO AvaloniaView can not transparent, but maybe it's not impossible, waitting... maybe?

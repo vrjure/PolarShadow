@@ -27,7 +27,7 @@ namespace Avalonia.Controls
         private bool _scrolling;
         static VirtualView()
         {
-            ContentProperty.Changed.AddClassHandler<VideoView>((s, e) =>
+            ContentProperty.Changed.AddClassHandler<VirtualView>((s, e) =>
             {
                 s.SetOverlayerContentIf();
             });
@@ -36,8 +36,8 @@ namespace Avalonia.Controls
         {
             this.Handler = handler;
             this.Handler.SetVirtualView(this);
-
         }
+
         public IViewHandler Handler { get; }
 
         public static readonly StyledProperty<object> ContentProperty = ContentControl.ContentProperty.AddOwner<VideoView>();
