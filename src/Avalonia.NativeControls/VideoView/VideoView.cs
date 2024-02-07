@@ -45,18 +45,6 @@ namespace Avalonia.Controls
             }
         }
 
-        public event EventHandler PlatformClick;
-
-        public void OnPlatformClick()
-        {
-            PlatformClick?.Invoke(this, EventArgs.Empty);
-        }
-
         public new IVideoViewHandler Handler => base.Handler as IVideoViewHandler;
-
-        protected override void OnPointerPressed(PointerPressedEventArgs e)
-        {
-            base.OnPointerPressed(e);
-        }
     }
 }

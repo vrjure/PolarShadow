@@ -11,7 +11,5 @@ namespace Avalonia.Controls
     {
         IVideoViewController Controller { get; set; }
         bool FullScreen { get; set; }
-
-        event EventHandler PlatformClick;
     }
 }

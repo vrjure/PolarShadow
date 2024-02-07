@@ -87,7 +87,6 @@ namespace Avalonia.Controls.Android
             {
                 MediaPlayer = this.MediaPlayer
             };
-            _platformView.Click += _platformView_Click;
             _platformView.KeepScreenOn = true;
             _platformEventHandler = new PlatformEventHandler(_platformView, _virtualView as INativeInteraction);
 
@@ -145,33 +144,10 @@ namespace Avalonia.Controls.Android
 
         }
 
-        private void _overLayerTopLevel_BackRequested(object sender, Interactivity.RoutedEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void _platformView_GenericMotion(object sender, View.GenericMotionEventArgs e)
-        {
-            
-        }
-
-        private void _platformView_Click(object sender, EventArgs e)
-        {
-            PlatformClick?.Invoke(this, e);
-            if (_overlayLayer == null)
-            {
-                return;
-            }
-
-            if (_overlayLayer.Visibility == ViewStates.Visible)
-            {
-                _overlayLayer.Visibility = ViewStates.Gone;
-            }
-            else
-            {
-                _overlayLayer.Visibility = ViewStates.Visible;
-            }
-        }
+        //private void _overLayerTopLevel_BackRequested(object sender, Interactivity.RoutedEventArgs e)
+        //{
+        //    e.Handled = true;
+        //}
 
         private void SetFullScreen()
         {       

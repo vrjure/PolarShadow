@@ -18,7 +18,7 @@ namespace PolarShadow.Controls
 
         private Point _cursorPoint;
         private bool _isScrolling;
-        private int _scrollChangedX;
+        private double _scrollChangedX;
         private bool? _scrollHorizontal;
         private Rect _leftRect;
         private bool _pressedOnLeft;
@@ -176,7 +176,8 @@ namespace PolarShadow.Controls
 
         private void OnHorizontalScroll(ScrollGestureEventArgs e)
         {
-            _scrollChangedX -= (int)Math.Round(e.Delta.X);
+            _scrollChangedX -= e.Delta.X;
+            //System.Diagnostics.Trace.WriteLine($"ScrollChange: {_scrollChangedX}");
         }
 
         private void OnVerticalScroll(ScrollGestureEventArgs e)
