@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Desktop.Essentials
 {
+#pragma warning disable CA1416
     /// <summary>
     /// https://gist.github.com/sverrirs/d099b34b7f72bb4fb386
     /// </summary>
@@ -315,6 +316,8 @@ namespace PolarShadow.Desktop.Essentials
             }
         }
     }
+#pragma warning restore CA1416
+
 
     [ComImport]
     [Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")]

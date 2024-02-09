@@ -25,7 +25,9 @@ namespace PolarShadow.Android.Essentials
             _audioManageer = context.GetSystemService(Context.AudioService) as AudioManager;
             _maxVolume = _audioManageer.GetStreamMaxVolume(Stream.Music);
 #if ANDROID28_0_OR_GREATER
+#pragma warning disable CA1416
             _minVolume = _audioManageer.GetStreamMinVolume(Stream.Music);
+#pragma warning restore CA1416
 #else
             _minVolume = 0;
 #endif
