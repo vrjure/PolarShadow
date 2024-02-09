@@ -44,6 +44,12 @@ namespace PolarShadow.Controls
                     target = target + TimeSpan.FromSeconds(_part_slider.SmallChange);
                     seek = handled = true;
                     break;
+                case Key.Up:
+                    _deviceService.Volume += 1;
+                    break;
+                case Key.Down:
+                    _deviceService.Volume -= 1;
+                    break;
                 case Key.Space:
                     PlayPause();
                     handled = true;
@@ -114,6 +120,20 @@ namespace PolarShadow.Controls
         {
             base.OnPointerReleased(e);
             OnReleased(e.GetPosition(this));
+        }
+
+        protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
+        {
+            base.OnPointerWheelChanged(e);
+            if (_deviceService == null) return;
+            if (e.Delta.Y > 0)
+            {
+                _deviceService.Volume -= 1;
+            }
+            else
+            {
+                _deviceService.Volume += 1;
+            }
         }
 
         private void OnHolding(HoldingRoutedEventArgs e)
