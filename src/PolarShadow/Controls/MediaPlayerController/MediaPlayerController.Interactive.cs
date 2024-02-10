@@ -289,7 +289,6 @@ namespace PolarShadow.Controls
         private void AutoHide()
         {
             CancelAutoHide();
-
             if (IsShow())
             {
                 _hideDisposable = DispatcherTimer.RunOnce(Hide, TimeSpan.FromSeconds(_autoHideDelaySec));

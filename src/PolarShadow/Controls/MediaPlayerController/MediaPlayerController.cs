@@ -137,6 +137,7 @@ namespace PolarShadow.Controls
 
         private Border _part_tip;
         private TextBlock _part_tip_text;
+        private bool _isShow;
 
         private readonly IDeviceService _deviceService;
 
@@ -189,6 +190,8 @@ namespace PolarShadow.Controls
             _part_root_panel = e.NameScope.Get<Panel>("Part_Root_Panel");
 
             SetPlayMode(MediaMode.Simple);
+
+            Show();
         }
 
         private void MediaControllerPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
@@ -270,15 +273,17 @@ namespace PolarShadow.Controls
         {
             _part_root_panel.Cursor = new Cursor(StandardCursorType.None);
             _part_root.Opacity = 0;
+            _isShow = false;
         }
 
         private void Show()
         {
             _part_root_panel.Cursor = Cursor.Default;
             _part_root.Opacity = 1;
+            _isShow = true;
         }
 
-        private bool IsShow() => _part_root?.Opacity != 0;
+        private bool IsShow() => _isShow;
 
         private void PreviousBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
