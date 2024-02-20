@@ -38,7 +38,7 @@ namespace PolarShadow
 
             if (_cache.ContainsKey(key))
             {
-                var content = await _cache.GetAsync(key);
+                var content = await _cache.GetAsync(key).ConfigureAwait(false);
 
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK)
                 {
@@ -46,7 +46,7 @@ namespace PolarShadow
                 };
             }
 
-            var response = await base.SendAsync(request, cancellationToken);
+            var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             return response;

@@ -170,7 +170,7 @@ namespace PolarShadow.Controls
 
             try
             {
-                using var response = await httpClient.GetAsync(uri);
+                using var response = await httpClient.GetAsync(uri).ConfigureAwait(false);
                 response.EnsureSuccessStatusCode();
 
                 return TryGetImage(await response.Content.ReadAsStreamAsync(), uri);
