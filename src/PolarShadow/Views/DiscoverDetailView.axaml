@@ -47,7 +47,11 @@
 		</Expander>
 
 		<Grid Grid.Row="1">
-			<ScrollViewer>
+			<ScrollViewer VerticalScrollBarVisibility="Hidden"
+						  x:Name="part_content_scroll">
+				<ScrollViewer.GestureRecognizers>
+					<ScrollGestureRecognizer CanHorizontallyScroll="False" CanVerticallyScroll="True"/>
+				</ScrollViewer.GestureRecognizers>
 				<StackPanel Orientation="Vertical"
 							Spacing="10">
 					<ListBox ItemsSource="{Binding ResourceList}"
