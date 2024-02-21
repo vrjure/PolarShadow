@@ -47,6 +47,7 @@ namespace Avalonia.Controls
                 {
                     MediaPlayer.Play();
                 }
+                TriggerLayoutChangeListener();
             }
             else
             {

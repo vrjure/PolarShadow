@@ -245,6 +245,15 @@ namespace Avalonia.Controls
             {
                 await Task.Run(() =>
                 {
+                    //TODO 在安卓上 网络视频加载不会马上停止，非常浪费流量
+                    //可能：https://code.videolan.org/videolan/LibVLCSharp/-/issues/214
+                    cache.Stop();
+                    if (cache.Media != null)
+                    {
+                        cache.Media.ParseStop();
+                        cache.Media.Dispose();
+                        cache.Media = null;
+                    }
                     cache.Dispose();
                 });
             }
