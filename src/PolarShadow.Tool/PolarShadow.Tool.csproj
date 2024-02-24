@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PolarShadow.Core\PolarShadow.Core.csproj" />
+    <ProjectReference Include="..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
   </ItemGroup>
 
 </Project>

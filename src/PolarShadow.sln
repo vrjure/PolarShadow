@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Core", "PolarShadow.Core\PolarShadow.Core.csproj", "{D8814AF4-51A4-4AEF-8B06-2F54157C364A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A0DA3243-6E13-4A97-A794-9AF90DF06F28}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadowTests", "Tests\PolarShadowTests\PolarShadowTests.csproj", "{D948F56C-BB01-486C-BAAD-1C373A918C67}"
@@ -46,16 +44,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NativeControls", "NativeCon
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.NativeControls", "Avalonia.NativeControls\Avalonia.NativeControls.csproj", "{6E456E0E-BE52-40AC-AD86-A38E01DFFA7D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Core", "PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj", "{A37A0ACF-0B7F-4708-A697-20F40001465F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8814AF4-51A4-4AEF-8B06-2F54157C364A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D948F56C-BB01-486C-BAAD-1C373A918C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -122,6 +118,10 @@ Global
 		{6E456E0E-BE52-40AC-AD86-A38E01DFFA7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E456E0E-BE52-40AC-AD86-A38E01DFFA7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E456E0E-BE52-40AC-AD86-A38E01DFFA7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A37A0ACF-0B7F-4708-A697-20F40001465F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A37A0ACF-0B7F-4708-A697-20F40001465F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A37A0ACF-0B7F-4708-A697-20F40001465F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A37A0ACF-0B7F-4708-A697-20F40001465F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

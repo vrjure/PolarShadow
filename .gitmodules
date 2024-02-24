@@ -1,0 +1,3 @@
+[submodule "src/PolarShadow.Core"]
+	path = src/PolarShadow.Core
+	url = https://github.com/vrjure/PolarShadow.Core.git
