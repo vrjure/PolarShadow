@@ -4,7 +4,7 @@
 	<Design.PreviewWith>
 		<Border Padding="20">
 			<!-- Add Controls for Previewer Here -->
-			<ps:MediaPlayerController/>
+			<ps:MediaPlayerController Width="800" Height="400"/>
 		</Border>
 	</Design.PreviewWith>
     <!-- Add Resources Here -->

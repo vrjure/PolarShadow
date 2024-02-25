@@ -189,8 +189,6 @@ namespace PolarShadow.Controls
             _part_tip = e.NameScope.Get<Border>("part_tip");
             _part_root_panel = e.NameScope.Get<Panel>("Part_Root_Panel");
 
-            SetPlayMode(MediaMode.Simple);
-
             Show();
         }
 

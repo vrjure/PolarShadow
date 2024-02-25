@@ -64,10 +64,9 @@ namespace Avalonia.Controls
                 }
                 if (Dispatcher.UIThread.CheckAccess())
                 {
-                    var old = _time;
                     if(SetProperty(ref _time, value))
                     {
-                        TryToSeekTime(old, value);
+                        TryToSeekTime(TimeSpan.FromMilliseconds(MediaPlayer.Time), value);
                     }
                 }
                 else
@@ -203,7 +202,6 @@ namespace Avalonia.Controls
 
         private void MediaPlayer_Buffering(object sender, MediaPlayerBufferingEventArgs e)
         {
-            System.Diagnostics.Trace.WriteLine(e.Cache);
             this.Buffering?.Invoke(this, e.Cache);
         }
 

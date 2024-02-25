@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Selection;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
 using PolarShadow.Aria2;
@@ -88,6 +89,28 @@ namespace PolarShadow.ViewModels
             _currentProgress = e;
         }
 
+        private void Controller_MediaChanged(object sender, EventArgs e)
+        {
+            Dispatcher.UIThread.Post(async () =>
+            {
+                var second = HeaderSelection.SelectedItem as ResourceTreeNode;
+                var third = SelectionModel.SelectedItem as ResourceTreeNode;
+                var thirdIndex = SelectionModel.SelectedIndex;
+
+                if (History != null)
+                {
+                    var descItem = GetProgressDesc(History);
+                    if (descItem.Item2 == third.Name || descItem.Item3 == thirdIndex)
+                    {
+                        MediaController.Controller.Time = _currentProgress;
+                        return;
+                    }
+                }
+
+                await TryUpdateHistory(this.Resource, second, third, thirdIndex, 0);
+            });           
+        }
+
         private async Task LoadingDetail()
         {
             if (Param_Link == null)
@@ -111,7 +134,10 @@ namespace PolarShadow.ViewModels
             DetectSource();
 
             History = await _hisService.GetByResourceNameAsync(Param_Link.Name);
-
+            if (History != null)
+            {
+                _currentProgress = TimeSpan.FromMilliseconds(History.Progress);
+            }
         }
 
         private void DetectSource()
@@ -430,27 +456,21 @@ namespace PolarShadow.ViewModels
             }
 
             MediaController.Title = $"{this.Resource.Name}-{episode}";
-
-            await TryUpdateHistory();
-
             await MediaController.Controller?.PlayAsync(new Uri(videoSource.Src));
-
-            //if (History != null && History.Progress > 0)
-            //{
-            //    Controller.Time = TimeSpan.FromMilliseconds(History.Progress);
-            //}
-
         }
 
         private async Task TryUpdateHistory()
         {
             var second = HeaderSelection.SelectedItem as ResourceTreeNode;
             var third = SelectionModel.SelectedItem as ResourceTreeNode;
+            var thirdIndex = SelectionModel.SelectedIndex;
 
-            await TryUpdateHistory(this.Resource, second, third);
+            await TryUpdateHistory(this.Resource, second, third, thirdIndex, (long)_currentProgress.TotalMilliseconds);
         }
 
-        private async Task TryUpdateHistory(ResourceTreeNode root, ResourceTreeNode second, ResourceTreeNode third)
+        private string CombineDesc(ResourceTreeNode second, ResourceTreeNode third) => $"{second.Name}-{third.Name}";
+
+        private async Task TryUpdateHistory(ResourceTreeNode root, ResourceTreeNode second, ResourceTreeNode third, int thirdIndex, long progress)
         {
             if (root == null || second == null || third == null)
             {
@@ -458,26 +478,46 @@ namespace PolarShadow.ViewModels
             }
 
             var his = History;
-            var desc = $"{root.Name}-{second.Name}-{third.Name}";
+            var desc = CombineDesc(second, third);
             if (his == null)
             {
                 his = new HistoryModel
                 {
                     ResourceName = root.Name,
                     ProgressDesc = desc,
-                    Progress = (long)_currentProgress.TotalMilliseconds
+                    Progress = progress,
+                    ProgressIndex = thirdIndex
                 };
             }
             else
             {
                 his.ProgressDesc = desc;
-                his.Progress = (long)_currentProgress.TotalMilliseconds;
+                his.ProgressIndex = thirdIndex;
+                his.Progress = progress;
             }
 
             await _hisService.AddOrUpdateAsync(his);
 
             this.History = null;
             this.History = his;
+        }
+
+        private (string, string, int) GetProgressDesc(HistoryModel history)
+        {
+            if (history == null) return default;
+
+            if(string.IsNullOrEmpty(history.ProgressDesc)) return default;
+
+            var descSplit = history.ProgressDesc.Split('-');
+            var episode = string.Empty;
+            var category = string.Empty;
+            if (descSplit.Length >= 2)
+            {
+                category = descSplit[0];
+                episode = descSplit[1];
+            }
+
+            return (category, episode, history.ProgressIndex);
         }
     }
 }

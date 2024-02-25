@@ -10,6 +10,7 @@ namespace PolarShadow.Services
         public string ResourceName { get; set; }
         public long Progress { get; set; }
         public string ProgressDesc { get; set; }
+        public int ProgressIndex { get; set; }
         public DateTime UpdateTime { get; set; }
     }
 }
