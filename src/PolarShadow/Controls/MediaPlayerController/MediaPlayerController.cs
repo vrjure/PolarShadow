@@ -236,7 +236,7 @@ namespace PolarShadow.Controls
             Dispatcher.UIThread.Post(() =>
             {
                 MediaController.IsLoading = false;
-                ShowTip("播放错误!");
+                MediaController.Tip = "播放错误!";
             });
         }
         public void ShowTip(string tip)
@@ -245,10 +245,14 @@ namespace PolarShadow.Controls
             {
                 _part_tip_text.Text = tip;
             }
-            if (_part_tip != null)
+            if (_part_tip != null && !string.IsNullOrEmpty(tip))
             {
                 _part_tip.Opacity = 1;
-                DispatcherTimer.RunOnce(() => _part_tip.Opacity = 0, TimeSpan.FromSeconds(3));
+                DispatcherTimer.RunOnce(() => 
+                {
+                    _part_tip.Opacity = 0;
+                    MediaController.Tip = string.Empty;
+                }, TimeSpan.FromSeconds(3));
             }
         }
 

@@ -74,6 +74,25 @@ namespace PolarShadow.Controls
             {
                 Part_VideoView.FullScreen = MediaController.FullScreen;
             }
+            if (OperatingSystem.IsAndroid())
+            {
+                if (e.PropertyName.Equals(nameof(IMediaController.Tip)))
+                {
+                    if (string.IsNullOrEmpty(MediaController.Tip))
+                    {
+                        Part_VideoView.IsVisible = true;
+                    }
+                    else
+                    {
+                        Part_VideoView.IsVisible = false;
+                    }
+                }
+                else if (e.PropertyName.Equals(nameof(IMediaController.IsLoading)))
+                {
+                    Part_VideoView.IsVisible = !MediaController.IsLoading;
+                }
+            }
+            
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Avalonia.Controls.Android
 {
     internal class VLCVideoView : PlatformView, IPlatformVideoView
     {
-        private AvaloniaView _overlayLayer;// new well be cause memoryleak? not sure. so try use static.
+        private AvaloniaView _overlayLayer;
         private LibVLCSharp.Platforms.Android.VideoView _platformView;
         private Context _context;
         private PlatformEventHandler _platformEventHandler;
