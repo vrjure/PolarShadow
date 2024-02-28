@@ -112,6 +112,7 @@ namespace PolarShadow.ViewModels
                     {
                         c.Controller.TimeChanged -= _controller_TimeChanged;
                         _mediaController.Controller.MediaChanged -= Controller_MediaChanged;
+                        _mediaController.Controller.Ended -= Controller_Ended;
                         _mediaController.PreviousClick -= Controller_PreviousClick;
                         _mediaController.NextClick -= Controller_NextClick;
                         _mediaController.PropertyChanged -= MediaController_PropertyChanged;
@@ -121,6 +122,7 @@ namespace PolarShadow.ViewModels
                     {
                         _mediaController.Controller.TimeChanged += _controller_TimeChanged;
                         _mediaController.Controller.MediaChanged += Controller_MediaChanged;
+                        _mediaController.Controller.Ended += Controller_Ended;
                         _mediaController.PreviousClick += Controller_PreviousClick;
                         _mediaController.NextClick += Controller_NextClick;
                         _mediaController.PropertyChanged += MediaController_PropertyChanged;

@@ -315,6 +315,11 @@ namespace PolarShadow.ViewModels
             }
         }
 
+        private void Controller_Ended(object sender, EventArgs e)
+        {
+            Controller_NextClick(null, null);
+        }
+
         private async Task LinkClick(ResourceTreeNode node)
         {
             try
