@@ -12,7 +12,7 @@
 		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal">
 				<!--save-->
-				<Button Content="&#xF0B1;"
+				<Button Content="{DynamicResource save}"
 						Theme="{StaticResource Icon}"
 						Command="{Binding SaveCommand}">
 				</Button>
@@ -47,7 +47,7 @@
 		</DockPanel>
 		<DockPanel>
 			<TextBlock Text="Download Path" Classes="header"/>
-			<Button Content="&#xEF76;"
+			<Button Content="{DynamicResource more-v}"
 					Theme="{StaticResource Icon}"
 					DockPanel.Dock="Right"
 					VerticalAlignment="Center"

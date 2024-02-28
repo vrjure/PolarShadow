@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls.Notifications;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Models;
@@ -24,13 +25,13 @@ public partial class MainViewModel : ViewModelBase
     }
     public IEnumerable<MenuIconItem> MenuItems => new List<MenuIconItem>
     {
-        new(){ Name = "main", Icon = "\uEE26", VMType = typeof(BookshelfViewModel)},
-        new(){ Name = "discover", Icon = "\uEBC1", VMType = typeof(DiscoverViewModel)},
-        new(){ Name = "source", Icon = "\uEDC6", VMType = typeof(BookSourceViewModel)},
-        new(){ Name = "user", Icon="\uF25F", VMType = typeof(MineViewModel)},
-#if DEBUG
-        new(){ Name = "test", Icon="\uED3E", VMType = typeof(VideoPlayerViewModel)}
-#endif
+        new(){ Name = "main", Icon = FindResource<string>("home"), VMType = typeof(BookshelfViewModel)},
+        new(){ Name = "discover", Icon = FindResource<string>("discover"), VMType = typeof(DiscoverViewModel)},
+        new(){ Name = "source", Icon = FindResource<string>("source"), VMType = typeof(BookSourceViewModel)},
+        new(){ Name = "user", Icon = FindResource<string>("user"), VMType = typeof(MineViewModel)},
+//#if DEBUG
+//        new(){ Name = "test", Icon=FindResource<string>("flask"), VMType = typeof(VideoPlayerViewModel)}
+//#endif
     };
 
     private MenuIconItem _selectedValue;

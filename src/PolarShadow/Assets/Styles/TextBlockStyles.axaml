@@ -25,6 +25,6 @@
 	<Style Selector="TextBlock.empty">
 		<Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
 		<Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
-		<Setter Property="Text" Value="&#xF1F7; Empty"/>
+		<Setter Property="Text" Value="{StaticResource empty}"/>
 	</Style>
 </Styles>

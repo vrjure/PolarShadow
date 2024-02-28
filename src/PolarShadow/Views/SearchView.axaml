@@ -22,7 +22,7 @@
 		
 		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
 			<Button Theme="{StaticResource Icon}"
-					Content="&#xED22;">
+					Content="{DynamicResource filter}">
 				<Button.Flyout>
 					<Flyout Opened="Flyout_Opened"
 							Closing="Flyout_Closing">
@@ -52,7 +52,7 @@
 						  Data="{StaticResource loader2}">
 				</PathIcon>
 				<Button Command="{Binding LoadMoreCommand}"
-						Content="&#xEF78;"
+						Content="{DynamicResource more-h}"
 						Theme="{StaticResource Icon}"
 						HorizontalAlignment="Center"
 						IsVisible="{Binding ShowLoadMore}">

@@ -14,6 +14,7 @@
 				<ResourceInclude Source="/Assets/Values/Sizes.axaml"/>
 				<ResourceInclude Source="/Assets/Values/Colors.axaml"/>
 				<ResourceInclude Source="/Assets/Values/Paths.axaml"/>	
+				<ResourceInclude Source="/Assets/Values/RemixIcons.axaml"/>	
 				
 				<ResourceInclude Source="/Assets/Themes/SliderThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ItemsControlThemes.axaml"/>
@@ -65,7 +66,7 @@
 			<Panel>
 				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
 					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
-					   ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.jpg"
+					   ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.png"
 					   Stretch="Fill"/>
 				<Border VerticalAlignment="Bottom"
 						Background="#9FFFFFFF">
@@ -90,7 +91,7 @@
 			<Panel>
 				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
 					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
-					   ps:ImageAttached.PlaceholderSrc="Assets/images/item-background.jpg"
+					   ps:ImageAttached.PlaceholderSrc="Assets/images/item-background.png"
 					   Stretch="Fill"/>
 				<Border VerticalAlignment="Bottom"
 						Background="#9FFFFFFF">
@@ -115,7 +116,7 @@
 			<Panel>
 				<Image ps:ImageAttached.Src="{Binding ImageSrc}"
 					   ps:ImageAttached.Headers="{Binding ImageSrcHeaders}"
-					   ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.jpg"
+					   ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.png"
 					   Stretch="Fill"/>
 				<Border VerticalAlignment="Bottom"
 						Background="#9FFFFFFF">

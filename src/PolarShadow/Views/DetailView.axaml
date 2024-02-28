@@ -20,10 +20,10 @@
 					IsEnabled="{Binding !IsLoading}">
 				<Button.Styles>
 					<Style Selector="Button.save">
-						<Setter Property="Content" Value="&#xF0B1;"/>
+						<Setter Property="Content" Value="{DynamicResource save}"/>
 					</Style>
 					<Style Selector="Button.delete">
-						<Setter Property="Content" Value="&#xEC2A;"/>
+						<Setter Property="Content" Value="{DynamicResource delete}"/>
 					</Style>
 				</Button.Styles>
 			</Button>
@@ -180,7 +180,7 @@
 		</ScrollViewer>
 		
 		<Button Theme="{StaticResource Icon}"
-				Content="&#xF064;"
+				Content="{DynamicResource refresh}"
 				HorizontalAlignment="Right"
 				VerticalAlignment="Bottom"
 				Margin="20"

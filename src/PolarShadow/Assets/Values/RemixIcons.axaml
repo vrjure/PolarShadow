@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<TextBlock FontFamily="{StaticResource remixIcon}"
+					   Text="{DynamicResource loading}">
+			</TextBlock>
+		</Border>
+	</Design.PreviewWith>
+    <!-- Add Resources Here -->
+	<FontFamily x:Key="remixIcon" >/Assets/Fonts/remixicon.ttf#remixicon</FontFamily>
+	
+	<x:String x:Key="refresh">&#xF064;</x:String>
+	<x:String x:Key="search">&#xF0D1;</x:String>
+	<x:String x:Key="upload">&#xF249;</x:String>
+	<x:String x:Key="arrow-right">&#xEA6E;</x:String>
+	<x:String x:Key="save">&#xF0B1;</x:String>
+	<x:String x:Key="delete">&#xEC2A;</x:String>
+	<x:String x:Key="more-v">&#xEF76;</x:String>
+	<x:String x:Key="more-h">&#xEF78;</x:String>
+	<x:String x:Key="filter">&#xED22;</x:String>
+	<x:String x:Key="play">&#xF00A;</x:String>
+	<x:String x:Key="pause">&#xEFD7;</x:String>
+	<x:String x:Key="play-previous">&#xF13F;</x:String>
+	<x:String x:Key="play-next">&#xF143;</x:String>
+	<x:String x:Key="fullscreen">&#xED9B;</x:String>
+	<x:String x:Key="fullscreen-exit">&#xED99;</x:String>
+	<x:String x:Key="home">&#xEE26;</x:String>
+	<x:String x:Key="discover">&#xEBC1;</x:String>
+	<x:String x:Key="source">&#xEDC6;</x:String>
+	<x:String x:Key="user">&#xF25F;</x:String>
+	<x:String x:Key="flask">&#xED3E;</x:String>
+	<x:String x:Key="loading">&#xEEC1;</x:String>
+	<x:String x:Key="empty">&#xF1F7; Empty</x:String>
+</ResourceDictionary>

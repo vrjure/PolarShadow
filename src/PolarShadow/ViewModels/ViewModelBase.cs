@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -149,5 +150,10 @@ public class ViewModelBase : ObservableRecipient, INavigationNotify
                 await Task.Delay(millisecondsDelay);
             }
         });
+    }
+
+    protected T FindResource<T>(string key)
+    {
+        return (T)App.Current.FindResource(key);
     }
 }

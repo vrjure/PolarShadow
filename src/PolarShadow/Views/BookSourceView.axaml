@@ -13,7 +13,7 @@
 		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal">
 				<!--Import-->
-				<Button Content="&#xF249;"
+				<Button Content="{DynamicResource upload}"
 						Theme="{StaticResource Icon}"
 						Command="{Binding ImportCommand}">
 				</Button>
@@ -36,7 +36,7 @@
 							<TextBlock Text="{Binding Name}"/>
 							<TextBlock Text="{Binding Domain, StringFormat='({0})'}"/>
 						</StackPanel>
-						<TextBlock Text="&#xEA6E;"
+						<TextBlock Text="{DynamicResource arrow-right}"
 									HorizontalAlignment="Right"
 									VerticalAlignment="Center"
 									Classes="icon"

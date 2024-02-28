@@ -81,7 +81,7 @@
 												Margin="-8,0,0,0"
 												VerticalAlignment="Center">
 										<Button Theme="{DynamicResource Icon}"
-												Content="&#xF13F;"
+												Content="{DynamicResource play-previous}"
 												Foreground="White"
 												VerticalContentAlignment="Center"
 												x:Name="Part_Previous"/>
@@ -94,15 +94,15 @@
 												x:Name="Part_PlayPause">
 											<Button.Styles>
 												<Style Selector="Button.play">
-													<Setter Property="Content" Value="&#xF00A;"/>
+													<Setter Property="Content" Value="{DynamicResource play}"/>
 												</Style>
 												<Style Selector="Button.pause">
-													<Setter Property="Content" Value="&#xEFD7;"/>
+													<Setter Property="Content" Value="{DynamicResource pause}"/>
 												</Style>
 											</Button.Styles>
 										</Button>
 										<Button Theme="{DynamicResource Icon}"
-												Content="&#xF143;"
+												Content="{DynamicResource play-next}"
 												Foreground="White"
 												VerticalContentAlignment="Center"
 												x:Name="Part_Next"/>
@@ -139,10 +139,10 @@
 												x:Name="Part_FullScreen">
 											<Button.Styles>
 												<Style Selector="Button.fullScreen">
-													<Setter Property="Content" Value="&#xED9B;"/>
+													<Setter Property="Content" Value="{DynamicResource fullscreen}"/>
 												</Style>
 												<Style Selector="Button.exitFullScreen">
-													<Setter Property="Content" Value="&#xED99;"/>
+													<Setter Property="Content" Value="{DynamicResource fullscreen-exit}"/>
 												</Style>
 											</Button.Styles>
 										</Button>

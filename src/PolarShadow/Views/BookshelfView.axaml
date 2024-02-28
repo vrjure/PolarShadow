@@ -14,7 +14,7 @@
 			<StackPanel Orientation="Horizontal" Spacing="10">
 				<!--Search button-->
 				<Button Theme="{StaticResource Icon}"
-						Content="&#xF0D1;"
+						Content="{DynamicResource search}"
 						VerticalAlignment="Center"
 						Command="{Binding SearchCommand}"/>
 			</StackPanel>
