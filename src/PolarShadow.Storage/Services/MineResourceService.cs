@@ -47,6 +47,18 @@ namespace PolarShadow.Storage
             return await dbContext.Resources.Where(f => f.RootId == rootId && f.Id != rootId).AsNoTracking().ToListAsync();
         }
 
+        public async Task<ICollection<ResourceModel>> GetRootChildrenAsync(int rootId, int level)
+        {
+            using var dbContext = _dbContextFactory.CreateDbContext();
+            return await dbContext.Resources.Where(f=>f.RootId == rootId && f.Level == level).AsNoTracking().ToListAsync();
+        }
+
+        public async Task<int> GetRootChildrenCountAsync(int rootId, int level)
+        {
+            using var dbContext = _dbContextFactory.CreateDbContext();
+            return await dbContext.Resources.CountAsync(f=> f.RootId == rootId && f.Level == level);
+        }
+
         public async Task<ResourceModel> GetRootResourceAsync(string resourceName, string site)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();

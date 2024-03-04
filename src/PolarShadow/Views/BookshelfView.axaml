@@ -21,12 +21,17 @@
 		</ps:ToolBarTemplate>
 	</ps:ToolBarAttached.ToolBar>
 
-	<Grid Margin="8">
-		<ScrollViewer BringIntoViewOnFocusChange="False">
-			<ListBox ItemsSource="{Binding MineResource}"
-				     Theme="{StaticResource Card}"
-					 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
-			</ListBox>
-		</ScrollViewer>
+	<Grid>
+		<ps:SwipeToRefreshContainer Padding="8"
+									RefreshCommand="{Binding RefreshCommand}"
+									RefreshCancelCommand="{Binding RefreshCancelCommand}"
+									RefreshFinished="{Binding RefreshFinished}">
+			<ScrollViewer BringIntoViewOnFocusChange="False">
+				<ListBox ItemsSource="{Binding MineResource}"
+						 Theme="{StaticResource Card}"
+						 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
+				</ListBox>
+			</ScrollViewer>
+		</ps:SwipeToRefreshContainer>
 	</Grid>
 </UserControl>

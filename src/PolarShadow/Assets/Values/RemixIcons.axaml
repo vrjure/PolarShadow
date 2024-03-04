@@ -3,7 +3,7 @@
 	<Design.PreviewWith>
 		<Border Padding="20">
 			<TextBlock FontFamily="{StaticResource remixIcon}"
-					   Text="{DynamicResource loading}">
+					   Text="{DynamicResource restart}">
 			</TextBlock>
 		</Border>
 	</Design.PreviewWith>
@@ -32,4 +32,5 @@
 	<x:String x:Key="flask">&#xED3E;</x:String>
 	<x:String x:Key="loading">&#xEEC1;</x:String>
 	<x:String x:Key="empty">&#xF1F7; Empty</x:String>
+	<x:String x:Key="restart">&#xF080;</x:String>
 </ResourceDictionary>

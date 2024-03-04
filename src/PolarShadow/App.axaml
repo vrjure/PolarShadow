@@ -27,6 +27,7 @@
 				<ResourceInclude Source="/Assets/Themes/SearchBoxThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ExpanderThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ScrollBarThemes.axaml"/>
+				<ResourceInclude Source="/Assets/Themes/SwipeToRefreshContainerThemes.axaml"/>
 
 				<OnFormFactor>
 					<OnFormFactor.Default>
@@ -134,6 +135,43 @@
 							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
 							   HorizontalAlignment="Center"/>
 				</Border>
+			</Panel>
+		</DataTemplate>
+
+		<DataTemplate DataType="ps:ResourceModelRefreshItem">
+			<Panel>
+				<Image ps:ImageAttached.Src="{Binding Data.ImageSrc}"
+					   ps:ImageAttached.Headers="{Binding Data.ImageSrcHeaders}"
+					   ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.png"
+					   Stretch="Fill"/>
+				<Border VerticalAlignment="Bottom"
+						Background="#9FFFFFFF">
+					<TextBlock Text="{Binding Data.Name, Converter={x:Static ps:StringTrimConverter.Instance}}"
+							   TextWrapping="NoWrap"
+							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
+							   HorizontalAlignment="Center"/>
+				</Border>
+				<Border VerticalAlignment="Top"
+						HorizontalAlignment="Right"
+						Background="#9FFFFFFF"
+						CornerRadius="5">
+					<TextBlock Text="{Binding Data.Site}"
+							   TextWrapping="NoWrap"
+							   TextTrimming="{x:Static TextTrimming.CharacterEllipsis}"
+							   HorizontalAlignment="Center"/>
+				</Border>
+				<Ellipse Fill="Red"
+						 Width="10"
+						 Height="10"
+						 HorizontalAlignment="Left"
+						 VerticalAlignment="Top"
+						 Margin="2,2,0,0"
+						 IsVisible="{Binding IsNew}"/>
+				<PathIcon Data="{StaticResource loader2}"
+						  HorizontalAlignment="Center"
+						  VerticalAlignment="Center"
+						  IsVisible="{Binding IsRefresh}"
+						  Classes.spin="{Binding IsRefresh}"/>
 			</Panel>
 		</DataTemplate>
 	</Application.DataTemplates>

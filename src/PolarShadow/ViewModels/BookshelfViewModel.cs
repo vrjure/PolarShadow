@@ -2,13 +2,17 @@
 using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Cache;
+using PolarShadow.Core;
+using PolarShadow.Models;
 using PolarShadow.Navigations;
+using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PolarShadow.ViewModels
@@ -18,15 +22,19 @@ namespace PolarShadow.ViewModels
         private readonly INavigationService _nav;
         private readonly IMineResourceService _mineResourceService;
         private readonly INotificationManager _notify;
-        public BookshelfViewModel(INavigationService nav, IMineResourceService mineResourceService, INotificationManager notify)
+        private readonly IPolarShadow _polar;
+
+        private CancellationTokenSource _refreshCts;
+        public BookshelfViewModel(INavigationService nav, IMineResourceService mineResourceService, INotificationManager notify, IPolarShadow polar)
         {
             _nav = nav;
             _mineResourceService = mineResourceService;
             _notify = notify;
+            _polar = polar;
         }
 
-        private ObservableCollection<ResourceModel> _mineResource;
-        public ObservableCollection<ResourceModel> MineResource
+        private ObservableCollection<ResourceModelRefreshItem> _mineResource;
+        public ObservableCollection<ResourceModelRefreshItem> MineResource
         {
             get => _mineResource;
             set => SetProperty(ref _mineResource, value);
@@ -35,21 +43,45 @@ namespace PolarShadow.ViewModels
         private IRelayCommand _searchCommand;
         public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(() => _nav.Navigate<SearchViewModel>(TopLayoutViewModel.NavigationName, canBack: true));
 
+        private IRelayCommand _refreshCommand;
+        public IRelayCommand RefreshCommand => _refreshCommand ??= new RelayCommand(Refresh);
+
+        private IRelayCommand _refreshCancelCommand;
+        public IRelayCommand RefreshCancelCommand => _refreshCancelCommand ??= new RelayCommand(RefreshCancel);
+
+        private bool _refreshFinished;
+        public bool RefreshFinished
+        {
+            get => _refreshFinished;
+            set => SetProperty(ref _refreshFinished, value);
+        }
+
         protected override async void OnLoad()
         {
             try
             {
+                MineResource?.Clear();
                 var savedResource = await _mineResourceService.GetRootResourcesAsync();
-                MineResource = new ObservableCollection<ResourceModel>(savedResource);
+                if (savedResource?.Count == 0)
+                {
+                    return;
+                }
+
+                MineResource ??= new ObservableCollection<ResourceModelRefreshItem>();
+
+                foreach (var item in savedResource)
+                {
+                    MineResource.Add(new ResourceModelRefreshItem(item));
+                }
+                
             }
             catch (Exception ex)
             {
                 _notify.Show(ex);
             }
-
         }
 
-        public void ToDetail(ResourceModel res)
+        private void ToDetail(ResourceModel res)
         {
             if (res == null)
             {
@@ -66,9 +98,62 @@ namespace PolarShadow.ViewModels
         {
             if (e.SelectedItems.Count > 0)
             {
-                ToDetail(e.SelectedItems.First() as ResourceModel);
-                SelectionModel.Deselect(e.SelectedIndexes.First());
+                ToDetail((e.SelectedItems[0] as ResourceModelRefreshItem).Data);
+                SelectionModel.Deselect(e.SelectedIndexes[0]);
             }
+        }
+
+        private async void Refresh()
+        {
+            if (MineResource == null || MineResource.Count == 0) return;
+            RefreshFinished = false;
+            var tasks = new List<Task>();
+            _refreshCts = new CancellationTokenSource();
+            foreach (var item in MineResource)
+            {
+                if(_polar.TryGetSite(PolarShadowItems.VideoSites, item.Data.Site, out ISite site))
+                {
+                    item.IsRefresh = true;
+                    var task = site.ExecuteAsync<ResourceTree>(_polar, Requests.Detail, builder => 
+                    {
+                        builder.AddObjectValue(item.Data);
+                    }, _refreshCts.Token).ContinueWith( async (t) =>
+                    {
+                        item.IsRefresh = false;
+                        var result = t.Result;
+                        var children = result?.Children;
+                        if (children != null)
+                        {
+                            var total = 0;
+                            foreach (var item in children)
+                            {
+                                total += item.Children?.Count ?? 0;
+                            }
+                            var count = await _mineResourceService.GetRootChildrenCountAsync(item.Data.Id, 2);
+                            if (total != count)
+                            {
+                                item.IsNew = true;
+
+                                var rtn = result.ToResourceTreeNode();
+                                rtn.Id = item.Data.Id;
+                                await _mineResourceService.SaveResourceAsync(rtn);
+                            }
+                        }
+                    });
+                    tasks.Add(task);
+                }
+            }
+
+            await Task.WhenAll(tasks);
+
+            RefreshFinished = true;
+        }
+
+        private void RefreshCancel()
+        {
+            _refreshCts?.Cancel();
+            _refreshCts?.Dispose();
+            _refreshCts = null;
         }
 
     }

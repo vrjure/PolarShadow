@@ -12,6 +12,14 @@
 
   
   <ItemGroup>
+    <AvaloniaXaml Remove="Controls\DataTemplates\**" />
+    <Compile Remove="Controls\DataTemplates\**" />
+    <EmbeddedResource Remove="Controls\DataTemplates\**" />
+    <None Remove="Controls\DataTemplates\**" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
     <AvaloniaResource Remove="Assets\Styles\ListBoxStyles.axaml" />
     <AvaloniaResource Remove="Assets\Styles\ScrollViewStyles.axaml" />
     <AvaloniaResource Remove="Assets\Themes\ButtonThemes.axaml" />
@@ -32,6 +40,7 @@
     <AvaloniaResource Remove="Assets\Styles\TextBlockStyles.axaml" />
     <AvaloniaResource Remove="Assets\Styles\TextBoxStyles.axaml" />
     <AvaloniaResource Remove="Assets\Themes\SliderThemes.axaml" />
+    <AvaloniaResource Remove="Assets\Themes\SwipeToRefreshContainerThemes.axaml" />
   </ItemGroup>
 
   
@@ -82,12 +91,16 @@
 
   <ItemGroup>
     <Folder Include="Animations\" />
-    <Folder Include="Controls\DataTemplates\" />
-    <Folder Include="Controls\Models\" />
   </ItemGroup>
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\DetailView.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Assets\Themes\SwipeToRefreshContainerThemes.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
   </ItemGroup>
 
   <ItemGroup>

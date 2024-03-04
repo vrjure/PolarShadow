@@ -1,0 +1,57 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	                xmlns:ps="https://github.com/PolarShadow">
+	<Design.PreviewWith >
+		<Border Padding="20" Background="Black">
+			<ps:SwipeToRefreshContainer Width="800"
+										Height="400"
+										Background="White">
+				
+			</ps:SwipeToRefreshContainer>
+		</Border>
+	</Design.PreviewWith>
+    <!-- Add Resources Here -->
+    <ControlTheme TargetType="ps:SwipeToRefreshContainer" x:Key="{x:Type ps:SwipeToRefreshContainer}">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Panel Margin="{TemplateBinding Margin}">
+					<ContentPresenter Background="{TemplateBinding Background}"
+									  Foreground="{TemplateBinding Foreground}"
+									  BorderBrush="{TemplateBinding BorderBrush}"
+									  BorderThickness="{TemplateBinding BorderThickness}"
+									  VerticalAlignment="{TemplateBinding VerticalAlignment}"
+									  HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+									  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+									  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+									  Content="{TemplateBinding Content}"
+									  Padding="{TemplateBinding Padding}"/>
+					<Border VerticalAlignment="Top"
+							HorizontalAlignment="Center"
+							Padding="6"
+							x:Name="PART_Indicator"
+							Background="White"
+							CornerRadius="50"
+							BoxShadow="0 0 10 0 DarkGray"
+							Margin="0,-25,0,0"
+							IsVisible="False">
+
+							<PathIcon Data="{StaticResource path-restart}" 
+									  Foreground="Red"
+									  x:Name="PART_IndicatorIcon">
+							</PathIcon>
+								
+					</Border>
+				</Panel>
+			</ControlTemplate>
+		</Setter>
+		<Style Selector="^:spin /template/ PathIcon#PART_IndicatorIcon">
+			<Style.Animations>
+				<Animation Duration="0:0:1" IterationCount="INFINITE">
+					<KeyFrame Cue="100%">
+						<Setter Property="RotateTransform.Angle" Value="360.0"/>
+					</KeyFrame>
+				</Animation>
+			</Style.Animations>
+		</Style>
+	</ControlTheme>
+</ResourceDictionary>
