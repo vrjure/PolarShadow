@@ -33,5 +33,21 @@
 				</ListBox>
 			</ScrollViewer>
 		</ps:SwipeToRefreshContainer>
+
+		<OnFormFactor>
+			<OnFormFactor.Default>
+				<Button Theme="{StaticResource Icon}"
+						Content="{DynamicResource refresh}"
+						HorizontalAlignment="Right"
+						VerticalAlignment="Bottom"
+						Margin="20"
+						Command="{Binding RefreshCommand}"
+						Grid.Row="1"
+						Grid.ColumnSpan="2"/>
+			</OnFormFactor.Default>
+			<OnFormFactor.Mobile>
+				<Border/>
+			</OnFormFactor.Mobile>
+		</OnFormFactor>
 	</Grid>
 </UserControl>
