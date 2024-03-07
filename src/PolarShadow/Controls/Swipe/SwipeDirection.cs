@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Controls
 {
+    [Flags]
     public enum SwipeDirection
     {
-        None,
-        TopToBottom,
-        BottomToTop,
-        LeftToRight,
-        RightToLeft
+        None = 0,
+        TopToBottom = 1,
+        BottomToTop = 2,
+        LeftToRight = 4,
+        RightToLeft = 8
     }
 }

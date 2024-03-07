@@ -28,6 +28,7 @@
 				<ResourceInclude Source="/Assets/Themes/ExpanderThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ScrollBarThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/SwipeToRefreshContainerThemes.axaml"/>
+				<ResourceInclude Source="/Assets/Themes/SwipeContainerThemes.axaml"/>
 
 				<OnFormFactor>
 					<OnFormFactor.Default>

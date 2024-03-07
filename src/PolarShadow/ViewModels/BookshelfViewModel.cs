@@ -129,14 +129,14 @@ namespace PolarShadow.ViewModels
                             {
                                 total += item.Children?.Count ?? 0;
                             }
-                            var count = await _mineResourceService.GetRootChildrenCountAsync(item.Data.Id, 2);
+                            var count = await _mineResourceService.GetRootChildrenCountAsync(item.Data.Id, 2).ConfigureAwait(false);
                             if (total != count)
                             {
                                 item.IsNew = true;
 
                                 var rtn = result.ToResourceTreeNode();
                                 rtn.Id = item.Data.Id;
-                                await _mineResourceService.SaveResourceAsync(rtn);
+                                await _mineResourceService.SaveResourceAsync(rtn).ConfigureAwait(false);
                             }
                         }
                     });

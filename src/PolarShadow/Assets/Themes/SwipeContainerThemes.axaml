@@ -1,0 +1,130 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:ps="https://github.com/PolarShadow">
+    <!-- Add Resources Here -->
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<ps:SwipeContainer Width="800" Height="400"/>
+		</Border>
+	</Design.PreviewWith>
+	<ControlTheme TargetType="ps:SwipeContainer" x:Key="{x:Type ps:SwipeContainer}">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Panel>
+					<ScrollViewer x:Name="PART_ScrollView"
+						VerticalSnapPointsType="{TemplateBinding (ScrollViewer.VerticalSnapPointsType)}"
+						HorizontalSnapPointsType="{TemplateBinding (ScrollViewer.HorizontalSnapPointsType)}"
+						HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
+						VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
+						IsScrollChainingEnabled="{TemplateBinding (ScrollViewer.IsScrollChainingEnabled)}"
+						IsScrollInertiaEnabled="{TemplateBinding (ScrollViewer.IsScrollInertiaEnabled)}"
+						IsDeferredScrollingEnabled="{TemplateBinding (ScrollViewer.IsDeferredScrollingEnabled)}"
+						AllowAutoHide="{TemplateBinding (ScrollViewer.AllowAutoHide)}"
+						BringIntoViewOnFocusChange="{TemplateBinding (ScrollViewer.BringIntoViewOnFocusChange)}">
+						<StackPanel>
+							<ContentPresenter Background="{TemplateBinding Background}"
+											  Foreground="{TemplateBinding Foreground}"
+											  BorderBrush="{TemplateBinding BorderBrush}"
+											  BorderThickness="{TemplateBinding BorderThickness}"
+											  VerticalAlignment="{TemplateBinding VerticalAlignment}"
+											  HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+											  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+											  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+											  Content="{TemplateBinding Content}"
+											  Padding="{TemplateBinding Padding}"/>
+
+							<Panel VerticalAlignment="Bottom"
+								   HorizontalAlignment="Center">
+								<Button Theme="{DynamicResource Icon}"
+										Content="{DynamicResource more-h}"
+										x:Name="PART_LoadMoreIndicator"/>
+								<PathIcon Data="{DynamicResource loader2}"
+										  x:Name="PART_LoadingIndicator"/>
+							</Panel>
+						</StackPanel>
+					</ScrollViewer>
+
+					<Border VerticalAlignment="Top"
+							HorizontalAlignment="Center"
+							Padding="6"
+							x:Name="PART_RefreshIndicator"
+							Background="White"
+							CornerRadius="50"
+							BoxShadow="0 0 10 0 DarkGray"
+							Margin="0,-25,0,0">
+
+						<PathIcon Data="{StaticResource path-restart}"
+								  Foreground="Red"
+								  x:Name="PART_RefreshIndicatorIcon">
+						</PathIcon>
+					</Border>
+				</Panel>
+			</ControlTemplate>
+		</Setter>
+
+		<Style Selector="^:reset /template/ Border#PART_RefreshIndicator">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="^:reset /template/ Button#PART_LoadMoreIndicator">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="^:reset /template/ PathIcon#PART_LoadingIndicator">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		
+		<Style Selector="^:normal /template/ Border#PART_RefreshIndicator">
+			<Setter Property="IsVisible" Value="True"/>
+		</Style>
+		<Style Selector="^:normal /template/ Button#PART_LoadMoreIndicator">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="^:normal /template/ PathIcon#PART_LoadingIndicator">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		
+		<Style Selector="^:loadMore /template/ Button#PART_LoadMoreIndicator">
+			<Setter Property="IsVisible" Value="True"/>
+		</Style>
+		<Style Selector="^:loadMore /template/ PathIcon#PART_LoadingIndicator">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		
+		<Style Selector="^:loading /template/ Button#PART_LoadMoreIndicator">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="^:loading /template/ PathIcon#PART_LoadingIndicator">
+			<Setter Property="IsVisible" Value="True"/>
+			<Style.Animations>
+				<Animation Duration="0:0:2" IterationCount="Infinite">
+					<KeyFrame Cue="100%">
+						<Setter Property="RotateTransform.Angle" Value="360.0"/>
+					</KeyFrame>
+				</Animation>
+			</Style.Animations>
+		</Style>
+		
+		<Style Selector="^:noMore /template/ Button#PART_LoadMoreIndicator">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+		<Style Selector="^:noMore /template/ PathIcon#PART_LoadingIndicator">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+
+		<Style Selector="^:pull /template/ Border#PART_RefreshIndicator">
+			<Setter Property="IsVisible" Value="True"/>
+		</Style>
+
+		<Style Selector="^:refreshing /template/ Border#PART_RefreshIndicator">
+			<Setter Property="IsVisible" Value="True"/>
+		</Style>
+		<Style Selector="^:refreshing /template/ PathIcon#PART_RefreshIndicatorIcon">
+			<Style.Animations>
+				<Animation Duration="0:0:1" IterationCount="INFINITE">
+					<KeyFrame Cue="100%">
+						<Setter Property="RotateTransform.Angle" Value="360.0"/>
+					</KeyFrame>
+				</Animation>
+			</Style.Animations>
+		</Style>
+	</ControlTheme>
+</ResourceDictionary>
