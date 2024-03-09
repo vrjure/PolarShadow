@@ -37,7 +37,8 @@
 								   HorizontalAlignment="Center">
 								<Button Theme="{DynamicResource Icon}"
 										Content="{DynamicResource more-h}"
-										x:Name="PART_LoadMoreIndicator"/>
+										x:Name="PART_LoadMoreIndicator"
+										Command="{TemplateBinding LoadMoreCommand}"/>
 								<PathIcon Data="{DynamicResource loader2}"
 										  x:Name="PART_LoadingIndicator"/>
 							</Panel>

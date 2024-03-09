@@ -44,16 +44,29 @@ namespace PolarShadow.ViewModels
         public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(() => _nav.Navigate<SearchViewModel>(TopLayoutViewModel.NavigationName, canBack: true));
 
         private IRelayCommand _refreshCommand;
-        public IRelayCommand RefreshCommand => _refreshCommand ??= new RelayCommand(Refresh);
+        public IRelayCommand RefreshCommand => _refreshCommand ??= new RelayCommand(RefreshAction);
 
         private IRelayCommand _refreshCancelCommand;
-        public IRelayCommand RefreshCancelCommand => _refreshCancelCommand ??= new RelayCommand(RefreshCancel);
+        public IRelayCommand RefreshCancelCommand => _refreshCancelCommand ??= new RelayCommand(RefreshCancel); 
 
-        private bool _refreshFinished;
-        public bool RefreshFinished
+        private bool _refresh;
+        public bool Refresh
         {
-            get => _refreshFinished;
-            set => SetProperty(ref _refreshFinished, value);
+            get => _refresh;
+            set
+            {
+                if(SetProperty(ref _refresh, value))
+                {
+                    if (_refresh)
+                    {
+                        RefreshAction();
+                    }
+                    else
+                    {
+                        RefreshCancel();
+                    }
+                }
+            }
         }
 
         protected override async void OnLoad()
@@ -103,10 +116,10 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private async void Refresh()
+        private async void RefreshAction()
         {
             if (MineResource == null || MineResource.Count == 0) return;
-            RefreshFinished = false;
+
             var tasks = new List<Task>();
             _refreshCts = new CancellationTokenSource();
             foreach (var item in MineResource)
@@ -146,7 +159,7 @@ namespace PolarShadow.ViewModels
 
             await Task.WhenAll(tasks);
 
-            RefreshFinished = true;
+            Refresh = false;
         }
 
         private void RefreshCancel()

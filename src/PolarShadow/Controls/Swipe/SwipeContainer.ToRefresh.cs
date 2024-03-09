@@ -24,35 +24,11 @@ namespace PolarShadow.Controls
         private double _maxRefreshSwipeDistance;
         private double _minValidRefreshSwipeDistance;
 
-        public static readonly StyledProperty<ICommand> RefreshCommandProperty = AvaloniaProperty.Register<SwipeToRefreshContainer, ICommand>(nameof(RefreshCommand));
-        public ICommand RefreshCommand
+        public static readonly StyledProperty<bool> RefreshProperty = AvaloniaProperty.Register<SwipeToRefreshContainer, bool>(nameof(Refresh));
+        public bool Refresh
         {
-            get => GetValue(RefreshCommandProperty);
-            set => SetValue(RefreshCommandProperty, value);
-        }
-
-        public static readonly StyledProperty<ICommand> RefreshCancelCommandProperty = AvaloniaProperty.Register<SwipeToRefreshContainer, ICommand>(nameof(RefreshCancelCommand));
-        public ICommand RefreshCancelCommand
-        {
-            get => GetValue(RefreshCancelCommandProperty);
-            set => SetValue(RefreshCancelCommandProperty, value);
-        }
-
-        public static readonly StyledProperty<bool> RefreshFinishedProperty = AvaloniaProperty.Register<SwipeToRefreshContainer, bool>(nameof(RefreshFinished));
-        public bool RefreshFinished
-        {
-            get => GetValue(RefreshFinishedProperty);
-            set => SetValue(RefreshFinishedProperty, value);
-        }
-
-        public void RequestRefresh()
-        {
-            RefreshCommand?.Execute(default);
-        }
-
-        public void RequestCancelRefresh()
-        {
-            RefreshCancelCommand?.Execute(default);
+            get => GetValue(RefreshProperty);
+            set => SetValue(RefreshProperty, value);
         }
 
         private void InitRefresh()
@@ -67,12 +43,43 @@ namespace PolarShadow.Controls
             _refreshIndicatorVisual = _refreshIndicatorIconVisual = null;
         }
 
-        private void RefreshFinishedPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        private async void RefreshPropertyChanged(AvaloniaPropertyChangedEventArgs e)
         {
             var val = e.GetOldAndNewValue<bool>();
-            if (val.newValue && _refreshTCS != null)
+            if (val.newValue)
             {
-                _refreshTCS.TrySetResult();
+                if(_refreshTCS != null)
+                {
+                    return;
+                }
+                _refreshTCS = new TaskCompletionSource();
+                EnsureRefreshIndicatorVisual();
+                RefreshingState();
+                if (_refreshIndicatorVisual.Offset.Y < _minValidRefreshSwipeDistance)
+                {
+                    RefreshIndicatorTransformWithAnimation(_maxRefreshSwipeDistance, 1);
+                }
+
+                try
+                {
+                    await _refreshTCS.Task;
+                }
+                catch { }
+                finally
+                {
+                    _refreshTCS = null;
+                }
+            }
+            else
+            {
+                if (_refreshTCS != null)
+                {
+                    _refreshTCS.TrySetCanceled();
+                    _refreshTCS = null;
+                }
+
+                ResetRefreshIndicator(true);
+                NormalState();
             }
         }
 
@@ -111,47 +118,39 @@ namespace PolarShadow.Controls
             RefreshIndicatorTransform(Math.Round(delta_y, 2), Math.Round(scale, 2), Math.Round(rotate, 2));
         }
 
-        private async void TopToBottomEnd()
+        private void TopToBottomEnd()
         {
             var translateY = _refreshIndicatorVisual.Offset.Y;
             if (translateY > _minValidRefreshSwipeDistance)
             {
-                if (_refreshTCS != null)
-                {
-                    return;
-                }
-                _refreshTCS = new TaskCompletionSource();
-                RefreshFinished = false;
-                try
-                {
-                    RefreshingState();
-                    RequestRefresh();
-                    await _refreshTCS.Task;
-                }
-                catch { }
-                finally
-                {
-                    _refreshTCS = null;
-                    PullState();
-                }
+                Refresh = true;
             }
             else
             {
-                _refreshTCS?.TrySetCanceled();
-                RequestCancelRefresh();
+                if (Refresh)
+                {
+                    Refresh = false;
+                }
+                else
+                {
+                    ResetRefreshIndicator(true);
+                    NormalState();
+                }
             }
+        }
 
-            ResetRefreshIndicator(true);
-            NormalState();
+        private void EnsureRefreshIndicatorVisual()
+        {
+            _refreshIndicatorVisual ??= ElementComposition.GetElementVisual(_refreshIndicator);
+            _refreshIndicatorIconVisual ??= ElementComposition.GetElementVisual(_refreshIndicatorIcon);
         }
 
         private void ResetRefreshIndicator(bool animation = false)
         {
-            _refreshIndicatorVisual ??= ElementComposition.GetElementVisual(_refreshIndicator);
-            _refreshIndicatorIconVisual ??= ElementComposition.GetElementVisual(_refreshIndicatorIcon);
+            EnsureRefreshIndicatorVisual();
             if (animation)
             {
-                ResetRefreshIndicatorWidthAnimation(_resetTranslateY, resetScale);
+                RefreshIndicatorTransformWithAnimation(_resetTranslateY, resetScale);
             }
             else
             {
@@ -172,7 +171,7 @@ namespace PolarShadow.Controls
         }
 
 
-        private void ResetRefreshIndicatorWidthAnimation(double translateY = 0, double scale = 1)
+        private void RefreshIndicatorTransformWithAnimation(double translateY = 0, double scale = 1)
         {
             if (_refreshImplictAnimations == null)
             {

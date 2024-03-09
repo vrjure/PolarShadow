@@ -21,7 +21,7 @@ namespace PolarShadow.ViewModels
         private readonly INavigationService _nav;
 
         private PageFilter _filter;
-        private TaskCompletionSource _loading;
+        private TaskCompletionSource _loadingTCS;
         public DiscoverDetailViewModel(INotificationManager notify, IPolarShadow polar, INavigationService nav)
         {
             _notify = notify;
@@ -74,15 +74,31 @@ namespace PolarShadow.ViewModels
         private ResourceTree _currentCategory;
 
 
-        private bool _showLoadMore = false;
-        public bool ShowLoadMore
+        private bool _canLoadMore = false;
+        public bool CanLoadMore
         {
-            get => _showLoadMore;
-            set => SetProperty(ref _showLoadMore, value);
+            get => _canLoadMore;
+            set => SetProperty(ref _canLoadMore, value);
         }
 
-        private IAsyncRelayCommand _loadMoreCommand;
-        public IAsyncRelayCommand LoadMoreCommand => _loadMoreCommand ??= new AsyncRelayCommand(LoadMore);
+        private bool _loading;
+        public bool Loading
+        {
+            get => _loading;
+            set
+            {
+                if(SetProperty(ref _loading, value))
+                {
+                    if (_loading)
+                    {
+                        LoadMoreAction();
+                    }
+                }
+            }
+        }
+
+        private IRelayCommand _loadMoreCommand;
+        public IRelayCommand LoadMoreCommand => _loadMoreCommand ??= new RelayCommand(() => Loading = true);
 
         protected override async void OnLoad()
         {
@@ -99,9 +115,7 @@ namespace PolarShadow.ViewModels
 
             try
             {
-                IsLoading = true;
                 var categories = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, Requests.Categories, Cancellation.Token);
-                IsLoading = false;
                 if (categories == null)
                 {
                     Categories?.Clear();
@@ -118,13 +132,6 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        protected override void IsLoadingChanged()
-        {
-            if(_loading != null && !IsLoading)
-            {
-                _loading.TrySetResult();
-            }
-        }
         private void CategorySelection_SelectionChanged(object sender, SelectionModelSelectionChangedEventArgs e)
         {
             if (e.SelectedItems.Count > 0)
@@ -146,89 +153,57 @@ namespace PolarShadow.ViewModels
                 return;
             }
 
-            if (IsLoading)
+            if (Loading)
             {
-                _loading = new TaskCompletionSource();
+                _loadingTCS = new TaskCompletionSource();
                 Cancellation.Cancel();
-                await _loading.Task;
-                _loading = null;
+                await _loadingTCS.Task;
+                _loadingTCS = null;
+                Loading = false;
             }
-            IsLoading = true;
-            ShowLoadMore = false;
+
+            _currentCategory = category;
+            ResourceList?.Clear();
+
+            Loading = true;
+        }
+
+        private async void LoadMoreAction()
+        {
+            if (_currentCategory == null)
+            {
+                return;
+            }
+            var categoryValue = _currentCategory;
+            CanLoadMore = false;
             try
             {
-                ResourceList?.Clear();
-                _filter ??= new PageFilter();
-                _filter.Page = 1;
-                _filter.PageSize = 10;
-                var resources = await Param_Site.ExecuteAsync<ICollection<ResourceTree>>(_polar, category.Request, builder =>
+                var handler = Param_Site.CreateRequestHandler(_polar, categoryValue.Request);
+
+                if (ResourceList == null || ResourceList.Count == 0)
                 {
-                    builder.AddObjectValue(category);
-                    builder.AddObjectValue(_filter);
-                }, Cancellation.Token);
-
-                _currentCategory = category;
-
-                if (resources == null || resources.Count == 0)
-                {
-                    HasData = false;
-                    return;
-                }
-
-                HasData = true;
-
-                if (ResourceList == null)
-                {
-                    ResourceList = new ObservableCollection<ResourceTree>(resources);
+                    _filter ??= new PageFilter();
+                    _filter.Page = 1;
+                    _filter.PageSize = 10;
                 }
                 else
                 {
-                    foreach (var item in resources)
+                    var canPage = true;
+                    if (handler.TryGetParameter(SearchParams.CanPage, out bool val))
                     {
-                        ResourceList.Add(item);
+                        canPage = val;
                     }
+
+                    if (!canPage)
+                    {
+                        CanLoadMore = false;
+                        Loading = false;
+                        return;
+                    }
+
+                    _filter.Page++;
                 }
-
-                ShowLoadMore = true;
-            }
-            catch (OperationCanceledException) { }
-            catch (Exception ex)
-            {
-                _notify.Show(ex);
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
-        private async Task LoadMore()
-        {
-            IsLoading = true;
-            ShowLoadMore = false;
-            try
-            {
-                if (_currentCategory == null)
-                {
-                    return;
-                }
-                var categoryValue = _currentCategory;
-
-                var handler = Param_Site.CreateRequestHandler(_polar, categoryValue.Request);
-
-                var canPage = true;
-                if(handler.TryGetParameter(SearchParams.CanPage, out bool val))
-                {
-                    canPage = val;
-                }
-
-                if (!canPage) 
-                {
-                    ShowLoadMore = false;
-                    return;
-                }
-
-                _filter.Page++;
+                
                 var resources = await handler.ExecuteAsync<ICollection<ResourceTree>>(builder =>
                 {
                     builder.AddObjectValue(categoryValue);
@@ -237,25 +212,32 @@ namespace PolarShadow.ViewModels
 
                 if (resources == null || resources.Count == 0)
                 {
-                    ShowLoadMore = false;
+                    HasData = CanLoadMore = false;
                     return;
                 }
 
+                ResourceList ??= new ObservableCollection<ResourceTree>();
                 foreach (var item in resources)
                 {
                     ResourceList.Add(item);
                 }
-                ShowLoadMore = true;
+                HasData = CanLoadMore = true;
+
+                Loading = false;
             }
-            catch (OperationCanceledException) { }
+            catch (OperationCanceledException)
+            {
+                if(_loadingTCS != null)
+                {
+                    _loadingTCS.TrySetResult();
+                }
+            }
             catch (Exception ex)
             {
                 _notify.Show(ex);
+                Loading = false;
             }
-            finally
-            {
-                IsLoading = false;
-            }
+
         }
 
         public void ApplyParameter(IDictionary<string, object> parameters)

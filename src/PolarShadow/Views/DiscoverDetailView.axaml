@@ -47,29 +47,17 @@
 		</Expander>
 
 		<Grid Grid.Row="1">
-			<ScrollViewer VerticalScrollBarVisibility="Hidden"
-						  x:Name="part_content_scroll">
-				<ScrollViewer.GestureRecognizers>
-					<ScrollGestureRecognizer CanHorizontallyScroll="False" CanVerticallyScroll="True"/>
-				</ScrollViewer.GestureRecognizers>
-				<StackPanel Orientation="Vertical"
-							Spacing="10">
+			<ps:SwipeContainer SwipeDirection="BottomToTop"
+							   CanLoadMore="{Binding CanLoadMore}"
+							   LoadMoreCommand="{Binding LoadMoreCommand}"
+							   Loading="{Binding Loading, Mode=TwoWay}"
+							   ScrollViewer.VerticalScrollBarVisibility="Hidden"
+							   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 					<ListBox ItemsSource="{Binding ResourceList}"
 							 Theme="{StaticResource Card}"
 							 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
 					</ListBox>
-					<PathIcon Classes.spin="{Binding IsLoading}"
-								IsVisible="{Binding IsLoading}"
-								Data="{StaticResource loader2}">
-					</PathIcon>
-					<Button Command="{Binding LoadMoreCommand}"
-							Content="&#xEF78;"
-							Theme="{StaticResource Icon}"
-							HorizontalAlignment="Center"
-							IsVisible="{Binding ShowLoadMore}">
-					</Button>
-				</StackPanel>
-			</ScrollViewer>
+			</ps:SwipeContainer>
 			<TextBlock Classes="empty"
 					   FontSize="50"
 					   HorizontalAlignment="Center"

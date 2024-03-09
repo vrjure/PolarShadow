@@ -77,13 +77,13 @@ namespace PolarShadow.Controls
             {
                 SwipeDirectionPropertyChanged(change);
             }
-            else if (change.Property == RefreshFinishedProperty)
+            else if (change.Property == RefreshProperty)
             {
-                RefreshFinishedPropertyChanged(change);
+                RefreshPropertyChanged(change);
             }
-            else if (change.Property == LoadMoreFinishedProperty)
+            else if (change.Property == LoadingProperty)
             {
-                LoadMoreFinishedPropertyChanged(change);
+                LoadingPropertyChanged(change);
             }
             else if (change.Property == CanLoadMoreProperty)
             {

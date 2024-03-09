@@ -24,9 +24,9 @@
 	<Grid>
 		<ps:SwipeContainer Padding="8"
 						   SwipeDirection="TopToBottom,BottomToTop"
-						   RefreshCommand="{Binding RefreshCommand}"
-							RefreshCancelCommand="{Binding RefreshCancelCommand}"
-							RefreshFinished="{Binding RefreshFinished}">
+						   Refresh="{Binding Refresh, Mode=TwoWay}"
+						   ScrollViewer.VerticalScrollBarVisibility="Hidden"
+						   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 				<ListBox ItemsSource="{Binding MineResource}"
 						 Theme="{StaticResource Card}"
 						 Selection="{Binding SelectionModel, Mode=OneWayToSource}">

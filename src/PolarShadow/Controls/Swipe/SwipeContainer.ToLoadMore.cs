@@ -22,11 +22,11 @@ namespace PolarShadow.Controls
             set => SetValue(CanLoadMoreProperty, value);
         }
 
-        public static readonly StyledProperty<bool> LoadMoreFinishedProperty = AvaloniaProperty.Register<SwipeContainer, bool>(nameof(LoadMoreFinished));
-        public bool LoadMoreFinished
+        public static readonly StyledProperty<bool> LoadingProperty = AvaloniaProperty.Register<SwipeContainer, bool>(nameof(Loading));
+        public bool Loading
         {
-            get => GetValue(LoadMoreFinishedProperty);
-            set => SetValue(LoadMoreFinishedProperty, value);
+            get => GetValue(LoadingProperty);
+            set => SetValue(LoadingProperty, value);
         }
 
         public static readonly StyledProperty<ICommand> LoadMoreCommandProperty = AvaloniaProperty.Register<SwipeContainer, ICommand>(nameof(LoadMoreCommand));
@@ -36,23 +36,55 @@ namespace PolarShadow.Controls
             set => SetValue(LoadMoreCommandProperty, value);
         }
 
-        public void RequestLoadMore()
-        {
-            LoadMoreCommand?.Execute(default);
-        }
-
-        private void LoadMoreFinishedPropertyChanged(AvaloniaPropertyChangedEventArgs e)
+        private async void LoadingPropertyChanged(AvaloniaPropertyChangedEventArgs e)
         {
             var val = e.GetOldAndNewValue<bool>();
-            if (val.newValue && _loadMoreTCS != null)
+            if (val.newValue)
             {
-                _loadMoreTCS.TrySetResult();
+                if (_loadMoreTCS != null)
+                {
+                    return;
+                }
+                LoadingState();
+                _loadMoreTCS = new TaskCompletionSource();
+                try
+                {
+                    await _loadMoreTCS.Task;
+                }
+                catch { }
+                finally
+                {
+                    _loadMoreTCS = null;
+                }
+            }
+            else
+            {
+                if (_loadMoreTCS != null)
+                {
+                    _loadMoreTCS.TrySetCanceled();
+                    _loadMoreTCS = null;
+                }
+
+                if (CanLoadMore)
+                {
+                    LoadMoreState();
+                }
+                else
+                {
+                    NoMoreState();
+                }
             }
         }
 
         private void CanLoadMorePropertyChanged(AvaloniaPropertyChangedEventArgs e)
         {
+            if (Loading)
+            {
+                return;
+            }
+
             var val = e.GetOldAndNewValue<bool>();
+
             if (val.newValue)
             {
                 LoadMoreState();
@@ -63,32 +95,14 @@ namespace PolarShadow.Controls
             }
         }
 
-        private async void BottomToTopEnd(double y)
+        private void BottomToTopEnd(double y)
         {
             if (!CanLoadMore || Math.Abs(y) < _minValidLoadMoreSwipeDistance)
             {
                 return;
             }
 
-            if (_loadMoreTCS != null)
-            {
-                return;
-            }
-
-            LoadMoreFinished = false;
-            _loadMoreTCS = new TaskCompletionSource();
-            try
-            {
-                LoadingState();
-                RequestLoadMore();
-                await _loadMoreTCS.Task;
-            }
-            catch { }
-            finally
-            {
-                _loadMoreTCS = null;
-                LoadMoreState();
-            }
+            Loading = true;
         }
 
         private void LoadMoreState()
