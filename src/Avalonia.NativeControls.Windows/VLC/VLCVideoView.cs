@@ -158,7 +158,7 @@ namespace Avalonia.Controls.Windows
             PixelPoint newPosition;
             if (VisualRoot is Window root && root.WindowState == WindowState.FullScreen)
             {
-                newPosition = new PixelPoint(0, 0);
+                newPosition = root.Position;
             }
             else
             {

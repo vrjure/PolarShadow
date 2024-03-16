@@ -54,6 +54,12 @@ namespace PolarShadow.Controls
                     PlayPause();
                     handled = true;
                     break;
+                case Key.Escape:
+                    if (MediaController != null)
+                    {
+                        MediaController.FullScreen = false;
+                    }
+                    break;
             }
 
             if (handled && seek)
