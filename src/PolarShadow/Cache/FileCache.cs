@@ -108,6 +108,10 @@ namespace PolarShadow.Cache
 
         private long ReadCahceSize()
         {
+            if (!Directory.Exists(_options.CacheFolder))
+            {
+                Directory.CreateDirectory(_options.CacheFolder);
+            }
             var filesPaths = Directory.GetFiles(_options.CacheFolder);
             var total = 0L;
             foreach (var filePath in filesPaths)
