@@ -82,7 +82,7 @@
 						Stretch="Fill"
 						ps:ImageAttached.Src="{Binding Resource.ImageSrc}"
 						ps:ImageAttached.Headers="{Binding Resource.ImageSrcHeaders}"
-						ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.jpg"/>
+						ps:ImageAttached.PlaceholderSrc="/Assets/images/item-background.png"/>
 			</Border>
 			<StackPanel Spacing="10"
 						ClipToBounds="True">

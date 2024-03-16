@@ -9,6 +9,8 @@ namespace PolarShadow.Cache
 {
     internal interface IFileEntry : IDisposable
     {
+        DateTime CreateTime { get; }
+        long Size { get; }
         void WriteFile(byte[] fileData);
         Task WriteFileAsync(byte[] fileData);
         Task<byte[]> ReadFileAsync();

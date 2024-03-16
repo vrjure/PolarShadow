@@ -7,6 +7,7 @@ using Avalonia.NativeControls.Android;
 using Android.Views;
 using Avalonia.Controls.Android;
 using Avalonia.Dialogs;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace PolarShadow.Android;
 
@@ -28,5 +29,23 @@ public class MainActivity : AvaloniaMainActivity<App>
                 builder.UseNativeControls(services);
                 builder.UseEssentials(services, this);
             });
+    }
+
+    protected override void OnStop()
+    {
+        base.OnStop();
+        App.FileCacheFlush();
+    }
+
+    protected override void OnPause()
+    {
+        base.OnPause();
+        App.FileCacheFlush();
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        App.FileCacheFlush();
     }
 }

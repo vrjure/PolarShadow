@@ -58,7 +58,7 @@ namespace PolarShadow.Controls
         }
 
         public static readonly AttachedProperty<BufferLocation> CacheLocationProperty = AvaloniaProperty.RegisterAttached<ImageAttached, Image, BufferLocation>("CacheLocation", BufferLocation.None);
-        public static BufferLocation GetCacheLoaction(Image image)
+        public static BufferLocation GetCacheLocation(Image image)
         {
             return image.GetValue(CacheLocationProperty);
         }
@@ -119,7 +119,7 @@ namespace PolarShadow.Controls
                 {
                     var cache = GetCache(image);
                     var headers = GetHeaders(image);
-                    var cacheLoc = GetCacheLoaction(image);
+                    var cacheLoc = GetCacheLocation(image);
                     image.Source = await LoadFromWebAsync(src, cache, cacheLoc, headers);
                 }
                 else
@@ -144,7 +144,7 @@ namespace PolarShadow.Controls
             cache ??= Ioc.Default.GetService<IBufferCache>();
             if (cacheLocation == BufferLocation.None)
             {
-                cacheLocation = BufferLocation.Memory;
+                cacheLocation = BufferLocation.File;
             }
             using var httpClient = cache switch
             {

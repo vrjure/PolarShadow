@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using PolarShadow.Cache;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -45,14 +46,22 @@ namespace PolarShadow
                     Content = new ByteArrayContent(content)
                 };
             }
-
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             var response = await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
-
+            stopWatch.Stop();
+            System.Diagnostics.Trace.WriteLine($"resuest spend: {stopWatch.ElapsedMilliseconds} ms");
             if (!response.IsSuccessStatusCode)
             return response;
 
-            var data = await response.Content.ReadAsByteArrayAsync();
+            stopWatch.Restart();
+
+            var data = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             await _cache.SetAsync(key, data, _location);
+
+            stopWatch.Stop();
+            System.Diagnostics.Trace.WriteLine($"set cache spend: {stopWatch.ElapsedMilliseconds} ms");
+
             return response;
         }
     }

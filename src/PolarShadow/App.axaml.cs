@@ -64,6 +64,7 @@ public partial class App : Application
         {
             desktop.MainWindow = Ioc.Default.GetRequiredService<MainWindow>();
             topLevelService.SetTopLevel(desktop.MainWindow);
+            desktop.MainWindow.Deactivated += MainWindow_Deactivated;
             nav.Navigate<TopLayoutViewModel>(MainWindowViewModel.NavigationName);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
@@ -73,6 +74,11 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void MainWindow_Deactivated(object sender, EventArgs e)
+    {
+        FileCacheFlush();
     }
 
     private void ConfigureService()
@@ -162,7 +168,7 @@ public partial class App : Application
     private void RegisterCache(IServiceCollection service)
     {
         service.AddMemoryCache();
-        service.AddSingleton<IFileCache>(new FileCache(CacheFolder));
+        service.AddSingleton<IFileCache>(new FileCache(new FileCacheOptions { CacheFolder = CacheFolder }));
         service.AddSingleton<IBufferCache, BufferCache>();
 
         if (!Directory.Exists(CacheFolder))
@@ -178,5 +184,11 @@ public partial class App : Application
         {
             UserDataFolder = Path.Combine(AppDataFolder, "webview")
         });
+    }
+
+    public static void FileCacheFlush()
+    {
+        var fileCache = Ioc.Default.GetService<IFileCache>();
+        fileCache?.Flush();
     }
 }

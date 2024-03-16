@@ -10,12 +10,70 @@ namespace PolarShadow.Cache
 {
     internal class FileEntry : IFileEntry
     {
-        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
-        private readonly string _path;
+        private readonly SemaphoreSlim _writeLock = new SemaphoreSlim(1,1);
+        private readonly SemaphoreSlim _readLock = new SemaphoreSlim(0);
+        private readonly FileInfo _fileInfo;
         private int _disposed;
+        public long Size
+        {
+            get
+            {
+                try
+                {
+                    if (_readLock.Release() == 0)
+                    {
+                        _writeLock.Wait();
+                    }
+                    if (_fileInfo.Exists)
+                    {
+                        return _fileInfo.Length;
+                    }
+                }
+                catch { }
+                finally
+                {
+                    _readLock.Wait();
+                    if (_readLock.CurrentCount == 0)
+                    {
+                        _writeLock.Release();
+                    }
+                }
+                return 0;
+            }
+        }
+
+        public DateTime CreateTime
+        {
+            get
+            {
+                try
+                {
+                    if (_readLock.Release() == 0)
+                    {
+                        _writeLock.Wait();
+                    }
+
+                    if (_fileInfo.Exists)
+                    {
+                        return _fileInfo.CreationTime;
+                    }
+                }
+                catch { }
+                finally
+                {
+                    _readLock.Wait();
+                    if (_readLock.CurrentCount == 0)
+                    {
+                        _writeLock.Release();
+                    }
+                }
+                return DateTime.MinValue;
+            }
+        }
+
         public FileEntry(string path)
         {
-            _path = path;
+            _fileInfo = new FileInfo(path);
         }
 
         public void WriteFile(byte[] fileData)
@@ -23,22 +81,23 @@ namespace PolarShadow.Cache
             CheckDispose();
             try
             {
-                _lock.EnterWriteLock();
+                _writeLock.Wait();
                 try
                 {
-                    using var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.Write);
+                    using var fs = _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
                     fs.SetLength(0);
                     fs.Write(fileData);
                     fs.Flush();
+                    _fileInfo.Refresh();
                 }
                 finally
                 {
-                    _lock.ExitWriteLock();
+                    _writeLock.Release();
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine($"WriteFile:{ex}");
             }
         }
 
@@ -47,19 +106,32 @@ namespace PolarShadow.Cache
             CheckDispose();
             try
             {
-                _lock.EnterReadLock();
+                if (_readLock.Release() == 0)
+                {
+                    _writeLock.Wait();
+                }
                 try
                 {
-                    return File.ReadAllBytes(_path);
+                    if (_fileInfo.Exists)
+                    {
+                        var buffer = new byte[_fileInfo.Length];
+                        using var fs = _fileInfo.OpenRead();
+                        fs.Read(buffer);
+                        return buffer;
+                    }
                 }
                 finally
                 {
-                    _lock.ExitReadLock();
+                    _readLock.Wait();
+                    if (_readLock.CurrentCount == 0)
+                    {
+                        _writeLock.Release();
+                    }
                 }
             }
-            catch (Exception ex)
+            catch  (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine($"ReadFile:{ex}");
             }
             return null;
         }
@@ -69,22 +141,23 @@ namespace PolarShadow.Cache
             CheckDispose();
             try
             {
-                _lock.EnterWriteLock();
+                await _writeLock.WaitAsync();
                 try
                 {
-                    using var fs = new FileStream(_path, FileMode.OpenOrCreate, FileAccess.Write);
+                    using var fs = _fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
                     fs.SetLength(0);
                     await fs.WriteAsync(fileData);
                     await fs.FlushAsync();
+                    _fileInfo.Refresh();
                 }
                 finally
                 {
-                    _lock.ExitWriteLock();
+                    _writeLock.Release();
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine($"WriteFileAsync:{ex}");
             }
         }
 
@@ -93,19 +166,33 @@ namespace PolarShadow.Cache
             CheckDispose();
             try
             {
-                _lock.EnterReadLock();
+                if (_readLock.Release() == 0)
+                {
+                    await _writeLock.WaitAsync();
+                }
+
                 try
                 {
-                    return await File.ReadAllBytesAsync(_path);
+                    if (_fileInfo.Exists)
+                    {
+                        using var fs = _fileInfo.OpenRead();
+                        var buffer = new byte[_fileInfo.Length];
+                        await fs.ReadAsync(buffer);
+                        return buffer;
+                    }
                 }
                 finally
                 {
-                    _lock.ExitReadLock();
+                    await _readLock.WaitAsync();
+                    if (_readLock.CurrentCount == 0)
+                    {
+                        _writeLock.Release();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine($"ReadFileAsync:{ex}");
             }
             return null;
         }
@@ -113,39 +200,40 @@ namespace PolarShadow.Cache
         public void Dispose()
         {
             Interlocked.Exchange(ref _disposed, 1);
-            _lock.Dispose();
+            _writeLock.Dispose();
+            _readLock.Dispose();
         }
 
         public void Dispose(bool delete)
         {
-            Dispose();
             if (delete)
             {
                 Delete();
             }
+            Dispose();
         }
 
         private void CheckDispose()
         {
-            if(Interlocked.CompareExchange(ref _disposed, 1, 1) == 1)
+            if(Interlocked.CompareExchange(ref _disposed, _disposed, 1) == 1)
                 throw new ObjectDisposedException(GetType().FullName);
         }
 
-        private async void Delete()
+        private void Delete()
         {
             try
             {
-                await Task.Run(() =>
+                _writeLock.Wait();
+                if (_fileInfo.Exists)
                 {
-                    if (File.Exists(_path))
-                    {
-                        File.Delete(_path);
-                    }
-                });
+                    _fileInfo.Delete();
+                    _fileInfo.Refresh();
+                }
             }
-            catch (Exception ex)
+            catch { }
+            finally
             {
-                Console.WriteLine(ex.Message);
+                _writeLock.Release();
             }
         }
     }
