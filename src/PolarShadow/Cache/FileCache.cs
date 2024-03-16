@@ -29,7 +29,7 @@ namespace PolarShadow.Cache
             {
                 throw new InvalidOperationException("'CacheFolder' can not empty");
             }
-            _totalSize = ReadCahceSize();
+            _totalSize = ReadCacheSize();
             
         }
 
@@ -106,7 +106,7 @@ namespace PolarShadow.Cache
             return System.IO.Path.Combine(_options.CacheFolder, $"{key}.cache");
         }
 
-        private long ReadCahceSize()
+        private long ReadCacheSize()
         {
             if (!Directory.Exists(_options.CacheFolder))
             {
@@ -116,7 +116,7 @@ namespace PolarShadow.Cache
             var total = 0L;
             foreach (var filePath in filesPaths)
             {
-                var entry = _entryCache.GetOrAdd(filePath, (path) => new FileEntry(path));
+                var entry = _entryCache.GetOrAdd(System.IO.Path.GetFileNameWithoutExtension(filePath), (path) => new FileEntry(GetFilePath(path)));
                 total += entry.Size;
             }
 
