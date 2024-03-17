@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0-android</TargetFramework>
     <Nullable>disable</Nullable>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
