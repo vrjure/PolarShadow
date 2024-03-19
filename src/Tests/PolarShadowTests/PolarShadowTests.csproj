@@ -22,10 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\PolarShadow.Aria2\PolarShadow.Aria2.csproj" />
+    <ProjectReference Include="..\..\Aria2Net\src\Aria2Net\Aria2Net.csproj" />
     <ProjectReference Include="..\..\PolarShadow.Configuration\PolarShadow.Configuration.csproj" />
-    <ProjectReference Include="..\..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
-    <ProjectReference Include="..\..\PolarShadow.Resources\PolarShadow.Resources.csproj" />
+    <ProjectReference Include="..\..\PolarShadow.Resources\src\PolarShadow.Resources\PolarShadow.Resources.csproj" />
     <ProjectReference Include="..\..\PolarShadow\PolarShadow.csproj" />
   </ItemGroup>
 

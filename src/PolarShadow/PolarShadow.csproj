@@ -76,13 +76,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aria2Net\src\Aria2Net\Aria2Net.csproj" />
     <ProjectReference Include="..\Avalonia.NativeControls\Avalonia.NativeControls.csproj" />
-    <ProjectReference Include="..\PolarShadow.Aria2\PolarShadow.Aria2.csproj" />
-    <ProjectReference Include="..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
-    <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
-    <ProjectReference Include="..\PolarShadow.Resources\PolarShadow.Resources.csproj" />
-    <ProjectReference Include="..\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
-    <ProjectReference Include="..\PolarShadow.Storage\PolarShadow.Storage.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Resources\PolarShadow.Resources.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Storage\PolarShadow.Storage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

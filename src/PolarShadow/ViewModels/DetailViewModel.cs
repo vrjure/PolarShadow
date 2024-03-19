@@ -3,7 +3,7 @@ using Avalonia.Controls.Selection;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
-using PolarShadow.Aria2;
+using Aria2Net;
 using PolarShadow.Cache;
 using PolarShadow.Controls;
 using PolarShadow.Core;
