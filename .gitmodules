@@ -1,3 +1,9 @@
 [submodule "src/PolarShadow.Core"]
 	path = src/PolarShadow.Core
 	url = https://github.com/vrjure/PolarShadow.Core.git
+[submodule "src/PolarShadow.Resources"]
+	path = src/PolarShadow.Resources
+	url = https://github.com/vrjure/PolarShadow.Resources.git
+[submodule "src/Aria2Net"]
+	path = src/Aria2Net
+	url = https://github.com/vrjure/Aria2Net.git
