@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Resources\PolarShadow.Resources.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
