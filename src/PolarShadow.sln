@@ -26,9 +26,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.NativeControls.Android", "Avalonia.NativeControls.Android\Avalonia.NativeControls.Android.csproj", "{3C148FE5-D0A6-42B8-8B66-EB5CAB76D281}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NativeControls", "NativeControls", "{800A4439-0D45-427E-9390-3EF000FF5F4A}"
-	ProjectSection(SolutionItems) = preProject
-		PolarShadow.Desktop\Program.cs = PolarShadow.Desktop\Program.cs
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.NativeControls", "Avalonia.NativeControls\Avalonia.NativeControls.csproj", "{6E456E0E-BE52-40AC-AD86-A38E01DFFA7D}"
 EndProject
