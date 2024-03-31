@@ -1,40 +1,35 @@
-﻿using Avalonia.Controls.Notifications;
-using Avalonia.Controls.Selection;
-using Avalonia.Threading;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.EntityFrameworkCore;
-using Aria2Net;
-using PolarShadow.Cache;
-using PolarShadow.Controls;
 using PolarShadow.Core;
 using PolarShadow.Essentials;
-using PolarShadow.Models;
-using PolarShadow.Navigations;
-using PolarShadow.Options;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PolarShadow.Navigations;
+using PolarShadow.Notification;
+using PolarShadow.ViewModels.Notification;
+using Aria2Net;
 
 namespace PolarShadow.ViewModels
 {
     public partial class DetailViewModel : ViewModelBase, IParameterObtain
     {
         private readonly IPolarShadow _polar;
-        private readonly INotificationManager _notify;
+        private readonly IMessageService _notify;
         private readonly IMineResourceService _mineResourceService;
         private readonly IBufferCache _bufferCache;
         private readonly IPreference _preference;
         private readonly INavigationService _nav;
         private readonly IHistoryService _hisService;
-        private readonly ITopLevelService _topLevelService;
+        private readonly IDispatcher _dispatcher;
 
         private ResourceModel _rootResourceInDb;
         private TimeSpan _currentProgress;
 
-        public DetailViewModel(IPolarShadow polar, INotificationManager notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService, ITopLevelService toplevelService)
+        public DetailViewModel(IPolarShadow polar, IMessageService notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService, IDispatcher dispatcher)
         {
             _polar = polar;
             _notify = notify;
@@ -43,7 +38,7 @@ namespace PolarShadow.ViewModels
             _preference = preference;
             _nav = nav;
             _hisService = hisService;
-            _topLevelService = toplevelService;
+            _dispatcher = dispatcher;
         }
 
         public ILink Param_Link { get; set; }   
@@ -58,7 +53,6 @@ namespace PolarShadow.ViewModels
 
         protected override async void OnLoad()
         {
-            _topLevelService.PropertyChanged += _TopLevelService_PropertyChanged;
             if (this.Resource == null)
             {
                 await LoadingDetail();
@@ -67,7 +61,6 @@ namespace PolarShadow.ViewModels
 
         protected override async void OnUnload()
         {
-            _topLevelService.PropertyChanged -= _TopLevelService_PropertyChanged;
             if (MediaController.FullScreen)
             {
                 MediaController.FullScreen = false;
@@ -91,23 +84,23 @@ namespace PolarShadow.ViewModels
 
         private void Controller_MediaChanged(object sender, EventArgs e)
         {
-            Dispatcher.UIThread.Post(async () =>
+            _dispatcher.Post(async () =>
             {
-                var second = HeaderSelection.SelectedItem as ResourceTreeNode;
-                var third = SelectionModel.SelectedItem as ResourceTreeNode;
-                var thirdIndex = SelectionModel.SelectedIndex;
+                //var second = HeaderSelection.SelectedItem as ResourceTreeNode;
+                //var third = SelectionModel.SelectedItem as ResourceTreeNode;
+                //var thirdIndex = SelectionModel.SelectedIndex;
 
-                if (History != null)
-                {
-                    var descItem = GetProgressDesc(History);
-                    if (descItem.Item2 == third.Name || descItem.Item3 == thirdIndex)
-                    {
-                        MediaController.Controller.Time = _currentProgress;
-                        return;
-                    }
-                }
+                //if (History != null)
+                //{
+                //    var descItem = GetProgressDesc(History);
+                //    if (descItem.Item2 == third.Name || descItem.Item3 == thirdIndex)
+                //    {
+                //        MediaController.Controller.Time = _currentProgress;
+                //        return;
+                //    }
+                //}
 
-                await TryUpdateHistory(this.Resource, second, third, thirdIndex, 0);
+                //await TryUpdateHistory(this.Resource, second, third, thirdIndex, 0);
             });           
         }
 
@@ -115,7 +108,7 @@ namespace PolarShadow.ViewModels
         {
             if (Param_Link == null)
             {
-                _notify.Show("Missing parameters", NotificationType.Warning);
+                _notify.Show("Missing parameters", MessageType.Warning);
                 return;
             }
 
@@ -188,7 +181,7 @@ namespace PolarShadow.ViewModels
         {
             if (!_polar.TryGetSite(Param_Link.Site, out ISite site))
             {
-                _notify.Show($"Can not fond site [{Param_Link.Site}]", NotificationType.Warning);
+                _notify.Show($"Can not fond site [{Param_Link.Site}]", MessageType.Warning);
                 return;
             }
 
@@ -272,47 +265,19 @@ namespace PolarShadow.ViewModels
 
         }
 
-        private void _TopLevelService_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName.Equals(nameof(ITopLevelService.FullScreen)))
-            {
-                MediaController.FullScreen = _topLevelService.FullScreen;
-            }
-        }
-
         private void MediaController_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals(nameof(IMediaController.FullScreen)))
-            {
-                _topLevelService.FullScreen = MediaController.FullScreen;
-            }
+
         }
 
         private void Controller_NextClick(object sender, EventArgs e)
         {
-            if (SelectionModel == null)
-            {
-                return;
-            }
-
-            var count = (SelectionModel.Source as ICollection<ResourceTreeNode>)?.Count;
-            if (SelectionModel.SelectedIndex < count)
-            {
-                SelectionModel.Select(SelectionModel.SelectedIndex + 1);
-            }
+            
         }
 
         private void Controller_PreviousClick(object sender, EventArgs e)
         {
-            if (SelectionModel == null)
-            {
-                return;
-            }
-            var count = (SelectionModel.Source as ICollection<ResourceTreeNode>)?.Count;
-            if (SelectionModel.SelectedIndex > 0 && count > 0)
-            {
-                SelectionModel.Select(SelectionModel.SelectedIndex - 1);
-            }
+
         }
 
         private void Controller_Ended(object sender, EventArgs e)
@@ -357,8 +322,8 @@ namespace PolarShadow.ViewModels
 
         private async Task StartMagnet(ResourceTreeNode node)
         {
-            var rpc = await _preference.GetAsync(PreferenceOption.RPC, string.Empty);
-            var downloadFolder = await _preference.GetAsync(PreferenceOption.DownloadPath, string.Empty);
+            var rpc = await _preference.GetAsync(Preferences.RPC, string.Empty);
+            var downloadFolder = await _preference.GetAsync(Preferences.DownloadPath, string.Empty);
             if (string.IsNullOrEmpty(rpc) || string.IsNullOrEmpty(downloadFolder))
             {
                 _notify.Show("Aria2 configuration information is incomplete");
@@ -381,7 +346,7 @@ namespace PolarShadow.ViewModels
                     }
                     else if (result.IsError())
                     {
-                        _notify.Show(result.Error.Message, NotificationType.Error);
+                        _notify.Show(result.Error.Message, MessageType.Error);
                     }
                     else
                     {
@@ -403,7 +368,7 @@ namespace PolarShadow.ViewModels
                 if (MediaController.IsLoading)
                 {
                     Cancellation.Cancel();
-                    await WhenTaskCompleted(() => MediaController.IsLoading);
+                    //await WhenTaskCompleted(() => MediaController.IsLoading);
                 }
 
                 MediaController.IsLoading = true;
@@ -455,10 +420,10 @@ namespace PolarShadow.ViewModels
             }
 
             var episode = Param_Link?.Name;
-            if (SelectionModel.SelectedItem != null)
-            {
-                episode = (SelectionModel.SelectedItem as ResourceTreeNode).Name;
-            }
+            //if (SelectionModel.SelectedItem != null)
+            //{
+            //    episode = (SelectionModel.SelectedItem as ResourceTreeNode).Name;
+            //}
 
             MediaController.Title = $"{this.Resource.Name}-{episode}";
             await MediaController.Controller?.PlayAsync(new Uri(videoSource.Src));
@@ -466,11 +431,9 @@ namespace PolarShadow.ViewModels
 
         private async Task TryUpdateHistory()
         {
-            var second = HeaderSelection.SelectedItem as ResourceTreeNode;
-            var third = SelectionModel.SelectedItem as ResourceTreeNode;
-            var thirdIndex = SelectionModel.SelectedIndex;
+            
 
-            await TryUpdateHistory(this.Resource, second, third, thirdIndex, (long)_currentProgress.TotalMilliseconds);
+           
         }
 
         private string CombineDesc(ResourceTreeNode second, ResourceTreeNode third) => $"{second.Name}-{third.Name}";

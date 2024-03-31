@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Selection;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Controls;
 using PolarShadow.Resources;
 using PolarShadow.Services;
@@ -20,56 +18,6 @@ namespace PolarShadow.ViewModels
             get => _resource;
             private set => SetProperty(ref _resource, value);
         }
-
-        private ISelectionModel _headerSelection;
-        public ISelectionModel HeaderSelection
-        {
-            get => _headerSelection;
-            set => SetProperty(ref _headerSelection, value);
-        }
-
-        private ISelectionModel _analysisSelection;
-        public ISelectionModel AnalysisSelection
-        {
-            get => _analysisSelection;
-            set
-            {
-                var cache = _analysisSelection;
-                if (SetProperty(ref _analysisSelection, value))
-                {
-                    if (cache != null)
-                    {
-                        cache.SelectionChanged -= AnalysisSelection_SelectionChanged;
-                    }
-                    if (_analysisSelection != null)
-                    {
-                        _analysisSelection.SelectionChanged += AnalysisSelection_SelectionChanged;
-                    }
-                }
-            }
-        }
-
-        private ISelectionModel _sourceSelection;
-        public ISelectionModel SourceSelection
-        {
-            get => _sourceSelection;
-            set
-            {
-                var cache = _sourceSelection;
-                if (SetProperty(ref _sourceSelection, value))
-                {
-                    if (cache != null)
-                    {
-                        cache.SelectionChanged -= SourceSelection_SelectionChanged;
-                    }
-                    if (_sourceSelection != null)
-                    {
-                        _sourceSelection.SelectionChanged += SourceSelection_SelectionChanged;
-                    }
-                }
-            }
-        }
-
 
         private bool _isSave;
         public bool IsSaved

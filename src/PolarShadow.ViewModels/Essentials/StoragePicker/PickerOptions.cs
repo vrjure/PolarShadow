@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Navigation
+namespace PolarShadow.Essentials
 {
-    public interface INavigationNotify
+    public class PickerOptions
     {
-        void Load();
-        void Unload();
     }
 }

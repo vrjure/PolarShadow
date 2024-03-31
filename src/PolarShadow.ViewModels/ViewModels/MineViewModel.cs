@@ -1,23 +1,22 @@
-﻿using Avalonia.Controls.Notifications;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PolarShadow.Options;
 using PolarShadow.Models;
 using PolarShadow.Essentials;
+using PolarShadow.Notification;
 
 namespace PolarShadow.ViewModels
 {
     public class MineViewModel : ViewModelBase
     {
-        private readonly IStorageService _storage;
-        private readonly INotificationManager _notify;
+        private readonly IStorageItemPicker _storage;
+        private readonly IMessageService _notify;
         private readonly IPreference _preference;
-        public MineViewModel(IStorageService storage, INotificationManager notify, IPreference preference)
+        public MineViewModel(IStorageItemPicker storage, IMessageService notify, IPreference preference)
         {
             _storage = storage;
             _notify = notify;
@@ -53,21 +52,18 @@ namespace PolarShadow.ViewModels
 
         private async Task PickDownloadFolder()
         {
-            var folders = await _storage.OpenFolderPickerAsync(new Avalonia.Platform.Storage.FolderPickerOpenOptions
-            {
-                AllowMultiple = false
-            });
+            var folders = await _storage.OpenPickerAsync(new PickerOptions());
 
             if (folders == null || folders.Count == 0) return;
 
-            DownloadPath.Value = folders.First().Path.AbsolutePath;
+            //DownloadPath.Value = folders.First().Path.AbsolutePath;
         }
 
         protected override async void OnLoad()
         {
-            RPC = new ChangeValue<string>(await _preference.GetAsync(PreferenceOption.RPC, ""));
-            DownloadPath = new ChangeValue<string>(await _preference.GetAsync(PreferenceOption.DownloadPath, ""));
-            SearchTaskCount = new ChangeValue<int>(await _preference.GetAsync(PreferenceOption.SearchTaskCount, 3));
+            RPC = new ChangeValue<string>(await _preference.GetAsync(Preferences.RPC, ""));
+            DownloadPath = new ChangeValue<string>(await _preference.GetAsync(Preferences.DownloadPath, ""));
+            SearchTaskCount = new ChangeValue<int>(await _preference.GetAsync(Preferences.SearchTaskCount, 3));
         }
 
         private async Task SaveAsync()
@@ -75,13 +71,13 @@ namespace PolarShadow.ViewModels
             try
             {
                 if(RPC.IsChange)
-                    await _preference.SetAsync(PreferenceOption.RPC, RPC.Value);
+                    await _preference.SetAsync(Preferences.RPC, RPC.Value);
 
                 if(DownloadPath.IsChange)
-                    await _preference.SetAsync(PreferenceOption.DownloadPath, DownloadPath.Value);
+                    await _preference.SetAsync(Preferences.DownloadPath, DownloadPath.Value);
 
                 if (SearchTaskCount.IsChange)
-                    await _preference.SetAsync(PreferenceOption.SearchTaskCount, SearchTaskCount.Value);
+                    await _preference.SetAsync(Preferences.SearchTaskCount, SearchTaskCount.Value);
 
                 _notify.ShowSuccess();
             }

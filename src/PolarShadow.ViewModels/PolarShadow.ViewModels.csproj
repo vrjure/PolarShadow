@@ -1,19 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>disable</Nullable>
+	<Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="LibVLCSharp" Version="3.8.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
-    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
-    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Resources\PolarShadow.Resources.csproj" />
-    <ProjectReference Include="..\PolarShadow.Resources\src\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\Aria2Net\src\Aria2Net\Aria2Net.csproj" />
+    <ProjectReference Include="..\PolarShadow.Controls.Abstractions\PolarShadow.Controls.Abstractions.csproj" />
+    <ProjectReference Include="..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\PolarShadow.Resources.csproj" />
+    <ProjectReference Include="..\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\PolarShadow.Storage\PolarShadow.Storage.csproj" />
   </ItemGroup>
 
 </Project>

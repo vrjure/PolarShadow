@@ -9,4 +9,3 @@
 [assembly: XmlnsDefinition("https://github.com/PolarShadow", "PolarShadow.Controls.Converters")]
 [assembly: XmlnsDefinition("https://github.com/PolarShadow", "PolarShadow.Controls.MarkupExtensions")]
 [assembly: XmlnsDefinition("https://github.com/PolarShadow", "PolarShadow.Options")]
-

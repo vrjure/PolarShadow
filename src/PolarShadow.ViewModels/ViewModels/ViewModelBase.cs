@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using PolarShadow.Navigation;
+using PolarShadow.Navigations;
 using System;
 using System.Collections.Generic;
 using System.Threading;

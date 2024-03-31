@@ -1,8 +1,7 @@
-﻿using Avalonia.Controls.Notifications;
-using Avalonia.Controls.Selection;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Core;
 using PolarShadow.Navigations;
+using PolarShadow.Notification;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;
@@ -17,10 +16,10 @@ namespace PolarShadow.ViewModels
     public class DiscoverViewModel : ViewModelBase
     {
         private readonly IPolarShadow _polar;
-        private readonly INotificationManager _notify;
+        private readonly IMessageService _notify;
         private readonly INavigationService _nav;
 
-        public DiscoverViewModel(IPolarShadow polar, INotificationManager notify, INavigationService nav)
+        public DiscoverViewModel(IPolarShadow polar, IMessageService notify, INavigationService nav)
         {
             _polar = polar;
             _notify = notify;
@@ -58,15 +57,6 @@ namespace PolarShadow.ViewModels
             {
                 { nameof(DiscoverDetailViewModel.Param_Site), site }
             }, true);
-        }
-
-        protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
-        {
-            if (e.SelectedItems.Count > 0)
-            {
-                SiteSelectChanged(e.SelectedItems.First() as ISite);
-                SelectionModel.Deselect(e.SelectedIndexes.First());
-            }
         }
     }
 }

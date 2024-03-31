@@ -1,12 +1,7 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Notifications;
-using Avalonia.Controls.Selection;
-using CommunityToolkit.Mvvm.Input;
-using PolarShadow.Cache;
-using PolarShadow.Core;
+﻿using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Essentials;
+using PolarShadow.Core;
 using PolarShadow.Navigations;
-using PolarShadow.Options;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;
@@ -15,19 +10,20 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PolarShadow.Notification;
 
 namespace PolarShadow.ViewModels
 {
     public class SearchViewModel : ViewModelBase
     {
         private readonly IPolarShadow _polar;
-        private readonly INotificationManager _notify;
+        private readonly IMessageService _notify;
         private readonly INavigationService _nav;
         private readonly IBufferCache _bufferCache;
         private readonly IPreference _preference;
 
         private ISearchHandler<Resource> _searcHandler;
-        public SearchViewModel(IPolarShadow polar, INotificationManager notify, INavigationService nav, IBufferCache bufferCache, IPreference preference)
+        public SearchViewModel(IPolarShadow polar, IMessageService notify, INavigationService nav, IBufferCache bufferCache, IPreference preference)
         {
             _polar = polar;
             _notify = notify;
@@ -64,13 +60,6 @@ namespace PolarShadow.ViewModels
         {
             get => _availableSites;
             set => SetProperty(ref _availableSites, value);
-        }
-
-        private ISelectionModel _siteFilterSelection;
-        public ISelectionModel SiteFilterSelection
-        {
-            get => _siteFilterSelection;
-            set => SetProperty(ref _siteFilterSelection, value);
         }
 
         private IReadOnlyList<int> _selectedSiteFilters;
@@ -162,7 +151,7 @@ namespace PolarShadow.ViewModels
                 return;
             }
 
-            var taskCount = await _preference.GetAsync(PreferenceOption.SearchTaskCount, 3);
+            var taskCount = await _preference.GetAsync(Preferences.SearchTaskCount, 3);
             var sites = GetFilterSites();
             if (sites != null)
             {               
@@ -228,15 +217,6 @@ namespace PolarShadow.ViewModels
             {
                 {nameof(DetailViewModel.Param_Link), searchValue }
             }, true);
-        }
-
-        protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
-        {
-            if (e.SelectedItems.Count> 0)
-            {
-                NavigateToDetail(e.SelectedItems.First() as Resource);
-                SelectionModel.Deselect(e.SelectedIndexes.First());
-            }
         }
     }
 }

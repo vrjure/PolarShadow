@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls.Notifications;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +13,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PolarShadow.Notification;
 
 namespace PolarShadow.ViewModels
 {
-    public class TopLayoutViewModel : ViewModelBase, IRecipient<LoadingState>
+    public class TopLayoutViewModel : ViewModelBase
     {
         public static string NavigationName = "TopLayoutContent";
         public static string RightTitleBarContainer = "RightTitleBarContianer";
@@ -26,16 +26,14 @@ namespace PolarShadow.ViewModels
 
         private readonly INavigationService _nav;
         private readonly IDbContextFactory<PolarShadowDbContext> _dbFactory;
-        private readonly INotificationManager _notify;
+        private readonly IMessageService _notify;
         private readonly IPolarShadow _polar;
-        private readonly ITopLevelService _topLevel;
-        public TopLayoutViewModel(INavigationService nav, IDbContextFactory<PolarShadowDbContext> dbFactory, INotificationManager notify, IPolarShadow polar, ITopLevelService toplevel)
+        public TopLayoutViewModel(INavigationService nav, IDbContextFactory<PolarShadowDbContext> dbFactory, IMessageService notify, IPolarShadow polar)
         {
             _nav = nav;
             _dbFactory = dbFactory;
             _notify = notify;
             _polar = polar;
-            _topLevel = toplevel;
         }
 
         private bool _ShowTitleBar = true;
@@ -54,8 +52,6 @@ namespace PolarShadow.ViewModels
 
         protected override async void OnLoad()
         {
-            _topLevel.GetTopLevel().BackRequested += App_BackRequested;
-            _topLevel.PropertyChanged += TopLevel_PropertyChanged;
             IsDesktop = OperatingSystem.IsWindows();
 
             IsLoading = true;
@@ -88,40 +84,7 @@ namespace PolarShadow.ViewModels
 
         protected override void OnUnload()
         {
-            if (_topLevel.GetTopLevel() != null)
-            {
-                _topLevel.GetTopLevel().BackRequested -= App_BackRequested;
-            }
-            _topLevel.PropertyChanged -= TopLevel_PropertyChanged;
-        }
-
-        void IRecipient<LoadingState>.Receive(LoadingState message)
-        {
-            IsLoading = message.IsLoading;
-        }
-
-        private void App_BackRequested(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {           
-            if (_nav.CanBack(NavigationName))
-            {
-                if (_topLevel.FullScreen)
-                {
-                    _topLevel.FullScreen = false;
-                }
-                else
-                {
-                    _nav.Back(NavigationName);
-                }
-                e.Handled = true;
-            }
-        }
-
-        private void TopLevel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName.Equals(nameof(ITopLevelService.FullScreen)))
-            {
-                ShowTitleBar = !_topLevel.FullScreen;
-            }
+  
         }
     }
 }

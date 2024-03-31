@@ -1,9 +1,8 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Notifications;
-using Avalonia.Controls.Selection;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
+using PolarShadow.Essentials;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
+using PolarShadow.Notification;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,18 +16,20 @@ public partial class MainViewModel : ViewModelBase
 {
     public static string NavigationName = "MainViewContent";
     private readonly INavigationService _nav;
-    private readonly INotificationManager _notify;
-    public MainViewModel(INavigationService nav, INotificationManager notify)
+    private readonly IMessageService _notify;
+    private readonly IResourceService _resourceService;
+    public MainViewModel(INavigationService nav, IMessageService notify, IResourceService resourceService)
     {
         _nav = nav;
         _notify = notify;
+        _resourceService = resourceService;
     }
     public IEnumerable<MenuIconItem> MenuItems => new List<MenuIconItem>
     {
-        new(){ Name = "main", Icon = FindResource<string>("home"), VMType = typeof(BookshelfViewModel)},
-        new(){ Name = "discover", Icon = FindResource<string>("discover"), VMType = typeof(DiscoverViewModel)},
-        new(){ Name = "source", Icon = FindResource<string>("source"), VMType = typeof(BookSourceViewModel)},
-        new(){ Name = "user", Icon = FindResource<string>("user"), VMType = typeof(MineViewModel)},
+        new(){ Name = "main", Icon = _resourceService.FindResource<string>("home"), VMType = typeof(BookshelfViewModel)},
+        new(){ Name = "discover", Icon = _resourceService.FindResource<string>("discover"), VMType = typeof(DiscoverViewModel)},
+        new(){ Name = "source", Icon = _resourceService.FindResource<string>("source"), VMType = typeof(BookSourceViewModel)},
+        new(){ Name = "user", Icon = _resourceService.FindResource<string>("user"), VMType = typeof(MineViewModel)},
 //#if DEBUG
 //        new(){ Name = "test", Icon=FindResource<string>("flask"), VMType = typeof(VideoPlayerViewModel)}
 //#endif
@@ -61,14 +62,6 @@ public partial class MainViewModel : ViewModelBase
             _notify.Show(ex);
         }
     });
-
-    protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
-    {
-        if (e.SelectedItems.Count > 0)
-        {
-            ToPage(e.SelectedItems.First() as MenuIconItem);
-        }
-    }
 
     private void ToPage(MenuIconItem item)
     {

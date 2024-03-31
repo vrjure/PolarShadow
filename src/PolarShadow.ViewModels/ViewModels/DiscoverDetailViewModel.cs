@@ -1,8 +1,7 @@
-﻿using Avalonia.Controls.Notifications;
-using Avalonia.Controls.Selection;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Core;
 using PolarShadow.Navigations;
+using PolarShadow.Notification;
 using PolarShadow.Resources;
 using System;
 using System.Collections.Generic;
@@ -16,13 +15,13 @@ namespace PolarShadow.ViewModels
     public class DiscoverDetailViewModel : ViewModelBase, IParameterObtain
     {
 
-        private readonly INotificationManager _notify;
+        private readonly IMessageService _notify;
         private readonly IPolarShadow _polar;
         private readonly INavigationService _nav;
 
         private PageFilter _filter;
         private TaskCompletionSource _loadingTCS;
-        public DiscoverDetailViewModel(INotificationManager notify, IPolarShadow polar, INavigationService nav)
+        public DiscoverDetailViewModel(IMessageService notify, IPolarShadow polar, INavigationService nav)
         {
             _notify = notify;
             _polar = polar;
@@ -43,32 +42,6 @@ namespace PolarShadow.ViewModels
         {
             get => _resourceList;
             set => SetProperty(ref _resourceList, value);
-        }
-
-        private ISelectionModel _categorySelection;
-        public ISelectionModel CategorySelection
-        {
-            get => _categorySelection;
-            set 
-            { 
-                if(SetProperty(ref _categorySelection, value))
-                {
-                    _categorySelection.SelectionChanged += CategorySelection_SelectionChanged;
-                }
-            }
-        }
-
-        private ISelectionModel _categoryChildrenSelection;
-        public ISelectionModel CategoryChildrenSelection
-        {
-            get => _categoryChildrenSelection;
-            set
-            {
-                if (SetProperty(ref _categoryChildrenSelection, value))
-                {
-                    _categoryChildrenSelection.SelectionChanged += CategorySelection_SelectionChanged;
-                }
-            }
         }
 
         private ResourceTree _currentCategory;
@@ -132,18 +105,6 @@ namespace PolarShadow.ViewModels
             }
         }
 
-        private void CategorySelection_SelectionChanged(object sender, SelectionModelSelectionChangedEventArgs e)
-        {
-            if (e.SelectedItems.Count > 0)
-            {
-                CategoryValueChanged(e.SelectedItems[0] as ResourceTree);
-
-                if (sender == CategorySelection && _currentCategory != null && CategoryChildrenSelection != null)
-                {
-                    CategoryChildrenSelection.SelectedItem = _currentCategory;
-                }
-            }
-        }
 
 
         private async void CategoryValueChanged(ResourceTree category)
@@ -260,15 +221,6 @@ namespace PolarShadow.ViewModels
                 { nameof(DetailViewModel.Param_Link), res }
             }, true);
 
-        }
-
-        protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
-        {
-            if (e.SelectedItems.Count > 0)
-            {
-                ResourceSelected(e.SelectedItems[0] as ResourceTree);
-                SelectionModel.Deselect(e.SelectedIndexes[0]);
-            }
         }
     }
 }

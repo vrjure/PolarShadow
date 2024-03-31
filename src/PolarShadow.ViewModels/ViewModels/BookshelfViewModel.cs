@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Core;
 using PolarShadow.Models;
-using PolarShadow.Navigation;
+using PolarShadow.Navigations;
 using PolarShadow.Notification;
 using PolarShadow.Resources;
 using PolarShadow.Services;
@@ -36,6 +36,22 @@ namespace PolarShadow.ViewModels
         {
             get => _mineResource;
             set => SetProperty(ref _mineResource, value);
+        }
+
+        private ResourceModelRefreshItem _selectedValue;
+        public ResourceModelRefreshItem SelectedItem
+        {
+            get => _selectedValue;
+            set
+            {
+                if (SetProperty(ref _selectedValue, value))
+                {
+                    if (_selectedValue != null)
+                    {
+                        ToDetail(_selectedValue.Data);
+                    }
+                }
+            }
         }
 
         private IRelayCommand _searchCommand;
@@ -103,15 +119,6 @@ namespace PolarShadow.ViewModels
             {
                 {nameof(DetailViewModel.Param_Link), res }
             }, true);
-        }
-
-        protected override void OnSelectionChanged(SelectionModelSelectionChangedEventArgs e)
-        {
-            if (e.SelectedItems.Count > 0)
-            {
-                ToDetail((e.SelectedItems[0] as ResourceModelRefreshItem).Data);
-                SelectionModel.Deselect(e.SelectedIndexes[0]);
-            }
         }
 
         private async void RefreshAction()

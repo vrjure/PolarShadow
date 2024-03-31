@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.ViewModels
+namespace PolarShadow.Controls
 {
-    public class TestViewModel : ViewModelBase
+    public enum MediaMode
     {
-
+        Normal,
+        Simple,
+        Min
     }
 }
