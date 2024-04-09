@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Essentials
+namespace PolarShadow.WebView
 {
-    public interface IResourceService
+    public enum Sniff
     {
-        object FindResource(string key);
+        None,
+        M3U8
     }
 }

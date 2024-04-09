@@ -17,23 +17,18 @@ public partial class MainViewModel : ViewModelBase
     public static string NavigationName = "MainViewContent";
     private readonly INavigationService _nav;
     private readonly IMessageService _notify;
-    private readonly IResourceService _resourceService;
-    public MainViewModel(INavigationService nav, IMessageService notify, IResourceService resourceService)
+    public MainViewModel(INavigationService nav, IMessageService notify)
     {
         _nav = nav;
         _notify = notify;
-        _resourceService = resourceService;
     }
-    public IEnumerable<MenuIconItem> MenuItems => new List<MenuIconItem>
+    private ObservableCollection<MenuIconItem> _menuItems;
+    public ObservableCollection<MenuIconItem> MenuItems
     {
-        new(){ Name = "main", Icon = _resourceService.FindResource<string>("home"), VMType = typeof(BookshelfViewModel)},
-        new(){ Name = "discover", Icon = _resourceService.FindResource<string>("discover"), VMType = typeof(DiscoverViewModel)},
-        new(){ Name = "source", Icon = _resourceService.FindResource<string>("source"), VMType = typeof(BookSourceViewModel)},
-        new(){ Name = "user", Icon = _resourceService.FindResource<string>("user"), VMType = typeof(MineViewModel)},
-//#if DEBUG
-//        new(){ Name = "test", Icon=FindResource<string>("flask"), VMType = typeof(VideoPlayerViewModel)}
-//#endif
-    };
+        get => _menuItems;
+        set => SetProperty(ref _menuItems, value);
+    }
+    
 
     private MenuIconItem _selectedValue;
     public MenuIconItem SelectedValue

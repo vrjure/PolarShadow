@@ -20,15 +20,22 @@ namespace PolarShadow.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly INavigationService _nav;
         public MainWindow()
         {
             InitializeComponent();
-            this.Loaded += MainWindow_Loaded;
+            Loaded += MainWindow_Loaded;
         }
 
+        public MainWindow(MainWindowViewModel vm, INavigationService nav) : this()
+        {
+            this.DataContext = vm;
+            _nav = nav;
+        }
+        
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            NavigationManager.Navigate(TopLayoutViewModel.NavigationName, new MainView(), null, false);
+            _nav.Navigate<TopLayoutViewModel>(MainWindowViewModel.NavigationName);       
         }
     }
 }

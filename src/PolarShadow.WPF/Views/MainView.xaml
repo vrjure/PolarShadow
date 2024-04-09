@@ -4,10 +4,25 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PolarShadow.WPF.Views"
+             xmlns:vm="clr-namespace:PolarShadow.ViewModels;assembly=PolarShadow.ViewModels"
+             xmlns:nav="clr-namespace:PolarShadow.Navigations"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             >
+             nav:NavigationManager.RegisterLoad="True">
     <Grid>
-        <TextBlock Text="123454356787909"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}"/>
+        <Border Grid.Row="1">
+            <ListBox Style="{StaticResource HorizontalListBox}"
+                     ItemsSource="{Binding MenuItems}"
+                     HorizontalAlignment="Center"
+                     ItemContainerStyle="{StaticResource MenuItem}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
+            </ListBox>
+        </Border>
     </Grid>
 </UserControl>

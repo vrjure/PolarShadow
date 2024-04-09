@@ -7,40 +7,24 @@
         xmlns:vm="clr-namespace:PolarShadow.ViewModels;assembly=PolarShadow.ViewModels"
         xmlns:local="clr-namespace:PolarShadow.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        nav:NavigationManager.RegisterLoad="True">
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="{x:Static SystemParameters.CaptionHeight}"/>
+        <WindowChrome CaptionHeight="{DynamicResource WindowCaptionHeight}" 
+                      UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
     <Window.Template>
         <ControlTemplate TargetType="local:MainWindow">
-            <ContentPresenter Content="{TemplateBinding Content}"/>
+            <Border Background="{DynamicResource PrimaryBackground}">
+                <ContentPresenter Content="{TemplateBinding Content}"
+                                  x:Name="cp"/>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="WindowState" Value="Maximized">
+                    <Setter TargetName="cp" Property="Margin" Value="8"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
         </ControlTemplate>
     </Window.Template>
-    <DockPanel>
-        <Grid Height="40"
-              DockPanel.Dock="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="15"/>
-            </Grid.RowDefinitions>
-            <Border Grid.Row="1"
-                    Grid.ColumnSpan="5"
-                    Background="White"/>
-            <Button Style="{StaticResource Icon}"
-                    Content="{StaticResource back-button}"
-                    WindowChrome.IsHitTestVisibleInChrome="True"
-                    Margin="8"
-                    Grid.RowSpan="2"/>
-        </Grid>
-        <Border Background="White">
-            <ContentControl nav:NavigationManager.ContainerName="{x:Static vm:TopLayoutViewModel.NavigationName}"/>
-        </Border>
-    </DockPanel>
+    <ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainWindowViewModel.NavigationName}"/>
 </Window>

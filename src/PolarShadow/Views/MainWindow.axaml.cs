@@ -18,4 +18,10 @@ public partial class MainWindow : Window
     {
         this.DataContext = vm;
     }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        
+    }
 }

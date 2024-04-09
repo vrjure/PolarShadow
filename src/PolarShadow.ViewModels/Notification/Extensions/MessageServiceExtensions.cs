@@ -1,7 +1,7 @@
-﻿using PolarShadow.ViewModels.Notification;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace PolarShadow.Notification
 {
@@ -20,5 +20,10 @@ namespace PolarShadow.Notification
         }
 
         public static void ShowSuccess(this IMessageService manager) => Show(manager, "Success");
+
+        public static Task<MessageResult> ShowDialog(this IMessageService manager, string message, MessageType type = MessageType.Information, DialogType dialogType = DialogType.OKCancel)
+        {
+            return manager.ShowDialog(new Message() { Content = message, Expiration = Expiration, Title = "", MessageType = type }, dialogType);
+        }
     }
 }

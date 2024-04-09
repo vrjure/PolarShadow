@@ -1,0 +1,158 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:notify="clr-namespace:PolarShadow.Notification">
+    <Style TargetType="notify:PopupContent">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+        <Setter Property="Width" Value="300"/>
+        <Setter Property="Height" Value="80"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="notify:PopupContent">
+                    <Border Padding="5">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="1"/>
+                        </Border.Effect>
+                        <Border CornerRadius="5"
+                                ClipToBounds="True"
+                                Background="{TemplateBinding Background}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Rectangle Grid.ColumnSpan="3"
+                                           Grid.Row="0"
+                                           Height="8"
+                                           HorizontalAlignment="Stretch"
+                                           x:Name="Indicator"/>
+                                <TextBlock Text="{TemplateBinding Title}"
+                                           FontWeight="Bold"
+                                           Grid.Row="1"/>
+                                <ContentPresenter Grid.Row="2"
+                                                  Grid.ColumnSpan="3"
+                                                  TextBlock.Foreground="{TemplateBinding Foreground}"/>             
+                            </Grid>
+                        </Border>
+                    </Border>
+                    
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="MessageType" Value="Information">
+                            <Setter TargetName="Indicator" Property="Fill" Value="Blue"/>
+                        </Trigger>
+                        <Trigger Property="MessageType" Value="Error">
+                            <Setter TargetName="Indicator" Property="Fill" Value="Red"/>
+                        </Trigger>
+                        <Trigger Property="MessageType" Value="Warning">
+                            <Setter TargetName="Indicator" Property="Fill" Value="Orange"/>
+                        </Trigger>
+                        <Trigger Property="MessageType" Value="Success">
+                            <Setter TargetName="Indicator" Property="Fill" Value="LightGreen"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="notify:PopupDialogContent">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+        <Setter Property="MinWidth" Value="300"/>
+        <Setter Property="MinHeight" Value="250"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="notify:PopupDialogContent">
+                    <Border Padding="5">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="1"/>
+                        </Border.Effect>
+                        <Border CornerRadius="5"
+                                ClipToBounds="True"
+                                Background="{TemplateBinding Background}"
+                                >
+                            <Grid Margin="8,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{TemplateBinding Title}"
+                                           HorizontalAlignment="Center"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           Grid.ColumnSpan="2"
+                                           FontSize="{StaticResource TitleFontSize}"/>
+                                <Rectangle Height="8"
+                                           HorizontalAlignment="Stretch"
+                                           Grid.Row="1"
+                                           Grid.ColumnSpan="2"
+                                           x:Name="Indicator"/>
+                                <ContentPresenter Grid.Row="2"
+                                                  Grid.ColumnSpan="2"
+                                                  TextBlock.Foreground="{TemplateBinding Foreground}"/>
+                                <Button Grid.Column="0" 
+                                        Grid.Row="3"
+                                        x:Name="ButtonOk" 
+                                        HorizontalAlignment="Center"
+                                        Style="{StaticResource ButtonIcon}"
+                                        Content="{StaticResource check}"
+                                        FontSize="{StaticResource DialogButtonSize}"/>
+                                <Button Grid.Column="1" 
+                                        Grid.Row="3"
+                                        x:Name="ButtonCancel"
+                                        HorizontalAlignment="Center"
+                                        Style="{StaticResource ButtonIcon}"
+                                        Content="{StaticResource close}"
+                                        FontSize="{StaticResource DialogButtonSize}"/>
+                            </Grid>
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="MessageType" Value="Information">
+                            <Setter TargetName="Indicator" Property="Fill" Value="Blue"/>
+                        </Trigger>
+                        <Trigger Property="MessageType" Value="Error">
+                            <Setter TargetName="Indicator" Property="Fill" Value="Red"/>
+                        </Trigger>
+                        <Trigger Property="MessageType" Value="Warning">
+                            <Setter TargetName="Indicator" Property="Fill" Value="Orange"/>
+                        </Trigger>
+                        <Trigger Property="MessageType" Value="Success">
+                            <Setter TargetName="Indicator" Property="Fill" Value="LightGreen"/>
+                        </Trigger>
+                        
+                        <Trigger Property="DialogType" Value="None">
+                            <Setter TargetName="ButtonOk" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="ButtonCancel" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="Indicator" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="DialogType" Value="OKCancel">
+                            <Setter TargetName="ButtonOk" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="ButtonCancel" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="DialogType" Value="Ok">
+                            <Setter TargetName="ButtonOk" Property="Grid.ColumnSpan" Value="2"/>
+                            <Setter TargetName="ButtonOk" Property="HorizontalAlignment" Value="Center"/>
+                            <Setter TargetName="ButtonCancel" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="DialogType" Value="Cancel">
+                            <Setter TargetName="ButtonOk" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="ButtonCancel" Property="Grid.ColumnSpan" Value="2"/>
+                            <Setter TargetName="ButtonCancel" Property="HorizontalAlignment" Value="Center"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

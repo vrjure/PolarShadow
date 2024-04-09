@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <FontFamily x:Key="remixIcon" >pack://application:,,,/Assets/Fonts/remixicon.ttf#remixicon</FontFamily>
+    <FontFamily x:Key="remixIcon">pack://application:,,,/Assets/Fonts/remixicon.ttf#remixicon</FontFamily>
     
     <sys:String x:Key="refresh">&#xF064;</sys:String>
     <sys:String x:Key="search">&#xF0D1;</sys:String>
@@ -27,4 +27,10 @@
     <sys:String x:Key="empty">&#xF1F7; Empty</sys:String>
     <sys:String x:Key="restart">&#xF080;</sys:String>
     <sys:String x:Key="back-button">&#xEA60;</sys:String>
+    <sys:String x:Key="check">&#xEB7B;</sys:String>
+    <sys:String x:Key="close">&#xEB99;</sys:String>
+    <sys:String x:Key="close-large">&#xF4C8;</sys:String>
+    <sys:String x:Key="minimize">&#xF1AF;</sys:String>
+    <sys:String x:Key="maximize">&#xEB7F;</sys:String>
+    <sys:String x:Key="maximize-restore">&#xEB87;</sys:String>
 </ResourceDictionary>

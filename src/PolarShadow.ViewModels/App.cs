@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow
 {
-    internal class App
+    internal sealed class App
     {
         public static string AppDataFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PolarShadow");
         public static string ConfigFile => Path.Combine(AppDataFolder, "config.json");

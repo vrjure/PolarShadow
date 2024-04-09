@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PolarShadow.Models;
 using PolarShadow.Essentials;
 using PolarShadow.Notification;
+using PolarShadow.Models;
 
 namespace PolarShadow.ViewModels
 {

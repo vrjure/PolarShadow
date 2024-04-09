@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using PolarShadow.Navigations;
 using PolarShadow.Notification;
-using PolarShadow.ViewModels.Notification;
 using Aria2Net;
 
 namespace PolarShadow.ViewModels

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using PolarShadows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +13,7 @@ namespace PolarShadow.Navigations
     internal sealed partial class NavigationManager
     {
 
-        public static readonly DependencyProperty ContainerNameProperty = DependencyProperty.RegisterAttached("ContainerName", typeof(string), typeof(ContentControl), new PropertyMetadata("", PropertyChanged));
+        public static readonly DependencyProperty ContainerNameProperty = DP.RegisterAttached<ContentControl, string>("ContainerName", PropertyChanged);
         public static string GetContainerName(ContentControl control)
         {
             return (string)control.GetValue(ContainerNameProperty);
@@ -21,7 +23,7 @@ namespace PolarShadow.Navigations
             control.SetValue(ContainerNameProperty, value);
         }
 
-        public static readonly DependencyProperty BackNameProperty = DependencyProperty.RegisterAttached("BackName", typeof(string), typeof(FrameworkElement), new PropertyMetadata("", PropertyChanged));
+        public static readonly DependencyProperty BackNameProperty = DP.RegisterAttached<FrameworkElement, string>("BackName", PropertyChanged);
         public static string GetBackName(FrameworkElement control)
         {
             return (string)control.GetValue(BackNameProperty);
@@ -29,6 +31,16 @@ namespace PolarShadow.Navigations
         public static void SetBackName(FrameworkElement control, string value)
         {
             control.SetValue(BackNameProperty, value);
+        }
+
+        public static readonly DependencyProperty RegisterLoadProperty = DP.RegisterAttached<FrameworkElement, bool>("RegisterLoad", PropertyChanged);
+        public static bool GetRegisterLoad(FrameworkElement control)
+        {
+            return (bool)control.GetValue(RegisterLoadProperty);
+        }
+        public static void SetRegisterLoad(FrameworkElement control, bool value)
+        {
+            control.SetValue(RegisterLoadProperty, value);
         }
 
         private static void PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -40,6 +52,10 @@ namespace PolarShadow.Navigations
             else if (e.Property == BackNameProperty)
             {
                 BackNameChagned(d as FrameworkElement, e);
+            }
+            else if (e.Property == RegisterLoadProperty)
+            {
+                IsLoadChanged(d as FrameworkElement, e);
             }
         }
 
@@ -127,6 +143,31 @@ namespace PolarShadow.Navigations
             static void BackButtonPointReleased(object sender, RoutedEventArgs e)
             {
                 BackClick(sender);
+            }
+        }
+
+        private static void IsLoadChanged(FrameworkElement control, DependencyPropertyChangedEventArgs e)
+        {
+            control.Loaded -= Loaded;
+            control.Loaded += Loaded;
+            control.Unloaded -= Unloaded;
+            control.Unloaded += Unloaded;
+
+            static void Loaded(object sender, RoutedEventArgs e)
+            {
+                var element = sender as FrameworkElement;
+                if(element?.DataContext is ObservableRecipient recipient)
+                {
+                    recipient.IsActive = true;
+                }
+            }
+            static void Unloaded(object sender, RoutedEventArgs e)
+            {
+                var element = sender as FrameworkElement;
+                if (element?.DataContext is ObservableRecipient recipient)
+                {
+                    recipient.IsActive = false;
+                }
             }
         }
     }

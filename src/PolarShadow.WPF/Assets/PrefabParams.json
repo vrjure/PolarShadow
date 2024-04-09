@@ -1,0 +1,6 @@
+{
+  "template-sniff": {
+    "src": "{///body/div[@class='sniff']/span[1]}",
+    "srcType": "video"
+  }
+}

@@ -12,16 +12,25 @@
   <ItemGroup>
     <None Remove="Assets\Fonts\remixicon.ttf" />
     <None Remove="Assets\Fonts\SegoeFluentIcons.ttf" />
+    <None Remove="Assets\PrefabParams.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2470-prerelease" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\PolarShadow.Controls.Abstractions\PolarShadow.Controls.Abstractions.csproj" />
+    <ProjectReference Include="..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
     <ProjectReference Include="..\PolarShadow.ViewModels\PolarShadow.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\Fonts\remixicon.ttf" />
     <Resource Include="Assets\Fonts\SegoeFluentIcons.ttf" />
+    <Resource Include="Assets\PrefabParams.json" />
   </ItemGroup>
 
 </Project>
