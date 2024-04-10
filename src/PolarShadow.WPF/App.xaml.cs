@@ -50,7 +50,7 @@ namespace PolarShadow.WPF
             service.RegisterSingletonViewWithModel<MainWindow, MainWindowViewModel>();
             service.RegisterSingletonViewWithModel<TopLayoutView, TopLayoutViewModel>();
             service.RegisterTransientViewWithModel<MainView, MainViewModel>();
-            //service.RegisterTransientViewWithModel<BookshelfView, BookshelfViewModel>();
+            service.RegisterTransientViewWithModel<BookshelfView, BookshelfViewModel>();
             //service.RegisterTransientViewWithModel<BookSourceView, BookSourceViewModel>();
             //service.RegisterTransientViewWithModel<BookSourceDetailView, BookSourceDetailViewModel>();
             //service.RegisterTransientViewWithModel<SearchView, SearchViewModel>();

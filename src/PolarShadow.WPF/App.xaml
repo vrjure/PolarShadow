@@ -2,19 +2,23 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PolarShadow.WPF"
-             xmlns:m="clr-namespace:PolarShadow.Models;assembly=PolarShadow.ViewModels">
+             xmlns:m="clr-namespace:PolarShadow.Models;assembly=PolarShadow.ViewModels"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Assets/Values/RemixIcons.xaml"/>
                 <ResourceDictionary Source="/Assets/Values/Colors.xaml"/>
                 <ResourceDictionary Source="/Assets/Values/Sizes.xaml"/>
+                <ResourceDictionary Source="/Assets/Values/Fonts.xaml"/>
 
                 <ResourceDictionary Source="/Assets/Styles/GlyphsStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/ButtonStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/ListBoxStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/TextBlockStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/PopupContentStyles.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/SearchBoxStyles.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/UniformGridStyles.xaml"/>
 
                 <ResourceDictionary Source="/Assets/Themes/LightTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -25,6 +29,14 @@
                             HorizontalAlignment="Center"
                             FontSize="{StaticResource MenuIconLargeSize}"/>
             </DataTemplate>
+            
+            <DataTemplate DataType="{x:Type sys:String}">
+                <TextBlock Text="{Binding}"
+                           Style="{StaticResource BodyTextBlock}"
+                           TextWrapping="Wrap"
+                           TextTrimming="CharacterEllipsis"/>
+            </DataTemplate>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

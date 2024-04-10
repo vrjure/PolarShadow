@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:uc="clr-namespace:PolarShadow.Controls"
+                    xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors">
+    <Style TargetType="{x:Type TextBox}">
+        <Setter Property="FontFamily" Value="{StaticResource SegoeUI-Text}"/>
+        <Setter Property="FontSize" Value="{StaticResource Body}"/>
+    </Style>
+
+    <Style TargetType="uc:SearchBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="3"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="uc:SearchBox">
+                    <Border CornerRadius="10"
+                            Padding="{TemplateBinding Padding}"
+                            BorderThickness="1"
+                            BorderBrush="{DynamicResource SecondaryBorder}"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource TextBlockIcon}"
+                                        Text="{StaticResource searchBox_search}"
+                                        VerticalAlignment="Center"
+                                        FontSize="{TemplateBinding FontSize, Converter={x:Static uc:TextToIconSizeConverter.Instance}}"
+                                       Margin="0,0,5,0"/>
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          Margin="0"
+                                          Grid.Column="1"/>
+
+                            <Button Style="{StaticResource ButtonIcon}"
+                                    Content="{StaticResource searchBox_clear}"
+                                    Grid.Column="2"
+                                    VerticalAlignment="Center"
+                                    FontSize="{TemplateBinding FontSize, Converter={x:Static uc:TextToIconSizeConverter.Instance}}"
+                                    Margin="5,0"
+                                    Visibility="{TemplateBinding Text, Converter={x:Static uc:StringToVisibility.Instance}}"
+                                    x:Name="PART_ClearButton"/>
+                            <Button Style="{StaticResource ButtonIcon}"
+                                    Content="{StaticResource searchBox_execute}"
+                                    Grid.Column="3"
+                                    VerticalAlignment="Center"
+                                    FontSize="{TemplateBinding FontSize,Converter={x:Static uc:TextToIconSizeConverter.Instance}}"
+                                    Visibility="{TemplateBinding Text, Converter={x:Static uc:StringToVisibility.Instance}}"
+                                    Margin="5,0,0,0"/>
+                        </Grid>
+
+                        <behaviors:Interaction.Triggers>
+                            <behaviors:EventTrigger SourceObject="{Binding ElementName=PART_ClearButton}" EventName="Click">
+                                <behaviors:ChangePropertyAction TargetObject="{Binding RelativeSource={RelativeSource TemplatedParent}}" PropertyName="Text" Value=""/>
+                            </behaviors:EventTrigger>
+                        </behaviors:Interaction.Triggers>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

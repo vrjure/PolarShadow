@@ -33,4 +33,8 @@
     <sys:String x:Key="minimize">&#xF1AF;</sys:String>
     <sys:String x:Key="maximize">&#xEB7F;</sys:String>
     <sys:String x:Key="maximize-restore">&#xEB87;</sys:String>
+
+    <sys:String x:Key="searchBox_clear">&#xEB97;</sys:String>
+    <sys:String x:Key="searchBox_search">&#xF0D1;</sys:String>
+    <sys:String x:Key="searchBox_execute">&#xEA6E;</sys:String>
 </ResourceDictionary>

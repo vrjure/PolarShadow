@@ -55,7 +55,17 @@ namespace PolarShadow.ViewModels
         }
 
         private IRelayCommand _searchCommand;
-        public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(() => _nav.Navigate<SearchViewModel>(TopLayoutViewModel.NavigationName, canBack: true));
+        public IRelayCommand SearchCommand => _searchCommand ??= new RelayCommand(() =>
+        {
+            try
+            {
+                _nav.Navigate<SearchViewModel>(TopLayoutViewModel.NavigationName, canBack: true);
+            }
+            catch (Exception ex)
+            {
+                _notify.Show(ex);
+            }
+        });
 
         private IRelayCommand _refreshCommand;
         public IRelayCommand RefreshCommand => _refreshCommand ??= new RelayCommand(RefreshAction);

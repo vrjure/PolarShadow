@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:notify="clr-namespace:PolarShadow.Notification">
+                    xmlns:notify="clr-namespace:PolarShadow.Notification"
+                    xmlns:uc="clr-namespace:PolarShadow.Controls">
     <Style TargetType="notify:PopupContent">
         <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
         <Setter Property="Width" Value="300"/>
@@ -14,28 +15,24 @@
                         </Border.Effect>
                         <Border CornerRadius="5"
                                 ClipToBounds="True"
-                                Background="{TemplateBinding Background}">
+                                Background="{TemplateBinding Background}"
+                                Padding="5">
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <Rectangle Grid.ColumnSpan="3"
-                                           Grid.Row="0"
+                                <Rectangle Grid.Row="0"
                                            Height="8"
                                            HorizontalAlignment="Stretch"
-                                           x:Name="Indicator"/>
+                                           x:Name="Indicator"
+                                           Margin="0,5"/>
                                 <TextBlock Text="{TemplateBinding Title}"
-                                           FontWeight="Bold"
-                                           Grid.Row="1"/>
+                                           Grid.Row="1"
+                                           Style="{StaticResource SubtitleTextBlock}" Background="Red"
+                                           Visibility="{TemplateBinding Title, Converter={x:Static uc:StringToVisibility.Instance}}"/>
                                 <ContentPresenter Grid.Row="2"
-                                                  Grid.ColumnSpan="3"
                                                   TextBlock.Foreground="{TemplateBinding Foreground}"/>             
                             </Grid>
                         </Border>

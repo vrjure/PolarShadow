@@ -34,6 +34,8 @@ namespace PolarShadows
             return DependencyProperty.Register(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(defaultValue, changed, coerceValueCallback), validateValueCallback);
         }
 
+
+
         public static DependencyProperty RegisterAttached<TOwner, TValue>(string name)
         {
             return DependencyProperty.RegisterAttached(name, typeof(TValue), typeof(TOwner));

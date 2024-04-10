@@ -1,11 +1,54 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style TargetType="TextBlock">
-        <Setter Property="FontSize" Value="{StaticResource DefaultFontSize}"/>
+    <Style x:Key="CaptionTextBolck" TargetType="TextBox">
+        <Setter Property="FontFamily" Value="{StaticResource SegoeUI-Small}"/>
+        <Setter Property="FontSize" Value="{StaticResource Caption}"/>
     </Style>
     
-    <Style x:Key="TextBlockIcon" TargetType="TextBlock">
+    <Style x:Key="BodyTextBlock" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource SegoeUI-Text}"/>
+        <Setter Property="FontSize" Value="{StaticResource Body}"/>
+    </Style>
+
+    <Style x:Key="BodyStrongTextBlock" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource SegoeUI-Text-SemiBold}"/>
+        <Setter Property="FontSize" Value="{StaticResource Body}"/>
+    </Style>
+
+    <Style x:Key="SubtitleTextBlock" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource SegoeUI-Display-SemiBold}"/>
+        <Setter Property="FontSize" Value="{StaticResource Subtitle}"/>
+    </Style>
+
+    <Style x:Key="TitleTextBlock" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource SegoeUI-Display-SemiBold}"/>
+        <Setter Property="FontSize" Value="{StaticResource Title}"/>
+    </Style>
+
+    <Style x:Key="TitleLargeTextBlock" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource SegoeUI-Display-SemiBold}"/>
+        <Setter Property="FontSize" Value="{StaticResource TitleLarge}"/>
+    </Style>
+
+    <Style x:Key="DisplayTextBlock" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource SegoeUI-Display-SemiBold}"/>
+        <Setter Property="FontSize" Value="{StaticResource Display}"/>
+    </Style>
+
+    <Style TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlock}">
+    </Style>
+    
+    <Style x:Key="TextBlockIcon" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
         <Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
-        <Setter Property="FontSize" Value="{StaticResource DefaultIconFontSize}"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="InteractiveTextBloackIcon" TargetType="TextBlock" BasedOn="{StaticResource TextBlockIcon}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

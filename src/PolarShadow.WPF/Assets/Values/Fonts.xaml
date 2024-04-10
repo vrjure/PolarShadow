@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <FontFamily x:Key="SegoeUI-Small">pack:application:,,,/Assets/Fonts/SegoeUI-VF.ttf#Segoe UI Variable Small</FontFamily>
+    <FontFamily x:Key="SegoeUI-Small-Semibold">pack:application:,,,/Assets/Fonts/SegoeUI-VF.ttf#Segoe UI Variable Small Semibold</FontFamily>
+    
+    <FontFamily x:Key="SegoeUI-Text">pack:application:,,,/Assets/Fonts/SegoeUI-VF.ttf#Segoe UI Variable Text</FontFamily>
+    <FontFamily x:Key="SegoeUI-Text-SemiBold">pack:application:,,,/Assets/Fonts/SegoeUI-VF.ttf#Segoe UI Variable Text SemiBold</FontFamily>
+    
+    <FontFamily x:Key="SegoeUI-Display-SemiBold">pack:application:,,,/Assets/Fonts/SegoeUI-VF.ttf#Segoe UI Variable Display SemiBold</FontFamily>
+    
+</ResourceDictionary>

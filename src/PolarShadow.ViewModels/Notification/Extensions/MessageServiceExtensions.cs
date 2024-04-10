@@ -16,7 +16,7 @@ namespace PolarShadow.Notification
 
         public static void Show(this IMessageService notify, Exception ex)
         {
-            notify.Show(new Message() { Content = ex.Message});
+            notify.Show(new Message() { Content = ex.Message, Expiration = ErrorExpiration, MessageType = MessageType.Error});
         }
 
         public static void ShowSuccess(this IMessageService manager) => Show(manager, "Success");

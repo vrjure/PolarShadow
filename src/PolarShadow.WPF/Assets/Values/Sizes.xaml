@@ -11,4 +11,11 @@
     <sys:Double x:Key="MenuIconLargeSize">30</sys:Double>
     
     <sys:Double x:Key="WindowCaptionHeight">60</sys:Double>
+    
+    <sys:Double x:Key="Caption">12</sys:Double>
+    <sys:Double x:Key="Body">14</sys:Double>
+    <sys:Double x:Key="Subtitle">20</sys:Double>
+    <sys:Double x:Key="Title">28</sys:Double>
+    <sys:Double x:Key="TitleLarge">40</sys:Double>
+    <sys:Double x:Key="Display">48</sys:Double>
 </ResourceDictionary>

@@ -29,11 +29,10 @@
                         nav:NavigationManager.BackName="{x:Static vm:TopLayoutViewModel.NavigationName}"
                         Visibility="Collapsed"/>  
                 <ContentControl toolBar:ToolBarAttached.Name="{x:Static vm:TopLayoutViewModel.CenterTitleBarContainer}"
-                                Grid.Column="2"
+                                Grid.ColumnSpan="5"
                                 WindowChrome.IsHitTestVisibleInChrome="True"
                                 VerticalAlignment="Center"/>
                 <ContentControl toolBar:ToolBarAttached.Name="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}"
-                                Grid.RowSpan="2"
                                 Grid.Column="3"
                                 WindowChrome.IsHitTestVisibleInChrome="True"
                                 VerticalAlignment="Center"/>
@@ -47,7 +46,8 @@
                             Content="{StaticResource minimize}"
                             WindowChrome.IsHitTestVisibleInChrome="True"
                             x:Name="BtnMinimize"
-                            Click="BtnMinimize_Click"/>
+                            Click="BtnMinimize_Click"
+                            />
                     <Button Style="{StaticResource ButtonIcon}"
                             Content="{StaticResource maximize}"
                             Grid.Column="1"
