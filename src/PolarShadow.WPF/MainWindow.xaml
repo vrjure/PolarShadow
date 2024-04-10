@@ -11,7 +11,8 @@
         nav:NavigationManager.RegisterLoad="True">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{DynamicResource WindowCaptionHeight}" 
-                      UseAeroCaptionButtons="False"/>
+                      UseAeroCaptionButtons="False"
+                      GlassFrameThickness="-1"/>
     </WindowChrome.WindowChrome>
     <Window.Template>
         <ControlTemplate TargetType="local:MainWindow">

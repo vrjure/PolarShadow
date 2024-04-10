@@ -46,8 +46,6 @@ namespace PolarShadow.WPF.Views
             var mainWindow = Application.Current.MainWindow;
             if (mainWindow.WindowState == WindowState.Normal)
             {
-                mainWindow.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
-                mainWindow.MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth;
                 mainWindow.WindowState = WindowState.Maximized;
             }
             else if (mainWindow.WindowState == WindowState.Maximized)
