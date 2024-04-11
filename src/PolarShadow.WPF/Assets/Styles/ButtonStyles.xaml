@@ -19,7 +19,7 @@
 
     <Style x:Key="ButtonIcon" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
         <Setter Property="FontSize" Value="{StaticResource Subtitle}"/>
         <Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -46,7 +46,7 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
                 <Setter Property="Background" Value="Transparent"/>
             </Trigger>
         </Style.Triggers>

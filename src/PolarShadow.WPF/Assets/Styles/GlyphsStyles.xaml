@@ -3,13 +3,13 @@
     <Style x:Key="RemixIcon" TargetType="Glyphs">
         <Setter Property="FontUri" Value="pack://application:,,,/Assets/Fonts/remixicon.ttf"/>
         <Setter Property="FontRenderingEmSize" Value="{StaticResource Subtitle}"/>
-        <Setter Property="Fill" Value="{DynamicResource SecondaryText}"/>
+        <Setter Property="Fill" Value="{DynamicResource PrimaryText}"/>
     </Style>
 
     <Style x:Key="InteractiveRemixIcon" TargetType="Glyphs" BasedOn="{StaticResource RemixIcon}">
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Fill" Value="{DynamicResource PrimaryText}"/>
+                <Setter Property="Fill" Value="{DynamicResource SecondaryText}"/>
             </Trigger>
         </Style.Triggers>
     </Style>

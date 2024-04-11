@@ -39,7 +39,7 @@
     </Style>
     
     <Style x:Key="TextBlockIcon" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
         <Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
         <Setter Property="TextAlignment" Value="Center"/>
     </Style>
@@ -47,7 +47,7 @@
     <Style x:Key="InteractiveTextBloackIcon" TargetType="TextBlock" BasedOn="{StaticResource TextBlockIcon}">
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
             </Trigger>
         </Style.Triggers>
     </Style>

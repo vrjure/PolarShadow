@@ -13,7 +13,7 @@
     </Style>
 
     <Style x:Key="MenuItem" TargetType="ListBoxItem">
-        <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
@@ -25,12 +25,13 @@
                                        Visibility="Hidden"
                                        Fill="{DynamicResource AccentBackground}"
                                        x:Name="PART_Indicator"/>
-                            <ContentPresenter Margin="20,0,20,6"/>
+                            <ContentPresenter Margin="20,0,20,6"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}"/>
                         </DockPanel>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Visibility" TargetName="PART_Indicator" Value="Visible"/>

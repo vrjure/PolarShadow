@@ -11,7 +11,7 @@
                 <ControlTemplate TargetType="notify:PopupContent">
                     <Border Padding="5">
                         <Border.Effect>
-                            <DropShadowEffect ShadowDepth="1"/>
+                            <DropShadowEffect ShadowDepth="1" BlurRadius="10" Color="LightGray"/>
                         </Border.Effect>
                         <Border CornerRadius="5"
                                 ClipToBounds="True"
