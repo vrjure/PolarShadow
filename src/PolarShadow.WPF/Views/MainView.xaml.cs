@@ -48,6 +48,8 @@ namespace PolarShadow.WPF.Views
                 //        new(){ Name = "test", Icon=FindResource<string>("flask"), VMType = typeof(VideoPlayerViewModel)}
                 //#endif
             };
+
+            VM.SelectedValue = VM.MenuItems.FirstOrDefault();
         }
     }
 }

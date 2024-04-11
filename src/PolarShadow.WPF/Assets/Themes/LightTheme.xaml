@@ -24,6 +24,7 @@
 
     <SolidColorBrush x:Key="Disable" Color="{DynamicResource 160}"/>
 
-    
+    <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="{DynamicResource N140}"/>
+    <SolidColorBrush x:Key="ScrollBarThumbMouseOverBrush" Color="{DynamicResource N100}"/>
 
 </ResourceDictionary>

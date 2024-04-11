@@ -19,13 +19,14 @@
                 <ResourceDictionary Source="/Assets/Styles/PopupContentStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/SearchBoxStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/UniformGridStyles.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/ScrollBarStyles.xaml"/>
 
                 <ResourceDictionary Source="/Assets/Themes/LightTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type m:MenuIconItem}">
                 <TextBlock Text="{Binding Icon}"
-                            Style="{StaticResource TextBlockIcon}"
+                            Style="{StaticResource InteractiveTextBloackIcon}"
                             HorizontalAlignment="Center"
                             FontSize="{StaticResource MenuIconLargeSize}"/>
             </DataTemplate>
