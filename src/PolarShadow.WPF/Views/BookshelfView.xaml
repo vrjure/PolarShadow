@@ -9,8 +9,7 @@
              xmlns:vm="clr-namespace:PolarShadow.ViewModels;assembly=PolarShadow.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             nav:NavigationManager.RegisterLoad="True"
-             toolBar:ToolBarAttached.AddToolBar="True">
+             nav:NavigationManager.RegisterLoad="True">
     <toolBar:ToolBarAttached.ToolBar>
         <toolBar:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
             <Button Style="{StaticResource ButtonIcon}"
@@ -20,7 +19,7 @@
     </toolBar:ToolBarAttached.ToolBar>
     <UserControl.Content>
         <Grid>
-
+            
         </Grid>
     </UserControl.Content>
 

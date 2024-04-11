@@ -15,15 +15,6 @@ namespace PolarShadow.ToolBar
     {
         private static Dictionary<string, ContentControl> _containers = new Dictionary<string, ContentControl>(StringComparer.OrdinalIgnoreCase);
 
-        public static readonly DependencyProperty AddToolBarProperty = DP.RegisterAttached<ContentControl, bool>("AddToolBar", PropertyChanged);
-        public static bool GetAddToolBar(ContentControl control)
-        {
-            return (bool)control.GetValue(AddToolBarProperty);
-        }
-        public static void SetAddToolBar(ContentControl control, bool value)
-        {
-            control.SetValue(AddToolBarProperty, value);
-        }
         
         public static readonly DependencyProperty NameProperty = DP.RegisterAttached<ContentControl,string>("Name", PropertyChanged);
         public static string GetName(ContentControl control)
@@ -35,9 +26,14 @@ namespace PolarShadow.ToolBar
             control.SetValue(NameProperty, value);
         }
 
-        public static readonly DependencyProperty ToolBarProperty = DP.RegisterAttached<ContentControl, List<ToolBarTemplate>>("ToolBar",[], PropertyChanged);
+        public static readonly DependencyProperty ToolBarProperty = DP.RegisterAttached<ContentControl, List<ToolBarTemplate>>("ToolBar", PropertyChanged);
         public static List<ToolBarTemplate> GetToolBar(ContentControl control)
         {
+            var templates = control.GetValue(ToolBarProperty);
+            if (templates == null)
+            {
+                SetToolBar(control, new List<ToolBarTemplate>());
+            }
             return (List<ToolBarTemplate>)control.GetValue(ToolBarProperty);
         }
         public static void SetToolBar(ContentControl control, List<ToolBarTemplate> value)
@@ -91,7 +87,7 @@ namespace PolarShadow.ToolBar
             {
                 NamePropertyChanged(d, e);
             }
-            else if (e.Property == AddToolBarProperty)
+            else if (e.Property == ToolBarProperty)
             {
                 ToolBarPropertyChanged(d, e);
             }
