@@ -20,7 +20,7 @@
             <ListBox Style="{StaticResource HorizontalListBox}"
                      ItemsSource="{Binding MenuItems}"
                      HorizontalAlignment="Center"
-                     ItemContainerStyle="{StaticResource MenuItem}"
+                     ItemContainerStyle="{StaticResource ListBoxMenuItem}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
                      SelectedValue="{Binding SelectedValue, Mode=TwoWay}">

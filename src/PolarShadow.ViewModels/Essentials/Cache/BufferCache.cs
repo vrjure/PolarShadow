@@ -122,18 +122,5 @@ namespace PolarShadow.Essentials
         {
             _memoryCache.Set(key, buffer, new MemoryCacheEntryOptions { SlidingExpiration = _slidingExpiration});
         }
-
-        public static string SHA(string url)
-        {
-            using var sha = SHA256.Create();
-            var buffer = sha.ComputeHash(Encoding.UTF8.GetBytes(url));
-            var sb = new StringBuilder();
-
-            foreach (var item in buffer)
-            {
-                sb.Append(item.ToString("x2"));
-            }
-            return sb.ToString();
-        }
     }
 }

@@ -62,6 +62,7 @@ namespace PolarShadow.WPF
 
         private void RegisterUtilities(IServiceCollection service)
         {
+            service.RegisterCache(new FileCacheOptions { CacheFolder = CacheFolder});
             service.AddSingleton<INavigationService, NavigationService>();
             service.AddSingleton<IMessageService, NotificationContainer>();
         }

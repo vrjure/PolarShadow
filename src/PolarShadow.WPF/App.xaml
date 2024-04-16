@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PolarShadow.WPF"
              xmlns:m="clr-namespace:PolarShadow.Models;assembly=PolarShadow.ViewModels"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib">
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:img="clr-namespace:PolarShadow.ImageHelper"
+             xmlns:ctrl="clr-namespace:PolarShadow.Controls">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -11,7 +13,10 @@
                 <ResourceDictionary Source="/Assets/Values/Colors.xaml"/>
                 <ResourceDictionary Source="/Assets/Values/Sizes.xaml"/>
                 <ResourceDictionary Source="/Assets/Values/Fonts.xaml"/>
+                
+                <ResourceDictionary Source="/Assets/Styles/BaseStoryboards.xaml"/>
 
+                <ResourceDictionary Source="/Assets/Styles/BorderStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/GlyphsStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/ButtonStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/ListBoxStyles.xaml"/>
@@ -20,6 +25,7 @@
                 <ResourceDictionary Source="/Assets/Styles/SearchBoxStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/UniformGridStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/ScrollBarStyles.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/ImageStyles.xaml"/>
 
                 <ResourceDictionary Source="/Assets/Themes/LightTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -38,6 +44,50 @@
                            TextTrimming="CharacterEllipsis"/>
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type m:ResourceModelRefreshItem}">
+                <Grid>
+                    <Image img:ImageAttached.Src="{Binding Data.ImageSrc}"
+                           img:ImageAttached.Headers="{Binding Data.ImageSrcHeaders}"
+                           Style="{StaticResource CoverPlaceholder}"
+		                   Stretch="Fill"/>
+                    <Border VerticalAlignment="Bottom">
+                        <Border.Background>
+                            <SolidColorBrush Color="{DynamicResource N150}" Opacity="0.8"/>
+                        </Border.Background>
+                        <TextBlock Text="{Binding Data.Name}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Style="{StaticResource SubtitleTextBlock}"
+                                   TextAlignment="Center"/>
+                    </Border>
+                    <Ellipse Fill="{DynamicResource AccentBackground}"
+                             Width="10"
+                             Height="10"
+                             HorizontalAlignment="Left"
+                             VerticalAlignment="Top"
+                             Margin="2,2,0,0"
+                             Visibility="{Binding IsNew, Converter={x:Static ctrl:BoolToVisibility.Instance}}"/>
+                    <TextBlock Style="{StaticResource RefreshItemRefreshTextBlockIcon}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource PrimaryBackground}"
+                               FontSize="{StaticResource Title}">
+                    </TextBlock>
+                    <Border VerticalAlignment="Top"
+						    HorizontalAlignment="Right"
+						    CornerRadius="5"
+                            Padding="5,2">
+                        <Border.Background>
+                            <SolidColorBrush Color="{DynamicResource N150}" Opacity="0.8"/>
+                        </Border.Background>
+                        <TextBlock Text="{Binding Data.Site}"
+							       TextWrapping="NoWrap"
+							       TextTrimming="CharacterEllipsis"
+							       TextAlignment="Center"
+                                   HorizontalAlignment="Stretch"/>
+                    </Border>
+                </Grid>
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

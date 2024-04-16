@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:PolarShadow.ViewModels;assembly=PolarShadow.ViewModels"
         xmlns:local="clr-namespace:PolarShadow.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="500" Width="900"
         nav:NavigationManager.RegisterLoad="True">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{DynamicResource WindowCaptionHeight}" 

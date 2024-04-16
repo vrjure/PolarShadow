@@ -13,6 +13,8 @@
     <None Remove="Assets\Fonts\remixicon.ttf" />
     <None Remove="Assets\Fonts\SegoeFluentIcons.ttf" />
     <None Remove="Assets\Fonts\SegoeUI-VF.ttf" />
+    <None Remove="Assets\Icon.png" />
+    <None Remove="Assets\Images\item-background.png" />
     <None Remove="Assets\PrefabParams.json" />
   </ItemGroup>
 
@@ -36,6 +38,8 @@
   <ItemGroup>
     <Resource Include="Assets\Fonts\remixicon.ttf" />
     <Resource Include="Assets\Fonts\SegoeFluentIcons.ttf" />
+    <Resource Include="Assets\Icon.png" />
+    <Resource Include="Assets\Images\item-background.png" />
     <Resource Include="Assets\PrefabParams.json" />
   </ItemGroup>
 

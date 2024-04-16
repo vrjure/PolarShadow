@@ -19,8 +19,19 @@
     </toolBar:ToolBarAttached.ToolBar>
     <UserControl.Content>
         <Grid>
-            
+            <ListBox ScrollViewer.CanContentScroll="False"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ItemsSource="{Binding MineResource}"
+                     ItemContainerStyle="{StaticResource ListBoxGridItem}"
+                     Style="{StaticResource GridListBox}"/>
+
+            <Button Style="{StaticResource ButtonIcon}"
+                    Content="{StaticResource refresh}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,8,8"
+                    Command="{Binding RefreshCommand}"/>
         </Grid>
     </UserControl.Content>
-
 </UserControl>

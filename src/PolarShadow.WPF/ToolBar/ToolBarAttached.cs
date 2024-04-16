@@ -16,7 +16,7 @@ namespace PolarShadow.ToolBar
         private static Dictionary<string, ContentControl> _containers = new Dictionary<string, ContentControl>(StringComparer.OrdinalIgnoreCase);
 
         
-        public static readonly DependencyProperty NameProperty = DP.RegisterAttached<ContentControl,string>("Name", PropertyChanged);
+        public static readonly DependencyProperty NameProperty = DP.RegisterAttached<ToolBarAttached, string>("Name", PropertyChanged);
         public static string GetName(ContentControl control)
         {
             return (string)control.GetValue(NameProperty);
@@ -26,17 +26,19 @@ namespace PolarShadow.ToolBar
             control.SetValue(NameProperty, value);
         }
 
-        public static readonly DependencyProperty ToolBarProperty = DP.RegisterAttached<ContentControl, List<ToolBarTemplate>>("ToolBar", PropertyChanged);
-        public static List<ToolBarTemplate> GetToolBar(ContentControl control)
+        //owner设置为ContentControl,初始化时会调用GetToolBar
+        public static readonly DependencyProperty ToolBarProperty = DP.RegisterAttached<ContentControl, ToolBarTemplateCollection>("ToolBar", default, PropertyChanged);
+        public static ToolBarTemplateCollection GetToolBar(ContentControl control)
         {
-            var templates = control.GetValue(ToolBarProperty);
-            if (templates == null)
+            var collection = control.GetValue(ToolBarProperty) as ToolBarTemplateCollection;
+            if (collection == null)
             {
-                SetToolBar(control, new List<ToolBarTemplate>());
+                collection = new ToolBarTemplateCollection();
+                SetToolBar(control, collection);
             }
-            return (List<ToolBarTemplate>)control.GetValue(ToolBarProperty);
+            return (ToolBarTemplateCollection)control.GetValue(ToolBarProperty);
         }
-        public static void SetToolBar(ContentControl control, List<ToolBarTemplate> value)
+        public static void SetToolBar(ContentControl control, ToolBarTemplateCollection value)
         {
             control.SetValue(ToolBarProperty, value);
         }

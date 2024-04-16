@@ -235,7 +235,7 @@ namespace PolarShadow.ViewModels
 
                 if (!string.IsNullOrEmpty(this.Resource.ImageSrc))
                 {
-                    await _bufferCache.CacheFileIfExisedInMemory(BufferCache.SHA(this.Resource.ImageSrc));
+                    await _bufferCache.CacheFileIfExisedInMemory(SHA.SHA256(this.Resource.ImageSrc));
                 }
             }
             catch (Exception ex)
@@ -253,7 +253,7 @@ namespace PolarShadow.ViewModels
 
                 if (!string.IsNullOrEmpty(this.Resource.ImageSrc))
                 {
-                    _bufferCache.Remove(BufferCache.SHA(this.Resource.ImageSrc), BufferLocation.File);
+                    _bufferCache.Remove(SHA.SHA256(this.Resource.ImageSrc), BufferLocation.File);
                 }
                 IsSaved = false;
             }

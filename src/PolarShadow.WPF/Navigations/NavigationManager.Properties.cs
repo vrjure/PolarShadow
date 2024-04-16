@@ -13,7 +13,7 @@ namespace PolarShadow.Navigations
     internal sealed partial class NavigationManager
     {
 
-        public static readonly DependencyProperty ContainerNameProperty = DP.RegisterAttached<ContentControl, string>("ContainerName", PropertyChanged);
+        public static readonly DependencyProperty ContainerNameProperty = DP.RegisterAttached<NavigationManager, string>("ContainerName", PropertyChanged);
         public static string GetContainerName(ContentControl control)
         {
             return (string)control.GetValue(ContainerNameProperty);
@@ -23,7 +23,7 @@ namespace PolarShadow.Navigations
             control.SetValue(ContainerNameProperty, value);
         }
 
-        public static readonly DependencyProperty BackNameProperty = DP.RegisterAttached<FrameworkElement, string>("BackName", PropertyChanged);
+        public static readonly DependencyProperty BackNameProperty = DP.RegisterAttached<NavigationManager, string>("BackName", PropertyChanged);
         public static string GetBackName(FrameworkElement control)
         {
             return (string)control.GetValue(BackNameProperty);
@@ -33,7 +33,7 @@ namespace PolarShadow.Navigations
             control.SetValue(BackNameProperty, value);
         }
 
-        public static readonly DependencyProperty RegisterLoadProperty = DP.RegisterAttached<FrameworkElement, bool>("RegisterLoad", PropertyChanged);
+        public static readonly DependencyProperty RegisterLoadProperty = DP.RegisterAttached<NavigationManager, bool>("RegisterLoad", PropertyChanged);
         public static bool GetRegisterLoad(FrameworkElement control)
         {
             return (bool)control.GetValue(RegisterLoadProperty);

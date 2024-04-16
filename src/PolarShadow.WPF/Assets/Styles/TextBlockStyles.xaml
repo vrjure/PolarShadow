@@ -51,4 +51,33 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+
+    <Style x:Key="RotateTextBlockIcon" TargetType="TextBlock" BasedOn="{StaticResource TextBlockIcon}">
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <RotateTransform/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="RefreshItemRefreshTextBlockIcon" TargetType="TextBlock" BasedOn="{StaticResource RotateTextBlockIcon}">
+        <Setter Property="Text" Value="{StaticResource loading}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsRefresh}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard x:Name="startRotate" Storyboard="{StaticResource Spin}"/>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <RemoveStoryboard BeginStoryboardName="startRotate"/>
+                </DataTrigger.ExitActions>
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsRefresh}" Value="False">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>
