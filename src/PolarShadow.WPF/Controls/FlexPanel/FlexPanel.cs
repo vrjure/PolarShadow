@@ -7,16 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace PolarShadow.Controls
 {
-    class FlexPanel : Panel
+    class FlexPanel : Panel, IScrollInfo
     {
+        private const double Epsilon = 0.00000153;
         private bool _isHorizontal => FlexDirection == FlexDirection.Row || FlexDirection == FlexDirection.RowReverse;
         private bool _isReverse => FlexDirection == FlexDirection.RowReverse || FlexDirection == FlexDirection.ColumnReverse;
-        private int _lineCount = 0;
-        private double _needTotalV = 0;
 
+        private ScrollData _scrollData;
+        private LayoutData _layoutData;
 
         public static readonly DependencyProperty FlexDirectionProperty = DP.Register<FlexPanel, FlexDirection>(nameof(FlexDirection), FlexDirection.Row, metadataCreator: () => new FrameworkPropertyMetadata { AffectsMeasure = true, AffectsArrange = true });
         public FlexDirection FlexDirection
@@ -39,7 +42,7 @@ namespace PolarShadow.Controls
             set => SetValue(JustifyContentProperty, value);
         }
 
-        public static readonly DependencyProperty JustifyItemsProperty = DP.Register<FlexPanel, FlexAlign>(nameof(JustifyItems), FlexAlign.Center, metadataCreator: () => new FrameworkPropertyMetadata { AffectsArrange = true});
+        public static readonly DependencyProperty JustifyItemsProperty = DP.Register<FlexPanel, FlexAlign>(nameof(JustifyItems), FlexAlign.Center, metadataCreator: () => new FrameworkPropertyMetadata { AffectsArrange = true });
         public FlexAlign JustifyItems
         {
             get => (FlexAlign)GetValue(JustifyItemsProperty);
@@ -111,22 +114,293 @@ namespace PolarShadow.Controls
             element.SetValue(FlexShrinkProperty, value);
         }
 
+        public static readonly DependencyProperty FloatProperty = DP.RegisterAttached<FlexPanel, bool>("Float");
+        public static bool GetFloat(UIElement element)
+        {
+            return (bool)element.GetValue(FloatProperty);
+        }
+        public static void SetFloat(UIElement element, bool value)
+        {
+            element.SetValue(FloatProperty, value);
+        }
+
+
+        public ScrollViewer ScrollOwner
+        {
+            get
+            {
+                EnsureScrollData();
+                return _scrollData._scrollOwner;
+            }
+            set
+            {
+                EnsureScrollData();
+                if (value != _scrollData._scrollOwner)
+                {
+                    _scrollData._scrollOwner = value;
+                }
+            }
+        }
+
+        public bool CanHorizontallyScroll
+        {
+            get
+            {
+                if (_scrollData == null) return false;
+                return _scrollData._canHorizontal;
+            }
+            set
+            {
+                EnsureScrollData();
+                if (_scrollData._canHorizontal != value)
+                {
+                    _scrollData._canHorizontal = value;
+                    InvalidateMeasure();
+                }
+            }
+        }
+
+        public bool CanVerticallyScroll
+        {
+            get
+            {
+                if (_scrollData == null) return false;
+                return _scrollData._canVertical;
+            }
+            set
+            {
+                EnsureScrollData();
+                if (_scrollData._canVertical != value)
+                {
+                    _scrollData._canVertical = value;
+                    InvalidateMeasure();
+                }
+            }
+        }
+
+        public double ExtentHeight => _layoutData == null ? 0d : _layoutData._extent.Height;
+
+        public double ExtentWidth => _layoutData == null ? 0d : _layoutData._extent.Width;
+
+        public double ViewportHeight => _layoutData == null ? 0d : _layoutData._viewPort.Height;
+
+        public double ViewportWidth => _layoutData == null ? 0d : _layoutData._viewPort.Width;
+
+        public double HorizontalOffset => _scrollData == null ? 0d : -_scrollData._offset.X;
+
+        public double VerticalOffset => _scrollData == null ? 0d : -_scrollData._offset.Y;
+
+        public void LineUp()
+        {
+            SetVerticalOffset(_scrollData._offset.Y + _layoutData.GetLineUpOffset());
+        }
+
+        public void LineDown()
+        {
+            SetVerticalOffset(_scrollData._offset.Y - _layoutData.GetLineDownOffset());
+        }
+
+        public void LineLeft()
+        {
+            SetHorizontalOffset(_scrollData._offset.X - _layoutData.GetLineLeftOffset());
+        }
+
+        public void LineRight()
+        {
+            SetHorizontalOffset(_scrollData._offset.X + _layoutData.GetLineRightOffset());
+        }
+
+        public void MouseWheelDown()
+        {
+            LineDown();
+        }
+
+        public void MouseWheelLeft()
+        {
+            LineLeft();
+        }
+
+        public void MouseWheelRight()
+        {
+            LineRight();
+        }
+
+        public void MouseWheelUp()
+        {
+            LineUp();
+        }
+
+        public void PageUp()
+        {
+            SetVerticalOffset(_scrollData._offset.Y - ViewportHeight);
+        }
+
+        public void PageDown()
+        {
+            SetVerticalOffset(_scrollData._offset.Y + ViewportHeight);
+        }
+
+        public void PageLeft()
+        {
+            SetHorizontalOffset(_scrollData._offset.X - ViewportWidth);
+        }
+
+        public void PageRight()
+        {
+            SetHorizontalOffset(_scrollData._offset.X + ViewportWidth);
+        }
+
+        public Rect MakeVisible(Visual visual, Rect rectangle)
+        {
+            var childTransform = visual.TransformToAncestor(this);
+            rectangle = childTransform.TransformBounds(rectangle);
+
+            if (!IsScrolling())
+            {
+                return rectangle;
+            }
+
+            EnsureLayoutData();
+
+            var newOffset = new Vector();
+            if (_scrollData._canHorizontal)
+            {
+                if (rectangle.X < 0)
+                {
+                    newOffset.X = _scrollData._offset.X - rectangle.X;
+                }
+                else if (rectangle.X > _layoutData._viewPort.Width)
+                {
+                    newOffset.X = _scrollData._offset.X - (rectangle.Right - _layoutData._viewPort.Width);
+                }
+            }
+
+            if (_scrollData._canVertical)
+            {
+                if (rectangle.Y < 0)
+                {
+                    newOffset.Y = _scrollData._offset.Y - rectangle.Y;
+                }
+                else if (rectangle.Y > _layoutData._viewPort.Height)
+                {
+                    newOffset.Y = _scrollData._offset.Y - (rectangle.Bottom - _layoutData._viewPort.Height);
+                }
+            }
+
+            if (!IsClose(_scrollData._offset, newOffset))
+            {
+                _scrollData._offset = newOffset;
+                InvalidateMeasure();
+                OnScrollChange();
+            }
+            
+            return rectangle;
+        }
+
+        public void SetHorizontalOffset(double offset)
+        {
+            EnsureScrollData();
+            if (!IsClose(offset, _scrollData._offset.X))
+            {
+                if (offset > 0)
+                {
+                    return;
+                }
+                _scrollData._offset.X = offset;
+                InvalidateMeasure();
+                OnScrollChange();
+            }
+        }
+
+        public void SetVerticalOffset(double offset)
+        {
+            EnsureScrollData();
+            if (!IsClose(offset, _scrollData._offset.Y))
+            {
+                if (offset > 0)
+                {
+                    return;
+                }
+                _scrollData._offset.Y = offset;
+                InvalidateMeasure();
+                OnScrollChange();
+            }
+        }
+
+        private bool CanMouseWheelVerticallyScroll
+        {
+            get { return (SystemParameters.WheelScrollLines > 0); }
+        }
+
+        private void EnsureScrollData()
+        {
+            if (_scrollData == null)
+            {
+                _scrollData = new ScrollData();
+                EnsureLayoutData();
+            }
+        }
+
+        private void ResetScrolling()
+        {
+            InvalidateMeasure();
+        }
+
+        private void OnScrollChange()
+        {
+            if (ScrollOwner != null) 
+            { 
+                ScrollOwner.InvalidateScrollInfo(); 
+            }
+        }
+
+        private static bool IsClose(double value1, double value2)
+        {
+            if (value1 == value2) return true;
+
+            var delta = value1 - value2;
+            return (delta < Epsilon) && (delta > -Epsilon);
+        }
+
+        private static bool IsClose(Vector value1, Vector value2)
+        {
+            if (value1 == value2) return true;
+            var delta = value1 - value2;
+            return (delta.X > -Epsilon) && (delta.X < Epsilon)
+                && (delta.Y > -Epsilon) && (delta.Y > Epsilon);
+        }
+
+        private static bool IsClose(UVSize value1, UVSize value2)
+        {
+            if (value1 == value2) return true;
+            var deltaU = Math.Abs(value1.U - value2.U);
+            var deltaV= Math.Abs(value1.V - value2.V);
+            return deltaU < Epsilon
+                && deltaV < Epsilon;
+        }
+
+        private void EnsureLayoutData()
+        {
+            if (_layoutData == null)
+            {
+                _layoutData = new LayoutData();
+            }
+            _layoutData.SetScrollData(_scrollData);
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
             var panelSize = new UVSize(FlexDirection);
             var constraintSize = new UVSize(FlexDirection, availableSize.Width, availableSize.Height);
             var curLineSize = new UVSize(FlexDirection);
             var shouldWrap = FlexWrap != FlexWrap.NoWrap;
+            var fValid = true;
 
             var children = InternalChildren;
-            if (children.Count > 0)
-            {
-                _lineCount = 1;
-            }
-            else
-            {
-                _lineCount = 0;
-            }
+
+            EnsureLayoutData();
+            _layoutData.Reset();
+
             for (int i = 0, count = children.Count; i < count; i++)
             {
                 var child = children[i];
@@ -139,10 +413,10 @@ namespace PolarShadow.Controls
                 {
                     if (shouldWrap)
                     {
+                        _layoutData.AddLine(panelSize.U, panelSize.V, curLineSize, _isHorizontal);
                         panelSize.U = Math.Max(panelSize.U, curLineSize.U);
                         panelSize.V += curLineSize.V;
                         curLineSize = sz;
-                        _lineCount++;
                     }
                     else
                     {
@@ -157,9 +431,19 @@ namespace PolarShadow.Controls
                 }
             }
 
+            _layoutData.AddLine(panelSize.U, panelSize.V, curLineSize, _isHorizontal);
             panelSize.U = Math.Max(curLineSize.U, panelSize.U);
             panelSize.V += curLineSize.V;
-            _needTotalV = panelSize.V;
+
+            fValid = IsClose(_layoutData._viewPort, constraintSize);
+            fValid &= IsClose(_layoutData._extent, panelSize);
+
+            if (!fValid)
+            {
+                _layoutData._viewPort = constraintSize;
+                _layoutData._extent = panelSize;
+                OnScrollChange();
+            }
 
             return new Size(panelSize.Width, panelSize.Height);
         }
@@ -176,24 +460,29 @@ namespace PolarShadow.Controls
             var alignContent = AlignContent;
             var v = 0d;
             var appendV = 0d;
-            var remainV = uvFinal.V - _needTotalV;
-            switch (alignContent)
+            var remainV = uvFinal.V - _layoutData._extent.V;
+            var lineCount = _layoutData.LineCount;
+
+            if (remainV > 0)
             {
-                case FlexAlignContent.End:
-                    v = remainV;
-                    break;
-                case FlexAlignContent.Center:
-                    v = remainV / 2;
-                    break;
-                case FlexAlignContent.SpaceAround:
-                    v = remainV / (_lineCount * 2);
-                    break;
-                case FlexAlignContent.SpaceEvenly:
-                    v = remainV / (_lineCount + 1);
-                    break;
-                case FlexAlignContent.Stretch:
-                    appendV = remainV / _lineCount;
-                    break;
+                switch (alignContent)
+                {
+                    case FlexAlignContent.End:
+                        v = remainV;
+                        break;
+                    case FlexAlignContent.Center:
+                        v = remainV / 2;
+                        break;
+                    case FlexAlignContent.SpaceAround:
+                        v = remainV / (lineCount * 2);
+                        break;
+                    case FlexAlignContent.SpaceEvenly:
+                        v = remainV / (lineCount + 1);
+                        break;
+                    case FlexAlignContent.Stretch:
+                        appendV = remainV / lineCount;
+                        break;
+                }
             }
 
             var children = InternalChildren;
@@ -206,7 +495,7 @@ namespace PolarShadow.Controls
                 var shrink = GetFlexShrink(child);
 
                 var sz = GetItemBasisUVSize(child, uvFinal.U);
-                if(alignContent == FlexAlignContent.Stretch)
+                if (alignContent == FlexAlignContent.Stretch)
                 {
                     sz.V += appendV;
                 }
@@ -229,16 +518,16 @@ namespace PolarShadow.Controls
                         switch (alignContent)
                         {
                             case FlexAlignContent.SpaceBetween:
-                                if (_lineCount > 1)
+                                if (lineCount > 1)
                                 {
-                                    v += curLineSize.V + remainV / (_lineCount - 1);
+                                    v += curLineSize.V + remainV / (lineCount - 1);
                                 }
                                 break;
                             case FlexAlignContent.SpaceAround:
-                                v += curLineSize.V + remainV / (_lineCount * 2) * 2;
+                                v += curLineSize.V + remainV / (lineCount * 2) * 2;
                                 break;
                             case FlexAlignContent.SpaceEvenly:
-                                v += curLineSize.V + remainV / (_lineCount + 1);
+                                v += curLineSize.V + remainV / (lineCount + 1);
                                 break;
                             default:
                                 v += curLineSize.V;
@@ -279,7 +568,7 @@ namespace PolarShadow.Controls
             return finalSize;
         }
 
-       
+
 
         private void ArrangeLine(int startIndex, int endIndex, UVSize lineSize, UVSize totalSize, double v, double totalGrow, double totalShrink)
         {
@@ -377,8 +666,21 @@ namespace PolarShadow.Controls
         }
 
         private void Arrange(UIElement element, double u, double v, UVSize size, UVSize lineSize, bool isHorizontal)
-        {        
-            element.Arrange(new Rect(isHorizontal ? u : v, isHorizontal ? v : u, isHorizontal ? size.U : lineSize.V, isHorizontal ? lineSize.V : size.U));
+        {
+            var x = isHorizontal ? u : v;
+            var y = isHorizontal ? v : u;
+            if (_scrollData != null)
+            {
+                if (_scrollData._canHorizontal)
+                {
+                    x += _scrollData._offset.X;
+                }
+                if (_scrollData._canVertical)
+                {
+                    y += _scrollData._offset.Y;
+                }
+            }
+            element.Arrange(new Rect(x, y, isHorizontal ? size.U : lineSize.V, isHorizontal ? lineSize.V : size.U));
         }
 
         private UVSize GetItemBasisUVSize(UIElement element, double totalU)
@@ -482,6 +784,11 @@ namespace PolarShadow.Controls
             }
         }
 
+        private bool IsScrolling()
+        {
+            return _scrollData != null && _scrollData._scrollOwner != null;
+        }
+
         private struct UVSize
         {
             private bool _isHorizontal;
@@ -508,8 +815,182 @@ namespace PolarShadow.Controls
 
             public double Height
             {
-                get => _isHorizontal ? V:U;
+                get => _isHorizontal ? V : U;
                 set { if (_isHorizontal) V = value; else U = value; }
+            }
+
+            public static bool operator ==(UVSize value1, UVSize value2) => value1._isHorizontal == value2._isHorizontal
+                    && value1.U == value2.U
+                    && value1.V == value2.V;
+
+            public static bool operator !=(UVSize value1, UVSize value2) => value1._isHorizontal != value2._isHorizontal
+                    || value1.U != value2.U
+                    || value1.V != value2.V;
+        }
+
+        private class ScrollData
+        {
+            internal ScrollViewer _scrollOwner;
+            internal Vector _offset;
+            internal bool _canVertical;
+            internal bool _canHorizontal;
+        }
+
+        private class LayoutData
+        {
+            private ScrollData _scrollData;
+            private List<Rect> _lines = new List<Rect>();
+            internal UVSize _viewPort;
+            internal UVSize _extent;
+
+            public int LineCount => _lines.Count;
+
+            public Rect this[int index]
+            {
+                get => _lines[index];
+            }
+
+            public void SetScrollData(ScrollData scrollData)
+            {
+                _scrollData = scrollData;
+            }
+
+            public void AddLine(double u, double v, UVSize size, bool isHorizontal)
+            {
+                var x = isHorizontal ? u : v;
+                var y = isHorizontal ? v : u;
+                if (_scrollData != null)
+                {
+                    if (_scrollData._canVertical)
+                    {
+                        y += _scrollData._offset.Y;
+                    }
+                    if (_scrollData._canHorizontal)
+                    {
+                        x += _scrollData._offset.X;
+                    }
+                }
+                _lines.Add(new Rect(x, y, size.Width, size.Height));
+            }
+
+            public int LineOf(Rect rect)
+            {
+                var center = new Point((rect.Right - rect.Left) / 2 + rect.X, (rect.Bottom - rect.Top) / 2 + rect.Y);
+                for (int i = 0; i < _lines.Count; i++)
+                {
+                    if (_lines[i].Contains(center))
+                    {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            public Rect GetLine(Rect rect)
+            {
+                var index = LineOf(rect);
+                if (index < 0)
+                {
+                    return Rect.Empty;
+                }
+                return _lines[index];
+            }
+
+            public void Reset()
+            {
+                _lines.Clear();
+            }
+
+            public double GetLineUpOffset()
+            {
+                if (_scrollData == null) return 0;
+                for (int i = 0; i < _lines.Count; i++)
+                {
+                    var line = _lines[i];
+
+                    if (line.Height - Math.Abs(line.Y) >= 0)
+                    {
+                        return Math.Abs(line.Y);
+                    }
+                }
+
+                return 0;
+            }
+
+            public double GetLineDownOffset()
+            {
+                var sumH = 0d;
+                for (int i = 0; i < _lines.Count; i++)
+                {
+                    var line = _lines[i];
+                    var lineHeight = line.Height;
+                    if (line.Y < 0)
+                    {
+                        var y = Math.Abs(line.Y);
+                        if (y < lineHeight)
+                        {
+                            sumH += lineHeight - y;
+                        }
+                    }
+                    else
+                    {
+                        sumH += lineHeight;
+                    }
+
+                    if (_viewPort.Height - sumH <= 0)
+                    {
+                        if(sumH - _viewPort.Height > Epsilon)
+                        {
+                            return sumH - _viewPort.Height;
+                        }
+                    }
+                }
+
+                return 0;
+            }
+
+            public double GetLineLeftOffset()
+            {
+                if (_scrollData == null) return 0;
+                for (int i = 0; i < _lines.Count; i++)
+                {
+                    var line = _lines[i];
+                    if (line.Width - Math.Abs(line.X) >= 0)
+                    {
+                        return Math.Abs(line.X);
+                    }
+                }
+
+                return 0;
+            }
+
+            public double GetLineRightOffset()
+            {
+                var sumW = 0d;
+                for (int i = 0; i < _lines.Count; i++)
+                {
+                    var line = _lines[i];
+                    var colWidth = line.Width;
+                    if (line.X < 0)
+                    {
+                        var x = Math.Abs(line.X);
+                        if (x < line.Width)
+                        {
+                            sumW += line.Width - x;
+                        }
+                    }
+                    else
+                    {
+                        sumW += line.Width;
+                    }
+
+                    if (_viewPort.Width - sumW <= 0)
+                    {
+                        return sumW - _viewPort.Width;
+                    }
+                }
+
+                return 0;
             }
         }
     }
