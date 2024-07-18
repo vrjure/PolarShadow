@@ -114,7 +114,7 @@ namespace PolarShadow.Controls
             element.SetValue(FlexShrinkProperty, value);
         }
 
-        public static readonly DependencyProperty FloatProperty = DP.RegisterAttached<FlexPanel, bool>("Float");
+        public static readonly DependencyProperty FloatProperty = DP.RegisterAttached<FlexPanel, bool>("Float", false, metadataCreator: ()=> new FrameworkPropertyMetadata { AffectsArrange = true});
         public static bool GetFloat(UIElement element)
         {
             return (bool)element.GetValue(FloatProperty);
@@ -669,7 +669,8 @@ namespace PolarShadow.Controls
         {
             var x = isHorizontal ? u : v;
             var y = isHorizontal ? v : u;
-            if (_scrollData != null)
+            var isFloat = GetFloat(element);
+            if (_scrollData != null && !isFloat)
             {
                 if (_scrollData._canHorizontal)
                 {
