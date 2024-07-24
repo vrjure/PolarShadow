@@ -15,6 +15,7 @@ namespace PolarShadow.Controls
     class FlexPanel : Panel, IScrollInfo
     {
         private const double Epsilon = 0.00000153;
+        private const double MouseWheelOffset = 15d;
         private bool _isHorizontal => FlexDirection == FlexDirection.Row || FlexDirection == FlexDirection.RowReverse;
         private bool _isReverse => FlexDirection == FlexDirection.RowReverse || FlexDirection == FlexDirection.ColumnReverse;
 
@@ -186,18 +187,18 @@ namespace PolarShadow.Controls
 
         public double ViewportWidth => _layoutData == null ? 0d : _layoutData._viewPort.Width;
 
-        public double HorizontalOffset => _scrollData == null ? 0d : -_scrollData._offset.X;
+        public double HorizontalOffset => _scrollData == null ? 0d : _scrollData._offset.X;
 
-        public double VerticalOffset => _scrollData == null ? 0d : -_scrollData._offset.Y;
+        public double VerticalOffset => _scrollData == null ? 0d : _scrollData._offset.Y;
 
         public void LineUp()
         {
-            SetVerticalOffset(_scrollData._offset.Y + _layoutData.GetLineUpOffset());
+            SetVerticalOffset(_scrollData._offset.Y - _layoutData.GetLineUpOffset());
         }
 
         public void LineDown()
         {
-            SetVerticalOffset(_scrollData._offset.Y - _layoutData.GetLineDownOffset());
+            SetVerticalOffset(_scrollData._offset.Y + _layoutData.GetLineDownOffset());
         }
 
         public void LineLeft()
@@ -210,24 +211,23 @@ namespace PolarShadow.Controls
             SetHorizontalOffset(_scrollData._offset.X + _layoutData.GetLineRightOffset());
         }
 
-        public void MouseWheelDown()
+        public void MouseWheelUp()
         {
-            LineDown();
+            SetVerticalOffset(_scrollData._offset.Y - MouseWheelOffset);
         }
 
+        public void MouseWheelDown()
+        {
+            SetVerticalOffset(_scrollData._offset.Y + MouseWheelOffset);
+        }
         public void MouseWheelLeft()
         {
-            LineLeft();
+            SetHorizontalOffset(_scrollData._offset.X - MouseWheelOffset);
         }
 
         public void MouseWheelRight()
         {
-            LineRight();
-        }
-
-        public void MouseWheelUp()
-        {
-            LineUp();
+            SetHorizontalOffset(_scrollData._offset.X + MouseWheelOffset);
         }
 
         public void PageUp()
@@ -267,11 +267,11 @@ namespace PolarShadow.Controls
             {
                 if (rectangle.X < 0)
                 {
-                    newOffset.X = _scrollData._offset.X - rectangle.X;
+                    newOffset.X = _scrollData._offset.X + rectangle.X;
                 }
                 else if (rectangle.X > _layoutData._viewPort.Width)
                 {
-                    newOffset.X = _scrollData._offset.X - (rectangle.Right - _layoutData._viewPort.Width);
+                    newOffset.X = _scrollData._offset.X + rectangle.Right;
                 }
             }
 
@@ -279,11 +279,11 @@ namespace PolarShadow.Controls
             {
                 if (rectangle.Y < 0)
                 {
-                    newOffset.Y = _scrollData._offset.Y - rectangle.Y;
+                    newOffset.Y = _scrollData._offset.Y + rectangle.Y;
                 }
                 else if (rectangle.Y > _layoutData._viewPort.Height)
                 {
-                    newOffset.Y = _scrollData._offset.Y - (rectangle.Bottom - _layoutData._viewPort.Height);
+                    newOffset.Y = _scrollData._offset.Y + rectangle.Bottom;
                 }
             }
 
@@ -293,19 +293,29 @@ namespace PolarShadow.Controls
                 InvalidateMeasure();
                 OnScrollChange();
             }
-            
+
             return rectangle;
         }
 
         public void SetHorizontalOffset(double offset)
         {
             EnsureScrollData();
+            if (offset < 0 || ViewportWidth >= ExtentWidth)
+            {
+                offset = 0;
+            }
+            else
+            {
+                var delta = ExtentWidth - ViewportWidth;
+                if (offset > delta)
+                {
+                    offset = delta;
+                }
+            }
+
+            
             if (!IsClose(offset, _scrollData._offset.X))
             {
-                if (offset > 0)
-                {
-                    return;
-                }
                 _scrollData._offset.X = offset;
                 InvalidateMeasure();
                 OnScrollChange();
@@ -315,21 +325,25 @@ namespace PolarShadow.Controls
         public void SetVerticalOffset(double offset)
         {
             EnsureScrollData();
+            if (offset < 0 || ViewportHeight >= ExtentHeight)
+            {
+                offset = 0;
+            }
+            else
+            {
+                var delta = ExtentHeight - ViewportHeight;
+                if (offset > delta)
+                {
+                    offset = delta;
+                }
+            }
+            
             if (!IsClose(offset, _scrollData._offset.Y))
             {
-                if (offset > 0)
-                {
-                    return;
-                }
                 _scrollData._offset.Y = offset;
                 InvalidateMeasure();
                 OnScrollChange();
             }
-        }
-
-        private bool CanMouseWheelVerticallyScroll
-        {
-            get { return (SystemParameters.WheelScrollLines > 0); }
         }
 
         private void EnsureScrollData()
@@ -674,11 +688,11 @@ namespace PolarShadow.Controls
             {
                 if (_scrollData._canHorizontal)
                 {
-                    x += _scrollData._offset.X;
+                    x -= _scrollData._offset.X;
                 }
                 if (_scrollData._canVertical)
                 {
-                    y += _scrollData._offset.Y;
+                    y -= _scrollData._offset.Y;
                 }
             }
             element.Arrange(new Rect(x, y, isHorizontal ? size.U : lineSize.V, isHorizontal ? lineSize.V : size.U));
@@ -864,11 +878,11 @@ namespace PolarShadow.Controls
                 {
                     if (_scrollData._canVertical)
                     {
-                        y += _scrollData._offset.Y;
+                        y -= _scrollData._offset.Y;
                     }
                     if (_scrollData._canHorizontal)
                     {
-                        x += _scrollData._offset.X;
+                        x -= _scrollData._offset.X;
                     }
                 }
                 _lines.Add(new Rect(x, y, size.Width, size.Height));
