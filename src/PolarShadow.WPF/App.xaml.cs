@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PolarShadow.Core;
+using PolarShadow.Dispatcher;
 using PolarShadow.Essentials;
 using PolarShadow.Navigations;
 using PolarShadow.Notification;
@@ -24,12 +25,6 @@ namespace PolarShadow.WPF
     /// </summary>
     public partial class App : Application
     {
-        public static string AppDataFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PolarShadow");
-        public static string ConfigFile => Path.Combine(AppDataFolder, "config.json");
-        public static string DbFile => Path.Combine(AppDataFolder, "polar.db");
-        public static string CacheFolder => Path.Combine(AppDataFolder, "cache");
-        public static string PreferenceFolder => Path.Combine(AppDataFolder, "preference");
-
         protected override void OnStartup(StartupEventArgs e)
         {
             var services = new ServiceCollection();
@@ -53,8 +48,8 @@ namespace PolarShadow.WPF
             service.RegisterTransientViewWithModel<BookshelfView, BookshelfViewModel>();
             //service.RegisterTransientViewWithModel<BookSourceView, BookSourceViewModel>();
             //service.RegisterTransientViewWithModel<BookSourceDetailView, BookSourceDetailViewModel>();
-            //service.RegisterTransientViewWithModel<SearchView, SearchViewModel>();
-            //service.RegisterTransientViewWithModel<DetailView, DetailViewModel>();
+            service.RegisterTransientViewWithModel<SearchView, SearchViewModel>();
+            service.RegisterTransientViewWithModel<DetailView, DetailViewModel>();
             //service.RegisterTransientViewWithModel<DiscoverView, DiscoverViewModel>();
             //service.RegisterTransientViewWithModel<DiscoverDetailView, DiscoverDetailViewModel>();
             //service.RegisterTransientViewWithModel<MineView, MineViewModel>();
@@ -62,16 +57,19 @@ namespace PolarShadow.WPF
 
         private void RegisterUtilities(IServiceCollection service)
         {
-            service.RegisterCache(new FileCacheOptions { CacheFolder = CacheFolder});
+            service.RegisterCache(new FileCacheOptions { CacheFolder = PolarShadowApp.CacheFolder});
+            service.RegisterDbPreference();
+            service.RegisterVLC();
             service.AddSingleton<INavigationService, NavigationService>();
             service.AddSingleton<IMessageService, NotificationContainer>();
+            service.AddSingleton<IDispatcherUI, DispatcherUI>();
         }
 
         private void RegisterDatabase(IServiceCollection service)
         {
             service.AddDbContextFactory<PolarShadowDbContext>(op =>
             {
-                op.UseSqlite($"Data Source={DbFile}", op => op.MigrationsAssembly(typeof(App).Assembly.FullName));
+                op.UseSqlite($"Data Source={PolarShadowApp.DbFile}", op => op.MigrationsAssembly(typeof(App).Assembly.FullName));
             });
             service.RegisterStorageService();
         }

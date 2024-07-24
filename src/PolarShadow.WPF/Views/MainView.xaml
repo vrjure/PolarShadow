@@ -6,10 +6,10 @@
              xmlns:local="clr-namespace:PolarShadow.WPF.Views"
              xmlns:vm="clr-namespace:PolarShadow.ViewModels;assembly=PolarShadow.ViewModels"
              xmlns:nav="clr-namespace:PolarShadow.Navigations"
+             xmlns:ctrl ="clr-namespace:PolarShadow.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             nav:NavigationManager.RegisterLoad="True"
-             Background="White">
+             nav:NavigationManager.RegisterLoad="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

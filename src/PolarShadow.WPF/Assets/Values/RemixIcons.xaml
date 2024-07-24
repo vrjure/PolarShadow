@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <!--https://remixicon.com-->
     <FontFamily x:Key="remixIcon">pack://application:,,,/Assets/Fonts/remixicon.ttf#remixicon</FontFamily>
     
     <sys:String x:Key="refresh">&#xF064;</sys:String>
@@ -37,4 +38,14 @@
     <sys:String x:Key="searchBox_clear">&#xEB97;</sys:String>
     <sys:String x:Key="searchBox_search">&#xF0D1;</sys:String>
     <sys:String x:Key="searchBox_execute">&#xEA6E;</sys:String>
+
+    <sys:String x:Key="mediaPlayerController_back">&#xEA60;</sys:String>
+    <sys:String x:Key="mediaPlayerController_previous">&#xF13F;</sys:String>
+    <sys:String x:Key="mediaPlayerController_next">&#xF143;</sys:String>
+    <sys:String x:Key="mediaPlayerController_play">&#xF00A;</sys:String>
+    <sys:String x:Key="mediaPlayerController_pause">&#xEFD7;</sys:String>
+    <sys:String x:Key="mediaPlayerController_loading">&#xEEC1;</sys:String>
+    <sys:String x:Key="mediaPlayerController_FullScreen">&#xED9B;</sys:String>
+    <sys:String x:Key="mediaPlayerController_FullScreenExit">&#xED99;</sys:String>
+    <sys:String x:Key="mediaPlayerController_Volume">&#xF2A1;</sys:String>
 </ResourceDictionary>

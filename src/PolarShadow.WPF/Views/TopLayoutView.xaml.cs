@@ -1,5 +1,6 @@
 ﻿using PolarShadow.Notification;
 using PolarShadow.ViewModels;
+using PolarShadow.WebView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,11 +30,12 @@ namespace PolarShadow.WPF.Views
             Application.Current.MainWindow.StateChanged += MainWindow_StateChanged;
         }
 
-        public TopLayoutView(TopLayoutViewModel vm, IMessageService messageService) : this()
+        public TopLayoutView(TopLayoutViewModel vm, IMessageService messageService, IWebViewRequestHandler webViewHandler) : this()
         {
             DataContext = vm;
             (messageService as NotificationContainer)?.Initialize(Root);
             _msgService = messageService;
+            webViewHandler.SetContainer(Root);
         }
 
         private void BtnMinimize_Click(object sender, RoutedEventArgs e)
@@ -71,6 +73,25 @@ namespace PolarShadow.WPF.Views
             {
                 BtnMaximize.Content = this.FindResource<string>("maximize");
             }
+        }
+
+        public void FullScreen()
+        {
+            var mainWindow = Application.Current.MainWindow;
+            mainWindow.WindowStyle = WindowStyle.None;
+            mainWindow.WindowState = WindowState.Maximized;
+            mainWindow.Topmost = true;
+            windowCaption.Visibility = Visibility.Collapsed;
+            
+        }
+
+        public void NormalScreen()
+        {
+            var mainWindow = Application.Current.MainWindow;
+            mainWindow.WindowState = WindowState.Normal;
+            mainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
+            mainWindow.Topmost = false;
+            windowCaption.Visibility = Visibility.Visible;
         }
     }
 }

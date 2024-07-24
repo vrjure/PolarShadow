@@ -5,7 +5,8 @@
              xmlns:m="clr-namespace:PolarShadow.Models;assembly=PolarShadow.ViewModels"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:img="clr-namespace:PolarShadow.ImageHelper"
-             xmlns:ctrl="clr-namespace:PolarShadow.Controls">
+             xmlns:ctrl="clr-namespace:PolarShadow.Controls"
+             xmlns:pr="clr-namespace:PolarShadow.Resources;assembly=PolarShadow.Resources.Models">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -13,7 +14,9 @@
                 <ResourceDictionary Source="/Assets/Values/Colors.xaml"/>
                 <ResourceDictionary Source="/Assets/Values/Sizes.xaml"/>
                 <ResourceDictionary Source="/Assets/Values/Fonts.xaml"/>
-                
+
+                <ResourceDictionary Source="/Assets/Themes/LightTheme.xaml"/>
+
                 <ResourceDictionary Source="/Assets/Styles/BaseStoryboards.xaml"/>
 
                 <ResourceDictionary Source="/Assets/Styles/BorderStyles.xaml"/>
@@ -26,8 +29,9 @@
                 <ResourceDictionary Source="/Assets/Styles/UniformGridStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/ScrollBarStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/ImageStyles.xaml"/>
-
-                <ResourceDictionary Source="/Assets/Themes/LightTheme.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/SliderStyles.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/MediaPlayerControllerStyles.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/VideoViewStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type m:MenuIconItem}">
@@ -84,6 +88,38 @@
 							       TextWrapping="NoWrap"
 							       TextTrimming="CharacterEllipsis"
 							       TextAlignment="Center"
+                                   HorizontalAlignment="Stretch"/>
+                    </Border>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type pr:Resource}">
+                <Grid>
+                    <Image img:ImageAttached.Src="{Binding ImageSrc}"
+                           img:ImageAttached.Headers="{Binding ImageSrcHeaders}"
+                           Style="{StaticResource CoverPlaceholder}"
+                           Stretch="Fill"/>
+                    <Border VerticalAlignment="Bottom">
+                        <Border.Background>
+                            <SolidColorBrush Color="{DynamicResource N150}" Opacity="0.8"/>
+                        </Border.Background>
+                        <TextBlock Text="{Binding Name}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Style="{StaticResource SubtitleTextBlock}"
+                                   TextAlignment="Center"/>
+                    </Border>
+                    <Border VerticalAlignment="Top"
+					        HorizontalAlignment="Right"
+					        CornerRadius="5"
+                            Padding="5,2">
+                        <Border.Background>
+                            <SolidColorBrush Color="{DynamicResource N150}" Opacity="0.8"/>
+                        </Border.Background>
+                        <TextBlock Text="{Binding Site}"
+						           TextWrapping="NoWrap"
+						           TextTrimming="CharacterEllipsis"
+						           TextAlignment="Center"
                                    HorizontalAlignment="Stretch"/>
                     </Border>
                 </Grid>

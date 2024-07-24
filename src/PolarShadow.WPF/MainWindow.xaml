@@ -24,8 +24,17 @@
                 <Trigger Property="WindowState" Value="Maximized">
                     <Setter TargetName="cp" Property="Margin" Value="8"/>
                 </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="WindowState" Value="Maximized"/>
+                        <Condition Property="WindowStyle" Value="None"/>
+                    </MultiTrigger.Conditions>
+                    <Setter TargetName="cp" Property="Margin" Value="0"/>
+                </MultiTrigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
     </Window.Template>
-    <ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainWindowViewModel.NavigationName}"/>
+    <ContentControl nav:NavigationManager.ContainerName="{x:Static vm:MainWindowViewModel.NavigationName}"
+                    BorderThickness="0"
+                    Padding="0"/>
 </Window>

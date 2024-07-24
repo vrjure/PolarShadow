@@ -96,12 +96,12 @@ namespace PolarShadow.ImageHelper
             
             if (!string.IsNullOrEmpty(src))
             {
-                await LoadImage(image, new Uri(src));
+                await LoadImage(image, new Uri(src, UriKind.RelativeOrAbsolute));
             }
 
             if (image.Source == null && !string.IsNullOrEmpty(placeholderSrc))
             {
-                await LoadImage(image, new Uri(placeholderSrc));
+                await LoadImage(image, new Uri(placeholderSrc, UriKind.RelativeOrAbsolute));
             }
         }
 

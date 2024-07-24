@@ -27,4 +27,8 @@
     <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="{DynamicResource N140}"/>
     <SolidColorBrush x:Key="ScrollBarThumbMouseOverBrush" Color="{DynamicResource N100}"/>
 
+    <SolidColorBrush x:Key="IndicatorBackground" Color="{DynamicResource 110}"/>
+    <SolidColorBrush x:Key="IndicatorMouseOverBackground" Color="{DynamicResource 110}" Opacity="0.6"/>
+    
+
 </ResourceDictionary>

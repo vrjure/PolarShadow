@@ -37,7 +37,14 @@ namespace PolarShadow.WebView
             if (container == null) throw new ArgumentNullException(nameof(container));
 
             _container = container;
-            _webView = new WebView2 { Visibility = System.Windows.Visibility.Visible };
+            _webView = new WebView2 
+            { 
+                Visibility = System.Windows.Visibility.Visible,
+                Width= 1,
+                Height=1,
+                HorizontalAlignment= System.Windows.HorizontalAlignment.Center,
+                VerticalAlignment = System.Windows.VerticalAlignment.Center
+            };
             _container.Children.Add(_webView);
             State = WebViewState.Idle;
             Reset();

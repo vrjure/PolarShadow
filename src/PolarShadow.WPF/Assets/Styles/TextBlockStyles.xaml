@@ -54,6 +54,8 @@
 
 
     <Style x:Key="RotateTextBlockIcon" TargetType="TextBlock" BasedOn="{StaticResource TextBlockIcon}">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
         <Setter Property="TextAlignment" Value="Center"/>
         <Setter Property="RenderTransform">
@@ -76,6 +78,24 @@
                 <Setter Property="Visibility" Value="Visible"/>
             </DataTrigger>
             <DataTrigger Binding="{Binding IsRefresh}" Value="False">
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="ViewModelIsLoadingTextBlockIcon" TargetType="TextBlock" BasedOn="{StaticResource RotateTextBlockIcon}">
+        <Setter Property="Text" Value="{StaticResource loading}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard x:Name="startRotate" Storyboard="{StaticResource Spin}"/>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <RemoveStoryboard BeginStoryboardName="startRotate"/>
+                </DataTrigger.ExitActions>
+                <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding IsLoading}" Value="False">
                 <Setter Property="Visibility" Value="Collapsed"/>
             </DataTrigger>
         </Style.Triggers>

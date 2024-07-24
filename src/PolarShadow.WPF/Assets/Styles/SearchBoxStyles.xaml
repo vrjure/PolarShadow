@@ -22,7 +22,9 @@
                             HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalAlignment}"
                             Width="{TemplateBinding Width}"
-                            Height="{TemplateBinding Height}">
+                            Height="{TemplateBinding Height}"
+                            MinWidth="{TemplateBinding MinWidth}"
+                            MaxWidth="{TemplateBinding MaxWidth}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
@@ -53,7 +55,8 @@
                                     VerticalAlignment="Center"
                                     FontSize="{TemplateBinding FontSize,Converter={x:Static uc:TextToIconSizeConverter.Instance}}"
                                     Visibility="{TemplateBinding Text, Converter={x:Static uc:StringToVisibility.Instance}}"
-                                    Margin="5,0,0,0"/>
+                                    Margin="5,0,0,0"
+                                    Command="{TemplateBinding SearchCommand}"/>
                         </Grid>
 
                         <behaviors:Interaction.Triggers>

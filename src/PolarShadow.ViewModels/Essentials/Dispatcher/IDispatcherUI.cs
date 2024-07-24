@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Essentials
 {
-    public interface IDispatcher
+    public interface IDispatcherUI
     {
+        bool CheckAccess();
         void Post(Action action);
     }
 }

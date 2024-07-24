@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="PolarShadow.WPF.Views.SearchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PolarShadow.WPF.Views"
+             xmlns:nav="clr-namespace:PolarShadow.Navigations"
+             xmlns:ctrl="clr-namespace:PolarShadow.Controls"
+             xmlns:toolBar="clr-namespace:PolarShadow.ToolBar"
+             xmlns:vm="clr-namespace:PolarShadow.ViewModels;assembly=PolarShadow.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             nav:NavigationManager.RegisterLoad="True">
+    <toolBar:ToolBarAttached.ToolBar>
+        <toolBar:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.CenterTitleBarContainer}">
+            <ctrl:SearchBox MaxWidth="450" 
+                            MinWidth="200"
+                            SearchCommand="{Binding SearchCommand}"
+                            Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </toolBar:ToolBarTemplate>
+    </toolBar:ToolBarAttached.ToolBar>
+    <Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      CanContentScroll="False">
+            <StackPanel>
+                <ListBox ScrollViewer.CanContentScroll="False"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                         ItemContainerStyle="{StaticResource ListBoxGridItem}"
+                         ItemsSource="{Binding SearchResult}"
+                         SelectionMode="Single"
+                         SelectedValue="{Binding SelectedValue, Mode=TwoWay}">
+                    <ListBox.Style>
+                        <Style TargetType="ListBox" BasedOn="{StaticResource GridListBox}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBox">
+                                        <ItemsPresenter/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.Style>
+                </ListBox>
+                <Grid>
+                    <Button Style="{StaticResource ButtonIcon}"
+                            Content="{StaticResource more-h}"
+                            FontSize="{StaticResource Subtitle}"
+                            Command="{Binding LoadMoreCommand}"
+                            Visibility="{Binding ShowLoadMore, Converter={x:Static ctrl:BoolToVisibility.Instance}}"/>
+                    <TextBlock Style="{StaticResource ViewModelIsLoadingTextBlockIcon}"
+                               FontSize="{StaticResource Subtitle}"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

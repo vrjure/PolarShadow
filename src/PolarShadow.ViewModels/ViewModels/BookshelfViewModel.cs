@@ -39,7 +39,7 @@ namespace PolarShadow.ViewModels
         }
 
         private ResourceModelRefreshItem _selectedValue;
-        public ResourceModelRefreshItem SelectedItem
+        public ResourceModelRefreshItem SelectedValue
         {
             get => _selectedValue;
             set

@@ -12,31 +12,31 @@ namespace PolarShadow
     {
         public static void Save(this IPolarShadow polarShadow)
         {
-            if (!Directory.Exists(App.AppDataFolder))
+            if (!Directory.Exists(PolarShadowApp.AppDataFolder))
             {
-                Directory.CreateDirectory(App.AppDataFolder);
+                Directory.CreateDirectory(PolarShadowApp.AppDataFolder);
             }
             
-            if (!File.Exists(App.ConfigFile))
+            if (!File.Exists(PolarShadowApp.ConfigFile))
             {
-                using (var fs = File.Create(App.ConfigFile))
+                using (var fs = File.Create(PolarShadowApp.ConfigFile))
                 {
                     polarShadow.SaveTo(new JsonStreamSource(fs));
                 }
             }
             else
             {
-                polarShadow.SaveTo(new JsonFileSource() { Path = App.ConfigFile });
+                polarShadow.SaveTo(new JsonFileSource() { Path = PolarShadowApp.ConfigFile });
             }
         }
 
         public static void Load(this IPolarShadow polarShadow, bool reload = false)
         {
-            if (!File.Exists(App.ConfigFile))
+            if (!File.Exists(PolarShadowApp.ConfigFile))
             {
                 return;
             }
-            polarShadow.Load(new JsonFileSource() { Path = App.ConfigFile }, reload);
+            polarShadow.Load(new JsonFileSource() { Path = PolarShadowApp.ConfigFile }, reload);
         }
     }
 }

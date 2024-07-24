@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using PolarShadow.Controls;
+using PolarShadow.Media;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace PolarShadow.ViewModels
 {
@@ -17,6 +18,33 @@ namespace PolarShadow.ViewModels
         {
             get => _resource;
             private set => SetProperty(ref _resource, value);
+        }
+
+        private ResourceTreeNode _currentHead;
+        public ResourceTreeNode CurrentHead
+        {
+            get => _currentHead;
+            set => SetProperty(ref _currentHead, value);
+        }
+
+        private ResourceTreeNode _currentEpisode;
+        public ResourceTreeNode CurrentEpisode
+        {
+            get => _currentEpisode;
+            set
+            {
+                if(SetProperty(ref _currentEpisode, value))
+                {
+                    EpisodeSelectedAsync(_currentEpisode).WithoutWait();
+                }
+            }
+        }
+
+        private int _currentEpisodeIndex = -1;
+        public int CurrentEpisodeIndex
+        {
+            get => _currentEpisodeIndex;
+            set => SetProperty(ref _currentEpisodeIndex, value);
         }
 
         private bool _isSave;
@@ -47,45 +75,55 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _webAnalysisSites, value);
         }
 
-        private IMediaController _mediaController;
-        public IMediaController MediaController
+        private IVideoViewController _videoController;
+        public IVideoViewController VideoController
         {
-            get => _mediaController;
+            get => _videoController;
             set
             {
-                var c = _mediaController;
-                if(SetProperty(ref _mediaController, value))
+                var c = _videoController;
+                if(SetProperty(ref _videoController, value))
                 {
                     if (c != null)
                     {
-                        c.Controller.TimeChanged -= _controller_TimeChanged;
-                        _mediaController.Controller.MediaChanged -= Controller_MediaChanged;
-                        _mediaController.Controller.Ended -= Controller_Ended;
-                        _mediaController.PreviousClick -= Controller_PreviousClick;
-                        _mediaController.NextClick -= Controller_NextClick;
-                        _mediaController.PropertyChanged -= MediaController_PropertyChanged;
+                        c.TimeChanged -= _controller_TimeChanged;
+                        c.MediaChanged -= Controller_MediaChanged;
+                        c.Ended -= Controller_Ended;
                     }
 
-                    if (_mediaController != null)
+                    if (_videoController != null)
                     {
-                        _mediaController.Controller.TimeChanged += _controller_TimeChanged;
-                        _mediaController.Controller.MediaChanged += Controller_MediaChanged;
-                        _mediaController.Controller.Ended += Controller_Ended;
-                        _mediaController.PreviousClick += Controller_PreviousClick;
-                        _mediaController.NextClick += Controller_NextClick;
-                        _mediaController.PropertyChanged += MediaController_PropertyChanged;
+                        _videoController.TimeChanged += _controller_TimeChanged;
+                        _videoController.MediaChanged += Controller_MediaChanged;
+                        _videoController.Ended += Controller_Ended;
                     }
                 }
             }
         }
 
-        private IAsyncRelayCommand _refreshCommand;
-        public IAsyncRelayCommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadOnline);
+        private bool _fullScreen;
+        public bool FullScreen
+        {
+            get => _fullScreen;
+            set => SetProperty(ref _fullScreen, value);
+        }
 
-        private IAsyncRelayCommand _resourceOperateCommand;
-        public IAsyncRelayCommand ResourceOperateCommand => _resourceOperateCommand ??= new AsyncRelayCommand(ResourceOperate);
+        private ICommand _refreshCommand;
+        public ICommand RefreshCommand => _refreshCommand ??= new AsyncRelayCommand(LoadOnline);
 
-        private IAsyncRelayCommand _linkClickCommand;
-        public IAsyncRelayCommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(LinkClick);
+        private ICommand _resourceOperateCommand;
+        public ICommand ResourceOperateCommand => _resourceOperateCommand ??= new AsyncRelayCommand(ResourceOperate);
+
+        private ICommand _linkClickCommand;
+        public ICommand LinkClickCommand => _linkClickCommand ??= new AsyncRelayCommand<ResourceTreeNode>(EpisodeSelectedAsync);
+        
+        private ICommand _previousCommand;
+        private ICommand PreviousCommand => _previousCommand ??= new AsyncRelayCommand(PreviousAsync);
+
+        private ICommand _nextCommand;
+        public ICommand NextCommand => _nextCommand ??= new AsyncRelayCommand(NextAsync);
+
+        public ICommand _playPauseCommand;
+        public ICommand PlayPauseCommand => _playPauseCommand ??= new AsyncRelayCommand(PlayPauseAsync);
     }
 }

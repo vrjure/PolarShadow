@@ -38,18 +38,22 @@ namespace PolarShadow.WPF.Views
 
         private void MainView_Loaded(object sender, RoutedEventArgs e)
         {
-            VM.MenuItems = new ObservableCollection<MenuIconItem>
+            if (VM.MenuItems == null)
             {
-                new() { Name = "main", Icon = this.FindResource<string>("home"), VMType = typeof(BookshelfViewModel) },
-                new() { Name = "discover", Icon = this.FindResource<string>("discover"), VMType = typeof(DiscoverViewModel) },
-                new() { Name = "source", Icon = this.FindResource<string>("source"), VMType = typeof(BookSourceViewModel) },
-                new() { Name = "user", Icon = this.FindResource<string>("user"), VMType = typeof(MineViewModel) },
-                //#if DEBUG
-                //        new(){ Name = "test", Icon=FindResource<string>("flask"), VMType = typeof(VideoPlayerViewModel)}
-                //#endif
-            };
+                VM.MenuItems = new ObservableCollection<MenuIconItem>
+                {
+                    new() { Name = "main", Icon = this.FindResource<string>("home"), VMType = typeof(BookshelfViewModel) },
+                    new() { Name = "discover", Icon = this.FindResource<string>("discover"), VMType = typeof(DiscoverViewModel) },
+                    new() { Name = "source", Icon = this.FindResource<string>("source"), VMType = typeof(BookSourceViewModel) },
+                    new() { Name = "user", Icon = this.FindResource<string>("user"), VMType = typeof(MineViewModel) },
+                    //#if DEBUG
+                    //        new(){ Name = "test", Icon=FindResource<string>("flask"), VMType = typeof(VideoPlayerViewModel)}
+                    //#endif
+                };
 
-            VM.SelectedValue = VM.MenuItems.FirstOrDefault();
+                VM.SelectedValue = VM.MenuItems.FirstOrDefault();
+            }
+            
         }
     }
 }

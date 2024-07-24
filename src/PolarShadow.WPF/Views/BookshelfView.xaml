@@ -24,7 +24,8 @@
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      ItemsSource="{Binding MineResource}"
                      ItemContainerStyle="{StaticResource ListBoxGridItem}"
-                     Style="{StaticResource GridListBox}"/>
+                     Style="{StaticResource GridListBox}"
+                     SelectedValue="{Binding SelectedValue, Mode=TwoWay}"/>
 
             <Button Style="{StaticResource ButtonIcon}"
                     Content="{StaticResource refresh}"

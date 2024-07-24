@@ -16,7 +16,7 @@
                                        HorizontalAlignment="Stretch"
                                        Height="3"
                                        Visibility="Hidden"
-                                       Fill="{DynamicResource AccentBackground}"
+                                       Fill="{DynamicResource IndicatorBackground}"
                                        x:Name="PART_Indicator"/>
                             <ContentPresenter Margin="20,0,20,6"
                                               TextBlock.Foreground="{TemplateBinding Foreground}"/>
@@ -28,6 +28,31 @@
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Visibility" TargetName="PART_Indicator" Value="Visible"/>
+                            <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ListBoxSelectableItem" TargetType="ListBoxItem">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border Background="{TemplateBinding Background}">
+                        <ContentPresenter Margin="20,0,20,6"
+                                          TextBlock.Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource AccentBackground}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource AccentForeground}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource AccentBackground}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource AccentForeground}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -73,6 +98,17 @@
 
     <Style TargetType="ListBox">
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style x:Key="NoScroll" TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBox">
+                    <ItemsPresenter/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="HorizontalListBox" TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">

@@ -51,8 +51,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPF", "WPF", "{4128A6B5-6C2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.WPF", "PolarShadow.WPF\PolarShadow.WPF.csproj", "{4BB9CD0E-00CB-4ED3-B8CF-B86EF2DFFC45}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Controls.Abstractions", "PolarShadow.Controls.Abstractions\PolarShadow.Controls.Abstractions.csproj", "{CA4A6C20-1254-455A-B5B6-7B210E824076}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -297,18 +295,6 @@ Global
 		{4BB9CD0E-00CB-4ED3-B8CF-B86EF2DFFC45}.Release|x64.Build.0 = Release|Any CPU
 		{4BB9CD0E-00CB-4ED3-B8CF-B86EF2DFFC45}.Release|x86.ActiveCfg = Release|Any CPU
 		{4BB9CD0E-00CB-4ED3-B8CF-B86EF2DFFC45}.Release|x86.Build.0 = Release|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Debug|x64.Build.0 = Debug|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Debug|x86.Build.0 = Debug|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Release|x64.ActiveCfg = Release|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Release|x64.Build.0 = Release|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Release|x86.ActiveCfg = Release|Any CPU
-		{CA4A6C20-1254-455A-B5B6-7B210E824076}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -325,7 +311,6 @@ Global
 		{3691E290-C1BC-4AF9-91DA-85A675F57B63} = {8726A30E-6649-42DC-8F8B-4229BD8E517F}
 		{4128A6B5-6C28-45E2-BFC5-304FA906D79C} = {8726A30E-6649-42DC-8F8B-4229BD8E517F}
 		{4BB9CD0E-00CB-4ED3-B8CF-B86EF2DFFC45} = {4128A6B5-6C28-45E2-BFC5-304FA906D79C}
-		{CA4A6C20-1254-455A-B5B6-7B210E824076} = {8726A30E-6649-42DC-8F8B-4229BD8E517F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}

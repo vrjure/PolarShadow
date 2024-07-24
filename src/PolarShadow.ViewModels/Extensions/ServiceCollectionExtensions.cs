@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using LibVLCSharp.Shared;
+using Microsoft.Extensions.DependencyInjection;
 using PolarShadow.Essentials;
+using PolarShadow.Media;
+using PolarShadow.VLC;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +25,17 @@ namespace PolarShadow
                 Directory.CreateDirectory(fileOptions.CacheFolder);
             }
             return services;
+        }
+
+        public static IServiceCollection RegisterDbPreference(this IServiceCollection services)
+        {
+            return services.AddSingleton<IPreference, DbPreference>();
+        }
+
+        public static IServiceCollection RegisterVLC(this IServiceCollection services)
+        {
+            return services.AddSingleton(new LibVLC())
+                .AddTransient<IVideoViewController, VLController>();
         }
     }
 }

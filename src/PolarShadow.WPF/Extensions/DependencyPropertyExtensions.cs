@@ -9,61 +9,38 @@ namespace PolarShadows
 {
     static class DP
     {
-        public static DependencyProperty Register<TOwner, TValue>(string name)
+        public static DependencyProperty Register<TOwner, TValue>(string name, PropertyChangedCallback changed)
         {
-            return DependencyProperty.Register(name, typeof(TValue), typeof(TOwner));
+            return Register<TOwner, TValue>(name, default, changed);
         }
 
-        public static DependencyProperty Register<TOwner, TValue>(string name, TValue defaultValue)
+        public static DependencyProperty Register<TOwner, TValue>(string name, TValue defaultValue = default, PropertyChangedCallback changed = default, CoerceValueCallback coerceValueCallback = default, ValidateValueCallback validateValueCallback = default, Func<PropertyMetadata> metadataCreator = default)
         {
-            return DependencyProperty.Register(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(defaultValue));
-        }
+            var metadata = metadataCreator?.Invoke() ?? new PropertyMetadata();
+            metadata.DefaultValue = defaultValue;
+            metadata.PropertyChangedCallback = changed;
+            metadata.CoerceValueCallback = coerceValueCallback;
 
-        public static DependencyProperty Register<TOwner, TValue>(string name, TValue defaultValue, PropertyChangedCallback changed)
-        {
-            return DependencyProperty.Register(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(defaultValue, changed));
-        }
-
-        public static DependencyProperty Register<TOwner, TValue>(string name, TValue defaultValue, PropertyChangedCallback changed, CoerceValueCallback coerceValueCallback)
-        {
-            return DependencyProperty.Register(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(defaultValue, changed, coerceValueCallback));
-        }
-
-        public static DependencyProperty Register<TOwner, TValue>(string name, TValue defaultValue, PropertyChangedCallback changed, CoerceValueCallback coerceValueCallback, ValidateValueCallback validateValueCallback)
-        {
-            return DependencyProperty.Register(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(defaultValue, changed, coerceValueCallback), validateValueCallback);
-        }
-
-
-
-        public static DependencyProperty RegisterAttached<TOwner, TValue>(string name)
-        {
-            return DependencyProperty.RegisterAttached(name, typeof(TValue), typeof(TOwner));
-        }
-
-        public static DependencyProperty RegisterAttached<TOwner, TValue>(string name, TValue defaultValue)
-        {
-            return DependencyProperty.RegisterAttached(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(defaultValue));
+            return validateValueCallback == default ?
+                DependencyProperty.Register(name, typeof(TValue), typeof(TOwner), metadata)
+                : DependencyProperty.Register(name, typeof(TValue), typeof(TOwner), metadata, validateValueCallback);
         }
 
         public static DependencyProperty RegisterAttached<TOwner, TValue>(string name, PropertyChangedCallback changed)
         {
-            return DependencyProperty.RegisterAttached(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(changed));
+            return RegisterAttached<TOwner, TValue>(name, default, changed);
         }
 
-        public static DependencyProperty RegisterAttached<TOwner, TValue>(string name, TValue defaultValue, PropertyChangedCallback changed)
+        public static DependencyProperty RegisterAttached<TOwner, TValue>(string name, TValue defaultValue = default, PropertyChangedCallback changed = default, CoerceValueCallback coerceValueCallback = default, ValidateValueCallback validateValueCallback = default, Func<PropertyMetadata> metadataCreator = default)
         {
-            return DependencyProperty.RegisterAttached(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(defaultValue, changed));
-        }
+            var metadata = metadataCreator?.Invoke() ?? new PropertyMetadata();
+            metadata.DefaultValue = defaultValue;
+            metadata.PropertyChangedCallback = changed;
+            metadata.CoerceValueCallback = coerceValueCallback;
 
-        public static DependencyProperty RegisterAttached<TOwner, TValue>(string name, TValue defaultValue, PropertyChangedCallback changed, CoerceValueCallback coerceValueCallback)
-        {
-            return DependencyProperty.RegisterAttached(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(defaultValue, changed, coerceValueCallback));
-        }
-
-        public static DependencyProperty RegisterAttached<TOwner, TValue>(string name, TValue defaultValue, PropertyChangedCallback changed, CoerceValueCallback coerceValueCallback, ValidateValueCallback validateValueCallback)
-        {
-            return DependencyProperty.RegisterAttached(name, typeof(TValue), typeof(TOwner), new PropertyMetadata(defaultValue, changed, coerceValueCallback), validateValueCallback);
+            return validateValueCallback == default ? 
+                DependencyProperty.RegisterAttached(name, typeof(TValue), typeof(TOwner), metadata) 
+                : DependencyProperty.RegisterAttached(name, typeof(TValue), typeof(TOwner), metadata, validateValueCallback);
         }
     }
 }

@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aria2Net\src\Aria2Net\Aria2Net.csproj" />
-    <ProjectReference Include="..\PolarShadow.Controls.Abstractions\PolarShadow.Controls.Abstractions.csproj" />
     <ProjectReference Include="..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
     <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
     <ProjectReference Include="..\PolarShadow.Resources\PolarShadow.Resources.csproj" />

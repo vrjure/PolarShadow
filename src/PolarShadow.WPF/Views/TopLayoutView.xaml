@@ -13,7 +13,8 @@
     <Grid x:Name="Root">
         <DockPanel>
             <Grid Height="{DynamicResource WindowCaptionHeight}"
-                  DockPanel.Dock="Top">
+                  DockPanel.Dock="Top"
+                  x:Name="windowCaption">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="auto"/>
@@ -22,12 +23,21 @@
                     <ColumnDefinition Width="140"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Style="{StaticResource ButtonIcon}"
-                        Content="{StaticResource back-button}"
+                <Button Content="{StaticResource back-button}"
                         WindowChrome.IsHitTestVisibleInChrome="True"
                         VerticalAlignment="Center"
-                        nav:NavigationManager.BackName="{x:Static vm:TopLayoutViewModel.NavigationName}"
-                        Visibility="Collapsed"/>  
+                        Margin="8,0,0,0"
+                        nav:NavigationManager.BackName="{x:Static vm:TopLayoutViewModel.NavigationName}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource ButtonIcon}">
+                            <Style.Triggers>
+                                <Trigger Property="Opacity" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <ContentControl toolBar:ToolBarAttached.Name="{x:Static vm:TopLayoutViewModel.CenterTitleBarContainer}"
                                 Grid.ColumnSpan="5"
                                 WindowChrome.IsHitTestVisibleInChrome="True"

@@ -55,6 +55,19 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _searchResult, value);
         }
 
+        private Resource _selectedValue;
+        public Resource SelectedValue
+        {
+            get => _selectedValue;
+            set
+            {
+                if(SetProperty(ref _selectedValue, value))
+                {
+                    OnSelected(SelectedValue);
+                }
+            }
+        }
+
         private ObservableCollection<string> _availableSites;
         public ObservableCollection<string> AvailableSites
         {
@@ -204,6 +217,12 @@ namespace PolarShadow.ViewModels
             {
                 IsLoading = false;
             }
+        }
+
+        private void OnSelected(Resource selected)
+        {
+            if (selected == null) return;
+            NavigateToDetail(selected);
         }
 
         private void NavigateToDetail(Resource searchValue)

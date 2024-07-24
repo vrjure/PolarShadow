@@ -5,14 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Controls
+namespace PolarShadow.Media
 {
-    public interface IVideoViewController : IDisposable, INotifyPropertyChanged
+    public interface IVideoViewController : INotifyPropertyChanged
     {
         TimeSpan Length { get; }
         TimeSpan Time { get; set; }
         bool IsPlaying { get; }
         float Speed { get; set; }
+        int Volume { get; set; }
 
         void Play();
         Task PlayAsync();
@@ -22,6 +23,7 @@ namespace PolarShadow.Controls
         Task PauseAsync();
         void Stop();
         Task StopAsync();
+        void Dispose();
 
         event EventHandler<TimeSpan> LengthChanged;
         event EventHandler<TimeSpan> TimeChanged;
