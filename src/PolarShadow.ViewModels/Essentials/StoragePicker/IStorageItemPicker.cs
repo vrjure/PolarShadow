@@ -9,6 +9,6 @@ namespace PolarShadow.Essentials
     public interface IStorageItemPicker
     {
         Task<IReadOnlyList<IStorageItem>> OpenPickerAsync(PickerOptions options);
-        Task<IStorageFile> SavePickerAsync(PickerOptions optioins);
+        Task<IStorageFile> SavePickerAsync(PickerOptions options);
     }
 }

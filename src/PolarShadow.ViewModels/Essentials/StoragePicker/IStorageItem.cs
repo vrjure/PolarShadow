@@ -8,5 +8,9 @@ namespace PolarShadow.Essentials
 {
     public interface IStorageItem
     {
+        string Name { get; }
+        Uri Uri { get; }
+        Task DeleteAsync();
+        Task<IStorageItem> MoveAsync(IStorageFolder destination);
     }
 }

@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
+    <ProjectReference Include="..\PolarShadow.Resources\PolarShadow.Resources.csproj" />
     <ProjectReference Include="..\PolarShadow.ViewModels\PolarShadow.ViewModels.csproj" />
   </ItemGroup>
 

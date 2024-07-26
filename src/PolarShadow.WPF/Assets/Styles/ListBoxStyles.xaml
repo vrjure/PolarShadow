@@ -37,13 +37,24 @@
     </Style>
 
     <Style x:Key="ListBoxSelectableItem" TargetType="ListBoxItem">
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        <Setter Property="Background" Value="{DynamicResource PrimaryBackground}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Margin" Value="3"/>
+        <Setter Property="BorderBrush" Value="LightGray"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
-                    <Border Background="{TemplateBinding Background}">
-                        <ContentPresenter Margin="20,0,20,6"
-                                          TextBlock.Foreground="{TemplateBinding Foreground}"/>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            CornerRadius="5"
+                            Margin="{TemplateBinding Margin}">
+                        <ContentPresenter TextBlock.Foreground="{TemplateBinding Foreground}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Margin="20,6,20,6"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">

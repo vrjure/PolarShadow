@@ -8,6 +8,7 @@ using PolarShadow.Navigations;
 using PolarShadow.Notification;
 using PolarShadow.Resources;
 using PolarShadow.Storage;
+using PolarShadow.StoragePicker;
 using PolarShadow.ViewModels;
 using PolarShadow.WebView;
 using PolarShadow.WPF.Views;
@@ -46,8 +47,8 @@ namespace PolarShadow.WPF
             service.RegisterSingletonViewWithModel<TopLayoutView, TopLayoutViewModel>();
             service.RegisterTransientViewWithModel<MainView, MainViewModel>();
             service.RegisterTransientViewWithModel<BookshelfView, BookshelfViewModel>();
-            //service.RegisterTransientViewWithModel<BookSourceView, BookSourceViewModel>();
-            //service.RegisterTransientViewWithModel<BookSourceDetailView, BookSourceDetailViewModel>();
+            service.RegisterTransientViewWithModel<BookSourceView, BookSourceViewModel>();
+            service.RegisterTransientViewWithModel<BookSourceDetailView, BookSourceDetailViewModel>();
             service.RegisterTransientViewWithModel<SearchView, SearchViewModel>();
             service.RegisterTransientViewWithModel<DetailView, DetailViewModel>();
             //service.RegisterTransientViewWithModel<DiscoverView, DiscoverViewModel>();
@@ -63,6 +64,7 @@ namespace PolarShadow.WPF
             service.AddSingleton<INavigationService, NavigationService>();
             service.AddSingleton<IMessageService, NotificationContainer>();
             service.AddSingleton<IDispatcherUI, DispatcherUI>();
+            service.AddSingleton<IStorageItemPicker, StorageItemPicker>();
         }
 
         private void RegisterDatabase(IServiceCollection service)

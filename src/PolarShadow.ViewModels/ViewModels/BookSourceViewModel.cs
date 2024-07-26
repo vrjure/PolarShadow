@@ -37,6 +37,19 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _sites, value);
         }
 
+        private ISite _siteSelected;
+        public ISite SiteSelected
+        {
+            get => _siteSelected;
+            set 
+            {
+                if(SetProperty(ref _siteSelected, value))
+                {
+                    ToSiteDetail(_siteSelected);
+                }
+            } 
+        }
+
         private IAsyncRelayCommand _importCommand;
         public IAsyncRelayCommand ImportCommand => _importCommand ??= new AsyncRelayCommand(ImportSource);
 
@@ -49,10 +62,19 @@ namespace PolarShadow.ViewModels
         {
             try
             {
-                var source = await _storage.OpenPickerAsync(new PickerOptions());
-                if (source == null) return;
+                var source = await _storage.OpenPickerAsync(new PickerOptions()
+                {
+                    Title = "Json File",
+                    FileTypeFilter = new List<FilePickType>
+                    {
+                        new FilePickType{Name="json", Patterns = new  List<string> {"*.json" }
+                    }
+                }
+                });
+                if (source == null || source.Count == 0) return;
 
-                //_polar.LoadJsonStreamSource(source);
+                using var fs = await (source[0] as IStorageFile).ReadAsync();
+                _polar.LoadJsonStreamSource(fs);
 
                 Reflesh();
 
@@ -68,6 +90,7 @@ namespace PolarShadow.ViewModels
 
         private void Reflesh()
         {
+            SiteSelected = null;
             Sites = new ObservableCollection<ISite>(_polar.GetVideoSites());
         }
 
