@@ -44,6 +44,35 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _resourceList, value);
         }
 
+        private ResourceTree _selectedCategory;
+        public ResourceTree SelectedCategory
+        {
+            get => _selectedCategory;
+            set
+            {
+                if (SetProperty(ref _selectedCategory, value))
+                {
+                    if (_selectedCategory?.Children == null || (_selectedCategory?.Children != null && _selectedCategory.Children.Count == 0))
+                    {
+                        CategoryValueChanged(_selectedCategory);
+                    }
+                }
+            }
+        }
+
+        private ResourceTree _selectedResource;
+        public ResourceTree SelectedResource
+        {
+            get => _selectedResource;
+            set
+            {
+                if (SetProperty(ref _selectedResource, value))
+                {
+                    ResourceSelected(_selectedResource);
+                }
+            }
+        }
+
         private ResourceTree _currentCategory;
 
 
@@ -80,6 +109,8 @@ namespace PolarShadow.ViewModels
                 _notify.Show("Miss Parameter");
                 return;
             }
+
+            SelectedResource = null;
 
             if (Categories != null)
             {

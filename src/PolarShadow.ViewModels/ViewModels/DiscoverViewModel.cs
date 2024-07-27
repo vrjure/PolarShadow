@@ -33,10 +33,24 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _sites, value);
         }
 
+        private ISite _selectedSite;
+        public ISite SelectedSite
+        {
+            get => _selectedSite;
+            set 
+            {
+                if(SetProperty(ref _selectedSite, value))
+                {
+                    SiteSelectChanged(_selectedSite);
+                }
+            } 
+        }
+
         protected override void OnLoad()
         {
             try
             {
+                SelectedSite = null;
                 var sites = _polar.GetVideoSites(f => f.HasRequest(Requests.Categories));
                 Sites = new ObservableCollection<ISite>(sites);
             }

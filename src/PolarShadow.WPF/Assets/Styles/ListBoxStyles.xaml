@@ -4,6 +4,7 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <sys:Double x:Key="GridItemWidth">200</sys:Double>
     <sys:Double x:Key="GridItemHeight">250</sys:Double>
+    <sys:Double x:Key="GridItemMaxHeight">450</sys:Double>
 
     <Style x:Key="ListBoxMenuItem" TargetType="ListBoxItem">
         <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
@@ -76,8 +77,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
                     <Border CornerRadius="8"
-                            Margin="8"
-                            Height="{StaticResource GridItemHeight}">
+                            Margin="8">
                         <Border.OpacityMask>
                             <VisualBrush>
                                 <VisualBrush.Visual>
