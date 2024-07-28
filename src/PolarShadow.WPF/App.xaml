@@ -33,6 +33,7 @@
                 <ResourceDictionary Source="/Assets/Styles/MediaPlayerControllerStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/VideoViewStyles.xaml"/>
                 <ResourceDictionary Source="/Assets/Styles/TextBoxStyles.xaml"/>
+                <ResourceDictionary Source="/Assets/Styles/NumericUpDownStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type m:MenuIconItem}">

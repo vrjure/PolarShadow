@@ -53,7 +53,7 @@ namespace PolarShadow.WPF
             service.RegisterTransientViewWithModel<DetailView, DetailViewModel>();
             service.RegisterTransientViewWithModel<DiscoverView, DiscoverViewModel>();
             service.RegisterTransientViewWithModel<DiscoverDetailView, DiscoverDetailViewModel>();
-            //service.RegisterTransientViewWithModel<MineView, MineViewModel>();
+            service.RegisterTransientViewWithModel<MineView, MineViewModel>();
         }
 
         private void RegisterUtilities(IServiceCollection service)

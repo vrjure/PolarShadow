@@ -52,11 +52,14 @@ namespace PolarShadow.ViewModels
 
         private async Task PickDownloadFolder()
         {
-            var folders = await _storage.OpenPickerAsync(new PickerOptions());
+            var folders = await _storage.OpenPickerAsync(new PickerOptions(PickerType.Folder)
+            {
+                Title = "DownloadPath"
+            });
 
             if (folders == null || folders.Count == 0) return;
 
-            //DownloadPath.Value = folders.First().Path.AbsolutePath;
+            DownloadPath.Value = folders[0].Uri.AbsolutePath;
         }
 
         protected override async void OnLoad()

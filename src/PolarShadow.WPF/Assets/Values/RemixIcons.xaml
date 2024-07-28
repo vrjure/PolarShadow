@@ -7,7 +7,10 @@
     <sys:String x:Key="refresh">&#xF064;</sys:String>
     <sys:String x:Key="search">&#xF0D1;</sys:String>
     <sys:String x:Key="upload">&#xF249;</sys:String>
-    <sys:String x:Key="arrow-right">&#xEA6E;</sys:String>
+    <sys:String x:Key="arrow-left">&#xEA6E;</sys:String>
+    <sys:String x:Key="arrow-right">&#xEA64;</sys:String>
+    <sys:String x:Key="arrow-up">&#xEA78;</sys:String>
+    <sys:String x:Key="arrow-down">&#xEA4E;</sys:String>
     <sys:String x:Key="save">&#xF0B1;</sys:String>
     <sys:String x:Key="delete">&#xEC2A;</sys:String>
     <sys:String x:Key="more-v">&#xEF76;</sys:String>

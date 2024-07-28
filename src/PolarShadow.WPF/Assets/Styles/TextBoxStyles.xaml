@@ -5,7 +5,7 @@
         <Setter Property="MinWidth"
           Value="120" />
         <Setter Property="MinHeight"
-          Value="20" />
+          Value="30" />
         <Setter Property="AllowDrop"
           Value="true" />
         <Setter Property="Template">
@@ -16,7 +16,8 @@
                             Padding="2"
                             BorderThickness="1"
                             BorderBrush="LightGray">
-                        <ScrollViewer Margin="0" x:Name="PART_ContentHost" />
+                        <ScrollViewer Margin="0" x:Name="PART_ContentHost" 
+                                      VerticalAlignment="Center"/>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
