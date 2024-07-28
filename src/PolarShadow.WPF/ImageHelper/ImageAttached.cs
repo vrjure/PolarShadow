@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using PolarShadow.Controls;
 using PolarShadow.Essentials;
 using PolarShadows;
 using System;
@@ -167,7 +168,7 @@ namespace PolarShadow.ImageHelper
                 using var response = await httpClient.GetAsync(uri);
                 response.EnsureSuccessStatusCode();
 
-                return CreateBitmapImage(await response.Content.ReadAsStreamAsync());
+                return CreateBitmapImage(await response.Content.ReadAsStreamAsync(), uri);
             }
             catch (Exception ex)
             {
@@ -177,12 +178,21 @@ namespace PolarShadow.ImageHelper
             return null;
         }
 
-        private static BitmapImage CreateBitmapImage(Stream stream)
+        private static BitmapImage CreateBitmapImage(Stream stream, Uri uri)
         {
             var bitmapImage = CreateBitmapImage();
             bitmapImage.BeginInit();
             bitmapImage.CacheOption = BitmapCacheOption.OnLoad;//release stream. e...
-            bitmapImage.StreamSource = stream;
+            if (uri.LocalPath.EndsWith(".ico"))
+            {
+                var ico = new Ico(stream);
+                bitmapImage.StreamSource = ico.GetStream(ico.Count - 1);
+
+            }
+            else
+            {
+                bitmapImage.StreamSource = stream;
+            }
             bitmapImage.EndInit();
             return bitmapImage;
         }

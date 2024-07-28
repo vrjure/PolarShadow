@@ -65,6 +65,10 @@ namespace PolarShadow.WPF
             service.AddSingleton<IMessageService, NotificationContainer>();
             service.AddSingleton<IDispatcherUI, DispatcherUI>();
             service.AddSingleton<IStorageItemPicker, StorageItemPicker>();
+            service.AddSingleton(new WebViewOptions
+            {
+                UserDataFolder = Path.Combine(PolarShadowApp.AppDataFolder, "webview")
+            });
         }
 
         private void RegisterDatabase(IServiceCollection service)
