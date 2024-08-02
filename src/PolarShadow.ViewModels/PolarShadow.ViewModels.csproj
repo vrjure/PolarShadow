@@ -8,16 +8,21 @@
 
   <ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="LibVLCSharp" Version="3.8.2" />
+    <PackageReference Include="LibVLCSharp" Version="3.8.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Aria2Net\src\Aria2Net\Aria2Net.csproj" />
     <ProjectReference Include="..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
+    <ProjectReference Include="..\PolarShadow.Essential\PolarShadow.Essential.csproj" />
     <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
     <ProjectReference Include="..\PolarShadow.Resources\PolarShadow.Resources.csproj" />
     <ProjectReference Include="..\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
     <ProjectReference Include="..\PolarShadow.Storage\PolarShadow.Storage.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Essentials\Dispatcher\" />
   </ItemGroup>
 
 </Project>

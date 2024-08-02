@@ -4,13 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ps="https://github.com/PolarShadow"
 			 xmlns:psr="using:PolarShadow.Resources"
+			 xmlns:vm="using:PolarShadow.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.BookSourceView"
-			 x:DataType="ps:BookSourceViewModel"
+			 x:DataType="vm:BookSourceViewModel"
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True">
 	<ps:ToolBarAttached.ToolBar>
-		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+		<ps:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal">
 				<!--Import-->
 				<Button Content="{DynamicResource upload}"
@@ -23,7 +24,7 @@
 	<Grid>
 		<ListBox ItemsSource="{Binding Sites}"
 				 Margin="20"
-				 Selection="{Binding SelectionModel, Mode=OneWayToSource}"
+				 SelectedValue="{Binding SiteSelected}"
 				 Theme="{StaticResource Vertical}"
 				 ItemContainerTheme="{StaticResource VerticalItem-Border}">
 

@@ -14,26 +14,21 @@ using Avalonia.Controls.Notifications;
 using PolarShadow.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
-using PolarShadow.Cache;
 using PolarShadow.Resources;
 using System.Text;
 using PolarShadow.Handlers;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Platform;
 using System.Text.Json;
+using PolarShadow.StoragePicker;
+using PolarShadow.Dispatcher;
+using PolarShadow.Notifaction;
 
 namespace PolarShadow;
 
 public partial class App : Application
 {
-    public static string AppDataFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PolarShadow");
-    public static string ConfigFile => Path.Combine(AppDataFolder, "config.json");
-    public static string DbFile => Path.Combine(AppDataFolder, "polar.db");
-    public static string CacheFolder => Path.Combine(AppDataFolder, "cache");
-    public static string PreferenceFolder => Path.Combine(AppDataFolder, "preference");
-
     public IServiceCollection ServiceCollection = new ServiceCollection();
 
     public override void Initialize()
@@ -93,18 +88,21 @@ public partial class App : Application
 
         RegisterUtilities(service);
 
-        RegisterCache(service);
 
         RegisterNativeControls(service);
     }
 
     private void RegisterUtilities(IServiceCollection service)
     {
+        service.RegisterVLC();
+        service.RegisterCache(new FileCacheOptions { CacheFolder = PolarShadowApp.CacheFolder });
+        service.RegisterDbPreference();
         service.AddSingleton<INavigationService, NavigationService>();
-        service.AddSingleton<IStorageService, StorageService>();
+        service.AddSingleton<IStorageItemPicker, StorageItemPicker>();
         service.AddSingleton<ITopLevelService, TopLevelService>();
         service.AddSingleton<INotificationManager, NotificationManager>();
-        service.AddSingleton<IPreference, DbPreference>();
+        service.AddSingleton<IDispatcherUI, DispatcherUI>();
+        service.AddSingleton<IMessageService, NotificationService>();
     }
 
     private void RegisterView(IServiceCollection service)
@@ -120,12 +118,6 @@ public partial class App : Application
         service.RegisterTransientViewWithModel<DiscoverView, DiscoverViewModel>();
         service.RegisterTransientViewWithModel<DiscoverDetailView, DiscoverDetailViewModel>();
         service.RegisterTransientViewWithModel<MineView, MineViewModel>();
-        service.RegisterTransientViewWithModel<VideoPlayerView, VideoPlayerViewModel>();
-
-
-#if DEBUG
-        service.RegisterTransientViewWithModel<TestView, TestViewModel>();
-#endif
     }
 
     private void RegisterPolarShadow(IServiceCollection service)
@@ -160,21 +152,9 @@ public partial class App : Application
     {
         service.AddDbContextFactory<PolarShadowDbContext>(op =>
         {
-            op.UseSqlite($"Data Source={DbFile}", op => op.MigrationsAssembly(typeof(App).Assembly.FullName));
+            op.UseSqlite($"Data Source={PolarShadowApp.DbFile}", op => op.MigrationsAssembly(typeof(App).Assembly.FullName));
         });
         service.RegisterStorageService();
-    }
-
-    private void RegisterCache(IServiceCollection service)
-    {
-        service.AddMemoryCache();
-        service.AddSingleton<IFileCache>(new FileCache(new FileCacheOptions { CacheFolder = CacheFolder }));
-        service.AddSingleton<IBufferCache, BufferCache>();
-
-        if (!Directory.Exists(CacheFolder))
-        {
-            Directory.CreateDirectory(CacheFolder);
-        }
     }
 
     private void RegisterNativeControls(IServiceCollection service)
@@ -182,7 +162,7 @@ public partial class App : Application
         service.AddLibVLC();
         service.AddWebViewOptions(new WebViewOptions
         {
-            UserDataFolder = Path.Combine(AppDataFolder, "webview")
+            UserDataFolder = Path.Combine(PolarShadowApp.AppDataFolder, "webview")
         });
     }
 

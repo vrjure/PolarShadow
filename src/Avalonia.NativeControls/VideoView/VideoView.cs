@@ -1,5 +1,6 @@
 ﻿using Avalonia.Input;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using PolarShadow.Essentials;
 using System;
 using System.Diagnostics;
 
@@ -13,21 +14,6 @@ namespace Avalonia.Controls
         public VideoView() : base(Ioc.Default.GetRequiredService<IVideoViewHandler>())
         {
 
-        }
-
-        public static readonly DirectProperty<VideoView, bool> FullScreenProperty = AvaloniaProperty.RegisterDirect<VideoView, bool>(nameof(FullScreen), o => o.FullScreen, (o, v) => o.FullScreen = v);
-
-        private bool _fullSceen;
-        public bool FullScreen
-        {
-            get => _fullSceen;
-            set
-            {
-                if(SetAndRaise(FullScreenProperty, ref _fullSceen, value))
-                {
-                    this.Handler.PlatformView.FullScreen = _fullSceen;
-                }
-            }
         }
 
         public static readonly DirectProperty<VideoView, IVideoViewController> ControllerProperty = AvaloniaProperty.RegisterDirect<VideoView, IVideoViewController>(nameof(Controller), o => o.Controller, (o, v) => o.Controller = v);

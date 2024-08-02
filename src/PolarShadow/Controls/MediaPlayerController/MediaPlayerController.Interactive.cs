@@ -31,7 +31,7 @@ namespace PolarShadow.Controls
         {
             if (e.Handled || e.KeyModifiers != KeyModifiers.None || _part_slider == null) return;
 
-            var target = MediaController.Controller.Time;
+            var target = Controller.Time;
             var handled = false;
             var seek = false;
             switch (e.Key)
@@ -55,9 +55,9 @@ namespace PolarShadow.Controls
                     handled = true;
                     break;
                 case Key.Escape:
-                    if (MediaController != null)
+                    if (FullScreen)
                     {
-                        MediaController.FullScreen = false;
+                        FullScreen = false;
                     }
                     break;
             }
@@ -68,12 +68,12 @@ namespace PolarShadow.Controls
                 {
                     target = TimeSpan.Zero;
                 }
-                else if (target > MediaController.Controller.Length)
+                else if (target > Controller.Length)
                 {
-                    target = MediaController.Controller.Length;
+                    target = Controller.Length;
                 }
 
-                MediaController.Controller.Time = target;
+                Controller.Time = target;
             }
 
             e.Handled = handled;
@@ -144,18 +144,18 @@ namespace PolarShadow.Controls
 
         private void OnHolding(HoldingRoutedEventArgs e)
         {
-            if (MediaController?.Controller == null)
+            if (Controller == null)
             {
                 return;
             }
 
             if (e.HoldingState == HoldingState.Started)
             {
-                MediaController.Controller.Speed = 2;
+                Controller.Speed = 2;
             }
             else
             {
-                MediaController.Controller.Speed = 1;
+                Controller.Speed = 1;
             }
 
             //System.Diagnostics.Trace.WriteLine($"Play speed: {MediaController.Controller.Speed}");
@@ -163,7 +163,7 @@ namespace PolarShadow.Controls
 
         private void OnScroll(ScrollGestureEventArgs e)
         {
-            if (MediaController?.Controller == null)
+            if (Controller == null)
             {
                 return;
             }
@@ -208,7 +208,7 @@ namespace PolarShadow.Controls
 
         private void OnVerticalScroll(ScrollGestureEventArgs e)
         {
-            if (MediaController?.FullScreen == true)
+            if (FullScreen)
             {
                 if (_deviceService != null)
                 {
@@ -236,7 +236,7 @@ namespace PolarShadow.Controls
 
         private void OnScrollEnd(ScrollGestureEndedEventArgs e)
         {
-            if (MediaController?.Controller == null) return;
+            if (Controller == null) return;
             _isScrolling = false;
             //System.Diagnostics.Trace.WriteLine($"Scroll change: {_scrollChangeTime}");
 
@@ -247,7 +247,7 @@ namespace PolarShadow.Controls
                     return;
                 }
 
-                MediaController.Controller.Time += TimeSpan.FromSeconds(_scrollChangedX);
+                Controller.Time += TimeSpan.FromSeconds(_scrollChangedX);
             }
 
             AutoHide();

@@ -3,9 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ps="https://github.com/PolarShadow"
+			 xmlns:vm="using:PolarShadow.ViewModels"
+			 xmlns:m="using:PolarShadow.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.MainView"
-             x:DataType="ps:MainViewModel"
+             x:DataType="vm:MainViewModel"
 			 x:Name="mainView"
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True">
@@ -20,7 +22,7 @@
 						  SelectedValue="{Binding SelectedValue, Mode=TwoWay}"
 						  x:Name="MenuStrip">
 					<TabStrip.ItemTemplate>
-						<DataTemplate DataType="ps:MenuIconItem">
+						<DataTemplate DataType="m:MenuIconItem">
 							<StackPanel x:Name="menuItem"
 										Orientation="Vertical"
 										Width="60"
@@ -36,7 +38,7 @@
 				</TabStrip>
 			</Border>
 			<Border>
-				<ContentControl ps:NavigationManager.ContainerName="{x:Static ps:MainViewModel.NavigationName}">
+				<ContentControl ps:NavigationManager.ContainerName="{x:Static vm:MainViewModel.NavigationName}">
 				</ContentControl>
 			</Border>
 

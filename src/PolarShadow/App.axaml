@@ -3,6 +3,7 @@
 			 xmlns:ps="https://github.com/PolarShadow"
 			 xmlns:psr="using:PolarShadow.Resources"
 			 xmlns:pss="using:PolarShadow.Services"
+			 xmlns:m="using:PolarShadow.Models"
              x:Class="PolarShadow.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
@@ -22,7 +23,6 @@
 				<ResourceInclude Source="/Assets/Themes/ButtonThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/RadioButtonThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/MediaPlayerControllerThemes.axaml"/>
-				<ResourceInclude Source="/Assets/Themes/PSPlayerThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ScrollViewThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/SearchBoxThemes.axaml"/>
 				<ResourceInclude Source="/Assets/Themes/ExpanderThemes.axaml"/>
@@ -139,7 +139,7 @@
 			</Panel>
 		</DataTemplate>
 
-		<DataTemplate DataType="ps:ResourceModelRefreshItem">
+		<DataTemplate DataType="m:ResourceModelRefreshItem">
 			<Panel>
 				<Image ps:ImageAttached.Src="{Binding Data.ImageSrc}"
 					   ps:ImageAttached.Headers="{Binding Data.ImageSrcHeaders}"

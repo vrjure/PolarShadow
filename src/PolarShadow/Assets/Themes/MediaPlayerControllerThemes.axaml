@@ -63,7 +63,7 @@
 											Spacing="16"
 											VerticalAlignment="Center"
 											Margin="8,8,0,0">
-									<TextBlock Text="{Binding MediaController.Title, RelativeSource={RelativeSource TemplatedParent}}"
+									<TextBlock Text="{TemplateBinding Title}"
 											   Foreground="White"/>
 								</StackPanel>
 							</Grid>
@@ -89,8 +89,8 @@
 												FontSize="32"
 												Foreground="White"
 												VerticalContentAlignment="Center"
-												Classes.play="{Binding !MediaController.Controller.IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
-												Classes.pause="{Binding MediaController.Controller.IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
+												Classes.play="{Binding !Controller.IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
+												Classes.pause="{Binding Controller.IsPlaying, RelativeSource={RelativeSource TemplatedParent}}"
 												x:Name="Part_PlayPause">
 											<Button.Styles>
 												<Style Selector="Button.play">
@@ -112,17 +112,17 @@
 											Padding="8,0"
 											Grid.Column="1"
 											VerticalAlignment="Center"
-											Maximum="{Binding MediaController.Controller.Length, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
+											Maximum="{Binding Controller.Length, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}}"
 											Minimum="0"
 											SmallChange="5"
-											Value="{Binding MediaController.Controller.Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}, Mode=TwoWay}">
+											Value="{Binding Controller.Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToDoubleConverter.Instance}, Mode=TwoWay}">
 									</Slider>
-									<TextBlock Text="{Binding MediaController.Controller.Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
+									<TextBlock Text="{Binding Controller.Time, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToStringConverter.Instance}}"
 												Grid.Column="2"
 												VerticalAlignment="Center"
 												Foreground="White"
 												x:Name="Part_Time"/>
-									<TextBlock Text="{Binding MediaController.Controller.Length, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToStringConverter.Instance}, StringFormat='/{0}'}"
+									<TextBlock Text="{Binding Controller.Length, RelativeSource={RelativeSource TemplatedParent}, Converter={x:Static ps:TimeSpanToStringConverter.Instance}, StringFormat='/{0}'}"
 												Grid.Column="3"
 												VerticalAlignment="Center"
 												Foreground="White"
@@ -134,8 +134,8 @@
 												VerticalAlignment="Center"
 												VerticalContentAlignment="Center"
 												Foreground="White"
-												Classes.fullScreen="{Binding !MediaController.FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
-												Classes.exitFullScreen="{Binding MediaController.FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
+												Classes.fullScreen="{Binding !FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
+												Classes.exitFullScreen="{Binding FullScreen, RelativeSource={RelativeSource TemplatedParent}}"
 												x:Name="Part_FullScreen">
 											<Button.Styles>
 												<Style Selector="Button.fullScreen">
@@ -152,11 +152,11 @@
 						</Grid>
 					</Border>
 
-					<Border IsVisible="{Binding MediaController.IsLoading,RelativeSource={RelativeSource TemplatedParent}}"
+					<Border IsVisible="{TemplateBinding IsLoading}"
 							HorizontalAlignment="Center"
 							VerticalAlignment="Center">
 						<PathIcon Data="{StaticResource loader2}"
-								  Classes.spin="{Binding MediaController.IsLoading,RelativeSource={RelativeSource TemplatedParent}}"
+								  Classes.spin="{TemplateBinding IsLoading}"
 								  Height="30"
 								  Width="30"
 								  Foreground="White"/>
@@ -185,7 +185,49 @@
 				</Panel>			
 			</ControlTemplate>
 		</Setter>
+		<Style Selector="^[MediaMode=Normal]">
+			<Style Selector="^ /template/ Button#Part_Previous">
+				<Setter Property="IsVisible" Value="True"/>
+			</Style>
+			<Style Selector="^ /template/ Button#Part_Next">
+				<Setter Property="IsVisible" Value="True"/>
+			</Style>
+			<Style Selector="^ /template/ TextBlock#Part_Time">
+				<Setter Property="IsVisible" Value="True"/>
+			</Style>
+			<Style Selector="^ /template/ TextBlock#Part_Length">
+				<Setter Property="IsVisible" Value="True"/>
+			</Style>
+		</Style>
 
+		<Style Selector="^[MediaMode=Simple]">
+			<Style Selector="^ /template/ Button#Part_Previous">
+				<Setter Property="IsVisible" Value="False"/>
+			</Style>
+			<Style Selector="^ /template/ Button#Part_Next">
+				<Setter Property="IsVisible" Value="False"/>
+			</Style>
+			<Style Selector="^ /template/ TextBlock#Part_Time">
+				<Setter Property="IsVisible" Value="True"/>
+			</Style>
+			<Style Selector="^ /template/ TextBlock#Part_Length">
+				<Setter Property="IsVisible" Value="True"/>
+			</Style>
+		</Style>
+		<Style Selector="^[MediaMode=Min]">
+			<Style Selector="^ /template/ Button#Part_Previous">
+				<Setter Property="IsVisible" Value="False"/>
+			</Style>
+			<Style Selector="^ /template/ Button#Part_Next">
+				<Setter Property="IsVisible" Value="False"/>
+			</Style>
+			<Style Selector="^ /template/ TextBlock#Part_Time">
+				<Setter Property="IsVisible" Value="False"/>
+			</Style>
+			<Style Selector="^ /template/ TextBlock#Part_Length">
+				<Setter Property="IsVisible" Value="False"/>
+			</Style>
+		</Style>
 		<!--<Style Selector="^ /template/ Border#Part_Root[Opacity=0]">
 			<Setter Property="IsVisible" Value="False"/>
 		</Style>-->

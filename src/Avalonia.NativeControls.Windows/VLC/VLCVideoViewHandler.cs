@@ -1,7 +1,9 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Platform;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using LibVLCSharp.Shared;
+using PolarShadow.Essentials;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -20,7 +22,7 @@ namespace Avalonia.Controls.Windows
 
         protected override void ConnectHandler(VLCVideoView platformView)
         {
-            VirtualView.Controller = new VLController();
+            //VirtualView.Controller = Ioc.Default.GetRequiredService<IVideoViewController>();
         }
 
         protected override void DisconnectHandler(VLCVideoView platformView)

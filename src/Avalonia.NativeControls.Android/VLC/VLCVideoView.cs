@@ -5,6 +5,7 @@ using Avalonia.Android;
 using Avalonia.Media;
 using Avalonia.Platform;
 using LibVLCSharp.Shared;
+using PolarShadow.Essentials;
 using System;
 
 namespace Avalonia.Controls.Android
@@ -25,7 +26,7 @@ namespace Avalonia.Controls.Android
         public IVideoViewController Controller { get; set; }
 
 
-        public MediaPlayer MediaPlayer => (Controller as VLController)?.MediaPlayer;
+        public MediaPlayer MediaPlayer => (Controller as IVLController)?.MediaPlayer;
 
         private object _overlayContent;
         public object OverlayContent

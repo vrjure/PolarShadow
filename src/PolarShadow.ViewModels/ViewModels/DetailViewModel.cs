@@ -9,9 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PolarShadow.Navigations;
-using PolarShadow.Notification;
 using Aria2Net;
-using PolarShadow.Media;
 using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace PolarShadow.ViewModels
@@ -25,11 +23,12 @@ namespace PolarShadow.ViewModels
         private readonly IPreference _preference;
         private readonly INavigationService _nav;
         private readonly IHistoryService _hisService;
+        private readonly IDispatcherUI _dispathcerUI;
 
         private ResourceModel _rootResourceInDb;
         private TimeSpan _currentProgress;
 
-        public DetailViewModel(IPolarShadow polar, IMessageService notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService, IVideoViewController videoController)
+        public DetailViewModel(IPolarShadow polar, IMessageService notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService, IVideoViewController videoController, IDispatcherUI dispatcherUI)
         {
             _polar = polar;
             _notify = notify;
@@ -39,6 +38,7 @@ namespace PolarShadow.ViewModels
             _nav = nav;
             _hisService = hisService;
             VideoController = videoController;
+            _dispathcerUI = dispatcherUI;
         }
 
         public ILink Param_Link { get; set; }
@@ -435,7 +435,7 @@ namespace PolarShadow.ViewModels
 
         private void Controller_MediaChanged(object sender, EventArgs e)
         {
-            DispatcherUI.UI.Post(async () =>
+            _dispathcerUI.Post(async () =>
             {
                 if (History != null)
                 {
@@ -492,7 +492,7 @@ namespace PolarShadow.ViewModels
 
         private void Controller_Ended(object sender, EventArgs e)
         {
-            DispatcherUI.UI.Post(async () =>
+            _dispathcerUI.Post(async () =>
             {
                 await NextAsync();
             });

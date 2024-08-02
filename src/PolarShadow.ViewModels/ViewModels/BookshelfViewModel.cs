@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using PolarShadow.Core;
+using PolarShadow.Essentials;
 using PolarShadow.Models;
 using PolarShadow.Navigations;
-using PolarShadow.Notification;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;

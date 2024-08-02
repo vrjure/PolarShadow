@@ -9,9 +9,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Shell;
+using PolarShadow.Essentials;
 using PolarShadow.Navigations;
 using PolarShadow.ViewModels;
-using PolarShadow.WPF.Views;
 
 namespace PolarShadow.WPF
 {
@@ -21,21 +21,29 @@ namespace PolarShadow.WPF
     public partial class MainWindow : Window
     {
         private readonly INavigationService _nav;
+        private readonly IFileCache _fileCache;
         public MainWindow()
         {
             InitializeComponent();
             Loaded += MainWindow_Loaded;
         }
 
-        public MainWindow(MainWindowViewModel vm, INavigationService nav) : this()
+        public MainWindow(MainWindowViewModel vm, INavigationService nav, IFileCache fileCache = null) : this()
         {
             this.DataContext = vm;
             _nav = nav;
+            _fileCache = fileCache;
         }
         
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             _nav.Navigate<TopLayoutViewModel>(MainWindowViewModel.NavigationName);       
+        }
+
+        protected override void OnDeactivated(EventArgs e)
+        {
+            base.OnDeactivated(e);
+            _fileCache?.Flush();
         }
     }
 }

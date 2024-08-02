@@ -3,13 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ps="https://github.com/PolarShadow"
+			 xmlns:vm="using:PolarShadow.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.MineView"
-			 x:DataType="ps:MineViewModel"
+			 x:DataType="vm:MineViewModel"
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True">
 	<ps:ToolBarAttached.ToolBar>
-		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+		<ps:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal">
 				<!--save-->
 				<Button Content="{DynamicResource save}"

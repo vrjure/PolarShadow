@@ -143,7 +143,8 @@ namespace PolarShadow.Controls
 
         static MediaPlayerController()
         {
-            MediaControllerProperty.Changed.AddClassHandler<MediaPlayerController>((o,e)=>o.MediaControllerPropertyChanged(e));
+            ControllerProperty.Changed.AddClassHandler<MediaPlayerController>((o,e)=>o.OnPropertyChanged(e));
+            TipProperty.Changed.AddClassHandler<MediaPlayerController>((o, e) => o.OnPropertyChanged(e));
             HoldingEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnHolding(e));
             Gestures.ScrollGestureEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnScroll(e));
             Gestures.ScrollGestureEndedEvent.AddClassHandler<MediaPlayerController>((s, e) => s.OnScrollEnd(e));
@@ -166,11 +167,67 @@ namespace PolarShadow.Controls
             _deviceService = Ioc.Default.GetService<IDeviceService>();
         }
 
-        public static readonly StyledProperty<IMediaController> MediaControllerProperty = AvaloniaProperty.Register<MediaPlayerController, IMediaController>(nameof(MediaController));
-        public IMediaController MediaController
+        public static readonly StyledProperty<IVideoViewController> ControllerProperty = AvaloniaProperty.Register<MediaPlayerController, IVideoViewController>(nameof(ControllerProperty));
+        public IVideoViewController Controller
         {
-            get => GetValue(MediaControllerProperty);
-            set => SetValue(MediaControllerProperty, value);
+            get => GetValue(ControllerProperty);
+            set => SetValue(ControllerProperty, value);
+        }
+
+        public static readonly StyledProperty<string> TitleProperty = AvaloniaProperty.Register<MediaPlayerController, string>(nameof(Title));
+        public string Title
+        {
+            get => GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
+        }
+
+        public static readonly StyledProperty<string> TipProperty = AvaloniaProperty.Register<MediaPlayerController, string>(nameof(Tip));
+        public string Tip
+        {
+            get => GetValue(TipProperty);
+            set => SetValue(TipProperty, value);
+        }
+
+        public static readonly StyledProperty<bool> FullScreenProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(FullScreen));
+        public bool FullScreen
+        {
+            get => GetValue(FullScreenProperty);
+            set => SetValue(FullScreenProperty, value);
+        }
+
+        public static readonly StyledProperty<bool> IsLoadingProperty = AvaloniaProperty.Register<MediaPlayerController, bool>(nameof(IsLoading));
+        public bool IsLoading
+        {
+            get => GetValue(IsLoadingProperty);
+            set => SetValue(IsLoadingProperty, value);
+        }
+
+        public static readonly StyledProperty<MediaMode> MediaModeProperty = AvaloniaProperty.Register<MediaPlayerController, MediaMode>(nameof(MediaMode));
+        public MediaMode MediaMode
+        {
+            get => GetValue(MediaModeProperty);
+            set => SetValue(MediaModeProperty, value);
+        }
+
+        public static StyledProperty<ICommand> PreviousCommandProperty = AvaloniaProperty.Register<MediaPlayerController, ICommand>(nameof(PreviousCommand));
+        public ICommand PreviousCommand
+        {
+            get => GetValue(PreviousCommandProperty);
+            set => SetValue(PreviousCommandProperty, value);
+        }
+
+        public static StyledProperty<ICommand> NextCommandProperty = AvaloniaProperty.Register<MediaPlayerController, ICommand>(nameof(NextCommand));
+        public ICommand NextCommand
+        {
+            get => GetValue(NextCommandProperty);
+            set => SetValue(NextCommandProperty, value);
+        }
+
+        public static StyledProperty<ICommand> PlayPauseCommandProperty = AvaloniaProperty.Register<MediaPlayerController, ICommand>(nameof(PlayPauseCommand));
+        public ICommand PlayPauseCommand
+        {
+            get => GetValue(PlayPauseCommandProperty);
+            set => SetValue(PlayPauseCommandProperty, value);
         }
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
@@ -192,51 +249,44 @@ namespace PolarShadow.Controls
             Show();
         }
 
-        private void MediaControllerPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
-            var controller = arg.Sender as MediaPlayerController;
-
-            if (arg.OldValue is IMediaController old && old.Controller != null)
+            base.OnPropertyChanged(change);
+            if (change.Property == ControllerProperty)
             {
-                old.Controller.Error -= controller.Media_Error;
-                old.PropertyChanged -= ControllerPropertyChanged;
+                ControllerPropertyChanged(change);
             }
-
-            if (arg.NewValue is IMediaController newVal && newVal.Controller != null)
+            else if (change.Property == TipProperty)
             {
-                newVal.Controller.Error += controller.Media_Error;
-                newVal.PropertyChanged += ControllerPropertyChanged;
+                var val = change.GetNewValue<string>();
+                if (!string.IsNullOrEmpty(val))
+                {
+                    ShowTip(val);
+                }
             }
         }
 
-        private void ControllerPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ControllerPropertyChanged(AvaloniaPropertyChangedEventArgs arg)
         {
-            if (e.PropertyName.Equals(nameof(IMediaController.Tip)))
+            var controller = arg.Sender as MediaPlayerController;
+
+            if (arg.OldValue is IVideoViewController old)
             {
-                if (!string.IsNullOrEmpty(MediaController.Tip))
-                {
-                    ShowTip(MediaController.Tip);
-                }
+                old.Error -= controller.Media_Error;
             }
-            else if (e.PropertyName.Equals(nameof(IMediaController.MediaMode)))
+
+            if (arg.NewValue is IVideoViewController newVal)
             {
-                SetPlayMode(MediaController.MediaMode);
-            }
-            else if (e.PropertyName.Equals(nameof(IMediaController.FullScreen)))
-            {
-                if (!MediaController.FullScreen && _deviceService != null)
-                {
-                    _deviceService.Brightness = _deviceService.SystemBrightness;
-                }
+                newVal.Error += controller.Media_Error;
             }
         }
 
         private void Media_Error(object sender, EventArgs e)
         {
-            Dispatcher.UIThread.Post(() =>
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
             {
-                MediaController.IsLoading = false;
-                MediaController.Tip = "播放错误!";
+                IsLoading = false;
+                Tip = "播放错误!";
             });
         }
         public void ShowTip(string tip)
@@ -250,8 +300,8 @@ namespace PolarShadow.Controls
                 _part_tip.Opacity = 1;
                 DispatcherTimer.RunOnce(() => 
                 {
-                    _part_tip.Opacity = 0;
-                    MediaController.Tip = string.Empty;
+                   _part_tip.Opacity = 0;
+                   Tip = string.Empty;
                 }, TimeSpan.FromSeconds(3));
             }
         }
@@ -289,12 +339,12 @@ namespace PolarShadow.Controls
 
         private void PreviousBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            (MediaController as MediaController)?.OnPreviousClick();
+            PreviousCommand?.Execute(null);
         }
 
         private void NextBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            (MediaController as MediaController)?.OnNextClick();
+            NextCommand?.Execute(null);
         }
 
         private void PlayBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -304,23 +354,26 @@ namespace PolarShadow.Controls
 
         private async void PlayPause()
         {
-            if (MediaController?.Controller == null)
+            PlayPauseCommand?.Execute(null);
+            if (Controller == null)
             {
                 return;
             }
-            if (MediaController?.Controller.IsPlaying == true)
+            if (Controller.IsPlaying == true)
             {
-                await MediaController.Controller.PauseAsync();
+                await Controller.PauseAsync();
             }
             else
             {
-                await MediaController.Controller.PlayAsync();
+                await Controller.PlayAsync();
             }
         }
 
         private void FullScreenBtn_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            MediaController.FullScreen = !MediaController.FullScreen;
+            FullScreen = !FullScreen;
+            var topLevel = Ioc.Default.GetRequiredService<ITopLevelService>();
+            topLevel.FullScreen = FullScreen;
         }
 
         private void _part_slider_TemplateApplied(object sender, TemplateAppliedEventArgs e)
@@ -345,22 +398,22 @@ namespace PolarShadow.Controls
         protected override void OnSizeChanged(SizeChangedEventArgs e)
         {
             base.OnSizeChanged(e);
-            if (this.MediaController == null) return;
+            if (this.Controller == null) return;
 
             var halfWidth = e.NewSize.Width / 2;
             _leftRect = new Rect(0, 0, halfWidth, e.NewSize.Height);
 
             if(e.NewSize.Width < 500)
             {
-                this.MediaController.MediaMode = MediaMode.Min;
+                MediaMode = MediaMode.Min;
             }
             else if (e.NewSize.Width >= 500 && e.NewSize.Width < 800)
             {
-                this.MediaController.MediaMode = MediaMode.Simple;
+                MediaMode = MediaMode.Simple;
             }
             else
             {
-                this.MediaController.MediaMode = MediaMode.Normal;
+                MediaMode = MediaMode.Normal;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using HtmlAgilityPack;
 using PolarShadow.Core;
+using PolarShadow.WebView;
 using System;
 using System.Collections.Generic;
 using System.Linq;

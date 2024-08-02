@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using PolarShadow.Media;
-using PolarShadow.WPF;
+using PolarShadow.Essentials;
 using PolarShadow.WPF.Views;
 using PolarShadows;
 using System;

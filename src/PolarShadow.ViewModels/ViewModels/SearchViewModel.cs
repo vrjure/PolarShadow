@@ -10,7 +10,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PolarShadow.Notification;
 
 namespace PolarShadow.ViewModels
 {
@@ -73,6 +72,12 @@ namespace PolarShadow.ViewModels
         {
             get => _availableSites;
             set => SetProperty(ref _availableSites, value);
+        }
+        private string _selectedFilterSite;
+        public string SelectedFilterSite
+        {
+            get => _selectedFilterSite;
+            set => SetProperty(ref _selectedFilterSite, value);
         }
 
         private IReadOnlyList<int> _selectedSiteFilters;

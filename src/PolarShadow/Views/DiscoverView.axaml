@@ -5,16 +5,17 @@
 			 xmlns:ps="https://github.com/PolarShadow"
 			 xmlns:pss="using:PolarShadow.Services"
 			 xmlns:psr="using:PolarShadow.Resources"
+			 xmlns:vm="using:PolarShadow.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.DiscoverView"
-			 x:DataType="ps:DiscoverViewModel"
+			 x:DataType="vm:DiscoverViewModel"
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True">
 	<Border Margin="10">
 		<ScrollViewer BringIntoViewOnFocusChange="False">
 			<ListBox ItemsSource="{Binding Sites}"
 				 Theme="{StaticResource Card-Block}"
-				 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
+				 SelectedValue="{Binding SelectedSite, Mode=OneWayToSource}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="psr:ISite">
 						<Grid RowDefinitions="*,auto"

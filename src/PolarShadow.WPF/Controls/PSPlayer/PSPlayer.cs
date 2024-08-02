@@ -1,6 +1,5 @@
 ﻿using LibVLCSharp.WPF;
-using PolarShadow.Media;
-using PolarShadow.VLC;
+using PolarShadow.Essentials;
 using PolarShadows;
 using System;
 using System.Collections.Generic;

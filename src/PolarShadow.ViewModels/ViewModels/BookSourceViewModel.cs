@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
 using PolarShadow.Essentials;
 using PolarShadow.Navigations;
-using PolarShadow.Notification;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using PolarShadow.Storage;
@@ -67,9 +66,13 @@ namespace PolarShadow.ViewModels
                     Title = "Json File",
                     FileTypeFilter = new List<FilePickType>
                     {
-                        new FilePickType{Name="json", Patterns = new  List<string> {"*.json" }
+                        new FilePickType
+                        {
+                            Name="json", 
+                            Patterns = ["*.json"],
+                            MimeTypes = ["application/json"]
+                        }
                     }
-                }
                 });
                 if (source == null || source.Count == 0) return;
 

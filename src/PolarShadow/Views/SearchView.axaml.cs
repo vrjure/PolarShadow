@@ -30,13 +30,13 @@ public partial class SearchView : UserControl
         {
             foreach (var item in VM.SelectedSiteFilters)
             {
-                VM.SiteFilterSelection.Select(item);
+                //VM.SiteFilterSelection.Select(item);
             }
         }
     }
 
     private void Flyout_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-        VM.SelectedSiteFilters = VM.SiteFilterSelection.SelectedIndexes.ToList();
+        //VM.SelectedSiteFilters = VM.SiteFilterSelection.SelectedIndexes.ToList();
     }
 }

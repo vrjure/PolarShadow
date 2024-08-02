@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using PolarShadow.Essentials;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +19,7 @@ namespace Avalonia.Controls.Android
 
         protected override void ConnectHandler(VLCVideoView platformView)
         {
-            VirtualView.Controller = new VLController();
+            //VirtualView.Controller = Ioc.Default.GetRequiredService<IVideoViewController>();
         }
 
         protected override void DisconnectHandler(VLCVideoView platformView)

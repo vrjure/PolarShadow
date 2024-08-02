@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ps="https://github.com/PolarShadow"
 			 xmlns:psr="using:PolarShadow.Resources"
+			 xmlns:vm="using:PolarShadow.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.DiscoverDetailView"
-			 x:DataType="ps:DiscoverDetailViewModel"
+			 x:DataType="vm:DiscoverDetailViewModel"
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True"
 			 Padding="8">
@@ -19,7 +20,7 @@
 				<ListBox ItemsSource="{Binding Categories}"
 						 Theme="{StaticResource Horizontal}"
 						 ItemContainerTheme="{StaticResource SelectableItem}"
-						 Selection="{Binding CategorySelection, Mode=OneWayToSource}"
+						 SelectedValue="{Binding SelectedCategory, Mode=OneWayToSource}"
 						 Padding="6"
 						 ScrollViewer.HorizontalScrollBarVisibility="Auto"
 						 ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -37,7 +38,7 @@
 					 ScrollViewer.HorizontalScrollBarVisibility="Auto"
 					 ScrollViewer.VerticalScrollBarVisibility="Disabled"
 					 Padding="6"
-					 Selection="{Binding CategoryChildrenSelection, Mode=OneWayToSource}">
+					 SelectedValue="{Binding SelectedCategory, Mode=OneWayToSource}">
 				<ListBox.ItemTemplate>
 					<DataTemplate DataType="psr:ResourceTree">
 						<TextBlock Text="{Binding Name}"/>
@@ -55,7 +56,7 @@
 							   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 					<ListBox ItemsSource="{Binding ResourceList}"
 							 Theme="{StaticResource Card}"
-							 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
+							 SelectedValue="{Binding SelectedResource, Mode=OneWayToSource}">
 					</ListBox>
 			</ps:SwipeContainer>
 			<TextBlock Classes="empty"

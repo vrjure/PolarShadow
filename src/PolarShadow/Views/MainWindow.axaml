@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:ps="https://github.com/PolarShadow"
+		xmlns:vm="using:PolarShadow.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PolarShadow.Views.MainWindow"
         Icon="/Assets/Icon.png"
@@ -10,5 +11,5 @@
 		ExtendClientAreaToDecorationsHint="True"
 		ExtendClientAreaChromeHints="Default"
 		ExtendClientAreaTitleBarHeightHint="-1"
-		ps:NavigationManager.ContainerName="{x:Static ps:MainWindowViewModel.NavigationName}">
+		ps:NavigationManager.ContainerName="{x:Static vm:MainWindowViewModel.NavigationName}">
 </Window>

@@ -13,9 +13,13 @@
 
   
   <ItemGroup>
+    <AvaloniaXaml Remove="Animations\**" />
     <AvaloniaXaml Remove="Controls\DataTemplates\**" />
+    <Compile Remove="Animations\**" />
     <Compile Remove="Controls\DataTemplates\**" />
+    <EmbeddedResource Remove="Animations\**" />
     <EmbeddedResource Remove="Controls\DataTemplates\**" />
+    <None Remove="Animations\**" />
     <None Remove="Controls\DataTemplates\**" />
   </ItemGroup>
 
@@ -62,13 +66,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.10" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10" />
+    <PackageReference Include="Avalonia" Version="11.1.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.1" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.1" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
@@ -82,16 +86,13 @@
     <ProjectReference Include="..\PolarShadow.Resources\PolarShadow.Resources.csproj" />
     <ProjectReference Include="..\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
     <ProjectReference Include="..\PolarShadow.Storage\PolarShadow.Storage.csproj" />
+    <ProjectReference Include="..\PolarShadow.ViewModels\PolarShadow.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Views\BookSourceDetailView.axaml.cs">
       <DependentUpon>BookSourceDetailView.axaml</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Animations\" />
   </ItemGroup>
 
   <ItemGroup>

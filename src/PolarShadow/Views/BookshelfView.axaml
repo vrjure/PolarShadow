@@ -3,14 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ps="https://github.com/PolarShadow"
+			 xmlns:vm="using:PolarShadow.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.BookshelfView"	 
 			 xmlns:pss="using:PolarShadow.Services"
-			 x:DataType="ps:BookshelfViewModel"
+			 x:DataType="vm:BookshelfViewModel"
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True">
 	<ps:ToolBarAttached.ToolBar>
-		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+		<ps:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 			<StackPanel Orientation="Horizontal" Spacing="10">
 				<!--Search button-->
 				<Button Theme="{StaticResource Icon}"
@@ -29,7 +30,7 @@
 						   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 				<ListBox ItemsSource="{Binding MineResource}"
 						 Theme="{StaticResource Card}"
-						 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
+						 SelectedValue="{Binding SelectedValue, Mode=TwoWay}">
 				</ListBox>
 		</ps:SwipeContainer>
 

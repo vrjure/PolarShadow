@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using PolarShadow.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,12 @@ namespace PolarShadow.Essentials
                             TopLevel.InsetsManager.DisplayEdgeToEdge = false;
                             TopLevel.InsetsManager.IsSystemBarVisible = true;
                         }
+                    }
+
+                    var topVM = Ioc.Default.GetService<TopLayoutViewModel>();
+                    if (topVM != null)
+                    {
+                        topVM.ShowTitleBar = !_fullScreen;
                     }
                 }
                

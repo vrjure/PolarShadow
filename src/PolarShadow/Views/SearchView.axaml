@@ -4,14 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ps="https://github.com/PolarShadow"
 			 xmlns:psr="using:PolarShadow.Resources"
+			 xmlns:vm="using:PolarShadow.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.SearchView"
-			 x:DataType="ps:SearchViewModel"
+			 x:DataType="vm:SearchViewModel"
 			 x:CompileBindings="True"
 			 ps:PageLoadAttached.RegisterLoad="True">
 	<ps:ToolBarAttached.ToolBar>
 		<!--Search box-->
-		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.CenterTitleBarContainer}">
+		<ps:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.CenterTitleBarContainer}">
 			<Grid ColumnDefinitions="16,*,16">
 				<ps:SearchBox Grid.Column="1"
 							  SearchText="{Binding SearchText, Mode=TwoWay}"
@@ -20,7 +21,7 @@
 			</Grid>
 		</ps:ToolBarTemplate>
 		
-		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+		<ps:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 			<Button Theme="{StaticResource Icon}"
 					Content="{DynamicResource filter}">
 				<Button.Flyout>
@@ -30,7 +31,7 @@
 								 ItemContainerTheme="{StaticResource SelectableItem}"
 								 ScrollViewer.VerticalScrollBarVisibility="Auto"
 								 ItemsSource="{Binding AvailableSites}"
-								 Selection="{Binding SiteFilterSelection, Mode=OneWayToSource}"
+								 SelectedValue="{Binding SelectedFilterSite, Mode=OneWayToSource}"
 								 SelectionMode="Multiple,Toggle">
 						</ListBox>
 					</Flyout>
@@ -45,7 +46,7 @@
 			<StackPanel Orientation="Vertical">
 				<ListBox ItemsSource="{Binding SearchResult}"
 						 Theme="{StaticResource Card}"
-						 Selection="{Binding SelectionModel, Mode=OneWayToSource}">
+						 SelectedValue="{Binding SelectedValue, Mode=OneWayToSource}">
 				</ListBox>
 				<PathIcon Classes.spin="{Binding IsLoading}"
 						  IsVisible="{Binding IsLoading}"

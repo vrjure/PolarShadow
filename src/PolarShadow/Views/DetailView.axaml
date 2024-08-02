@@ -5,13 +5,14 @@
              xmlns:ps="https://github.com/PolarShadow"
              xmlns:pss="using:PolarShadow.Services"
 			 xmlns:psr="using:PolarShadow.Resources"
+			 xmlns:vm="using:PolarShadow.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="PolarShadow.Views.DetailView"
-             x:DataType="ps:DetailViewModel"
+             x:DataType="vm:DetailViewModel"
              x:CompileBindings="True"
              ps:PageLoadAttached.RegisterLoad="True">
 	<ps:ToolBarAttached.ToolBar>
-		<ps:ToolBarTemplate ToolBar="{x:Static ps:TopLayoutViewModel.RightTitleBarContainer}">
+		<ps:ToolBarTemplate ToolBar="{x:Static vm:TopLayoutViewModel.RightTitleBarContainer}">
 			<Button Theme="{StaticResource Icon}"
 		            Classes.save="{Binding !IsSaved}"
 		            Classes.delete="{Binding IsSaved}"
@@ -61,8 +62,8 @@
     <Grid RowDefinitions="*,1.5*,auto"
 		  ColumnDefinitions="*,*"
 		  Classes="layout_horizontal"
-		  Classes.fullScreen="{Binding MediaController.FullScreen}"
-		  Classes.normalScreen="{Binding !MediaController.FullScreen}"
+		  Classes.fullScreen="{Binding FullScreen}"
+		  Classes.normalScreen="{Binding !FullScreen}"
 		  x:Name="part_root">
 
 		<Grid x:Name="part_desc"
@@ -132,7 +133,7 @@
 							 Theme="{StaticResource Horizontal}"
 							 ItemContainerTheme="{StaticResource SelectableItem}"
 							 Name="EpisodeHeader"
-							 Selection="{Binding HeaderSelection, Mode=OneWayToSource}"
+							 SelectedValue="{Binding CurrentHead, Mode=OneWayToSource}"
 							 SelectionMode="AlwaysSelected"
 							 ScrollViewer.VerticalScrollBarVisibility="Disabled"
 							 ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -157,7 +158,7 @@
 						ItemsSource="{Binding #EpisodeHeader.((pss:ResourceTreeNode)SelectedValue).Children}"
 						Name="Episodes"
 						ItemContainerTheme="{StaticResource SelectableItemWithBorder}"
-						Selection="{Binding SelectionModel, Mode=OneWayToSource}"
+						SelectedValue="{Binding CurrentEpisode, Mode=OneWayToSource}"
 						ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 						ScrollViewer.VerticalScrollBarVisibility="Auto"
 						Background="Transparent">
@@ -199,7 +200,7 @@
 					  Foreground="Black"/>
 		</Border>
 		
-		<Border Grid.Row="2"
+		<!--<Border Grid.Row="2"
 				Grid.ColumnSpan="2"
 				Background="LightGray">
 			<StackPanel
@@ -214,7 +215,7 @@
 							 ItemContainerTheme="{StaticResource SelectableItem}"
 							 ScrollViewer.VerticalScrollBarVisibility="Disabled"
 							 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-							 Selection="{Binding SourceSelection, Mode=OneWayToSource}">
+							 SelectedValue="{Binding ">
 						<ListBox.ItemTemplate>
 							<DataTemplate DataType="pss:ResourceTreeNode">
 								<TextBlock Text="{Binding Name}"
@@ -246,14 +247,25 @@
 					</ListBox>
 				</DockPanel>
 			</StackPanel>
-		</Border>
+		</Border>-->
 
 		<Panel Grid.Row="0"
 			   Grid.Column="0"
 			   x:Name="part_player"
 			   Background="Black"
-			   Classes.fullScreen="{Binding MediaController.FullScreen}">
-			<ps:PSPlayer MediaController="{Binding MediaController, Mode=OneWayToSource}" />
+			   Classes.fullScreen="{Binding FullScreen}">
+			<ps:PSPlayer Controller="{Binding VideoController}">
+				<ps:MediaPlayerController Controller="{Binding VideoController}"
+										  FullScreen="{Binding FullScreen, Mode=OneWayToSource}"
+										  >
+					<ps:MediaPlayerController.Title>
+						<MultiBinding StringFormat="{}{0}-{1}">
+							<Binding Path="Resource.Name"/>
+							<Binding Path="CurrentEpisode.Name"/>
+						</MultiBinding>
+					</ps:MediaPlayerController.Title>
+				</ps:MediaPlayerController>
+			</ps:PSPlayer>
 		</Panel>
 	</Grid>
 </UserControl>

@@ -8,13 +8,14 @@ using Avalonia.Controls;
 using System.Linq;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
+using PolarShadow.WebView;
 
 namespace PolarShadow.Handlers
 {
     internal class WebViewTab
     {
         private Panel _container;
-        private readonly WebView _webView;
+        private readonly Avalonia.Controls.WebView _webView;
         private TaskCompletionSource<string> _tcs;
         private TaskCompletionSource _sniffTask;
         private static TimeSpan _timeout = TimeSpan.FromSeconds(60);
@@ -26,7 +27,7 @@ namespace PolarShadow.Handlers
             if (container == null) throw new ArgumentNullException(nameof(container));
 
             _container = container;
-            _webView = new WebView { IsVisible = true };
+            _webView = new Avalonia.Controls.WebView { IsVisible = true };
             _webView.Navigated += _webView_Navigated;
             _webView.LoadResource += _webView_LoadResource;
             _container.Children.Add(_webView);

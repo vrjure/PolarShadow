@@ -3,6 +3,7 @@ using Avalonia.Platform;
 using Avalonia.Rendering;
 using Avalonia.VisualTree;
 using LibVLCSharp.Shared;
+using PolarShadow.Essentials;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
@@ -13,7 +14,7 @@ namespace Avalonia.Controls.Windows
 {
     internal class VLCVideoView : PlatformView, IPlatformVideoView
     {
-        private Window _floatingContent;
+        private ForegroundWindow _floatingContent;
         private bool _isAttached;
 
         private readonly IVirtualView VirtualView;
@@ -21,12 +22,9 @@ namespace Avalonia.Controls.Windows
         public VLCVideoView(IVirtualView virtualView)
         {
             this.VirtualView = virtualView;
-
             this.VirtualView.AsHost().AttachedToVisualTree += VirtualView_AttachedToVisualTree;
             this.VirtualView.AsHost().DetachedFromVisualTree += VirtualView_DetachedFromVisualTree;
             this.VirtualView.AsHost().DetachedFromLogicalTree += VirtualView_DetachedFromLogicalTree;
-            this.VirtualView.AsHost().LayoutUpdated += VirtualView_LayoutUpdated;
-            this.VirtualView.AsHost().SizeChanged += VirtualView_SizeChanged;
         }
 
         private IRenderRoot _visualRoot;
@@ -36,7 +34,7 @@ namespace Avalonia.Controls.Windows
 
         public IVideoViewController Controller { get; set; }
 
-        private MediaPlayer MediaPlayer => (Controller as VLController)?.MediaPlayer;
+        private MediaPlayer MediaPlayer => (Controller as IVLController)?.MediaPlayer;
 
         private object _overlayContent;
         public object OverlayContent
@@ -52,18 +50,7 @@ namespace Avalonia.Controls.Windows
             }
         }
 
-        private bool _fullScreen;
-
         public event EventHandler PlatformClick;
-
-        public bool FullScreen
-        {
-            get => _fullScreen;
-            set => _fullScreen = value;
-        }
-
-        private TopLevel _topLevel => TopLevel.GetTopLevel(VirtualView as Visual);
-
 
         protected override IPlatformHandle OnCreateControl(IPlatformHandle parent, Func<IPlatformHandle> createDefault)
         {
@@ -74,27 +61,23 @@ namespace Avalonia.Controls.Windows
 
             var handler = createDefault();
             this.MediaPlayer.Hwnd = handler.Handle;
+            InitializeNativeOverlay();
             return handler;
         }
 
         protected override void DestroyControl()
         {
-            this.VirtualView.AsHost().AttachedToVisualTree -= VirtualView_AttachedToVisualTree;
-            this.VirtualView.AsHost().DetachedFromVisualTree -= VirtualView_DetachedFromVisualTree;
-            this.VirtualView.AsHost().DetachedFromLogicalTree -= VirtualView_DetachedFromLogicalTree;
-            this.VirtualView.AsHost().LayoutUpdated -= VirtualView_LayoutUpdated;
-            this.VirtualView.AsHost().SizeChanged -= VirtualView_SizeChanged;
-            if (VisualRoot is Window root)
-            {
-                root.PositionChanged -= Window_PositionChanged;
-            }
-
             if (MediaPlayer == null)
             {
                 return;
             }
 
             MediaPlayer.Hwnd = IntPtr.Zero;
+            if (_floatingContent != null)
+            {
+                _floatingContent.Close();
+                _floatingContent = null;
+            }
         }
 
         private void InitializeNativeOverlay()
@@ -103,98 +86,19 @@ namespace Avalonia.Controls.Windows
             if (!VirtualView.AsHost().IsAttachedToVisualTree()) return;
 
             InitializeDesktopNativeOverlay();
-            UpdateOverlayPosition();
-            ShowNativeOverlay(IsEffectivelyVisible);
         }
 
         private void InitializeDesktopNativeOverlay()
         {
             if (_floatingContent == null && OverlayContent != null)
             {
-                _floatingContent = new Window
-                {
-                    SystemDecorations = SystemDecorations.None,
-                    TransparencyLevelHint = new WindowTransparencyLevel[] { WindowTransparencyLevel.Transparent },
-                    Background = Brushes.Transparent,
-                    SizeToContent = SizeToContent.Manual,
-                    CanResize = false,
-                    ShowInTaskbar = false,
-                    Opacity = 1,
-                    ZIndex = int.MaxValue,
-                    DataContext = VirtualView.AsHost().DataContext,
-                };
-
+                _floatingContent = new ForegroundWindow(VirtualView as Control);
+                
                 if (OverlayContent != null)
                 {
                     _floatingContent.Content = OverlayContent;
                 }
-
-                if (VisualRoot is Window root)
-                {
-                    root.PositionChanged += Window_PositionChanged;
-                }
             }
-        }
-
-        private void Window_PositionChanged(object sender, PixelPointEventArgs e)
-        {
-            UpdateOverlayPosition();
-        }
-
-        private void UpdateOverlayPosition()
-        {
-            if (_floatingContent == null) return;
-
-            if (_floatingContent.Width != Bounds.Width
-                || _floatingContent.Height != Bounds.Height)
-            {
-                _floatingContent.Width = Bounds.Width;
-                _floatingContent.Height = Bounds.Height;
-
-                _floatingContent.MaxWidth = Bounds.Width;
-                _floatingContent.MaxHeight = Bounds.Height;
-            }
-
-            PixelPoint newPosition;
-            if (VisualRoot is Window root && root.WindowState == WindowState.FullScreen)
-            {
-                newPosition = root.Position;
-            }
-            else
-            {
-                newPosition = VirtualView.AsHost().PointToScreen(this.Bounds.Position);
-            }
-            if (newPosition != _floatingContent.Position)
-            {
-                _floatingContent.Position = newPosition;
-            }
-        }
-
-        private void ShowNativeOverlay(bool visible)
-        {
-            if (_floatingContent == null || _floatingContent.IsVisible == visible) return;
-
-            if (_isAttached && visible)
-            {
-                _floatingContent.Show(VisualRoot as Window);
-            }
-            else
-            {
-                _floatingContent.Hide();
-            }
-        }
-
-        private void VirtualView_LayoutUpdated(object sender, EventArgs e)
-        {
-            if (!this.VirtualView.AsHost().IsLoaded)
-            {
-                UpdateOverlayPosition();
-            }
-        }
-
-        private void VirtualView_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateOverlayPosition();
         }
 
         private void VirtualView_DetachedFromLogicalTree(object sender, LogicalTree.LogicalTreeAttachmentEventArgs e)
@@ -206,13 +110,12 @@ namespace Avalonia.Controls.Windows
         private void VirtualView_DetachedFromVisualTree(object sender, VisualTreeAttachmentEventArgs e)
         {
             _isAttached = false;
-            ShowNativeOverlay(false);
         }
 
         private void VirtualView_AttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs e)
         {
             _isAttached = true;
-            InitializeNativeOverlay();
+            //InitializeNativeOverlay();
         }
     }
 }

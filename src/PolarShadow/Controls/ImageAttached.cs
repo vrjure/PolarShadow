@@ -6,7 +6,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
-using PolarShadow.Cache;
+using PolarShadow.Essentials;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -178,7 +178,7 @@ namespace PolarShadow.Controls
             catch (Exception ex)
             {
                 System.Diagnostics.Trace.WriteLine($"Downloading image error '{uri}' : {ex.Message}");
-                cache.Remove(BufferCache.SHA(uri.ToString()));
+                cache.Remove(SHA.SHA256(uri.ToString()));
             }
             return null;
         }

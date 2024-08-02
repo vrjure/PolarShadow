@@ -47,14 +47,14 @@ namespace PolarShadow.Views
                 return;
             }
 
-            if (VM?.SourceOptions?.Count > 0 && VM.SelectionModel?.SelectedItem != null)
-            {
-                var container = Episodes.ContainerFromIndex(VM.SelectionModel.SelectedIndex);
-                if (container != null)
-                {
-                    FlyoutBase.ShowAttachedFlyout((container as ListBoxItem).Presenter.Child);
-                }
-            }
+            //if (VM?.SourceOptions?.Count > 0 && VM.SelectionModel?.SelectedItem != null)
+            //{
+            //    var container = Episodes.ContainerFromIndex(VM.SelectionModel.SelectedIndex);
+            //    if (container != null)
+            //    {
+            //        FlyoutBase.ShowAttachedFlyout((container as ListBoxItem).Presenter.Child);
+            //    }
+            //}
         }
 
         protected override void OnSizeChanged(SizeChangedEventArgs e)
@@ -63,34 +63,42 @@ namespace PolarShadow.Views
 
             if (Design.IsDesignMode) return;
 
-            if (e.NewSize.Width < 1000)
+            if (!VM.FullScreen)
             {
-                part_root.Classes.Remove(_layout_horizontal);
-                if (!part_root.Classes.Contains(_layout_vertical))
+                if (e.NewSize.Width < 1000)
                 {
-                    part_root.Classes.Add(_layout_vertical);
-
-                    part_root.Children.Remove(part_desc);
-                    if (part_desc.Parent == null)
+                    part_root.Classes.Remove(_layout_horizontal);
+                    if (!part_root.Classes.Contains(_layout_vertical))
                     {
-                        part_bottom.Children.Insert(0, part_desc);
+                        part_root.Classes.Add(_layout_vertical);
+
+                        part_root.Children.Remove(part_desc);
+                        if (part_desc.Parent == null)
+                        {
+                            part_bottom.Children.Insert(0, part_desc);
+                        }
+                    }
+                }
+                else
+                {
+                    part_root.Classes.Remove(_layout_vertical);
+                    if (!part_root.Classes.Contains(_layout_horizontal))
+                    {
+                        part_root.Classes.Add(_layout_horizontal);
+
+                        part_bottom.Children.Remove(part_desc);
+                        if (part_desc.Parent == null)
+                        {
+                            part_root.Children.Add(part_desc);
+                        }
                     }
                 }
             }
             else
             {
-                part_root.Classes.Remove(_layout_vertical);
-                if (!part_root.Classes.Contains(_layout_horizontal))
-                {
-                    part_root.Classes.Add(_layout_horizontal);
 
-                    part_bottom.Children.Remove(part_desc);
-                    if (part_desc.Parent == null)
-                    {
-                        part_root.Children.Add(part_desc);
-                    }
-                }
             }
+            
         }
     }
 }

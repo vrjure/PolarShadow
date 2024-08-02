@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
-using PolarShadow.Media;
+using PolarShadow.Essentials;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;
