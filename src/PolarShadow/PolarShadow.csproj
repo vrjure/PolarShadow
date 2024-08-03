@@ -73,7 +73,7 @@
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.7" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
@@ -85,6 +85,7 @@
     <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
     <ProjectReference Include="..\PolarShadow.Resources\PolarShadow.Resources.csproj" />
     <ProjectReference Include="..\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
+    <ProjectReference Include="..\PolarShadow.Storage.Sqlite.Migrations\PolarShadow.Storage.Sqlite.Migrations.csproj" />
     <ProjectReference Include="..\PolarShadow.Storage\PolarShadow.Storage.csproj" />
     <ProjectReference Include="..\PolarShadow.ViewModels\PolarShadow.ViewModels.csproj" />
   </ItemGroup>

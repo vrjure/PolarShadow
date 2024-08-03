@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Storage.Sqlite.Migrations
+namespace PolarShadow.Storage.Postgre.Migrations
 {
-    internal class DesiginTimeContextFactory : IDesignTimeDbContextFactory<PolarShadowDbContext>
+    public class DesignTimeContextFactory : IDesignTimeDbContextFactory<PolarShadowDbContext>
     {
         public PolarShadowDbContext CreateDbContext(string[] args)
         {
-            var builder = new DbContextOptionsBuilder<PolarShadowDbContext>().UseSqlite("Data Source=./polar.db3");
+            var builder = new DbContextOptionsBuilder<PolarShadowDbContext>().UseNpgsql("",op=> op.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
             return new PolarShadowDbContext(builder.Options);
         }
     }

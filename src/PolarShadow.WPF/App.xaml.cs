@@ -8,6 +8,7 @@ using PolarShadow.Navigations;
 using PolarShadow.Notification;
 using PolarShadow.Resources;
 using PolarShadow.Storage;
+using PolarShadow.Storage.Sqlite.Migrations;
 using PolarShadow.StoragePicker;
 using PolarShadow.ViewModels;
 using PolarShadow.WebView;
@@ -75,7 +76,7 @@ namespace PolarShadow.WPF
         {
             service.AddDbContextFactory<PolarShadowDbContext>(op =>
             {
-                op.UseSqlite($"Data Source={PolarShadowApp.DbFile}", op => op.MigrationsAssembly(typeof(App).Assembly.FullName));
+                op.UseSqlite($"Data Source={PolarShadowApp.DbFile}", op => op.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
             });
             service.RegisterStorageService();
         }

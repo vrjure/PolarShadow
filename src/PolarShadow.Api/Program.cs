@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PolarShadow.Api;
 using PolarShadow.Core;
 using PolarShadow.Storage;
+using PolarShadow.Storage.Postgre.Migrations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +21,10 @@ var setting = builder.Configuration.GetSection("PolarShadowSetting").Get<PolarSh
 
 builder.Services.AddDbContextFactory<PolarShadowDbContext>(builder =>
 {
-    builder.UseNpgsql(setting.ConnectionString, opBuilder => opBuilder.MigrationsAssembly(typeof(PolarShadowDbContext).Assembly.FullName));
+    builder.UseNpgsql(setting!.ConnectionString, opBuilder => opBuilder.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
 });
 
-builder.Services.AddStorageServices();
+builder.Services.RegisterStorageService();
 
 var app = builder.Build();
 

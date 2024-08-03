@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.7" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2470-prerelease" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
@@ -33,6 +33,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
     <ProjectReference Include="..\PolarShadow.Resources\PolarShadow.Resources.csproj" />
+    <ProjectReference Include="..\PolarShadow.Storage.Sqlite.Migrations\PolarShadow.Storage.Sqlite.Migrations.csproj" />
     <ProjectReference Include="..\PolarShadow.ViewModels\PolarShadow.ViewModels.csproj" />
   </ItemGroup>
 

@@ -24,6 +24,7 @@ using System.Text.Json;
 using PolarShadow.StoragePicker;
 using PolarShadow.Dispatcher;
 using PolarShadow.Notifaction;
+using PolarShadow.Storage.Sqlite.Migrations;
 
 namespace PolarShadow;
 
@@ -152,7 +153,7 @@ public partial class App : Application
     {
         service.AddDbContextFactory<PolarShadowDbContext>(op =>
         {
-            op.UseSqlite($"Data Source={PolarShadowApp.DbFile}", op => op.MigrationsAssembly(typeof(App).Assembly.FullName));
+            op.UseSqlite($"Data Source={PolarShadowApp.DbFile}", op => op.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
         });
         service.RegisterStorageService();
     }
