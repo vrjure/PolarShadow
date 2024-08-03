@@ -1,4 +1,5 @@
-﻿using PolarShadow.Notification;
+﻿using PolarShadow.Essentials;
+using PolarShadow.Notification;
 using PolarShadow.ViewModels;
 using PolarShadow.WebView;
 using System;

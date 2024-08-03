@@ -8,7 +8,6 @@
              xmlns:img="clr-namespace:PolarShadow.ImageHelper"
              xmlns:pss="clr-namespace:PolarShadow.Services;assembly=PolarShadow.Services.Abstractions"
              xmlns:nav="clr-namespace:PolarShadow.Navigations"
-             xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
              xmlns:toolBar="clr-namespace:PolarShadow.ToolBar"
              xmlns:vm="clr-namespace:PolarShadow.ViewModels;assembly=PolarShadow.ViewModels"
              mc:Ignorable="d" 
