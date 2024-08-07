@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PolarShadow.Resources;
 using PolarShadow.Services;
+using PolarShadow.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Storage
 {
-    public class MineResourceService : IMineResourceService
+    internal class MineResourceService : IMineResourceService
     {
         private readonly IDbContextFactory<PolarShadowDbContext> _dbContextFactory;
 

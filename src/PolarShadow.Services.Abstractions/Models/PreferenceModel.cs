@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Storage
+namespace PolarShadow.Services
 {
-    public class PreferenceEntity
+    public class PreferenceModel
     {
         public string Key { get; set; }
         public string Value { get; set; }

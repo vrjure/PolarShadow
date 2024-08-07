@@ -11,6 +11,6 @@ namespace PolarShadow.Services
         Task DeleteAsync(int id);
         Task AddOrUpdateAsync(HistoryModel model);
         Task<HistoryModel> GetByIdAsync(int id);
-        Task<HistoryModel> GetByResourceNameAsync(string reourceName);
+        Task<HistoryModel> GetByResourceNameAsync(string resourceName);
     }
 }

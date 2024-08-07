@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PolarShadow.Core;
+using PolarShadow.Resources;
 using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
@@ -18,8 +19,9 @@ namespace PolarShadow.Storage
         }
 
         public DbSet<ResourceModel> Resources { get; set; }
-        public DbSet<PreferenceEntity> Preferences { get; set; }
+        public DbSet<PreferenceModel> Preferences { get; set; }
         public DbSet<HistoryModel> Histories { get; set; }
+        public DbSet<SourceVersionModel> SourceVersions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,10 +33,12 @@ namespace PolarShadow.Storage
                 f => JsonSerializer.Serialize(f, JsonOption.DefaultSerializer),
                 f => JsonSerializer.Deserialize<IDictionary<string, string>>(f, JsonOption.DefaultSerializer));
 
-            modelBuilder.Entity<PreferenceEntity>().HasKey(f => f.Key);
+            modelBuilder.Entity<PreferenceModel>().HasKey(f => f.Key);
 
             modelBuilder.Entity<HistoryModel>().HasKey(f => f.Id);
             modelBuilder.Entity<HistoryModel>().HasIndex(f => f.ResourceName);
+
+            modelBuilder.Entity<SourceVersionModel>().HasKey(f => f.Id);
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using PolarShadow.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Storage
 {
-    public class PreferenceManager
+    internal class PreferenceService : IPreferenceService
     {
         private readonly IDbContextFactory<PolarShadowDbContext> _dbContextFactory;
-        public PreferenceManager(IDbContextFactory<PolarShadowDbContext> dbContextFactory)
+        public PreferenceService(IDbContextFactory<PolarShadowDbContext> dbFactory)
         {
-            _dbContextFactory = dbContextFactory;
+            _dbContextFactory = dbFactory;
         }
 
-        public void Set(PreferenceEntity item)
+        public void Set(PreferenceModel item)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
             try
@@ -33,7 +35,7 @@ namespace PolarShadow.Storage
             }
         }
 
-        public async Task SetAsync(PreferenceEntity item)
+        public async Task SetAsync(PreferenceModel item)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
             try
@@ -51,13 +53,13 @@ namespace PolarShadow.Storage
             }
         }
 
-        public PreferenceEntity Get(string key)
+        public PreferenceModel Get(string key)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
-            return dbContext.Preferences.Where(f=>f.Key == key).FirstOrDefault();
+            return dbContext.Preferences.Where(f => f.Key == key).FirstOrDefault();
         }
 
-        public async Task<PreferenceEntity> GetAsync(string key)
+        public async Task<PreferenceModel> GetAsync(string key)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
             return await dbContext.Preferences.Where(f => f.Key == key).FirstOrDefaultAsync();
@@ -73,6 +75,12 @@ namespace PolarShadow.Storage
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
             await dbContext.Preferences.ExecuteDeleteAsync();
+        }
+
+        public async Task<ICollection<PreferenceModel>> GetAllAsync()
+        {
+            using var dbContext = _dbContextFactory.CreateDbContext();
+            return await dbContext.Preferences.ToListAsync();
         }
     }
 }

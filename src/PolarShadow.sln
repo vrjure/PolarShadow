@@ -53,9 +53,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Essential", "Po
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{DD269E48-6B9C-449E-ACD5-8937FEE6AEDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolarShadow.Storage.Postgre.Migrations", "PolarShadow.Storage.Postgre.Migrations\PolarShadow.Storage.Postgre.Migrations.csproj", "{C851C29B-3E11-4DA1-A9C1-F90AAF278258}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Storage.Postgre.Migrations", "PolarShadow.Storage.Postgre.Migrations\PolarShadow.Storage.Postgre.Migrations.csproj", "{C851C29B-3E11-4DA1-A9C1-F90AAF278258}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolarShadow.Storage.Sqlite.Migrations", "PolarShadow.Storage.Sqlite.Migrations\PolarShadow.Storage.Sqlite.Migrations.csproj", "{1EAA46A9-9A03-4231-9E49-D36D5C2C720C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Storage.Sqlite.Migrations", "PolarShadow.Storage.Sqlite.Migrations\PolarShadow.Storage.Sqlite.Migrations.csproj", "{1EAA46A9-9A03-4231-9E49-D36D5C2C720C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
