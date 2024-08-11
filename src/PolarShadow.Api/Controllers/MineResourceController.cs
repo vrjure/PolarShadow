@@ -20,7 +20,7 @@ namespace PolarShadow.Api.Controllers
             await _mineResource.DeleteRootResourceAsync(rootId);
         }
 
-        [HttpGet("/{id}")]
+        [HttpGet("{id}")]
         public async Task<ResourceModel> GetResourceAsync([FromRoute] int id)
         {
             return await _mineResource.GetResourceAsync(id);
@@ -44,7 +44,7 @@ namespace PolarShadow.Api.Controllers
             return await _mineResource.GetRootChildrenCountAsync(rootId, level);
         }
 
-        [HttpGet("/{resourceName}/{site}")]
+        [HttpGet("{resourceName}/{site}")]
         public async Task<ResourceModel> GetRootResourceAsync([FromRoute] string resourceName, [FromRoute] string site)
         {
             return await _mineResource.GetRootResourceAsync(resourceName, site);
@@ -60,6 +60,12 @@ namespace PolarShadow.Api.Controllers
         public async Task SaveResourceAsync([FromBody] ResourceTreeNode tree)
         {
             await _mineResource.SaveResourceAsync(tree);
+        }
+
+        [HttpPost("upload")]
+        public async Task UploadAsync([FromBody] ICollection<ResourceModel> data)
+        {
+            await _mineResource.UploadAsync(data);
         }
     }
 }

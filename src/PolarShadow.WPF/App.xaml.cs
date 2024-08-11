@@ -36,11 +36,20 @@ namespace PolarShadow.WPF
             RegisterDatabase(services);
             RegisterPolarShadow(services);
             Ioc.Default.ConfigureServices(services.BuildServiceProvider());
+            using var db = Ioc.Default.GetRequiredService<IDbContextFactory<PolarShadowDbContext>>().CreateDbContext();
+            db.Database.Migrate();
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
 
             var mainWindow = Ioc.Default.GetService<MainWindow>();
             mainWindow.Show();
             base.OnStartup(e);
 
+        }
+
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            var message = Ioc.Default.GetRequiredService<IMessageService>();
+            message.Show(e.Exception);
         }
 
         private void RegisterView(IServiceCollection service)
@@ -61,7 +70,6 @@ namespace PolarShadow.WPF
         private void RegisterUtilities(IServiceCollection service)
         {
             service.RegisterCache(new FileCacheOptions { CacheFolder = PolarShadowApp.CacheFolder});
-            service.RegisterDbPreference();
             service.RegisterVLC();
             service.AddSingleton<INavigationService, NavigationService>();
             service.AddSingleton<IMessageService, NotificationContainer>();
@@ -71,6 +79,7 @@ namespace PolarShadow.WPF
             {
                 UserDataFolder = Path.Combine(PolarShadowApp.AppDataFolder, "webview")
             });
+            service.AddPolarShadowService();
         }
 
         private void RegisterDatabase(IServiceCollection service)
@@ -79,7 +88,6 @@ namespace PolarShadow.WPF
             {
                 op.UseSqlite($"Data Source={PolarShadowApp.DbFile}", op => op.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
             });
-            service.RegisterStorageService();
         }
 
         private void RegisterPolarShadow(IServiceCollection service)

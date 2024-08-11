@@ -45,6 +45,19 @@ namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
                     b.ToTable("Histories");
                 });
 
+            modelBuilder.Entity("PolarShadow.Services.PreferenceModel", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("Preferences");
+                });
+
             modelBuilder.Entity("PolarShadow.Services.ResourceModel", b =>
                 {
                     b.Property<int>("Id")
@@ -93,17 +106,24 @@ namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
                     b.ToTable("Resources");
                 });
 
-            modelBuilder.Entity("PolarShadow.Storage.PreferenceEntity", b =>
+            modelBuilder.Entity("PolarShadow.Services.SourceModel", b =>
                 {
-                    b.Property<string>("Key")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreateTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Value")
+                    b.Property<string>("Data")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Key");
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("TEXT");
 
-                    b.ToTable("Preferences");
+                    b.HasKey("Id");
+
+                    b.ToTable("Sources");
                 });
 #pragma warning restore 612, 618
         }

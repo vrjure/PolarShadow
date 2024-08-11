@@ -19,8 +19,8 @@ namespace PolarShadow.StoragePicker
         public StorageFolder(Uri uri)
         {
             this.Uri = uri;
-            this.Name = Path.GetFileName(uri.ToString());
-            _info = new DirectoryInfo(uri.ToString());
+            this.Name = Path.GetFileName(uri.AbsolutePath);
+            _info = new DirectoryInfo(uri.AbsolutePath);
         }
         public string Name { get; }
 
@@ -28,7 +28,7 @@ namespace PolarShadow.StoragePicker
 
         public Task<IStorageFile> CreateFileAsync(string name)
         {
-            return Task.FromResult<IStorageFile>(new StorageFile(Path.Combine(Uri.ToString(), name)));
+            return Task.FromResult<IStorageFile>(new StorageFile(Path.Combine(Uri.AbsolutePath, name)));
         }
 
         public Task DeleteAsync()
@@ -39,7 +39,7 @@ namespace PolarShadow.StoragePicker
 
         public Task<IStorageFolder> CreateFolderAsync(string name)
         {
-            return Task.FromResult<IStorageFolder>(new StorageFolder(Path.Combine(Uri.ToString(), name)));
+            return Task.FromResult<IStorageFolder>(new StorageFolder(Path.Combine(Uri.AbsolutePath, name)));
         }
 
         public async IAsyncEnumerable<IStorageItem> GetItemsAsync()
@@ -60,7 +60,7 @@ namespace PolarShadow.StoragePicker
 
         public Task<IStorageItem> MoveAsync(IStorageFolder destination)
         {
-            var dest = Path.Combine(destination.Uri.ToString(), Name);
+            var dest = Path.Combine(destination.Uri.AbsolutePath, Name);
             _info.MoveTo(dest);
             return Task.FromResult<IStorageItem>(new StorageFolder(dest));
         }

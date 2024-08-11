@@ -64,6 +64,21 @@ namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
                     table.PrimaryKey("PK_Resources", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Sources",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Data = table.Column<string>(type: "TEXT", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sources", x => x.Id);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Histories_ResourceName",
                 table: "Histories",
@@ -81,6 +96,9 @@ namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
 
             migrationBuilder.DropTable(
                 name: "Resources");
+
+            migrationBuilder.DropTable(
+                name: "Sources");
         }
     }
 }

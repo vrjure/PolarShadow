@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Storage
 {
-    internal class HistoryService : IHistoryService
+    internal class HistoryService : SyncAbleService<HistoryModel>, IDbHistoryService
     {
         private IDbContextFactory<PolarShadowDbContext> _contextFactory;
-        public HistoryService(IDbContextFactory<PolarShadowDbContext> contextFactory)
+        public HistoryService(IDbContextFactory<PolarShadowDbContext> contextFactory):base(contextFactory)
         {
             _contextFactory = contextFactory;
         }

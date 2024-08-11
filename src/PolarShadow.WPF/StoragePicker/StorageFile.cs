@@ -21,7 +21,7 @@ namespace PolarShadow.StoragePicker
                 throw new ArgumentException("uri not a file");
             }
             this.Uri = uri;
-            this.Name = Path.GetFileName(uri.ToString());
+            this.Name = Path.GetFileName(uri.AbsolutePath);
         }
         public string Name { get; }
 
@@ -29,25 +29,25 @@ namespace PolarShadow.StoragePicker
 
         public Task DeleteAsync()
         {
-            File.Delete(Uri.ToString());
+            File.Delete(Uri.AbsolutePath);
             return Task.CompletedTask;
         }
 
         public Task<IStorageItem> MoveAsync(IStorageFolder destination)
         {
-            var dest = Path.Combine(destination.Uri.ToString(), Name);
-            File.Move(Uri.ToString(), dest);
+            var dest = Path.Combine(destination.Uri.AbsolutePath, Name);
+            File.Move(Uri.AbsolutePath, dest);
             return Task.FromResult<IStorageItem>(new StorageFile(dest));
         }
 
         public Task<Stream> ReadAsync()
         {
-            return Task.FromResult<Stream>(new FileStream(Uri.ToString(), FileMode.OpenOrCreate, FileAccess.Read));
+            return Task.FromResult<Stream>(new FileStream(Uri.AbsolutePath, FileMode.OpenOrCreate, FileAccess.Read));
         }
 
         public Task<Stream> WriteAsync()
         {
-            return Task.FromResult<Stream>(new FileStream(Uri.ToString(), FileMode.OpenOrCreate, FileAccess.Write));
+            return Task.FromResult<Stream>(new FileStream(Uri.AbsolutePath, FileMode.OpenOrCreate, FileAccess.Write));
         }
     }
 }

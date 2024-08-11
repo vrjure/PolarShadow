@@ -11,7 +11,8 @@ namespace PolarShadow
     {
         public static string RPC => nameof(RPC);
         public static string DownloadPath => nameof(DownloadPath);
-        
         public static string SearchTaskCount => nameof(SearchTaskCount);
+        public static string ServerAddress => nameof(ServerAddress);
+        public static string ApiEnable => nameof(ApiEnable);
     }
 }

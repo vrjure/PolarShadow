@@ -12,7 +12,7 @@ namespace PolarShadow.Storage.Postgre.Migrations
     {
         public PolarShadowDbContext CreateDbContext(string[] args)
         {
-            var builder = new DbContextOptionsBuilder<PolarShadowDbContext>().UseNpgsql("",op=> op.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
+            var builder = new DbContextOptionsBuilder<PolarShadowDbContext>().UseNpgsql("Host=localhost;Port=5432;Username=root;Password=123456;Database=PolarShadow;", op=> op.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
             return new PolarShadowDbContext(builder.Options);
         }
     }

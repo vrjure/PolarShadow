@@ -65,6 +65,21 @@ namespace PolarShadow.Storage.Postgre.Migrations.Migrations
                     table.PrimaryKey("PK_Resources", x => x.Id);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Sources",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Data = table.Column<string>(type: "text", nullable: true),
+                    CreateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sources", x => x.Id);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Histories_ResourceName",
                 table: "Histories",
@@ -82,6 +97,9 @@ namespace PolarShadow.Storage.Postgre.Migrations.Migrations
 
             migrationBuilder.DropTable(
                 name: "Resources");
+
+            migrationBuilder.DropTable(
+                name: "Sources");
         }
     }
 }

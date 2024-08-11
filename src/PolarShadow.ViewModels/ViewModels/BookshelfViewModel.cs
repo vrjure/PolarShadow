@@ -99,7 +99,7 @@ namespace PolarShadow.ViewModels
             {
                 MineResource?.Clear();
                 var savedResource = await _mineResourceService.GetRootResourcesAsync();
-                if (savedResource?.Count == 0)
+                if (savedResource== null || savedResource.Count == 0)
                 {
                     return;
                 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Services
 {
-    public interface IMineResourceService
+    public interface IMineResourceService: ISyncAble<ResourceModel>
     {
         /// <summary>
         /// 相同名的的根节点资源

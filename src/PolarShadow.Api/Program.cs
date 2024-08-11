@@ -4,7 +4,6 @@ using NLog;
 using NLog.Web;
 using PolarShadow.Api;
 using PolarShadow.Api.Swagger;
-using PolarShadow.Core;
 using PolarShadow.Storage;
 using PolarShadow.Storage.Postgre.Migrations;
 using PolarShadow.Services;
@@ -30,7 +29,7 @@ try
     })
     .AddJsonOptions(option =>
     {
-        JsonOption.Default(option.JsonSerializerOptions);
+        JsonOptions.Default(option.JsonSerializerOptions);
     });
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
@@ -49,8 +48,8 @@ try
         builder.UseNpgsql(setting!.ConnectionString, opBuilder => opBuilder.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
     });
 
-    builder.Services.RegisterStorageService();
-    builder.Services.AddSingleton<FileSafeOperate>();
+    builder.Services.AddPolarShadowService();
+    builder.Services.AddUntities();
 
     var app = builder.Build();
 

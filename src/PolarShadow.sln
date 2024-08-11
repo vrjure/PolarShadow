@@ -57,6 +57,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Storage.Postgre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Storage.Sqlite.Migrations", "PolarShadow.Storage.Sqlite.Migrations\PolarShadow.Storage.Sqlite.Migrations.csproj", "{1EAA46A9-9A03-4231-9E49-D36D5C2C720C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolarShadow.Services.Http", "PolarShadow.Services.Http\PolarShadow.Services.Http.csproj", "{B5164303-E136-4A47-8FE7-B330028D5EDC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -325,6 +327,18 @@ Global
 		{1EAA46A9-9A03-4231-9E49-D36D5C2C720C}.Release|x64.Build.0 = Release|Any CPU
 		{1EAA46A9-9A03-4231-9E49-D36D5C2C720C}.Release|x86.ActiveCfg = Release|Any CPU
 		{1EAA46A9-9A03-4231-9E49-D36D5C2C720C}.Release|x86.Build.0 = Release|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Debug|x64.Build.0 = Debug|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Debug|x86.Build.0 = Debug|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Release|x64.ActiveCfg = Release|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Release|x64.Build.0 = Release|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Release|x86.ActiveCfg = Release|Any CPU
+		{B5164303-E136-4A47-8FE7-B330028D5EDC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

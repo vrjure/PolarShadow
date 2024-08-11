@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Storage
 {
-    internal class MineResourceService : IMineResourceService
+    internal class MineResourceService : SyncAbleService<ResourceModel>, IDbMineResourceService
     {
         private readonly IDbContextFactory<PolarShadowDbContext> _dbContextFactory;
 
-        public MineResourceService(IDbContextFactory<PolarShadowDbContext> dbContextFactory)
+        public MineResourceService(IDbContextFactory<PolarShadowDbContext> dbContextFactory) :base(dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
         }
@@ -69,7 +69,7 @@ namespace PolarShadow.Storage
         public async Task<ICollection<ResourceModel>> GetRootResourcesAsync()
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
-            return await dbContext.Resources.Where(f => f.ParentId == 0).AsNoTracking().ToListAsync();
+            return await dbContext.Resources.Where(f => f.ParentId == 0).ToListAsync();
         }
 
         public async Task SaveResourceAsync(ResourceTreeNode tree)

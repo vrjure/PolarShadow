@@ -1,4 +1,6 @@
-﻿namespace PolarShadow.Api
+﻿using System;
+
+namespace PolarShadow.Services
 {
     public class ResultException : Exception
     {

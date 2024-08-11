@@ -19,10 +19,10 @@ namespace PolarShadow.ViewModels
         private readonly IMessageService _notify;
         private readonly INavigationService _nav;
         private readonly IBufferCache _bufferCache;
-        private readonly IPreference _preference;
+        private readonly IPreferenceService _preference;
 
         private ISearchHandler<Resource> _searcHandler;
-        public SearchViewModel(IPolarShadow polar, IMessageService notify, INavigationService nav, IBufferCache bufferCache, IPreference preference)
+        public SearchViewModel(IPolarShadow polar, IMessageService notify, INavigationService nav, IBufferCache bufferCache, IPreferenceService preference)
         {
             _polar = polar;
             _notify = notify;

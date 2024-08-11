@@ -26,7 +26,7 @@ namespace PolarShadow.Api.Controllers
             return await _preferenceService.GetAllAsync();
         }
 
-        [HttpGet("/{key}")]
+        [HttpGet("{key}")]
         public async Task<PreferenceModel> GetAsync(string key)
         {
             return await _preferenceService.GetAsync(key);

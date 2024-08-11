@@ -43,5 +43,11 @@ namespace PolarShadow.Api.Controllers
         {
             return await _historyService.GetListPageAsync(page, pageSize, filter);
         }
+
+        [HttpPost("upload")]
+        public async Task UploadAsync([FromBody] ICollection<HistoryModel> data)
+        {
+            await _historyService.UploadAsync(data);
+        }
     }
 }

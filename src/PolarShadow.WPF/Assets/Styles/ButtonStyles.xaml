@@ -90,4 +90,45 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style x:Key="Switch" TargetType="ToggleButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryText}"/>
+        <Setter Property="FontSize" Value="{StaticResource Subtitle}"/>
+        <Setter Property="FontFamily" Value="{StaticResource remixIcon}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Content" Value="{StaticResource toggle}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Background="{TemplateBinding Background}"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                        <TextBlock FontFamily="{TemplateBinding FontFamily}"
+                           FontSize="{TemplateBinding FontSize}"
+                           FontWeight="{TemplateBinding FontWeight}"
+                           FontStyle="{TemplateBinding FontStyle}"
+                           Text="{TemplateBinding Content}"
+                           TextAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryText}"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource AccentBackground}"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Content" Value="{StaticResource toggled}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

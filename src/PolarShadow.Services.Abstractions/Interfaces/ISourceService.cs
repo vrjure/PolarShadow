@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Services
 {
-    public interface ISourceService
+    public interface ISourceService : ISyncAble<SourceModel>
     {
-        Task<SourceVersionModel> GetSourceViersionAsync();
-        Task UploadAsync();
-        Task<Stream> DownloadAsync();
+        Task<SourceModel> GetSouuceAsync();
+        Task SaveSourceAsync(SourceModel source);
     }
 }

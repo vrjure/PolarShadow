@@ -20,7 +20,7 @@ namespace PolarShadow.ViewModels
         private readonly IMessageService _notify;
         private readonly IMineResourceService _mineResourceService;
         private readonly IBufferCache _bufferCache;
-        private readonly IPreference _preference;
+        private readonly IPreferenceService _preference;
         private readonly INavigationService _nav;
         private readonly IHistoryService _hisService;
         private readonly IDispatcherUI _dispathcerUI;
@@ -28,7 +28,7 @@ namespace PolarShadow.ViewModels
         private ResourceModel _rootResourceInDb;
         private TimeSpan _currentProgress;
 
-        public DetailViewModel(IPolarShadow polar, IMessageService notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreference preference, INavigationService nav, IHistoryService hisService, IVideoViewController videoController, IDispatcherUI dispatcherUI)
+        public DetailViewModel(IPolarShadow polar, IMessageService notify, IMineResourceService mineResourceService, IBufferCache bufferCache, IPreferenceService preference, INavigationService nav, IHistoryService hisService, IVideoViewController videoController, IDispatcherUI dispatcherUI)
         {
             _polar = polar;
             _notify = notify;

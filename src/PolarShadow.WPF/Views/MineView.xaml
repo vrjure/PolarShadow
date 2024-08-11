@@ -76,12 +76,39 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="搜索线程数"/>
+                        <TextBlock Text="Tasks"/>
                         <ctrl:NumericUpDown Grid.Column="1"
                                             Mininum="1"
                                             Maximum="10"
                                             Value="{Binding SearchTaskCount.Value, Mode=TwoWay}"/>
 
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Api"
+                                    Style="{StaticResource TitleTextBlock}"/>
+                        <ToggleButton Style="{StaticResource Switch}"
+                                      FontSize="{StaticResource Title}"
+                                      Margin="10,0"
+                                      x:Name="btn_apiEnable"
+                                      IsChecked="{Binding ApiEnable.Value, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <Rectangle Fill="{StaticResource IndicatorBackground}" Height="2"/>
+                    <Grid Margin="0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Address"/>
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding ApiAddress.Value, Mode=TwoWay}"
+                                 IsEnabled="{Binding ElementName=btn_apiEnable, Path=IsChecked}"/>
+                        <Button Grid.Column="2"
+                                Style="{StaticResource ButtonIcon}"
+                                Content="{StaticResource upload_cloud}"
+                                IsEnabled="{Binding ElementName=btn_apiEnable, Path=IsChecked}"
+                                Command="{Binding UploadCloudCommand}"/>
                     </Grid>
                 </StackPanel>
             </ScrollViewer>

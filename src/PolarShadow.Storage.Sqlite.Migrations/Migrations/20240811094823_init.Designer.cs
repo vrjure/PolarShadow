@@ -11,7 +11,7 @@ using PolarShadow.Storage;
 namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
 {
     [DbContext(typeof(PolarShadowDbContext))]
-    [Migration("20240803151546_init")]
+    [Migration("20240811094823_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -46,6 +46,19 @@ namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
                     b.HasIndex("ResourceName");
 
                     b.ToTable("Histories");
+                });
+
+            modelBuilder.Entity("PolarShadow.Services.PreferenceModel", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("Preferences");
                 });
 
             modelBuilder.Entity("PolarShadow.Services.ResourceModel", b =>
@@ -96,17 +109,24 @@ namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
                     b.ToTable("Resources");
                 });
 
-            modelBuilder.Entity("PolarShadow.Storage.PreferenceEntity", b =>
+            modelBuilder.Entity("PolarShadow.Services.SourceModel", b =>
                 {
-                    b.Property<string>("Key")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreateTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Value")
+                    b.Property<string>("Data")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Key");
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("TEXT");
 
-                    b.ToTable("Preferences");
+                    b.HasKey("Id");
+
+                    b.ToTable("Sources");
                 });
 #pragma warning restore 612, 618
         }

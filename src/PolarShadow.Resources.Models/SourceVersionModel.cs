@@ -7,6 +7,6 @@ namespace PolarShadow.Resources
     public class SourceVersionModel
     {
         public int Id { get; set; }
-        public DateTimeOffset VersionTime { get; set; }
+        public DateTime VersionTime { get; set; }
     }
 }

@@ -52,6 +52,19 @@ namespace PolarShadow.Storage.Postgre.Migrations.Migrations
                     b.ToTable("Histories");
                 });
 
+            modelBuilder.Entity("PolarShadow.Services.PreferenceModel", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("Preferences");
+                });
+
             modelBuilder.Entity("PolarShadow.Services.ResourceModel", b =>
                 {
                     b.Property<int>("Id")
@@ -102,17 +115,26 @@ namespace PolarShadow.Storage.Postgre.Migrations.Migrations
                     b.ToTable("Resources");
                 });
 
-            modelBuilder.Entity("PolarShadow.Storage.PreferenceEntity", b =>
+            modelBuilder.Entity("PolarShadow.Services.SourceModel", b =>
                 {
-                    b.Property<string>("Key")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
                         .HasColumnType("text");
 
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Key");
+                    b.HasKey("Id");
 
-                    b.ToTable("Preferences");
+                    b.ToTable("Sources");
                 });
 #pragma warning restore 612, 618
         }

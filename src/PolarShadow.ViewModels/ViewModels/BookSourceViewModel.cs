@@ -22,12 +22,14 @@ namespace PolarShadow.ViewModels
         private readonly IStorageItemPicker _storage;
         private readonly IMessageService _notification;
         private readonly INavigationService _nav;
-        public BookSourceViewModel(IPolarShadow polar, IStorageItemPicker storage, IMessageService notification, INavigationService nav)
+        private readonly ISourceService _sourceService;
+        public BookSourceViewModel(IPolarShadow polar, IStorageItemPicker storage, IMessageService notification, INavigationService nav, ISourceService sourceService)
         {
             _polar = polar;
             _storage = storage;
             _notification = notification;
             _nav = nav;
+            _sourceService = sourceService;
         }
         private ObservableCollection<ISite> _sites;
         public ObservableCollection<ISite> Sites
@@ -79,9 +81,9 @@ namespace PolarShadow.ViewModels
                 using var fs = await (source[0] as IStorageFile).ReadAsync();
                 _polar.LoadJsonStreamSource(fs);
 
-                Reflesh();
+                await _polar.SaveAsync(_sourceService);
 
-                _polar.Save();
+                Reflesh();
 
                 _notification.ShowSuccess();
             }

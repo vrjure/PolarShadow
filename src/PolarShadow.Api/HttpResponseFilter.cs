@@ -22,13 +22,17 @@ namespace PolarShadow.Api
         {
             if (context.Exception == null)
             {
-                if (context.Result?.GetType() == typeof(EmptyResult))
+                if (context.Result is FileResult)
+                {
+                    return;
+                }
+                else if (context.Result is EmptyResult)
                 {
                     context.Result = new ObjectResult(Result.Success);
                 }
-                else
+                else if (context.Result is ObjectResult obj)
                 {
-                    context.Result = new ObjectResult(new ResultObject(context.Result));
+                    context.Result = new ObjectResult(new ResultObject(obj.Value));
                 }
             }
             else

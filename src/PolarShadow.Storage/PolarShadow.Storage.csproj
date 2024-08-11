@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -13,13 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PolarShadow.Core\src\PolarShadow.Core\PolarShadow.Core.csproj" />
     <ProjectReference Include="..\PolarShadow.Resources.Models\PolarShadow.Resources.Models.csproj" />
     <ProjectReference Include="..\PolarShadow.Services.Abstractions\PolarShadow.Services.Abstractions.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Entities\" />
   </ItemGroup>
 
 </Project>

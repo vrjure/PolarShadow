@@ -7,8 +7,8 @@
     <sys:String x:Key="refresh">&#xF064;</sys:String>
     <sys:String x:Key="search">&#xF0D1;</sys:String>
     <sys:String x:Key="upload">&#xF249;</sys:String>
-    <sys:String x:Key="arrow-left">&#xEA6E;</sys:String>
-    <sys:String x:Key="arrow-right">&#xEA64;</sys:String>
+    <sys:String x:Key="arrow-left">&#xEA64;</sys:String>
+    <sys:String x:Key="arrow-right">&#xEA6E;</sys:String>
     <sys:String x:Key="arrow-up">&#xEA78;</sys:String>
     <sys:String x:Key="arrow-down">&#xEA4E;</sys:String>
     <sys:String x:Key="save">&#xF0B1;</sys:String>
@@ -37,6 +37,9 @@
     <sys:String x:Key="minimize">&#xF1AF;</sys:String>
     <sys:String x:Key="maximize">&#xEB7F;</sys:String>
     <sys:String x:Key="maximize-restore">&#xEB87;</sys:String>
+    <sys:String x:Key="toggle">&#xF219;</sys:String>
+    <sys:String x:Key="toggled">&#xF218;</sys:String>
+    <sys:String x:Key="upload_cloud">&#xF24D;</sys:String>
 
     <sys:String x:Key="searchBox_clear">&#xEB97;</sys:String>
     <sys:String x:Key="searchBox_search">&#xF0D1;</sys:String>

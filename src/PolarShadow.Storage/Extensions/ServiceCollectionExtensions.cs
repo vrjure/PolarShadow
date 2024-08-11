@@ -10,12 +10,13 @@ namespace PolarShadow.Storage
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection RegisterStorageService(this IServiceCollection services)
+        public static IServiceCollection AddPolarShadowDbService(this IServiceCollection services)
         {
-            services.AddSingleton<IMineResourceService, MineResourceService>();
-            services.AddSingleton<IHistoryService, HistoryService>();
-            services.AddSingleton<IPreferenceService, PreferenceService>();
-            return services;
+            return services.AddTransient<IDbMineResourceService, MineResourceService>()
+                .AddTransient<IDbHistoryService, HistoryService>()
+                .AddTransient<IDbPreferenceService, PreferenceService>()
+                .AddTransient<IDbSourceService, SourceService>()
+                .AddMemoryCache();
         }
     }
 }

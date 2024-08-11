@@ -37,7 +37,7 @@ namespace PolarShadow.WPF
         
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            _nav.Navigate<TopLayoutViewModel>(MainWindowViewModel.NavigationName);       
+            _nav.Navigate<TopLayoutViewModel>(MainWindowViewModel.NavigationName);
         }
 
         protected override void OnDeactivated(EventArgs e)

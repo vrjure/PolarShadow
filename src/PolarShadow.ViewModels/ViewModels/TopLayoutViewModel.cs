@@ -26,12 +26,14 @@ namespace PolarShadow.ViewModels
         private readonly IDbContextFactory<PolarShadowDbContext> _dbFactory;
         private readonly IMessageService _notify;
         private readonly IPolarShadow _polar;
-        public TopLayoutViewModel(INavigationService nav, IDbContextFactory<PolarShadowDbContext> dbFactory, IMessageService notify, IPolarShadow polar)
+        private readonly ISourceService _sourceService;
+        public TopLayoutViewModel(INavigationService nav, IDbContextFactory<PolarShadowDbContext> dbFactory, IMessageService notify, IPolarShadow polar, ISourceService sourceService)
         {
             _nav = nav;
             _dbFactory = dbFactory;
             _notify = notify;
             _polar = polar;
+            _sourceService = sourceService;
         }
 
         private bool _ShowTitleBar = true;
@@ -56,14 +58,7 @@ namespace PolarShadow.ViewModels
             try
             {
                 InitLibVlc();
-
-                await Task.Run(() =>
-                {
-                    using var db = _dbFactory.CreateDbContext();
-                    db.Database.EnsureCreated();
-
-                    _polar.Load();
-                });
+                await _polar.LoadAsync(_sourceService);
             }
             catch (Exception ex)
             {

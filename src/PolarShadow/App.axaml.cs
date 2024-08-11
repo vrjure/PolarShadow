@@ -50,6 +50,8 @@ public partial class App : Application
         Ioc.Default.ConfigureServices(service);
 
         var topLevelService = Ioc.Default.GetRequiredService<ITopLevelService>();
+        using var db = Ioc.Default.GetRequiredService<IDbContextFactory<PolarShadowDbContext>>().CreateDbContext();
+        db.Database.Migrate();
         var nav = Ioc.Default.GetRequiredService<INavigationService>();
 
         // Line below is needed to remove Avalonia data validation.
@@ -89,7 +91,6 @@ public partial class App : Application
 
         RegisterUtilities(service);
 
-
         RegisterNativeControls(service);
     }
 
@@ -97,13 +98,14 @@ public partial class App : Application
     {
         service.RegisterVLC();
         service.RegisterCache(new FileCacheOptions { CacheFolder = PolarShadowApp.CacheFolder });
-        service.RegisterDbPreference();
         service.AddSingleton<INavigationService, NavigationService>();
         service.AddSingleton<IStorageItemPicker, StorageItemPicker>();
         service.AddSingleton<ITopLevelService, TopLevelService>();
         service.AddSingleton<INotificationManager, NotificationManager>();
         service.AddSingleton<IDispatcherUI, DispatcherUI>();
         service.AddSingleton<IMessageService, NotificationService>();
+        service.AddPolarShadowDbService();
+
     }
 
     private void RegisterView(IServiceCollection service)
@@ -155,7 +157,6 @@ public partial class App : Application
         {
             op.UseSqlite($"Data Source={PolarShadowApp.DbFile}", op => op.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
         });
-        service.RegisterStorageService();
     }
 
     private void RegisterNativeControls(IServiceCollection service)
