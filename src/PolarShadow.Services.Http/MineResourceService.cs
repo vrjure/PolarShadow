@@ -94,7 +94,7 @@ namespace PolarShadow.Services.Http
         public async Task<ICollection<ResourceModel>> DownloadAsync()
         {
             var url = $"{_mineResource}/download";
-            var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url);
+            var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url, JsonOptions.DefaultSerializer);
             result?.ThrowIfUnsuccessful();
             return result!.Data;
         }

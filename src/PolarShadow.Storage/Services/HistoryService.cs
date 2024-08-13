@@ -19,6 +19,11 @@ namespace PolarShadow.Storage
         public async Task AddOrUpdateAsync(HistoryModel model)
         {
             using var dbContext = _contextFactory.CreateDbContext();
+            var data = await dbContext.Histories.FirstOrDefaultAsync(f=>f.ResourceName == model.ResourceName);
+            if (data != null)
+            {
+                model.Id = data.Id;
+            }
             model.UpdateTime = DateTime.Now;
             dbContext.Histories.Update(model);
             await dbContext.SaveChangesAsync();
