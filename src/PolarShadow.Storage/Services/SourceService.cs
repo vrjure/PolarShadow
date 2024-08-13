@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Storage
 {
-    internal class SourceService : IDbSourceService
+    internal class SourceService : SyncAbleService<SourceModel>, IDbSourceService
     {
         private readonly IDbContextFactory<PolarShadowDbContext> _dbFactory;
-        public SourceService(IDbContextFactory<PolarShadowDbContext> dbFactroy)
+        public SourceService(IDbContextFactory<PolarShadowDbContext> dbFactroy) : base(dbFactroy)
         {
             _dbFactory = dbFactroy;
         }
@@ -30,11 +30,28 @@ namespace PolarShadow.Storage
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task UploadAsync(ICollection<SourceModel> data)
+        public override async Task UploadAsync(ICollection<SourceModel> data)
         {
+            if (data == null || data.Count == 0)
+            {
+                return;
+            }
             using var dbContext = _dbFactory.CreateDbContext();
-            await dbContext.Sources.ExecuteDeleteAsync();
-            dbContext.Sources.AddRange(data);
+            var local = await dbContext.Sources.OrderByDescending(f => f.UpdateTime).AsNoTracking().FirstOrDefaultAsync();
+            if (local == null)
+            {
+                dbContext.Sources.AddRange(data);
+            }
+            else
+            {
+                foreach (var item in data)
+                {
+                    if (item.UpdateTime.ToUniversalTime() > local.UpdateTime.ToUniversalTime())
+                    {
+                        dbContext.Sources.Update(item);
+                    }
+                }
+            }
             await dbContext.SaveChangesAsync();
         }
     }

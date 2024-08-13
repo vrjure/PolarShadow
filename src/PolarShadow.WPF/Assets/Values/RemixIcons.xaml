@@ -40,6 +40,8 @@
     <sys:String x:Key="toggle">&#xF219;</sys:String>
     <sys:String x:Key="toggled">&#xF218;</sys:String>
     <sys:String x:Key="upload_cloud">&#xF24D;</sys:String>
+    <sys:String x:Key="download_cloud">&#xEC57;</sys:String>
+    <sys:String x:Key="cloud">&#xEBA2;</sys:String>
 
     <sys:String x:Key="searchBox_clear">&#xEB97;</sys:String>
     <sys:String x:Key="searchBox_search">&#xF0D1;</sys:String>

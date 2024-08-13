@@ -39,5 +39,11 @@ namespace PolarShadow.Api.Controllers
         {
             await _sourceService.UploadAsync(data);
         }
+
+        [HttpGet("download")]
+        public async Task<ICollection<SourceModel>> DownloadAsync()
+        {
+            return await _sourceService.DownloadAsync();
+        }
     }
 }

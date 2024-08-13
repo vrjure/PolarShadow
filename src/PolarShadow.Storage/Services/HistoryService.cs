@@ -59,5 +59,46 @@ namespace PolarShadow.Storage
                     .ToListAsync();
             }
         }
+
+        public override async Task UploadAsync(ICollection<HistoryModel> data)
+        {
+            if (data == null || data.Count == 0)
+            {
+                return;
+            }
+
+            using var dbContext = _contextFactory.CreateDbContext();
+            var dbData = await dbContext.Histories.ToListAsync();
+            if (!dbData.Any())
+            {
+                foreach (var item in data)
+                {
+                    item.Id = 0;
+                }
+
+                dbContext.Histories.AddRange(data);
+            }
+            else
+            {
+                var addList = data.ExceptBy(dbData.Select(f => f.ResourceName), f => f.ResourceName);
+                var union = dbData.UnionBy(data, f => f.ResourceName);
+
+                var updateList = new List<HistoryModel>();
+                foreach (var item in union)
+                {
+                    var db = dbData.First(f => f.ResourceName == item.ResourceName);
+                    var remote = data.First(f => f.ResourceName == item.ResourceName);
+                    if (remote.UpdateTime.ToUniversalTime() > db.UpdateTime.ToUniversalTime())
+                    {
+                        db.UpdateTime = remote.UpdateTime;
+                        updateList.Add(db);
+                    }
+                }
+
+                dbContext.Histories.UpdateRange(updateList);
+            }
+
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

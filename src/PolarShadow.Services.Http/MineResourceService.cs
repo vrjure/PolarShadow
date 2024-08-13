@@ -90,5 +90,13 @@ namespace PolarShadow.Services.Http
             var result = await response.Content.ReadFromJsonAsync<Result>(JsonOptions.DefaultSerializer);
             result?.ThrowIfUnsuccessful();
         }
+
+        public async Task<ICollection<ResourceModel>> DownloadAsync()
+        {
+            var url = $"{_mineResource}/download";
+            var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url);
+            result?.ThrowIfUnsuccessful();
+            return result!.Data;
+        }
     }
 }

@@ -49,5 +49,12 @@ namespace PolarShadow.Api.Controllers
         {
             await _historyService.UploadAsync(data);
         }
+
+        [HttpGet("download")]
+        public async Task<ICollection<HistoryModel>> DownloadAsync()
+        {
+            return await _historyService.DownloadAsync();
+        }
+
     }
 }

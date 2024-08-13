@@ -105,10 +105,37 @@
                                  Text="{Binding ApiAddress.Value, Mode=TwoWay}"
                                  IsEnabled="{Binding ElementName=btn_apiEnable, Path=IsChecked}"/>
                         <Button Grid.Column="2"
-                                Style="{StaticResource ButtonIcon}"
-                                Content="{StaticResource upload_cloud}"
-                                IsEnabled="{Binding ElementName=btn_apiEnable, Path=IsChecked}"
-                                Command="{Binding UploadCloudCommand}"/>
+                                Command="{Binding UploadCloudCommand}"
+                                IsEnabled="{Binding ElementName=btn_apiEnable, Path=IsChecked}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource ButtonIcon}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid Background="{TemplateBinding Background}"
+                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                                    <TextBlock FontFamily="{TemplateBinding FontFamily}"
+                                                               FontSize="{TemplateBinding FontSize}"
+                                                               FontWeight="{TemplateBinding FontWeight}"
+                                                               FontStyle="{TemplateBinding FontStyle}"
+                                                               Text="{StaticResource cloud}"
+                                                               TextAlignment="Center"/>
+                                                    <TextBlock FontFamily="{TemplateBinding FontFamily}"
+                                                               FontSize="8"
+                                                               FontWeight="{TemplateBinding FontWeight}"
+                                                               FontStyle="{TemplateBinding FontStyle}"
+                                                               Text="{StaticResource refresh}"
+                                                               TextAlignment="Center"
+                                                               Foreground="White"
+                                                               VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                     </Grid>
                 </StackPanel>
             </ScrollViewer>

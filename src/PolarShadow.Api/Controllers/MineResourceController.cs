@@ -67,5 +67,11 @@ namespace PolarShadow.Api.Controllers
         {
             await _mineResource.UploadAsync(data);
         }
+
+        [HttpGet("download")]
+        public async Task<ICollection<ResourceModel>> DownloadAsync()
+        {
+            return await _mineResource.DownloadAsync();
+        }
     }
 }

@@ -64,5 +64,13 @@ namespace PolarShadow.Services.Http
             var result = await response.Content.ReadFromJsonAsync<Result>(JsonOptions.DefaultSerializer);
             result.ThrowIfUnsuccessful();
         }
+
+        public async Task<ICollection<HistoryModel>> DownloadAsync()
+        {
+            var url = $"{History}/download";
+            var result = await _client.GetFromJsonAsync<Result<ICollection<HistoryModel>>>(url);
+            result.ThrowIfUnsuccessful();
+            return result!.Data;
+        }
     }
 }

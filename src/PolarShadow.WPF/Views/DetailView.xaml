@@ -138,11 +138,12 @@
                         <ListBox ItemsSource="{Binding Resource.Children}"
                          Style="{StaticResource HorizontalListBox}"
                          ItemContainerStyle="{StaticResource ListBoxMenuItem}"
+                         SelectedValue="{Binding CurrentHead, Mode=OneWayToSource}"
                          x:Name="EpisodeHeader">
                             <ListBox.ItemTemplate>
                                 <DataTemplate DataType="pss:ResourceTreeNode">
                                     <TextBlock Style="{StaticResource SubtitleTextBlock}"
-                       Text="{Binding Name}"/>
+                                                Text="{Binding Name}"/>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

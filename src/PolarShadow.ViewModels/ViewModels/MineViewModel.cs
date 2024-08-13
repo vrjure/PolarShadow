@@ -159,9 +159,9 @@ namespace PolarShadow.ViewModels
                 var historySync = _service.GetRequiredService<ISyncService<HistoryModel>>();
                 var sourceSync = _service.GetRequiredService<ISyncService<SourceModel>>();
 
-                await resourceSync.UploadAsync();
-                await historySync.UploadAsync();
-                await sourceSync.UploadAsync();
+                await resourceSync.SyncAsync();
+                await historySync.SyncAsync();
+                await sourceSync.SyncAsync();
 
                 _notify.ShowSuccess();
             }
