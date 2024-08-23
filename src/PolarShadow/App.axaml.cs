@@ -104,7 +104,7 @@ public partial class App : Application
         service.AddSingleton<INotificationManager, NotificationManager>();
         service.AddSingleton<IDispatcherUI, DispatcherUI>();
         service.AddSingleton<IMessageService, NotificationService>();
-        service.AddPolarShadowDbService();
+        service.AddPolarShadowService();
 
     }
 

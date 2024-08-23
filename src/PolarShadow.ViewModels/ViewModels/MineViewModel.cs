@@ -11,6 +11,7 @@ using PolarShadow.Storage;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using PolarShadow.Services.Http;
 using Microsoft.Extensions.DependencyInjection;
+using PolarShadow.Core;
 
 namespace PolarShadow.ViewModels
 {
@@ -23,7 +24,8 @@ namespace PolarShadow.ViewModels
         private readonly IHttpHistoryService _historyService;
         private readonly ISourceService _sourceService;
         private readonly IServiceProvider _service;
-        public MineViewModel(IStorageItemPicker storage, IMessageService notify, IDbPreferenceService dbPreference, IHttpMineResourceService mineResourceService, IHttpHistoryService historyService, ISourceService sourceService, IServiceProvider service)
+        private readonly IPolarShadow _polar;
+        public MineViewModel(IStorageItemPicker storage, IMessageService notify, IDbPreferenceService dbPreference, IHttpMineResourceService mineResourceService, IHttpHistoryService historyService, ISourceService sourceService, IServiceProvider service, IPolarShadow polar)
         {
             _storage = storage;
             _notify = notify;
@@ -32,6 +34,7 @@ namespace PolarShadow.ViewModels
             _historyService = historyService;
             _sourceService = sourceService;
             _service = service;
+            _polar = polar;
         }
 
         private ChangeValue<string> _rpc;
@@ -162,6 +165,12 @@ namespace PolarShadow.ViewModels
                 await resourceSync.SyncAsync();
                 await historySync.SyncAsync();
                 await sourceSync.SyncAsync();
+
+                var source = await _sourceService.GetSouuceAsync();
+                if (source != null && !string.IsNullOrEmpty(source.Data))
+                {
+                    _polar.Load(new JsonStringSource() { Json = source.Data }, true);
+                }
 
                 _notify.ShowSuccess();
             }

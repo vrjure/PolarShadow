@@ -15,7 +15,7 @@
 		<ScrollViewer BringIntoViewOnFocusChange="False">
 			<ListBox ItemsSource="{Binding Sites}"
 				 Theme="{StaticResource Card-Block}"
-				 SelectedValue="{Binding SelectedSite, Mode=OneWayToSource}">
+				 SelectedValue="{Binding SelectedSite, Mode=TwoWay}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate DataType="psr:ISite">
 						<Grid RowDefinitions="*,auto"

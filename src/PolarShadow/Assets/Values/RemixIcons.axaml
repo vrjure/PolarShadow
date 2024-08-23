@@ -33,4 +33,7 @@
 	<x:String x:Key="loading">&#xEEC1;</x:String>
 	<x:String x:Key="empty">&#xF1F7; Empty</x:String>
 	<x:String x:Key="restart">&#xF080;</x:String>
+	<x:String x:Key="upload_cloud">&#xF24D;</x:String>
+	<x:String x:Key="download_cloud">&#xEC57;</x:String>
+	<x:String x:Key="cloud">&#xEBA2;</x:String>
 </ResourceDictionary>

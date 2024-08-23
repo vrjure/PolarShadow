@@ -62,12 +62,47 @@
 				   Classes="title"/>
 		<Rectangle Classes="line"/>
 		<DockPanel>
-			<TextBlock Text="搜索线程数" Classes="header"/>
+			<TextBlock Text="Search Tasks" Classes="header"/>
 			<NumericUpDown VerticalAlignment="Center"
 						   Value="{Binding SearchTaskCount.Value, Mode=TwoWay}"
 						   Minimum="1"
 						   Maximum="10"
 						   FormatString="N0"/>
+		</DockPanel>
+
+		<StackPanel Orientation="Horizontal"
+					Spacing="10">
+			<TextBlock Text="Api"
+					   Classes="title"/>
+			<ToggleSwitch IsChecked="{Binding ApiEnable.Value, Mode=TwoWay}"
+						  VerticalAlignment="Center"/>
+		</StackPanel>
+		
+		<Rectangle Classes="line"/>
+		<DockPanel>
+			<TextBlock Text="Address"
+					   DockPanel.Dock="Left"
+					   Classes="header"/>
+			<Button DockPanel.Dock="Right"
+					Theme="{StaticResource Icon}"
+					Margin="6,0"
+					Command="{Binding UploadCloudCommand}"
+					IsEnabled="{Binding ApiEnable.Value}">
+				<Button.Content>
+					<Panel>
+						<TextBlock Classes="icon"
+								   Text="{StaticResource cloud}"/>
+						<TextBlock Classes="icon"
+								   Text="{StaticResource refresh}"
+								   Foreground="White"
+								   FontSize="10"
+								   VerticalAlignment="Center"
+								   HorizontalAlignment="Center"/>
+					</Panel>
+				</Button.Content>
+			</Button>
+			<TextBox Text="{Binding ApiAddress.Value, Mode=TwoWay}"
+					 IsEnabled="{Binding ApiEnable.Value}"/>
 		</DockPanel>
 	</StackPanel>
 </UserControl>
