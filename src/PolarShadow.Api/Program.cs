@@ -9,6 +9,11 @@ using PolarShadow.Storage.Postgre.Migrations;
 using PolarShadow.Services;
 using PolarShadow.Api.Utilities;
 using PolarShadow.Api.Utilities.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
+using Microsoft.OpenApi.Models;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings(reloadOnChange:true).GetCurrentClassLogger();
 logger.Info("Server Starting");
@@ -36,6 +41,28 @@ try
     builder.Services.AddSwaggerGen(options =>
     {
         options.OperationFilter<SwaggerGenOperationFilter>();
+        options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        {
+            Name = "JWT Authentication",
+            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+            Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+            Scheme = JwtBearerDefaults.AuthenticationScheme,
+            BearerFormat = "JWT"
+        });
+        options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[]{}
+            }
+        });
     });
 
     var settingSection = builder.Configuration.GetSection("PolarShadowSetting");
@@ -46,6 +73,35 @@ try
     builder.Services.AddDbContextFactory<PolarShadowDbContext>(builder =>
     {
         builder.UseNpgsql(setting!.ConnectionString, opBuilder => opBuilder.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
+    });
+
+    JWTOptions jwtOptions = new JWTOptions();
+    builder.Configuration.GetSection("jwt").Bind(jwtOptions);
+
+    builder.Services.AddAuthentication(op =>
+    {
+        op.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        op.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(op =>
+    {
+        op.RequireHttpsMetadata = false;
+        op.SaveToken = false;
+        op.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.PrivateKey)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+        };
+        
+    });
+
+    builder.Services.AddAuthorization(op =>
+    {
+        op.AddPolicy(Policies.Client, policy =>
+        {
+            policy.RequireClaim(JWTClaimTypes.ClientId, jwtOptions.ClientId);
+            policy.RequireUserName(jwtOptions.UserName);
+        });
     });
 
     builder.Services.AddPolarShadowService();
@@ -60,6 +116,7 @@ try
         app.UseSwaggerUI();
     }
 
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();

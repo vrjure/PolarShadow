@@ -38,6 +38,7 @@
     {
         public const int Success = 0;
         public const int ParameterError = 1000;
+        public const int UsernameOrPasswordError = 1001;
         public const int ServerConfigError = 9998;
         public const int UnhandledException = 9999;
     }
