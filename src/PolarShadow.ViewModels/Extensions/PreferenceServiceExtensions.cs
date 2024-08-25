@@ -21,5 +21,13 @@ namespace PolarShadow
         {
             return services.Get(Preferences.ApiEnable, false);
         }
+
+        public static TokenRequestModel GetTokenRequestModel(this IDbPreferenceService services)
+        {
+            var userName = services.Get(Preferences.UserName, "");
+            var password = services.Get(Preferences.Password, "");
+
+            return new TokenRequestModel { UserName = userName, Password = password };
+        }
     }
 }

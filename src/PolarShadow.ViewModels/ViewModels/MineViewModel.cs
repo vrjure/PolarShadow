@@ -65,11 +65,25 @@ namespace PolarShadow.ViewModels
             set => SetProperty(ref _apiAddress, value);
         }
 
-        public ChangeValue<bool> _apiEnable;
+        private ChangeValue<bool> _apiEnable;
         public ChangeValue<bool> ApiEnable
         {
             get => _apiEnable;
             set => SetProperty(ref _apiEnable, value);
+        }
+
+        private ChangeValue<string> _userName;
+        public ChangeValue<string> UserName
+        {
+            get => _userName;
+            set => SetProperty(ref _userName, value);
+        }
+
+        private ChangeValue<string> _password;
+        public ChangeValue<string> Password
+        {
+            get => _password;
+            set => SetProperty(ref _password, value);
         }
 
         private IAsyncRelayCommand _pickDownloadPathCommand;
@@ -102,6 +116,8 @@ namespace PolarShadow.ViewModels
                 RPC = new ChangeValue<string>(await _dbPreference.GetAsync(Preferences.RPC, ""));
                 DownloadPath = new ChangeValue<string>(await _dbPreference.GetAsync(Preferences.DownloadPath, ""));
                 SearchTaskCount = new ChangeValue<int>(await _dbPreference.GetAsync(Preferences.SearchTaskCount, 3));
+                UserName = new ChangeValue<string>(await _dbPreference.GetAsync(Preferences.UserName, ""));
+                Password = new ChangeValue<string>(await _dbPreference.GetAsync(Preferences.Password, ""));
             }
             catch (Exception ex)
             {
@@ -126,26 +142,32 @@ namespace PolarShadow.ViewModels
                 if (ApiAddress.IsChange)
                     await _dbPreference.SetAsync(Preferences.ServerAddress, ApiAddress.Value);
 
-                if (ApiEnable.IsChange)
-                {
-                    await _dbPreference.SetAsync(Preferences.ApiEnable, ApiEnable.Value);
-                    if (ApiEnable.Value)
-                    {
-                        try
-                        {
-                            var serverService = Ioc.Default.GetRequiredService<IServerService>();
-                            await serverService.GetServerTime();
-                        }
-                        catch(Exception ex)
-                        {
-                            ApiEnable.Value = false;
-                            await _dbPreference.SetAsync(Preferences.ApiEnable, ApiEnable.Value);
+                if (UserName.IsChange)
+                    await _dbPreference.SetAsync(Preferences.UserName, UserName.Value);
 
-                            _notify.Show(ex);
-                            return;
-                        }
-                    } 
+                if (Password.IsChange)
+                    await _dbPreference.SetAsync(Preferences.Password, Password.Value);
+
+                if (ApiEnable.IsChange)
+                    await _dbPreference.SetAsync(Preferences.ApiEnable, ApiEnable.Value);
+
+                if (ApiEnable.Value)
+                {
+                    try
+                    {
+                        var serverService = _service.GetRequiredService<IServerService>();
+                        await serverService.GetServerTimeAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        ApiEnable.Value = false;
+                        await _dbPreference.SetAsync(Preferences.ApiEnable, ApiEnable.Value);
+
+                        _notify.Show(ex);
+                        return;
+                    }
                 }
+
                 _notify.ShowSuccess();
             }
             catch (Exception ex)

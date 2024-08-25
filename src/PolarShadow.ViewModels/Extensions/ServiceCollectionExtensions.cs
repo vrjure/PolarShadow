@@ -27,6 +27,15 @@ namespace PolarShadow
                     {
                         client.BaseAddress = new Uri(preference.Get(Preferences.ServerAddress, ""));
                     }
+                }, sp =>
+                {
+                    var option = new TokenClientOptions();
+                    option.TokenRequestCreator = () =>
+                    {
+                        var preference = sp.GetRequiredService<IDbPreferenceService>();
+                        return preference.GetTokenRequestModel();
+                    };
+                    return option;
                 })
                 .AddTransient<IMineResourceService>(sp =>
                 {

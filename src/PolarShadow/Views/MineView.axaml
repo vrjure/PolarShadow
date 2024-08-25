@@ -104,5 +104,20 @@
 			<TextBox Text="{Binding ApiAddress.Value, Mode=TwoWay}"
 					 IsEnabled="{Binding ApiEnable.Value}"/>
 		</DockPanel>
+		<DockPanel>
+			<TextBlock Text="UserName"
+					   Classes="header"
+					   DockPanel.Dock="Left"/>
+			<TextBox Text="{Binding UserName.Value, Mode=TwoWay}"
+					 IsEnabled="{Binding ApiEnable.Value}"/>
+		</DockPanel>
+		<DockPanel>
+			<TextBlock Text="Password"
+					   Classes="header"
+					   DockPanel.Dock="Left"/>
+			<TextBox PasswordChar="*"
+					 Text="{Binding Password.Value, Mode=TwoWay}"
+					 IsEnabled="{Binding ApiEnable.Value}"/>
+		</DockPanel>
 	</StackPanel>
 </UserControl>

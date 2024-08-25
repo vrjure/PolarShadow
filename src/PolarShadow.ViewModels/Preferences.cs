@@ -14,5 +14,7 @@ namespace PolarShadow
         public static string SearchTaskCount => nameof(SearchTaskCount);
         public static string ServerAddress => nameof(ServerAddress);
         public static string ApiEnable => nameof(ApiEnable);
+        public static string UserName => nameof(UserName);
+        public static string Password => nameof(Password);
     }
 }

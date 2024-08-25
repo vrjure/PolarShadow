@@ -9,20 +9,16 @@ using System.Threading.Tasks;
 namespace PolarShadow.Services.Http
 {
     internal class ServerService : IServerService
-    {
-        private static string Server = "Server";
-        private readonly HttpClient _client;
-        public ServerService(HttpClient client)
+    { 
+        private readonly IPolarShadowClient _client;
+        public ServerService(IPolarShadowClient client)
         {
             _client = client;
         }
 
-        public async ValueTask<DateTime> GetServerTime()
+        public async ValueTask<DateTime> GetServerTimeAsync()
         {
-            var url = $"{Server}/time";
-            var result = await _client.GetFromJsonAsync<Result<DateTime>>(url);
-            result.ThrowIfUnsuccessful();
-            return result!.Data;
+            return await _client.GetServerTimeAsync();
         }
     }
 }

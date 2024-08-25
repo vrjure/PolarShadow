@@ -17,6 +17,12 @@
             <Setter Property="Margin" Value="8,0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+
+        <Style TargetType="PasswordBox" BasedOn="{StaticResource {x:Type PasswordBox}}">
+            <Setter Property="Margin" Value="8,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        
         <Style TargetType="ctrl:NumericUpDown" BasedOn="{StaticResource {x:Type ctrl:NumericUpDown}}">
             <Setter Property="Margin" Value="8,0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -90,7 +96,6 @@
                         <ToggleButton Style="{StaticResource Switch}"
                                       FontSize="{StaticResource Title}"
                                       Margin="10,0"
-                                      x:Name="btn_apiEnable"
                                       IsChecked="{Binding ApiEnable.Value, Mode=TwoWay}"/>
                     </StackPanel>
                     <Rectangle Fill="{StaticResource IndicatorBackground}" Height="2"/>
@@ -100,13 +105,18 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                            <RowDefinition Height="40"/>
+                        </Grid.RowDefinitions>
                         <TextBlock Text="Address"/>
                         <TextBox Grid.Column="1"
                                  Text="{Binding ApiAddress.Value, Mode=TwoWay}"
-                                 IsEnabled="{Binding ElementName=btn_apiEnable, Path=IsChecked}"/>
+                                 IsEnabled="{Binding ApiEnable.Value}"/>
                         <Button Grid.Column="2"
                                 Command="{Binding UploadCloudCommand}"
-                                IsEnabled="{Binding ElementName=btn_apiEnable, Path=IsChecked}">
+                                IsEnabled="{Binding ApiEnable.Value}">
                             <Button.Style>
                                 <Style TargetType="Button" BasedOn="{StaticResource ButtonIcon}">
                                     <Setter Property="Template">
@@ -136,6 +146,23 @@
                                 </Style>
                             </Button.Style>
                         </Button>
+
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="0"
+                                   Text="UserName"/>
+                        <TextBox Grid.Row="1"
+                                 Grid.Column="1"
+                                 IsEnabled="{Binding ApiEnable.Value}"
+                                 Text="{Binding UserName.Value, Mode=TwoWay}"/>
+
+                        <TextBlock Grid.Row="2"
+                                   Grid.Column="0"
+                                   Text="Password"/>
+                        <PasswordBox Grid.Row="2"
+                                     Grid.Column="1"
+                                     IsEnabled="{Binding ApiEnable.Value}"
+                                     PasswordChanged="PasswordBox_PasswordChanged"
+                                     x:Name="passwordBox"/>
                     </Grid>
                 </StackPanel>
             </ScrollViewer>

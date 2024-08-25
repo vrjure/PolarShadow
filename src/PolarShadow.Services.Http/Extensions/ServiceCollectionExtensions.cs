@@ -10,16 +10,21 @@ namespace PolarShadow.Services.Http
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddPolarShadowHttpService(this IServiceCollection services, Action<IServiceProvider, HttpClient>? configureClient = null)
+        public static IServiceCollection AddPolarShadowHttpService(this IServiceCollection services, Action<IServiceProvider, HttpClient> configureClient, Func<IServiceProvider, TokenClientOptions> tokenClientOption)
         {
-            if (configureClient != null)
-            {
-                services.AddHttpClient<IHttpMineResourceService, MineResourceService>(configureClient);
-                services.AddHttpClient<IHttpHistoryService, HistoryService>(configureClient);
-                services.AddHttpClient<IHttpPreferenceService, PreferenceService>(configureClient);
-                services.AddHttpClient<IServerService, ServerService>(configureClient);
-                services.AddHttpClient<IHttpSourceService, SourceService>(configureClient);
-            }
+            services.AddMemoryCache();
+            services.AddSingleton(sp => tokenClientOption(sp));
+            services.AddHttpClient<IPolarShadowTokenClient, PolarShadowTokenClient>(configureClient);
+
+            services.AddTransient<AuthenticationHandler>();
+            services.AddHttpClient<IPolarShadowClient, PolarShadowClient>(configureClient)
+                .AddHttpMessageHandler<AuthenticationHandler>();
+
+            services.AddTransient<IHttpMineResourceService, MineResourceService>();
+            services.AddTransient<IHttpHistoryService, HistoryService>();
+            services.AddTransient<IHttpPreferenceService, PreferenceService>();
+            services.AddTransient<IServerService, ServerService>();
+            services.AddTransient<IHttpSourceService, SourceService>();
             return services;
         }
     }

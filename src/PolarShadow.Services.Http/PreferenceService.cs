@@ -11,9 +11,8 @@ namespace PolarShadow.Services.Http
 {
     internal class PreferenceService : IHttpPreferenceService
     {
-        private static string Preference = "Preference";
-        private readonly HttpClient _client;
-        public PreferenceService(HttpClient client)
+        private readonly IPolarShadowClient _client;
+        public PreferenceService(IPolarShadowClient client)
         {
             _client = client;
         }
@@ -25,9 +24,7 @@ namespace PolarShadow.Services.Http
 
         public async Task ClearAsync()
         {
-            var url = $"{Preference}/clear";
-            var result = await _client.DeleteFromJsonAsync<Result>(url, JsonOptions.DefaultSerializer);
-            result.ThrowIfUnsuccessful();
+            await _client.ClearAsync();
         }
 
         public PreferenceModel Get(string key)
@@ -37,18 +34,12 @@ namespace PolarShadow.Services.Http
 
         public async Task<ICollection<PreferenceModel>?> GetAllAsync()
         {
-            var url = $"{Preference}";
-            var result = await _client.GetFromJsonAsync<Result<ICollection<PreferenceModel>>>(url, JsonOptions.DefaultSerializer);
-            result.ThrowIfUnsuccessful();
-            return result?.Data;
+            return await _client.GetAllAsync();
         }
 
         public async Task<PreferenceModel?> GetAsync(string key)
         {
-            var url = $"{Preference}/{key}";
-            var result = await _client.GetFromJsonAsync<Result<PreferenceModel>>(url, JsonOptions.DefaultSerializer);
-            result.ThrowIfUnsuccessful();
-            return result?.Data;
+            return await _client.GetAsync(key);
         }
 
         public void Set(PreferenceModel item)
@@ -58,11 +49,7 @@ namespace PolarShadow.Services.Http
 
         public async Task SetAsync(PreferenceModel item)
         {
-            var url = $"{Preference}";
-            var response = await _client.PostAsJsonAsync(url, item, JsonOptions.DefaultSerializer);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<Result>();
-            result.ThrowIfUnsuccessful();
+            await _client.SetAsync(item);
         }
     }
 }

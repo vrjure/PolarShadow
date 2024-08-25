@@ -12,7 +12,7 @@ namespace PolarShadow.Api.Controllers
     public class ServerController : ControllerBase, IServerService
     {
         [HttpGet("time")]
-        public ValueTask<DateTime> GetServerTime()
+        public ValueTask<DateTime> GetServerTimeAsync()
         {
             return ValueTask.FromResult(DateTime.Now);
         }

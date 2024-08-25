@@ -11,92 +11,60 @@ namespace PolarShadow.Services.Http
 {
     internal class MineResourceService : IHttpMineResourceService
     {
-        public static string _mineResource = "MineResource";
-        private readonly HttpClient _client;
-        public MineResourceService(HttpClient client)
+        private readonly IPolarShadowClient _client;
+        public MineResourceService(IPolarShadowClient client)
         {
             _client = client;
         }
 
         public async Task DeleteRootResourceAsync(int rootId)
         {
-            var url = $"{_mineResource}/delete/{rootId}";
-            var result = await _client.DeleteFromJsonAsync<Result>(url, JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
+            await _client.DeleteRootResourceAsync(rootId);
         }
 
         public async Task<ResourceModel?> GetResourceAsync(int id)
         {
-            var url = $"{_mineResource}/{id}";
-            var result = await _client.GetFromJsonAsync<Result<ResourceModel>>(url, JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
-            return result?.Data;
+            return await _client.GetResourceAsync(id);
         }
 
         public async Task<ICollection<ResourceModel>?> GetRootChildrenAsync(int rootId)
         {
-            var url = $"{_mineResource}/children/{rootId}";
-            var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url, JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
-            return result?.Data;
+            return await _client.GetRootChildrenAsync(rootId);
         }
 
         public async Task<ICollection<ResourceModel>?> GetRootChildrenAsync(int rootId, int level)
         {
-            var url = $"{_mineResource}/children/{rootId}/{level}";
-            var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url, JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
-            return result?.Data;
+            return await _client.GetRootChildrenAsync(rootId, level);
         }
 
         public async Task<int> GetRootChildrenCountAsync(int rootId, int level)
         {
-            var url = $"{_mineResource}/children/count/{rootId}/{level}";
-            var result = await _client.GetFromJsonAsync<Result<int>>(url, JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
-            return result!.Data;
+            return await _client.GetRootChildrenCountAsync(rootId, level);
         }
 
         public async Task<ResourceModel?> GetRootResourceAsync(string resourceName, string site)
         {
-            var url = $"{_mineResource}/{resourceName}/{site}";
-            var result = await _client.GetFromJsonAsync<Result<ResourceModel>>(url, JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
-            return result?.Data;
+            return await _client.GetRootResourceAsync(resourceName, site);
         }
 
         public async Task<ICollection<ResourceModel>?> GetRootResourcesAsync()
         {
-            var url = $"{_mineResource}";
-            var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url, JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
-            return result?.Data;
+            return await _client.GetRootResourcesAsync();
         }
 
         public async Task SaveResourceAsync(ResourceTreeNode tree)
         {
-            var url = $"{_mineResource}/save";
-            var message = await _client.PostAsJsonAsync(url, tree);
-            message.EnsureSuccessStatusCode();
-            var result = await message.Content.ReadFromJsonAsync<Result>(JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
+            await _client.SaveResourceAsync(tree);
         }
 
         public async Task UploadAsync(ICollection<ResourceModel> data)
         {
-            var url = $"{_mineResource}/upload";
-            var response = await _client.PostAsJsonAsync(url, data, JsonOptions.DefaultSerializer);
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadFromJsonAsync<Result>(JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
+            await _client.UploadAsync(data);
         }
 
         public async Task<ICollection<ResourceModel>> DownloadAsync()
         {
-            var url = $"{_mineResource}/download";
-            var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url, JsonOptions.DefaultSerializer);
-            result?.ThrowIfUnsuccessful();
-            return result!.Data;
+            return await (_client as IHttpMineResourceService).DownloadAsync();
         }
     }
 }

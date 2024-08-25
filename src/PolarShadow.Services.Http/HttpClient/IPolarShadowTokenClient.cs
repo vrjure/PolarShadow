@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PolarShadow.Services
+namespace PolarShadow.Services.Http
 {
-    public interface IServerService
+    public interface IPolarShadowTokenClient
     {
-        ValueTask<DateTime> GetServerTimeAsync();
+        Task<TokenModel?> GetTokenAsync();
     }
 }
