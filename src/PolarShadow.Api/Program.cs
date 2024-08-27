@@ -75,8 +75,9 @@ try
         builder.UseNpgsql(setting!.ConnectionString, opBuilder => opBuilder.MigrationsAssembly(typeof(DesignTimeContextFactory).Assembly.FullName));
     });
 
-    JWTOptions jwtOptions = new JWTOptions();
-    builder.Configuration.GetSection("jwt").Bind(jwtOptions);
+    var jwtSection = builder.Configuration.GetSection("jwt");
+    var jwtOptions = jwtSection.Get<JWTOptions>() ?? new JWTOptions();
+    builder.Services.Configure<JWTOptions>(jwtSection);
 
     builder.Services.AddAuthentication(op =>
     {
@@ -108,6 +109,11 @@ try
     builder.Services.AddUntities();
 
     var app = builder.Build();
+
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+    });
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())

@@ -32,7 +32,7 @@ namespace PolarShadow.Services.Http
 
         public async Task<ICollection<SourceModel>> DownloadAsync()
         {
-            return await DownloadAsync();
+            return await (_client as IHttpSourceService).DownloadAsync();
         }
     }
 }
