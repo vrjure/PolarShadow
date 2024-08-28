@@ -18,8 +18,8 @@ namespace PolarShadow.Storage
         }
         public async Task AddOrUpdateAsync(HistoryModel model)
         {
-            using var dbContext = _contextFactory.CreateDbContext();
-            var data = await dbContext.Histories.FirstOrDefaultAsync(f=>f.ResourceName == model.ResourceName);
+            using var dbContext = await _contextFactory.CreateDbContextAsync();
+            var data = await dbContext.Histories.AsNoTracking().FirstOrDefaultAsync(f=>f.ResourceName == model.ResourceName);
             if (data != null)
             {
                 model.Id = data.Id;
@@ -29,31 +29,31 @@ namespace PolarShadow.Storage
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(long id)
         {
-            using var context = _contextFactory.CreateDbContext();
+            using var context = await _contextFactory.CreateDbContextAsync();
             await context.Histories.Where(f => f.Id == id).ExecuteDeleteAsync();
         }
 
-        public async Task<HistoryModel> GetByIdAsync(int id)
+        public async Task<HistoryModel> GetByIdAsync(long id)
         {
-            using var context = _contextFactory.CreateDbContext();
-            return await context.Histories.FirstOrDefaultAsync(f => f.Id == id);
+            using var context = await _contextFactory.CreateDbContextAsync();
+            return await context.Histories.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
         }
 
         public async Task<HistoryModel> GetByResourceNameAsync(string reourceName)
         {
-            using var context = _contextFactory.CreateDbContext();
-            return await context.Histories.FirstOrDefaultAsync(f=> f.ResourceName == reourceName);
+            using var context = await _contextFactory.CreateDbContextAsync();
+            return await context.Histories.AsNoTracking().FirstOrDefaultAsync(f=> f.ResourceName == reourceName);
         }
 
         public async Task<ICollection<HistoryModel>> GetListPageAsync(int page, int pageSize, string filter = null)
         {
-            using var context = _contextFactory.CreateDbContext();
+            using var context = await _contextFactory.CreateDbContextAsync();
             var skip = (page - 1) * pageSize;
             if (string.IsNullOrEmpty(filter))
             {
-                return await context.Histories.OrderByDescending(f => f.UpdateTime).Skip(skip).Take(pageSize).ToListAsync();
+                return await context.Histories.AsNoTracking().OrderByDescending(f => f.UpdateTime).Skip(skip).Take(pageSize).ToListAsync();
             }
             else
             {
@@ -61,49 +61,9 @@ namespace PolarShadow.Storage
                     .OrderByDescending(f=>f.UpdateTime)
                     .Skip(skip)
                     .Take(pageSize)
+                    .AsNoTracking()
                     .ToListAsync();
             }
-        }
-
-        public override async Task UploadAsync(ICollection<HistoryModel> data)
-        {
-            if (data == null || data.Count == 0)
-            {
-                return;
-            }
-
-            using var dbContext = _contextFactory.CreateDbContext();
-            var dbData = await dbContext.Histories.ToListAsync();
-            if (!dbData.Any())
-            {
-                foreach (var item in data)
-                {
-                    item.Id = 0;
-                }
-
-                dbContext.Histories.AddRange(data);
-            }
-            else
-            {
-                var addList = data.ExceptBy(dbData.Select(f => f.ResourceName), f => f.ResourceName);
-                var union = dbData.UnionBy(data, f => f.ResourceName);
-
-                var updateList = new List<HistoryModel>();
-                foreach (var item in union)
-                {
-                    var db = dbData.First(f => f.ResourceName == item.ResourceName);
-                    var remote = data.First(f => f.ResourceName == item.ResourceName);
-                    if (remote.UpdateTime.ToUniversalTime() > db.UpdateTime.ToUniversalTime())
-                    {
-                        db.UpdateTime = remote.UpdateTime;
-                        updateList.Add(db);
-                    }
-                }
-
-                dbContext.Histories.UpdateRange(updateList);
-            }
-
-            await dbContext.SaveChangesAsync();
         }
     }
 }

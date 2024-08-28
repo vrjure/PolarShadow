@@ -33,14 +33,14 @@ namespace PolarShadow.Services.Http
             result.ThrowIfUnsuccessful();
         }
 
-        async Task IHistoryService.DeleteAsync(int id)
+        async Task IHistoryService.DeleteAsync(long id)
         {
             var url = $"{History}/{id}";
             var result = await _client.DeleteFromJsonAsync<Result>(url, JsonOptions.DefaultSerializer);
             result.ThrowIfUnsuccessful();
         }
 
-        async Task<HistoryModel?> IHistoryService.GetByIdAsync(int id)
+        async Task<HistoryModel?> IHistoryService.GetByIdAsync(long id)
         {
             var url = $"{History}/byId/{id}";
             var result = await _client.GetFromJsonAsync<Result<HistoryModel>>(url, JsonOptions.DefaultSerializer);
@@ -73,13 +73,22 @@ namespace PolarShadow.Services.Http
             result.ThrowIfUnsuccessful();
         }
 
-        async Task<ICollection<HistoryModel>> ISyncAble<HistoryModel>.DownloadAsync()
+        async Task<ICollection<HistoryModel>> ISyncAble<HistoryModel>.DownloadAsync(DateTime lastTime)
         {
-            var url = $"{History}/download";
+            var url = $"{History}/download?lastTime={FormatTime(lastTime)}";
             var result = await _client.GetFromJsonAsync<Result<ICollection<HistoryModel>>>(url, JsonOptions.DefaultSerializer);
             result.ThrowIfUnsuccessful();
             return result!.Data;
         }
+
+        async Task<DateTime> ISyncAble<HistoryModel>.GetLastTimeAsync()
+        {
+            var url = $"{History}/lastTime";
+            var result = await _client.GetFromJsonAsync<Result<DateTime>>(url, JsonOptions.DefaultSerializer);
+            result.ThrowIfUnsuccessful();
+            return result!.Data;
+        }
+
 
 
 
@@ -132,14 +141,14 @@ namespace PolarShadow.Services.Http
 
 
 
-        async Task IMineResourceService.DeleteRootResourceAsync(int rootId)
+        async Task IMineResourceService.DeleteRootResourceAsync(long rootId)
         {
             var url = $"{_mineResource}/delete/{rootId}";
             var result = await _client.DeleteFromJsonAsync<Result>(url, JsonOptions.DefaultSerializer);
             result?.ThrowIfUnsuccessful();
         }
 
-        async Task<ResourceModel?> IMineResourceService.GetResourceAsync(int id)
+        async Task<ResourceModel?> IMineResourceService.GetResourceAsync(long id)
         {
             var url = $"{_mineResource}/{id}";
             var result = await _client.GetFromJsonAsync<Result<ResourceModel>>(url, JsonOptions.DefaultSerializer);
@@ -147,7 +156,7 @@ namespace PolarShadow.Services.Http
             return result?.Data;
         }
 
-        async Task<ICollection<ResourceModel>?> IMineResourceService.GetRootChildrenAsync(int rootId)
+        async Task<ICollection<ResourceModel>?> IMineResourceService.GetRootChildrenAsync(long rootId)
         {
             var url = $"{_mineResource}/children/{rootId}";
             var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url, JsonOptions.DefaultSerializer);
@@ -155,7 +164,7 @@ namespace PolarShadow.Services.Http
             return result?.Data;
         }
 
-        async Task<ICollection<ResourceModel>?> IMineResourceService.GetRootChildrenAsync(int rootId, int level)
+        async Task<ICollection<ResourceModel>?> IMineResourceService.GetRootChildrenAsync(long rootId, int level)
         {
             var url = $"{_mineResource}/children/{rootId}/{level}";
             var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url, JsonOptions.DefaultSerializer);
@@ -163,7 +172,7 @@ namespace PolarShadow.Services.Http
             return result?.Data;
         }
 
-        async Task<int> IMineResourceService.GetRootChildrenCountAsync(int rootId, int level)
+        async Task<int> IMineResourceService.GetRootChildrenCountAsync(long rootId, int level)
         {
             var url = $"{_mineResource}/children/count/{rootId}/{level}";
             var result = await _client.GetFromJsonAsync<Result<int>>(url, JsonOptions.DefaultSerializer);
@@ -205,14 +214,21 @@ namespace PolarShadow.Services.Http
             result?.ThrowIfUnsuccessful();
         }
 
-        async Task<ICollection<ResourceModel>> ISyncAble<ResourceModel>.DownloadAsync()
+        async Task<ICollection<ResourceModel>> ISyncAble<ResourceModel>.DownloadAsync(DateTime lastTime)
         {
-            var url = $"{_mineResource}/download";
+            var url = $"{_mineResource}/download?lastTime={FormatTime(lastTime)}";
             var result = await _client.GetFromJsonAsync<Result<ICollection<ResourceModel>>>(url, JsonOptions.DefaultSerializer);
             result?.ThrowIfUnsuccessful();
             return result!.Data;
         }
 
+        async Task<DateTime> ISyncAble<ResourceModel>.GetLastTimeAsync()
+        {
+            var url = $"{_mineResource}/lastTime";
+            var result = await _client.GetFromJsonAsync<Result<DateTime>>(url, JsonOptions.DefaultSerializer);
+            result.ThrowIfUnsuccessful();
+            return result!.Data;
+        }
 
 
 
@@ -242,13 +258,22 @@ namespace PolarShadow.Services.Http
             result.ThrowIfUnsuccessful();
         }
 
-        async Task<ICollection<SourceModel>> ISyncAble<SourceModel>.DownloadAsync()
+        async Task<ICollection<SourceModel>> ISyncAble<SourceModel>.DownloadAsync(DateTime lastTime)
         {
-            var url = $"{_source}/download";
+            var url = $"{_source}/download?lastTime={FormatTime(lastTime)}";
             var result = await _client.GetFromJsonAsync<Result<ICollection<SourceModel>>>(url, JsonOptions.DefaultSerializer);
             result.ThrowIfUnsuccessful();
             return result!.Data;
         }
+
+        async Task<DateTime> ISyncAble<SourceModel>.GetLastTimeAsync()
+        {
+            var url = $"{_source}/lastTime";
+            var result = await _client.GetFromJsonAsync<Result<DateTime>>(url, JsonOptions.DefaultSerializer);
+            result.ThrowIfUnsuccessful();
+            return result!.Data;
+        }
+
 
         public async ValueTask<DateTime> GetServerTimeAsync()
         {
@@ -256,6 +281,11 @@ namespace PolarShadow.Services.Http
             var result = await _client.GetFromJsonAsync<Result<DateTime>>(url, JsonOptions.DefaultSerializer);
             result.ThrowIfUnsuccessful();
             return result!.Data;
+        }
+
+        private string FormatTime(DateTime time)
+        {
+            return time.ToUniversalTime().ToString();
         }
     }
 }

@@ -5,11 +5,12 @@ using System.Text;
 
 namespace PolarShadow.Services
 {
-    public class ResourceModel : Resource
+    public class ResourceModel : Resource, ISyncAbleModel, IKey
     {
-        public virtual int Id { get; set; }
-        public virtual int ParentId { get; set; }
-        public virtual int RootId { get; set; }
+        public virtual long Id { get; set; }
+        public virtual long ParentId { get; set; }
+        public virtual long RootId { get; set; }
         public virtual int Level { get; set; }
+        public DateTime UpdateTime { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using PolarShadow.Resources;
 using PolarShadow.Services;
 using PolarShadow.Storage;
@@ -19,10 +20,10 @@ namespace PolarShadow.Storage
             _dbContextFactory = dbContextFactory;
         }
 
-        public async Task DeleteRootResourceAsync(int rootId)
+        public async Task DeleteRootResourceAsync(long rootId)
         {
-            using var dbContext = _dbContextFactory.CreateDbContext();
-            using var trans = dbContext.Database.BeginTransaction();
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            using var trans = await dbContext.Database.BeginTransactionAsync();
             try
             {
                 await dbContext.Resources.Where(f => f.Id == rootId).ExecuteDeleteAsync();
@@ -36,27 +37,27 @@ namespace PolarShadow.Storage
             }
         }
 
-        public async Task<ResourceModel> GetResourceAsync(int id)
+        public async Task<ResourceModel> GetResourceAsync(long id)
         {
-            using var dbcontent = _dbContextFactory.CreateDbContext();
+            using var dbcontent = await _dbContextFactory.CreateDbContextAsync();
             return await dbcontent.Resources.Where(f => f.Id == id).AsNoTracking().FirstOrDefaultAsync();
         }
 
-        public async Task<ICollection<ResourceModel>> GetRootChildrenAsync(int rootId)
+        public async Task<ICollection<ResourceModel>> GetRootChildrenAsync(long rootId)
         {
-            using var dbContext = _dbContextFactory.CreateDbContext();
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             return await dbContext.Resources.Where(f => f.RootId == rootId && f.Id != rootId).AsNoTracking().ToListAsync();
         }
 
-        public async Task<ICollection<ResourceModel>> GetRootChildrenAsync(int rootId, int level)
+        public async Task<ICollection<ResourceModel>> GetRootChildrenAsync(long rootId, int level)
         {
-            using var dbContext = _dbContextFactory.CreateDbContext();
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             return await dbContext.Resources.Where(f=>f.RootId == rootId && f.Level == level).AsNoTracking().ToListAsync();
         }
 
-        public async Task<int> GetRootChildrenCountAsync(int rootId, int level)
+        public async Task<int> GetRootChildrenCountAsync(long rootId, int level)
         {
-            using var dbContext = _dbContextFactory.CreateDbContext();
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             return await dbContext.Resources.CountAsync(f=> f.RootId == rootId && f.Level == level);
         }
 
@@ -68,18 +69,18 @@ namespace PolarShadow.Storage
 
         public async Task<ICollection<ResourceModel>> GetRootResourcesAsync()
         {
-            using var dbContext = _dbContextFactory.CreateDbContext();
-            return await dbContext.Resources.Where(f => f.ParentId == 0).ToListAsync();
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            return await dbContext.Resources.Where(f => f.ParentId == 0).AsNoTracking().ToListAsync();
         }
 
         public async Task SaveResourceAsync(ResourceTreeNode tree)
         {
-            using var dbContext = _dbContextFactory.CreateDbContext();
-            using var trans = dbContext.Database.BeginTransaction();
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            using var trans = await dbContext.Database.BeginTransactionAsync();
 
             try
             {
-                await SaveResourceAsync(tree, dbContext);
+                SaveResourceAsync(tree, dbContext);
 
                 await dbContext.SaveChangesAsync();
 
@@ -92,79 +93,44 @@ namespace PolarShadow.Storage
             }
         }
 
-        private async Task SaveResourceAsync(ResourceTreeNode tree, PolarShadowDbContext dbContext)
+        private void SaveResourceAsync(ResourceTreeNode tree, PolarShadowDbContext dbContext)
         {
-            await dbContext.Resources.Where(f => f.Id == tree.Id).ExecuteDeleteAsync();
-            await dbContext.Resources.Where(f => f.RootId == tree.Id).ExecuteDeleteAsync();
-
-            dbContext.Resources.AddRange(TreeEnumerable.EnumerateDeepFirst(tree, t => t.Children));
-            await dbContext.SaveChangesAsync();
+            var now = DateTime.Now;
 
             foreach (var item in TreeEnumerable.EnumerateBreadthFirstWithParentChild(tree, t => t.Children))
             {
                 if (item.Key == null && item.Value != null) // first
                 {
+                    if (item.Value.Id == 0)
+                    {
+                        item.Value.Id = IdGenerator.NextId();
+
+                        dbContext.Resources.Add(item.Value);
+                    }
+                    else
+                    {
+                        dbContext.Resources.Update(item.Value);
+                    }
                     item.Value.RootId = item.Value.Id;
                     item.Value.Level = 0;
+                    item.Value.UpdateTime = now;
                 }
-
-                if (item.Key != null && item.Value != null)
+                else if (item.Key != null && item.Value != null)
                 {
+                    if (item.Value.Id == 0)
+                    {
+                        item.Value.Id = IdGenerator.NextId();
+                        dbContext.Resources.Add(item.Value);
+                    }
+                    else
+                    {
+                        dbContext.Resources.Update(item.Value);
+                    }
                     item.Value.ParentId = item.Key.Id;
                     item.Value.RootId = item.Key.RootId;
                     item.Value.Level = item.Key.Level + 1;
+                    item.Value.UpdateTime = now;
                 }
-
-                if (item.Value != null)
-                {
-                    dbContext.Resources.Update(item.Value);
-                }
-            }
-        }
-
-        public override async Task UploadAsync(ICollection<ResourceModel> data)
-        {
-            if (data == null || data.Count == 0)
-            {
-                return;
-            }
-            var rootList = data.Where(f => f.ParentId == 0);
-
-            using var dbContext = _dbContextFactory.CreateDbContext();
-            using var trans = dbContext.Database.BeginTransaction();
-
-            try
-            {
-                var dbResources = await dbContext.Resources.Where(f => f.ParentId == 0).ToListAsync();
-                var addList = rootList.ExceptBy(dbResources.Select(f => (f.Name, f.Site)), f => (f.Name, f.Site));
-                foreach (var item in addList)
-                {
-                    var children = data.Where(f => f.RootId == item.Id && f.Id != item.Id);
-                    var tree = CreateEnumerator(item, children).BuildTree();
-                    tree.Id = 0;
-                    foreach (var child in children)
-                    {
-                        child.Id = 0;
-                    }
-                    await SaveResourceAsync(tree, dbContext);
-                }
-
-                await dbContext.SaveChangesAsync();
-                await trans.CommitAsync();
-            }
-            catch (Exception)
-            {
-                await trans.RollbackAsync();
-                throw;
-            }
-        }
-
-        private static IEnumerable<ResourceModel> CreateEnumerator(ResourceModel root, IEnumerable<ResourceModel> children)
-        {
-            yield return root;
-            foreach (var item in children)
-            {
-                yield return item;
             }
         }
     }

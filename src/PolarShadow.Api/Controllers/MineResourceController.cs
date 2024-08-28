@@ -18,31 +18,31 @@ namespace PolarShadow.Api.Controllers
         }
 
         [HttpDelete("delete/{rootId}")]
-        public async Task DeleteRootResourceAsync([FromRoute] int rootId)
+        public async Task DeleteRootResourceAsync([FromRoute] long rootId)
         {
             await _mineResource.DeleteRootResourceAsync(rootId);
         }
 
         [HttpGet("{id}")]
-        public async Task<ResourceModel> GetResourceAsync([FromRoute] int id)
+        public async Task<ResourceModel> GetResourceAsync([FromRoute] long id)
         {
             return await _mineResource.GetResourceAsync(id);
         }
 
         [HttpGet("children/{rootId}")]
-        public async Task<ICollection<ResourceModel>> GetRootChildrenAsync([FromRoute] int rootId)
+        public async Task<ICollection<ResourceModel>> GetRootChildrenAsync([FromRoute] long rootId)
         {
             return await _mineResource.GetRootChildrenAsync(rootId);
         }
 
         [HttpGet("children/{rootId}/{level}")]
-        public async Task<ICollection<ResourceModel>> GetRootChildrenAsync([FromRoute] int rootId, [FromRoute] int level)
+        public async Task<ICollection<ResourceModel>> GetRootChildrenAsync([FromRoute] long rootId, [FromRoute] int level)
         {
             return await _mineResource.GetRootChildrenAsync(rootId, level);
         }
 
         [HttpGet("children/count/{rootId}/{level}")]
-        public async Task<int> GetRootChildrenCountAsync([FromRoute] int rootId, [FromRoute] int level)
+        public async Task<int> GetRootChildrenCountAsync([FromRoute] long rootId, [FromRoute] int level)
         {
             return await _mineResource.GetRootChildrenCountAsync(rootId, level);
         }
@@ -72,9 +72,15 @@ namespace PolarShadow.Api.Controllers
         }
 
         [HttpGet("download")]
-        public async Task<ICollection<ResourceModel>> DownloadAsync()
+        public async Task<ICollection<ResourceModel>> DownloadAsync([FromQuery] DateTime lastTime)
         {
-            return await _mineResource.DownloadAsync();
+            return await _mineResource.DownloadAsync(lastTime);
+        }
+
+        [HttpGet("lastTime")]
+        public async Task<DateTime> GetLastTimeAsync()
+        {
+            return await _mineResource.GetLastTimeAsync();
         }
     }
 }

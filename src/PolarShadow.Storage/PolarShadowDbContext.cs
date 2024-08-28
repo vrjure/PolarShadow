@@ -38,6 +38,18 @@ namespace PolarShadow.Storage
                 .HasConversion(
                     f => JsonSerializer.Serialize(f, JsonOptions.DefaultSerializer),
                     f => JsonSerializer.Deserialize<IDictionary<string, string>>(f, JsonOptions.DefaultSerializer));
+                if (ISSQliteProvider(this))
+                {
+                    builder.Property(f => f.UpdateTime).HasConversion(
+                        f => DateTimeToString(f),
+                        f => StringToDateTime(f));
+                }
+                else if(IsPostgreProvider(this))
+                {
+                    builder.Property(f => f.UpdateTime).HasConversion(
+                        f => f.ToUniversalTime(),
+                        f => f);
+                }
             });
 
             modelBuilder.Entity<PreferenceModel>().HasKey(f => f.Key);

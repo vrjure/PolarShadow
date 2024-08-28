@@ -43,9 +43,15 @@ namespace PolarShadow.Api.Controllers
         }
 
         [HttpGet("download")]
-        public async Task<ICollection<SourceModel>> DownloadAsync()
+        public async Task<ICollection<SourceModel>> DownloadAsync([FromQuery] DateTime lastTime)
         {
-            return await _sourceService.DownloadAsync();
+            return await _sourceService.DownloadAsync(lastTime);
+        }
+
+        [HttpGet("lastTime")]
+        public async Task<DateTime> GetLastTimeAsync()
+        {
+            return await _sourceService.GetLastTimeAsync();
         }
     }
 }

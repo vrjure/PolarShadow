@@ -19,38 +19,21 @@ namespace PolarShadow.Storage
 
         public async Task<SourceModel> GetSouuceAsync()
         {
-            using var dbContext = _dbFactory.CreateDbContext();
-            return await dbContext.Sources.OrderByDescending(f=>f.UpdateTime).FirstOrDefaultAsync();
+            using var dbContext = await _dbFactory.CreateDbContextAsync();
+            return await dbContext.Sources.OrderByDescending(f=>f.UpdateTime).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public async Task SaveSourceAsync(SourceModel source)
         {
-            using var dbContext = _dbFactory.CreateDbContext();
-            dbContext.Sources.Update(source);
-            await dbContext.SaveChangesAsync();
-        }
-
-        public override async Task UploadAsync(ICollection<SourceModel> data)
-        {
-            if (data == null || data.Count == 0)
+            source.UpdateTime = DateTime.Now;
+            using var dbContext = await _dbFactory.CreateDbContextAsync();
+            if (dbContext.Sources.Any(f=>f.Id == source.Id))
             {
-                return;
-            }
-            using var dbContext = _dbFactory.CreateDbContext();
-            var local = await dbContext.Sources.OrderByDescending(f => f.UpdateTime).AsNoTracking().FirstOrDefaultAsync();
-            if (local == null)
-            {
-                dbContext.Sources.AddRange(data);
+                dbContext.Sources.Update(source);
             }
             else
             {
-                foreach (var item in data)
-                {
-                    if (item.UpdateTime.ToUniversalTime() > local.UpdateTime.ToUniversalTime())
-                    {
-                        dbContext.Sources.Update(item);
-                    }
-                }
+                dbContext.Sources.Add(source);
             }
             await dbContext.SaveChangesAsync();
         }

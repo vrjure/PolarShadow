@@ -23,41 +23,36 @@ namespace PolarShadow.Storage
         public void Set(PreferenceModel item)
         {
             using var dbContext = _dbContextFactory.CreateDbContext();
-            try
+
+            if (dbContext.Preferences.Any(f=>f.Key == item.Key))
             {
                 dbContext.Preferences.Update(item);
-                dbContext.SaveChanges();
-
-                _cache?.Set(item.Key, item);
             }
-            catch (DbUpdateException ex)
+            else
             {
-                foreach (var entry in ex.Entries)
-                {
-                    entry.State = EntityState.Added;
-                }
-                dbContext.SaveChanges();
+                dbContext.Preferences.Add(item);
             }
+
+            dbContext.SaveChanges();
+
+            _cache?.Set(item.Key, item);
         }
 
         public async Task SetAsync(PreferenceModel item)
         {
-            using var dbContext = _dbContextFactory.CreateDbContext();
-            try
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+            if (await dbContext.Preferences.AnyAsync(f=>f.Key == item.Key))
             {
                 dbContext.Preferences.Update(item);
-                await dbContext.SaveChangesAsync();
-
-                _cache?.Set(item.Key, item);
             }
-            catch (DbUpdateException ex)
+            else
             {
-                foreach (var entry in ex.Entries)
-                {
-                    entry.State = EntityState.Added;
-                }
-                await dbContext.SaveChangesAsync();
+                dbContext.Preferences.Add(item);
             }
+            await dbContext.SaveChangesAsync();
+
+            _cache?.Set(item.Key, item);
         }
 
         public PreferenceModel Get(string key)
@@ -67,7 +62,7 @@ namespace PolarShadow.Storage
                 return cache;
             }
             using var dbContext = _dbContextFactory.CreateDbContext();
-            return dbContext.Preferences.Where(f => f.Key == key).FirstOrDefault();
+            return dbContext.Preferences.Where(f => f.Key == key).AsNoTracking().FirstOrDefault();
         }
 
         public async Task<PreferenceModel> GetAsync(string key)
@@ -77,8 +72,8 @@ namespace PolarShadow.Storage
                 return cache;
             }
 
-            using var dbContext = _dbContextFactory.CreateDbContext();
-            return await dbContext.Preferences.Where(f => f.Key == key).FirstOrDefaultAsync();
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            return await dbContext.Preferences.Where(f => f.Key == key).AsNoTracking().FirstOrDefaultAsync();
         }
 
         public void Clear()
@@ -101,7 +96,7 @@ namespace PolarShadow.Storage
 
         public async Task ClearAsync()
         {
-            using var dbContext = _dbContextFactory.CreateDbContext();
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             if (_cache != null)
             {
                 var allValue = await dbContext.Preferences.ToListAsync();
@@ -119,8 +114,8 @@ namespace PolarShadow.Storage
 
         public async Task<ICollection<PreferenceModel>> GetAllAsync()
         {
-            using var dbContext = _dbContextFactory.CreateDbContext();
-            return await dbContext.Preferences.ToListAsync();
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            return await dbContext.Preferences.AsNoTracking().ToListAsync();
         }
     }
 }

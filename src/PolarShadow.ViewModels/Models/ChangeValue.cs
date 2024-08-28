@@ -18,15 +18,27 @@ namespace PolarShadow.Models
             this.Compare = compare;
             this.Value = value;
         }
-        public T Compare { get; }
+        public T Compare { get; private set; }
 
         private T _value;
         public T Value
         {
             get => _value;
-            set => SetProperty(ref _value, value);
+            set
+            {
+                SetProperty(ref _value, value);
+            }
         }
 
         public bool IsChange => !EqualityComparer<T>.Default.Equals(Compare, Value);
+
+        public void Reset()
+        {
+            Compare = Value;
+        }
+        public void Reset(T value)
+        {
+            Compare = Value = value;
+        }
     }
 }

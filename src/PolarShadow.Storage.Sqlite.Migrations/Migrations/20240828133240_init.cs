@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -15,13 +14,13 @@ namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
                 name: "Histories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ResourceName = table.Column<string>(type: "TEXT", nullable: true),
                     Progress = table.Column<long>(type: "INTEGER", nullable: false),
                     ProgressDesc = table.Column<string>(type: "TEXT", nullable: true),
                     ProgressIndex = table.Column<int>(type: "INTEGER", nullable: false),
-                    UpdateTime = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    UpdateTime = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -44,11 +43,12 @@ namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
                 name: "Resources",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ParentId = table.Column<int>(type: "INTEGER", nullable: false),
-                    RootId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ParentId = table.Column<long>(type: "INTEGER", nullable: false),
+                    RootId = table.Column<long>(type: "INTEGER", nullable: false),
                     Level = table.Column<int>(type: "INTEGER", nullable: false),
+                    UpdateTime = table.Column<string>(type: "TEXT", nullable: false),
                     Src = table.Column<string>(type: "TEXT", nullable: true),
                     SrcType = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
@@ -68,11 +68,11 @@ namespace PolarShadow.Storage.Sqlite.Migrations.Migrations
                 name: "Sources",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Data = table.Column<string>(type: "TEXT", nullable: true),
-                    CreateTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdateTime = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    CreateTime = table.Column<string>(type: "TEXT", nullable: false),
+                    UpdateTime = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

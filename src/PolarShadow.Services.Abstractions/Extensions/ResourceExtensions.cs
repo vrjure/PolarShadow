@@ -14,7 +14,7 @@ namespace PolarShadow.Services
 
             ResourceTreeNode tree = null;
 
-            var dict = new Dictionary<int, ResourceTreeNode>();
+            var dict = new Dictionary<long, ResourceTreeNode>();
             foreach (var item in resources)
             {
                 if (item.Level == 0 && item.ParentId == 0)

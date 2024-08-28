@@ -30,9 +30,14 @@ namespace PolarShadow.Services.Http
             await _client.UploadAsync(data);
         }
 
-        public async Task<ICollection<SourceModel>> DownloadAsync()
+        public async Task<ICollection<SourceModel>> DownloadAsync(DateTime lastTime)
         {
-            return await (_client as IHttpSourceService).DownloadAsync();
+            return await (_client as IHttpSourceService).DownloadAsync(lastTime);
+        }
+
+        public async Task<DateTime> GetLastTimeAsync()
+        {
+            return await (_client as IHttpSourceService).GetLastTimeAsync();
         }
     }
 }

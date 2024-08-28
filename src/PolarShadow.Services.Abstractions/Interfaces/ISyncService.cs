@@ -9,13 +9,12 @@ namespace PolarShadow.Services
     public interface ISyncAble<T> where T : class
     {
         Task UploadAsync(ICollection<T> data);
-        Task<ICollection<T>> DownloadAsync();
+        Task<ICollection<T>> DownloadAsync(DateTime updateTime);
+        Task<DateTime> GetLastTimeAsync();
     }
 
     public interface ISyncService<T> where T : class
     {
-        Task UploadAsync();
-        Task<ICollection<T>> DownloadAsync();
         Task SyncAsync();
     }
 }

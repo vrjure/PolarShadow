@@ -20,19 +20,13 @@ namespace PolarShadow.ViewModels
         private readonly IStorageItemPicker _storage;
         private readonly IMessageService _notify;
         private readonly IDbPreferenceService _dbPreference;
-        private readonly IHttpMineResourceService _mineResourceService;
-        private readonly IHttpHistoryService _historyService;
-        private readonly ISourceService _sourceService;
         private readonly IServiceProvider _service;
         private readonly IPolarShadow _polar;
-        public MineViewModel(IStorageItemPicker storage, IMessageService notify, IDbPreferenceService dbPreference, IHttpMineResourceService mineResourceService, IHttpHistoryService historyService, ISourceService sourceService, IServiceProvider service, IPolarShadow polar)
+        public MineViewModel(IStorageItemPicker storage, IMessageService notify, IDbPreferenceService dbPreference, IServiceProvider service, IPolarShadow polar)
         {
             _storage = storage;
             _notify = notify;
             _dbPreference = dbPreference;
-            _mineResourceService = mineResourceService;
-            _historyService = historyService;
-            _sourceService = sourceService;
             _service = service;
             _polar = polar;
         }
@@ -130,26 +124,48 @@ namespace PolarShadow.ViewModels
         {
             try
             {
-                if(RPC.IsChange)
+                if (RPC.IsChange)
+                {
                     await _dbPreference.SetAsync(Preferences.RPC, RPC.Value);
+                    RPC.Reset();
+                }
 
-                if(DownloadPath.IsChange)
+                if (DownloadPath.IsChange)
+                {
                     await _dbPreference.SetAsync(Preferences.DownloadPath, DownloadPath.Value);
+                    DownloadPath.Reset();
+                }
 
                 if (SearchTaskCount.IsChange)
+                {
                     await _dbPreference.SetAsync(Preferences.SearchTaskCount, SearchTaskCount.Value);
-                
+                    SearchTaskCount.Reset();
+                }
+
                 if (ApiAddress.IsChange)
+                {
                     await _dbPreference.SetAsync(Preferences.ServerAddress, ApiAddress.Value);
+                    ApiAddress.Reset();
+                }
 
                 if (UserName.IsChange)
+                {
                     await _dbPreference.SetAsync(Preferences.UserName, UserName.Value);
+                    UserName.Reset();
+                }
 
                 if (Password.IsChange)
+                {
                     await _dbPreference.SetAsync(Preferences.Password, Password.Value);
+                    Password.Reset();
+                }
 
                 if (ApiEnable.IsChange)
+                {
                     await _dbPreference.SetAsync(Preferences.ApiEnable, ApiEnable.Value);
+                    ApiEnable.Reset();
+
+                }
 
                 if (ApiEnable.Value)
                 {
@@ -157,12 +173,13 @@ namespace PolarShadow.ViewModels
                     {
                         var serverService = _service.GetRequiredService<IServerService>();
                         await serverService.GetServerTimeAsync();
+
+                        await UpdateSourceAsync();
                     }
                     catch (Exception ex)
                     {
-                        ApiEnable.Value = false;
+                        ApiEnable.Reset(false);
                         await _dbPreference.SetAsync(Preferences.ApiEnable, ApiEnable.Value);
-
                         _notify.Show(ex);
                         return;
                     }
@@ -188,17 +205,22 @@ namespace PolarShadow.ViewModels
                 await historySync.SyncAsync();
                 await sourceSync.SyncAsync();
 
-                var source = await _sourceService.GetSouuceAsync();
-                if (source != null && !string.IsNullOrEmpty(source.Data))
-                {
-                    _polar.Load(new JsonStringSource() { Json = source.Data }, true);
-                }
+                await UpdateSourceAsync();
 
                 _notify.ShowSuccess();
             }
             catch (Exception ex)
             {
                 _notify.Show(ex);
+            }
+        }
+        private async Task UpdateSourceAsync()
+        {
+            var sourceService = _service.GetRequiredService<ISourceService>();
+            var source = await sourceService.GetSouuceAsync();
+            if (source != null && !string.IsNullOrEmpty(source.Data))
+            {
+                _polar.Load(new JsonStringSource() { Json = source.Data }, true);
             }
         }
     }

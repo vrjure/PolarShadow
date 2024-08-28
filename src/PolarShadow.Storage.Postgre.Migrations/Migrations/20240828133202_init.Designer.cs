@@ -12,7 +12,7 @@ using PolarShadow.Storage;
 namespace PolarShadow.Storage.Postgre.Migrations.Migrations
 {
     [DbContext(typeof(PolarShadowDbContext))]
-    [Migration("20240811094849_init")]
+    [Migration("20240828133202_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -27,11 +27,11 @@ namespace PolarShadow.Storage.Postgre.Migrations.Migrations
 
             modelBuilder.Entity("PolarShadow.Services.HistoryModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<long>("Progress")
                         .HasColumnType("bigint");
@@ -70,11 +70,11 @@ namespace PolarShadow.Storage.Postgre.Migrations.Migrations
 
             modelBuilder.Entity("PolarShadow.Services.ResourceModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -94,14 +94,14 @@ namespace PolarShadow.Storage.Postgre.Migrations.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int>("ParentId")
-                        .HasColumnType("integer");
+                    b.Property<long>("ParentId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Request")
                         .HasColumnType("text");
 
-                    b.Property<int>("RootId")
-                        .HasColumnType("integer");
+                    b.Property<long>("RootId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Site")
                         .HasColumnType("text");
@@ -113,6 +113,9 @@ namespace PolarShadow.Storage.Postgre.Migrations.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
                     b.ToTable("Resources");
@@ -120,11 +123,11 @@ namespace PolarShadow.Storage.Postgre.Migrations.Migrations
 
             modelBuilder.Entity("PolarShadow.Services.SourceModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreateTime")
                         .HasColumnType("timestamp with time zone");

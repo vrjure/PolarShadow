@@ -21,12 +21,12 @@ namespace PolarShadow.Services.Http
             await _client.AddOrUpdateAsync(model);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(long id)
         {
             await _client.DeleteAsync(id);
         }
 
-        public async Task<HistoryModel?> GetByIdAsync(int id)
+        public async Task<HistoryModel?> GetByIdAsync(long id)
         {
             return await _client.GetByIdAsync(id);
         }
@@ -46,9 +46,14 @@ namespace PolarShadow.Services.Http
             await _client.UploadAsync(data);
         }
 
-        public async Task<ICollection<HistoryModel>> DownloadAsync()
+        public async Task<ICollection<HistoryModel>> DownloadAsync(DateTime lastTime)
         {
-            return await (_client as IHttpHistoryService).DownloadAsync();
+            return await (_client as IHttpHistoryService).DownloadAsync(lastTime);
+        }
+
+        public async Task<DateTime> GetLastTimeAsync()
+        {
+            return await (_client as IHttpHistoryService).GetLastTimeAsync();
         }
     }
 }

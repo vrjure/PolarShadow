@@ -24,13 +24,13 @@ namespace PolarShadow.Api.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task DeleteAsync([FromRoute] int id)
+        public async Task DeleteAsync([FromRoute] long id)
         {
             await _historyService.DeleteAsync(id);
         }
 
         [HttpGet("byId/{id:long}")]
-        public async Task<HistoryModel> GetByIdAsync([FromRoute] int id)
+        public async Task<HistoryModel> GetByIdAsync([FromRoute] long id)
         {
             return await _historyService.GetByIdAsync(id);
         }
@@ -54,10 +54,15 @@ namespace PolarShadow.Api.Controllers
         }
 
         [HttpGet("download")]
-        public async Task<ICollection<HistoryModel>> DownloadAsync()
+        public async Task<ICollection<HistoryModel>> DownloadAsync([FromQuery] DateTime updateTime)
         {
-            return await _historyService.DownloadAsync();
+            return await _historyService.DownloadAsync(updateTime);
         }
 
+        [HttpGet("lastTime")]
+        public async Task<DateTime> GetLastTimeAsync()
+        {
+            return await _historyService.GetLastTimeAsync();
+        }
     }
 }

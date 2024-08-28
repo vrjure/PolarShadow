@@ -23,27 +23,27 @@ namespace PolarShadow.Services
         /// </summary>
         /// <param name="rootId"></param>
         /// <returns></returns>
-        Task<ICollection<ResourceModel>> GetRootChildrenAsync(int rootId);
+        Task<ICollection<ResourceModel>> GetRootChildrenAsync(long rootId);
         /// <summary>
         /// 获取根节点下level级的资源
         /// </summary>
         /// <param name="rootId"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        Task<ICollection<ResourceModel>> GetRootChildrenAsync(int rootId, int level);
+        Task<ICollection<ResourceModel>> GetRootChildrenAsync(long rootId, int level);
         /// <summary>
         /// 获取根节点下level级的资源数
         /// </summary>
         /// <param name="rootId"></param>
         /// <param name="level"></param>
         /// <returns></returns>
-        Task<int> GetRootChildrenCountAsync(int rootId, int level);
+        Task<int> GetRootChildrenCountAsync(long rootId, int level);
         /// <summary>
         /// 获取单个资源
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<ResourceModel> GetResourceAsync(int id);
+        Task<ResourceModel> GetResourceAsync(long id);
         /// <summary>
         /// 保存资源树
         /// </summary>
@@ -55,6 +55,6 @@ namespace PolarShadow.Services
         /// </summary>
         /// <param name="rootId"></param>
         /// <returns></returns>
-        Task DeleteRootResourceAsync(int rootId);
+        Task DeleteRootResourceAsync(long rootId);
     }
 }

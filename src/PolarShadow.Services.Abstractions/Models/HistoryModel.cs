@@ -4,9 +4,9 @@ using System.Text;
 
 namespace PolarShadow.Services
 {
-    public class HistoryModel
+    public class HistoryModel : ISyncAbleModel, IKey
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string ResourceName { get; set; }
         public long Progress { get; set; }
         public string ProgressDesc { get; set; }

@@ -19,7 +19,7 @@ namespace PolarShadow
 
         public static bool HasServerAddress(this IDbPreferenceService services)
         {
-            return services.Get(Preferences.ApiEnable, false);
+            return services.Get(Preferences.ApiEnable, false) && !string.IsNullOrEmpty(Preferences.ServerAddress);
         }
 
         public static TokenRequestModel GetTokenRequestModel(this IDbPreferenceService services)

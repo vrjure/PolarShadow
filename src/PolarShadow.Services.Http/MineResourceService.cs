@@ -17,27 +17,27 @@ namespace PolarShadow.Services.Http
             _client = client;
         }
 
-        public async Task DeleteRootResourceAsync(int rootId)
+        public async Task DeleteRootResourceAsync(long rootId)
         {
             await _client.DeleteRootResourceAsync(rootId);
         }
 
-        public async Task<ResourceModel?> GetResourceAsync(int id)
+        public async Task<ResourceModel?> GetResourceAsync(long id)
         {
             return await _client.GetResourceAsync(id);
         }
 
-        public async Task<ICollection<ResourceModel>?> GetRootChildrenAsync(int rootId)
+        public async Task<ICollection<ResourceModel>?> GetRootChildrenAsync(long rootId)
         {
             return await _client.GetRootChildrenAsync(rootId);
         }
 
-        public async Task<ICollection<ResourceModel>?> GetRootChildrenAsync(int rootId, int level)
+        public async Task<ICollection<ResourceModel>?> GetRootChildrenAsync(long rootId, int level)
         {
             return await _client.GetRootChildrenAsync(rootId, level);
         }
 
-        public async Task<int> GetRootChildrenCountAsync(int rootId, int level)
+        public async Task<int> GetRootChildrenCountAsync(long rootId, int level)
         {
             return await _client.GetRootChildrenCountAsync(rootId, level);
         }
@@ -62,9 +62,14 @@ namespace PolarShadow.Services.Http
             await _client.UploadAsync(data);
         }
 
-        public async Task<ICollection<ResourceModel>> DownloadAsync()
+        public async Task<ICollection<ResourceModel>> DownloadAsync(DateTime lastTime)
         {
-            return await (_client as IHttpMineResourceService).DownloadAsync();
+            return await (_client as IHttpMineResourceService).DownloadAsync(lastTime);
+        }
+
+        public async Task<DateTime> GetLastTimeAsync()
+        {
+            return await (_client as IHttpMineResourceService).GetLastTimeAsync();
         }
     }
 }

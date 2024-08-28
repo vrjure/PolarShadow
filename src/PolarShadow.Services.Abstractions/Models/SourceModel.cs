@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace PolarShadow.Services
 {
-    public class SourceModel
+    public class SourceModel : ISyncAbleModel, IKey
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Data { get; set; }
         public DateTime CreateTime { get; set; } = DateTime.Now;
         public DateTime UpdateTime { get; set; } = DateTime.Now;
